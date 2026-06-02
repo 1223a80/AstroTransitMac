@@ -1,0 +1,23 @@
+{
+  "mode": "solar_arc",
+  "birth": {
+    "moment": {"year": 1990, "month": 1, "day": 1, "hour": 12, "minute": 0, "timezone": "Asia/Shanghai"},
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "houseSystem": "whole_sign",
+    "zodiac": "tropical",
+    "boundsSystem": "egyptian",
+    "triplicitySystem": "dorothean"
+  },
+  "reference": {"year": 2026, "month": 6, "day": 2, "hour": 12, "minute": 0, "timezone": "Asia/Shanghai"},
+  "house_system": "whole_sign",
+  "zodiac": "tropical",
+  "node_mode": "true_node",
+  "aspects": [
+    {"id": "conjunction", "name": "合相", "angle": 0, "orb": 6},
+    {"id": "opposition", "name": "冲相", "angle": 180, "orb": 6},
+    {"id": "trine", "name": "拱相", "angle": 120, "orb": 6},
+    {"id": "square", "name": "刑相", "angle": 90, "orb": 6},
+    {"id": "sextile", "name": "六合", "angle": 60, "orb": 6}
+  ]
+}

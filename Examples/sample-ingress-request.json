@@ -1,0 +1,26 @@
+{
+  "mode": "scan",
+  "scanKind": "ingress",
+  "label": "Ingress May-Jun 2026",
+  "start": {
+    "year": 2026,
+    "month": 5,
+    "day": 1,
+    "hour": 0,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "end": {
+    "year": 2026,
+    "month": 6,
+    "day": 30,
+    "hour": 23,
+    "minute": 59,
+    "timezone": "Asia/Shanghai"
+  },
+  "transitBodies": ["SUN", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"],
+  "customAsteroids": [],
+  "aspects": [],
+  "targetText": "",
+  "ephemerisPath": null
+}

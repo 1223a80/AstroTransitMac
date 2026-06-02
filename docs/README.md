@@ -1,0 +1,12 @@
+# Documentation Index
+
+Use these files before changing the project:
+
+- `../AGENTS.md` - working rules and current high-risk contracts for coding agents.
+- `project-structure.md` - directory map, source-of-truth locations, and generated folders.
+- `backend-contracts.md` - JSON contracts and calculation-specific invariants.
+- `validation.md` - local setup, test commands, and smoke checks.
+- `opencode-next-step-requirements.md` - scoped product requirement for config preset management.
+- `../classical-techniques-roadmap.md` - older roadmap notes for classical techniques.
+
+The root `README.md` is the user-facing overview. Keep detailed agent handoff notes in `AGENTS.md` or this `docs/` folder rather than expanding the README indefinitely.

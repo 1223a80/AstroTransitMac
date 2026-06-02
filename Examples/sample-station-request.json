@@ -1,0 +1,26 @@
+{
+  "mode": "scan",
+  "scanKind": "station",
+  "label": "Stations 2026",
+  "start": {
+    "year": 2026,
+    "month": 1,
+    "day": 1,
+    "hour": 0,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "end": {
+    "year": 2026,
+    "month": 12,
+    "day": 31,
+    "hour": 23,
+    "minute": 59,
+    "timezone": "Asia/Shanghai"
+  },
+  "transitBodies": ["MERCURY", "VENUS", "MARS", "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"],
+  "customAsteroids": [],
+  "aspects": [],
+  "targetText": "",
+  "ephemerisPath": null
+}

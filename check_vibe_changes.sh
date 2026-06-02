@@ -1,0 +1,54 @@
+#!/bin/bash
+# check_vibe_changes.sh
+# 给完全不懂编程的我用的“接受 agent 改动前一键检查”脚本
+# 用法：bash check_vibe_changes.sh
+# 或者直接在 Finder 里双击（如果有执行权限）
+
+set -euo pipefail
+
+echo "========================================"
+echo "Vibe Coding 改动验证脚本"
+echo "========================================"
+echo
+
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT_DIR"
+
+echo "1. Python 后端测试..."
+python3 -m pytest python_tests/ -q || { echo "❌ Python 测试失败"; exit 1; }
+echo "✅ Python 测试通过"
+echo
+
+echo "2. Swift 构建..."
+swift build 2>&1 | tail -5 || { echo "❌ Swift build 失败"; exit 1; }
+echo "✅ Swift build 成功"
+echo
+
+echo "3. 关键 smoke 测试（classical + scan + horary + rectify）..."
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-request.json > /dev/null && echo "✅ classical smoke OK"
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-scan-request.json > /dev/null && echo "✅ scan smoke OK"
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-horary-request.json > /dev/null 2>&1 || echo "⚠️ horary sample 不存在或失败（可忽略，如果有）"
+
+# rectify 简单 smoke（不要求完整 UI）
+echo '{"mode":"rectify","birth_date":"2000-01-01","center_time":"12:00","timezone":"Asia/Shanghai","latitude":31.23,"longitude":121.47,"house_system":"whole_sign","zodiac":"tropical","bounds_system":"egyptian","triplicity_system":"dorothean","max_age":30,"window_minutes":5,"step_minutes":5}' | python3 Sources/TransitStudio/Resources/backend/transit_calc.py 2>/dev/null | head -c 200 > /dev/null && echo "✅ rectify smoke 至少能跑通"
+echo
+
+echo "4. 个人数据 / 作者痕迹扫描（应该只剩少量明确测试数据）..."
+echo "扫描结果（如果很多，说明需要让 agent 清理）："
+grep -r "31.2304\|121.4737\|/Users/gacu/资料库/ephe" \
+  --include="*.swift" --include="*.py" \
+  Sources/ python_tests/ Examples/ 2>/dev/null | wc -l || true
+echo "(上面数字越小越好。作者测试数据在 tests/examples 里是允许的，但默认值和 UI 里不应该再出现个人路径)"
+echo
+
+echo "5. 最近改动文件一览（让你直观看到 agent 到底动了什么）："
+git status --porcelain 2>/dev/null | head -20 || echo "(没有 git 或没有变更)"
+echo
+
+echo "========================================"
+echo "基础检查完成。"
+echo "请再手动确认："
+echo "- CHANGELOG.md 最上面是否加了本次改动说明？"
+echo "- 如果改了模型或导出，是否对比过同一个输入的导出结果？"
+echo "- 如果是新功能，PLANS.md 是否更新了进度？"
+echo "========================================"

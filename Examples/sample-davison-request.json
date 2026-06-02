@@ -1,0 +1,24 @@
+{
+  "mode": "davison",
+  "person_a": {
+    "name": "Person A",
+    "moment": {"year": 1990, "month": 1, "day": 1, "hour": 12, "minute": 0, "timezone": "Asia/Shanghai"},
+    "latitude": 31.2304,
+    "longitude": 121.4737
+  },
+  "person_b": {
+    "name": "Person B",
+    "moment": {"year": 1992, "month": 6, "day": 15, "hour": 8, "minute": 30, "timezone": "America/New_York"},
+    "latitude": 40.7128,
+    "longitude": -74.0060
+  },
+  "house_system": "whole_sign",
+  "zodiac": "tropical",
+  "node_mode": "true_node",
+  "aspects": [
+    {"id": "conjunction", "name": "合相", "angle": 0, "orb": 8},
+    {"id": "opposition", "name": "冲相", "angle": 180, "orb": 8},
+    {"id": "trine", "name": "拱相", "angle": 120, "orb": 6},
+    {"id": "square", "name": "刑相", "angle": 90, "orb": 6}
+  ]
+}
