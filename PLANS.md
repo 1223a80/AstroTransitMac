@@ -13,6 +13,11 @@
 - 人工核对 `README.md` 中文内容与原文结构一致
 - `git diff -- README.md`
 
+**执行记录**：
+- 已审查后端 mode 分发、Swift 导航、run action、结果页、设置页和生时矫正 UI
+- 确认 README 先前遗漏的真实功能包括：Synastry、Composite、Davison、Secondary Progressions、Solar Arc、Harmonic、Chart Wheel、AI 分析、Markdown/JSON/CSV 导出、小行星策略与三级生时矫正
+- 已基于代码事实重写 README 的功能概览、环境说明、后端直跑示例和验证说明
+
 ## 2026-06-02 — 更新 AGENTS.md 的 Git 协作规则
 
 **任务**：将当前已落地的 Git / GitHub 基础设施转化为仓库级协作规则，补充到 `AGENTS.md`，降低后续多 agent 并行时的改动污染和审查成本。
