@@ -138,7 +138,7 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
     section_errors: dict[str, str] = {}
     aspects: list[dict[str, Any]] = []
     try:
-        aspects = find_aspects(comp_planet_rows, comp_planet_rows, aspect_specs)
+        aspects = find_aspects(comp_planet_rows, comp_planet_rows, aspect_specs, skip_self_aspects=True)
     except Exception as exc:
         warnings.append(f"Composite 相位计算失败：{exc}")
         section_errors["aspects"] = str(exc)

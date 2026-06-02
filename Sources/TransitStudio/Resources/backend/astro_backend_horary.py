@@ -405,7 +405,7 @@ def exact_time_for_signature(
     if signature is None:
         return False, ""
     aspect_name, aspect_type, _orb, applying, _ = signature
-    if aspect_type != "度数" or applying != "入相":
+    if aspect_type != "degree" or applying != "入相":
         return False, ""
     warning_keys: set[str] = set()
     aspect_id = next((key for key, name in ASPECT_NAMES.items() if name == aspect_name), None)
@@ -449,7 +449,7 @@ def key_significator_links(
         if signature is not None:
             aspect, aspect_type, orb, applying_value, _ = signature
             applying = applying_value or ""
-            if aspect_type == "星座":
+            if aspect_type == "sign":
                 perfection_reason = "sign-based only"
             elif applying != "入相":
                 perfection_reason = "separating"
@@ -523,7 +523,7 @@ def degree_based_key_aspects(
             if right_row is None:
                 continue
             signature = classical_aspect_signature(left_row, right_row, 8.0)
-            if signature is None or signature[1] != "度数":
+            if signature is None or signature[1] != "degree":
                 continue
             aspect_name, _aspect_type, orb, applying, _ = signature
             _perfects, exact_time = exact_time_for_signature(chart_dt, left_row, right_row, signature, warnings)

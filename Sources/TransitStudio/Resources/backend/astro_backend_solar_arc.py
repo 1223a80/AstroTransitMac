@@ -140,7 +140,7 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     body_lons = {row["body_id"]: row["longitude"] for row in sa_positioned}
     aspects_internal: list[dict[str, Any]] = []
     try:
-        aspects_internal = find_aspects(sa_positioned, sa_positioned, aspect_specs)
+        aspects_internal = find_aspects(sa_positioned, sa_positioned, aspect_specs, skip_self_aspects=True)
     except Exception:
         aspects_internal = []
     house_map = {row["body_id"]: row.get("house", 1) for row in sa_positioned}

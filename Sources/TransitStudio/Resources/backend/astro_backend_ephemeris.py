@@ -22,6 +22,12 @@ from astro_backend_core import (
 NO_ASTEROIDS = False
 REQUIRE_EPHEMERIS = "warn"
 
+_position_cache: dict[tuple[float, str, bool], tuple[tuple[float, ...], str] | None] = {}
+
+
+def clear_position_cache() -> None:
+    _position_cache.clear()
+
 HOUSE_SYSTEMS = {
     "whole_sign": ("Whole Sign", "W"),
     "placidus": ("Placidus", "P"),
@@ -99,13 +105,19 @@ def calculate_values(
     warning_keys: set[str] | None = None,
     sidereal: bool = False,
 ) -> tuple[tuple[float, ...], str] | None:
+    cache_key = (jd_ut, spec.body_id, sidereal)
+    if cache_key in _position_cache:
+        return _position_cache[cache_key]
+
     flags = swe.FLG_SWIEPH | swe.FLG_SPEED
     if sidereal:
         flags |= swe.FLG_SIDEREAL
 
     try:
         values, _ = swe.calc_ut(jd_ut, spec.code, flags)
-        return values, "Swiss Ephemeris"
+        result = (values, "Swiss Ephemeris")
+        _position_cache[cache_key] = result
+        return result
     except swe.Error as swiss_error:
         if is_asteroid_spec(spec):
             reason = str(swiss_error)
@@ -118,6 +130,7 @@ def calculate_values(
                     f"{spec.body_id}:asteroid_ephemeris_missing",
                     asteroid_skip_message([spec.name], reason),
                 )
+            _position_cache[cache_key] = None
             return None
         try:
             fallback_flags = swe.FLG_MOSEPH | swe.FLG_SPEED
@@ -130,7 +143,9 @@ def calculate_values(
                 f"{spec.body_id}:fallback",
                 f"{spec.name} 使用 Moshier fallback：{swiss_error}",
             )
-            return values, "Moshier fallback"
+            result = (values, "Moshier fallback")
+            _position_cache[cache_key] = result
+            return result
         except swe.Error as fallback_error:
             warn_once(
                 warnings,
@@ -138,6 +153,7 @@ def calculate_values(
                 f"{spec.body_id}:failed",
                 f"无法计算 {spec.name}：{fallback_error}",
             )
+            _position_cache[cache_key] = None
             return None
 
 

@@ -143,9 +143,13 @@ def calculate_classical_planets(
     bounds_system: str,
     triplicity_system: str,
     warnings: list[str],
+    precomputed_positions: list[dict[str, Any]] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]], set[str]]:
-    specs = [BODY_REGISTRY[body_id] for body_id in CLASSICAL_BODY_IDS]
-    positions = calculate_positions(jd_ut, specs, warnings, sidereal=sidereal)
+    if precomputed_positions is not None:
+        positions = precomputed_positions
+    else:
+        specs = [BODY_REGISTRY[body_id] for body_id in CLASSICAL_BODY_IDS]
+        positions = calculate_positions(jd_ut, specs, warnings, sidereal=sidereal)
     by_id = {row["body_id"]: row for row in positions}
     sun_lon = by_id["SUN"]["longitude"]
     ephemerides = {row.get("_ephemeris", "Swiss Ephemeris") for row in positions}
@@ -502,7 +506,8 @@ def classical_snapshot(
     is_day = longitude_in_interval(sun_longitude, angles["DSC"], angles["ASC"])
 
     planet_rows, planet_positions, ephemerides = calculate_classical_planets(
-        jd_ut, cusps, is_day, sidereal, bounds_system, triplicity_system, warnings
+        jd_ut, cusps, is_day, sidereal, bounds_system, triplicity_system, warnings,
+        precomputed_positions=prelim_positions,
     )
     lot_rows = calculate_lots(angles, planet_positions, cusps, is_day)
     aspects, receptions = classical_aspects_and_receptions(

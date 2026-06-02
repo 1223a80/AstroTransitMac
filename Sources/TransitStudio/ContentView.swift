@@ -12,53 +12,136 @@ struct TargetPositionOption: Identifiable, Hashable {
 }
 
 struct ContentView: View {
+    // MARK: - Navigation
     @State var mode: CalculationMode = .settings
     @AppStorage("natalChartStyle") var practiceModeStorage = PracticeMode.modern.rawValue
+    @State var modernSubMode = ModernSubMode.natal
+
+    // MARK: - Birth data
     @State var natalDate = Self.fixedDate(year: 1990, month: 1, day: 1, hour: 12, minute: 0)
-    @State var transitDate = Date()
-    @State var horaryDate = Date()
-    @State var scanStartDate = Self.fixedDate(year: 2026, month: 5, day: 1, hour: 0, minute: 0)
-    @State var scanEndDate = Self.fixedDate(year: 2026, month: 6, day: 30, hour: 23, minute: 59)
-    @State var classicalReferenceDate = Date()
-    @State var scanWindowLabel = "May-Jun 2026"
-    @State var selectedScanKind = "aspect"
-    @AppStorage("natalProfilesJSON") var natalProfilesJSON = ""
-    @State var natalProfileName = "我的本命盘"
-    @State var selectedNatalProfileID = ""
-    @State var targetSource = "natal"
-    @State var selectedTargetAngles = Set<String>()
-    @State var selectedTargetPlanets = Set<String>()
-    @State var selectedTargetAsteroids = Set<String>()
-    @State var selectedTargetHouses = Set<Int>()
-    @State var selectedTargetLots = Set<String>()
-    @State var customLotTargetsText = ""
-    @State var scanMoonFilter = "exclude"
-    @State var scanTargetsText = Self.defaultScanTargets
     @State var gmtOffset = 8
     @State var birthLatitude = "31.2304"
     @State var birthLongitude = "121.4737"
-    @State var horaryPlaceName = "当前提问地点"
-    @State var horaryLatitude = "31.2304"
-    @State var horaryLongitude = "121.4737"
-    @State var horaryQuestionText = ""
     @StateObject var currentLocationManager = CurrentLocationManager()
+
+    // MARK: - House / zodiac settings
     @State var selectedHouseSystem = "whole_sign"
     @State var selectedZodiac = "tropical"
     @State var selectedBoundsSystem = "egyptian"
     @State var selectedTriplicitySystem = "dorothean"
-    @State var classicalAspectOrb = 3.0
-    @AppStorage("pythonPath") var pythonPath = BackendClient.suggestedPythonPath()
-    @State var swissephStatus = "正在检测 pyswisseph..."
-    @AppStorage("ephemerisPath") var ephemerisPath = ""
-    @AppStorage("noAsteroids") var noAsteroids = false
-    @AppStorage("requireEphemeris") var requireEphemeris = "warn"
-    @AppStorage("autoDownloadAsteroids") var autoDownloadAsteroids = true
+
+    // MARK: - Body / aspect selections
     @State var selectedNatalBodies = Set(bodyOptions.filter(\.isDefault).map(\.id))
     @State var selectedTransitBodies = Set(bodyOptions.filter(\.isDefault).map(\.id))
     @State var selectedAspects = Set(aspectOptions.filter(\.isDefault).map(\.id))
     @State var customAspectDegrees = ""
     @State var customAsteroids = ""
     @State var globalOrb = 3.0
+
+    // MARK: - Classical mode state
+    @State var classicalReferenceDate = Date()
+    @State var classicalAspectOrb = 3.0
+    @State var classicalResult: ClassicalResult?
+    @State var classicalAIAnalysis = ""
+    @State var classicalSelectedTab = "planets"
+    @State var showClassicalExportSheet = false
+    @State var classicalExportSections: Set<MarkdownExportBuilder.ExportSection> = Set(MarkdownExportBuilder.ExportSection.allCases)
+
+    // MARK: - Horary mode state
+    @State var horaryDate = Date()
+    @State var horaryPlaceName = "当前提问地点"
+    @State var horaryLatitude = "31.2304"
+    @State var horaryLongitude = "121.4737"
+    @State var horaryQuestionText = ""
+    @State var horaryResult: HoraryResult?
+    @State var horaryAIAnalysis = ""
+    @State var horarySelectedTab = "overview"
+
+    // MARK: - Scan mode state
+    @State var scanStartDate = Self.fixedDate(year: 2026, month: 5, day: 1, hour: 0, minute: 0)
+    @State var scanEndDate = Self.fixedDate(year: 2026, month: 6, day: 30, hour: 23, minute: 59)
+    @State var scanWindowLabel = "May-Jun 2026"
+    @State var selectedScanKind = "aspect"
+    @State var scanMoonFilter = "exclude"
+    @State var scanTargetsText = Self.defaultScanTargets
+    @State var scanResult: ScanResult?
+    @State var scanAIAnalysis = ""
+    @State var scanSelectedTab = "hits"
+    @State var scanConfigText = ""
+    @State var scanPresetName = ""
+    @State var selectedScanPresetID = ""
+
+    // MARK: - Moment mode state
+    @State var transitDate = Date()
+    @State var selectedTargetAngles = Set<String>()
+    @State var selectedTargetPlanets = Set<String>()
+    @State var selectedTargetAsteroids = Set<String>()
+    @State var selectedTargetHouses = Set<Int>()
+    @State var selectedTargetLots = Set<String>()
+    @State var customLotTargetsText = ""
+    @State var momentResult: TransitResult?
+    @State var momentAIAnalysis = ""
+    @State var momentSelectedTab = "aspects"
+    @State var momentConfigText = ""
+    @State var momentPresetName = ""
+    @State var selectedMomentPresetID = ""
+
+    // MARK: - Modern relationship mode state
+    @State var modernResultData: ModernResultData?
+    @State var modernPersonBDate = Self.fixedDate(year: 1992, month: 6, day: 15, hour: 8, minute: 30)
+    @State var modernPersonBLatitude = "40.7128"
+    @State var modernPersonBLongitude = "-74.0060"
+    @State var modernNodeMode = "true_node"
+    @State var modernHarmonicOrder = 4
+    @State var modernAIAnalysis = ""
+    @State var modernSelectedTab = "planets"
+    @State var modernNatalSelectedTab = "natal_positions"
+
+    // MARK: - Rectify mode state
+    @State var rectifyResponse: RectifyResponse?
+    @State var rectifyLevel2Response: RectifyResponse?
+    @State var rectifyLevel3Response: RectifyResponse?
+    @State var rectifyS1Index = 0
+    @State var rectifyS2Index = 0
+    @State var rectifyActiveLevel = 1
+    @State var rectifyLevel2Gen = 0
+    @State var rectifyLevel3Gen = 0
+    @State var rectifyLevel3ResponseID = 0
+
+    // MARK: - Profile / templates
+    @AppStorage("natalProfilesJSON") var natalProfilesJSON = ""
+    @State var natalProfileName = "我的本命盘"
+    @State var selectedNatalProfileID = ""
+    @State var targetSource = "natal"
+
+    // MARK: - UI layout state
+    @State var isNavigationCollapsed = false
+    @State var isMiddleSidebarCollapsed = false
+    @State var isShowingAppSettingsPage = false
+    @State var middleSidebarWidth: CGFloat = 430
+    @State var middleSidebarLastExpandedWidth: CGFloat = 430
+    @State var middleSidebarDragStartWidth: CGFloat?
+    @State var collapsedSections: Set<String> = []
+
+    // MARK: - Running / progress / AI
+    @State var isRunning = false
+    @State var errorMessage: String?
+    @State var calculationProgress: Double?
+    @State var calculationProgressText = ""
+    @State var asteroidPreparationMessage = ""
+    @State var progressTask: Task<Void, Never>?
+    @State var swissephStatus = "正在检测 pyswisseph..."
+    @State var isAnalyzingAI = false
+
+    // MARK: - Cross-mode result caches
+    @State var fullNatalResult: TransitResult?
+
+    // MARK: - AppStorage (persistent settings)
+    @AppStorage("pythonPath") var pythonPath = BackendClient.suggestedPythonPath()
+    @AppStorage("ephemerisPath") var ephemerisPath = ""
+    @AppStorage("noAsteroids") var noAsteroids = false
+    @AppStorage("requireEphemeris") var requireEphemeris = "warn"
+    @AppStorage("autoDownloadAsteroids") var autoDownloadAsteroids = true
     @AppStorage("llmBaseURL") var llmBaseURL = "https://open.bigmodel.cn/api/paas/v4"
     @AppStorage("llmModel") var llmModel = "glm-4.7-flash"
     @AppStorage("llmAPIKey") var llmAPIKey = ""
@@ -72,61 +155,6 @@ struct ContentView: View {
     @AppStorage("aiNote") var aiNote = ""
     @AppStorage("momentPresetsJSON") var momentPresetsJSON = ""
     @AppStorage("scanPresetsJSON") var scanPresetsJSON = ""
-    @State var momentPresetName = ""
-    @State var selectedMomentPresetID = ""
-    @State var scanPresetName = ""
-    @State var selectedScanPresetID = ""
-    @State var momentAIAnalysis = ""
-    @State var scanAIAnalysis = ""
-    @State var classicalAIAnalysis = ""
-    @State var horaryAIAnalysis = ""
-    @State var isAnalyzingAI = false
-    @State var isRunning = false
-    @State var isNavigationCollapsed = false
-    @State var isMiddleSidebarCollapsed = false
-    @State var isShowingAppSettingsPage = false
-    @State var middleSidebarWidth: CGFloat = 430
-    @State var middleSidebarLastExpandedWidth: CGFloat = 430
-    @State var middleSidebarDragStartWidth: CGFloat?
-    @State var calculationProgress: Double?
-    @State var calculationProgressText = ""
-    @State var asteroidPreparationMessage = ""
-    @State var progressTask: Task<Void, Never>?
-    @State var errorMessage: String?
-    @State var momentResult: TransitResult?
-    @State var fullNatalResult: TransitResult?
-    @State var scanResult: ScanResult?
-    @State var classicalResult: ClassicalResult?
-    @State var horaryResult: HoraryResult?
-    @State var rectifyResponse: RectifyResponse?
-    @State var rectifyLevel2Response: RectifyResponse?
-    @State var rectifyLevel3Response: RectifyResponse?
-    @State var rectifyS1Index = 0
-    @State var rectifyS2Index = 0
-    @State var rectifyActiveLevel = 1
-    @State var collapsedSections: Set<String> = []
-    @State var rectifyLevel2Gen = 0
-    @State var rectifyLevel3Gen = 0
-    @State var rectifyLevel3ResponseID = 0
-    @State var momentConfigText = ""
-    @State var scanConfigText = ""
-    @State var classicalSelectedTab = "planets"
-    @State var showClassicalExportSheet = false
-    @State var classicalExportSections: Set<MarkdownExportBuilder.ExportSection> = Set(MarkdownExportBuilder.ExportSection.allCases)
-    @State var horarySelectedTab = "overview"
-    @State var modernNatalSelectedTab = "natal_positions"
-    @State var momentSelectedTab = "aspects"
-    @State var scanSelectedTab = "hits"
-
-    @State var modernSubMode = ModernSubMode.natal
-    @State var modernResultData: ModernResultData?
-    @State var modernPersonBDate = Self.fixedDate(year: 1992, month: 6, day: 15, hour: 8, minute: 30)
-    @State var modernPersonBLatitude = "40.7128"
-    @State var modernPersonBLongitude = "-74.0060"
-    @State var modernNodeMode = "true_node"
-    @State var modernHarmonicOrder = 4
-    @State var modernAIAnalysis = ""
-    @State var modernSelectedTab = "planets"
 
     static let houseSystemOptions = [
         PickerOption(id: "whole_sign", title: "Whole Sign"),

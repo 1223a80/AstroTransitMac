@@ -100,7 +100,7 @@ def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str
 
     aspects: list[dict[str, Any]] = []
     try:
-        aspects = find_aspects(harmonic_planet_rows, harmonic_planet_rows, aspect_specs)
+        aspects = find_aspects(harmonic_planet_rows, harmonic_planet_rows, aspect_specs, skip_self_aspects=True)
     except Exception as exc:
         warnings.append(f"Harmonic 相位计算失败：{exc}")
         section_errors["aspects"] = str(exc)

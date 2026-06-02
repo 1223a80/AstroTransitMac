@@ -34,6 +34,7 @@ from astro_backend_core import (
 from astro_backend_ephemeris import (
     build_houses,
     calculate_positions,
+    clear_position_cache,
     configure_runtime,
     house_for_longitude,
     house_rows,
@@ -302,7 +303,7 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
             "combust_orb_deg": 8.5,
             "under_beams_orb_deg": 15.0,
             "naibod_rate": 0.9856,
-            "primary_directions_method": "Placidus Semi-Arc",
+            "primary_directions_method": "Naibod",
             "modern_planets_excluded_from_scoring": True,
             "scoring_includes_conditioning": True,
             "sign_based_receptions_downgraded": True,
@@ -389,6 +390,7 @@ def main() -> None:
             "warn",
         )
         configure_runtime(no_asteroids, require_ephemeris)
+        clear_position_cache()
 
         ephemeris_path = (request.get("ephemeris_path") or request.get("ephemerisPath") or "").strip()
         if ephemeris_path:

@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-06-02 — Review 跟进：sidereal 缓存碰撞 / ViewModel 死代码 / label 拼写
+
+### Fixes
+
+1. **[P1] 缓存碰撞** — `_position_cache` key 增加 `sidereal` 标志，防止黄道/恒星同 JD 查表返回错误经度
+2. **[P2] ViewModel 死代码** — 移除 ContentView 中 6 个未接线的 `@StateObject` 声明；ViewModel 文件保留为架构文档
+3. **[P3] 标签拼写** — `"Naibod (Platicus)"` → `"Naibod"`（Platicus 拼写错误且此算法非 Placidus）
+
+### 验证
+
+- `python3 -m pytest python_tests` — 219 passed
+- `swift build` — Build complete
+- `swift test` — 10 passed in 5 suites
+- 缓存修复验证：tropical(336.1069) / sidereal(311.0458) 独立缓存互不影响
+
+## 2026-06-02 — 评估修正合集：Horary 字符串 / Self-aspect / 主限命名 / ViewModel 拆分 / 性能优化
+
+### P0 修复
+
+1. **Horary 字符串契约不一致** — `astro_backend_horary.py` 三处用中文"度数""星座"比 `classical_aspect_signature()` 返回的英文 `"degree"`/`"sign"` → 改英文
+2. **Self-aspect / 重复相位 bug** — `find_aspects()` 加 `skip_self_aspects` 参数；5 个同表调用者（harmonic/composite/davison/progressions/solar_arc）设为 True，同时用 frozenset 去重 A-B/B-A
+3. **Primary Directions 命名诚实化** — `astro_backend_api.py` → `"Naibod (Platicus)"`，不再伪称 Placidus Semi-Arc
+
+### P1 重构 / 优化
+
+4. **ContentView ViewModel 拆分** — 创建 6 个 `@StateObject` ViewModel（`ClassicalViewModel`、`HoraryViewModel`、`ScanViewModel`、`MomentViewModel`、`ModernRelationshipViewModel`、`RectifyViewModel`），状态分组合法化；所有现有 `ContentView+*.swift` 扩展方法零修改
+5. **经典返照性能优化** —
+   - `calculate_classical_planets` 接受 `precomputed_positions` 参数，消除 `classical_snapshot` 内 7 次重复 `swe.calc_ut`
+   - 新增 `_position_cache` 模块级缓存 + `clear_position_cache()`，降低搜索阶段跨行星重复计算
+
+### 验证
+
+- `python3 -m pytest python_tests` — 219 passed
+- `swift build` — Build complete
+- `swift test` — 10 passed in 5 suites
+- 经典 smoke test 工作正常
+
 ## 2026-06-02 — README 中文化
 
 - **`README.md`** — 将项目说明从英文翻译为中文，并按当前代码事实补齐功能概览、现代子模式、图轮 / AI 分析 / 导出能力、后端运行示例与验证说明

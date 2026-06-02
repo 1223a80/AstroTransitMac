@@ -52,17 +52,25 @@ def find_aspects(
     transit_positions: list[dict[str, Any]],
     natal_positions: list[dict[str, Any]],
     aspect_specs: list[dict[str, Any]],
+    skip_self_aspects: bool = False,
 ) -> list[dict[str, Any]]:
     hits: list[dict[str, Any]] = []
+    seen_pairs: set[frozenset[str]] = set()
 
     for transit in transit_positions:
         for natal in natal_positions:
+            if skip_self_aspects and transit["body_id"] == natal["body_id"]:
+                continue
+            pair = frozenset([transit["body_id"], natal["body_id"]])
+            if skip_self_aspects and pair in seen_pairs:
+                continue
             separation = angular_separation(transit["longitude"], natal["longitude"])
             for aspect in aspect_specs:
                 angle = float(aspect["angle"])
                 orb_limit = float(aspect["orb"])
                 orb = abs(separation - angle)
                 if orb <= orb_limit + 1e-9:
+                    seen_pairs.add(pair)
                     hits.append(
                         {
                             "id": (
