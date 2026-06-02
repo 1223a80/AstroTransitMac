@@ -110,3 +110,16 @@ echo '{"mode":"rectify","birth_date":"1990-01-01","center_time":"12:00","timezon
 - Keep generated artifacts out of source edits.
 - If changing a calculation rule, add or update a focused Python test.
 - If changing a displayed/exported field, check Swift build and at least the relevant markdown/text export code.
+
+## Git Workflow
+
+- This project is now a Git repository with `main` tracking `origin/main`.
+- Treat `main` as the review baseline, not the default scratch space for experimental edits.
+- For non-trivial work, create a task branch first. Branch names should be descriptive, such as `feature/modern-ui-export` or `fix/rectify-timeout`.
+- Keep one task per branch. Do not mix unrelated fixes into the same branch just because the files are nearby.
+- `PLANS.md` explains intended work, `git diff` proves actual code changes, and `CHANGELOG.md` summarizes the result for humans. Do not use any one of the three as a substitute for the other two.
+- Before editing, read the relevant code and confirm the target files and contracts. Do not start from a guessed patch shape.
+- Before asking for review or declaring completion, run the required validation for the touched area and inspect `git diff --stat` plus the full `git diff`.
+- If the diff contains unrelated noise, stop and clean the task boundary before review.
+- Push branches to GitHub only after the local diff and validation output match the task plan.
+- Never force-push or rewrite shared history unless the human explicitly asks for it.

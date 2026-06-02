@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-06-02 — 补充 Git 协作规则
+
+- **`AGENTS.md`** — 新增 `Git Workflow` 章节，明确 `main` / 任务分支 / `PLANS.md` / `git diff` / `CHANGELOG.md` 的职责边界
+- 新增提交前检查要求：先跑对应验证，再查看 `git diff --stat` 和完整 `git diff`
+- 明确禁止把无关改动混入同一任务分支，且未经用户要求不得改写共享历史
+- **`PLANS.md`** — 追加本次“更新 AGENTS.md 的 Git 协作规则”任务计划
+
 ## 2026-06-02 — 引入 Git 仓库准备
 
 - **`PLANS.md`** — 追加“为项目引入 Git 仓库”计划，明确初始化仓库、检查忽略规则与基线提交的执行步骤

@@ -1,5 +1,18 @@
 # 规范化计划
 
+## 2026-06-02 — 更新 AGENTS.md 的 Git 协作规则
+
+**任务**：将当前已落地的 Git / GitHub 基础设施转化为仓库级协作规则，补充到 `AGENTS.md`，降低后续多 agent 并行时的改动污染和审查成本。
+
+**方案**：
+1. 在 `AGENTS.md` 中新增 Git 工作流约束，明确 `main`、功能分支、`PLANS.md` / `CHANGELOG.md` / `git diff` 的职责
+2. 保持规则面向 agent 可执行，避免空泛原则，优先写清楚任务开始前、提交前、推送前分别要做什么
+3. 同步更新 `CHANGELOG.md`，记录这次仓库协作规范补充
+
+**验证**：
+- 人工核对 `AGENTS.md` 中新规则与当前仓库现实一致
+- `git status --short --branch`
+
 ## 2026-06-02 — 为项目引入 Git 仓库
 
 **任务**：将当前 `AstroTransitMac` 目录从普通文件夹转换为可审查、可追踪的 Git 仓库，为后续分支与 worktree 协作打基础。
