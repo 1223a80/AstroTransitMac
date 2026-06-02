@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-06-02 — README 中文化
+
+- **`README.md`** — 将项目说明从英文翻译为中文，保留原有结构、命令、路径、输出字段与验证说明
+- **`PLANS.md`** — 追加本次 README 中文化任务计划
+
 ## 2026-06-02 — 补充 Git 协作规则
 
 - **`AGENTS.md`** — 新增 `Git Workflow` 章节，明确 `main` / 任务分支 / `PLANS.md` / `git diff` / `CHANGELOG.md` 的职责边界
