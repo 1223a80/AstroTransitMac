@@ -7,6 +7,8 @@
 - **Git 仓库** — 已在项目根目录执行 `git init -b main`，当前目录已进入 Git 管理；由于本机未配置 `user.name` / `user.email`，首个基线提交待补身份后再创建
 - **Git 身份** — 已收到用于当前仓库的本地提交身份，准备补齐配置并创建基线提交
 - **Git 身份修正** — 用户更正提交身份为 `katou <whatismorethat@gacu.com>`；需同步修正仓库本地配置并改写首个基线提交作者信息
+- **GitHub 远程** — 用户已创建空仓库 `1223a80/AstroTransitMac`，准备将本地 `main` 分支接入 `origin` 并执行首次推送
+- **GitHub 连接状态** — 已添加 `origin` 指向 `https://github.com/1223a80/AstroTransitMac.git`；首次 HTTPS 推送因本机未配置 GitHub 凭证而失败，下一步需补 PAT 或改走 SSH
 
 ## 2026-06-02 — 现代模块交付核查
 

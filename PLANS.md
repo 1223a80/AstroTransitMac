@@ -22,6 +22,10 @@
 - `git config --get user.name` / `user.email` 均为空，首个基线提交暂不能安全创建
 - 用户已提供提交身份，下一步将写入仓库本地配置并创建首个基线提交
 - 用户随后更正提交身份为 `katou <whatismorethat@gacu.com>`；需同步修正本地仓库配置并改写刚创建的基线提交作者
+- 用户已在 GitHub 创建空仓库 `1223a80/AstroTransitMac`；下一步为添加 `origin` 并执行首次 `git push -u origin main`
+- 已添加 `origin = https://github.com/1223a80/AstroTransitMac.git`
+- 首次 `git push -u origin main` 失败：`could not read Username for 'https://github.com': Device not configured`
+- 本机不存在 `~/.ssh` 目录，当前最短路径是补 GitHub HTTPS 认证（PAT）或改走 SSH 配置
 
 ## 2026-06-02 — 现代占星计算规则文档
 
