@@ -190,6 +190,181 @@ def yoga_ashraya(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> 
 
 # ─── Tithi-related Yogas ──────────────────────────────────────────────
 
+def yoga_budha_aditya(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
+    """Budha-Aditya Yoga: Sun + Mercury in the same house."""
+    if not _are_in_same_rasi(planet_positions, "SUN", "MERCURY"):
+        return None
+    return {"name": "BudhaAditya", "group": "solar",
+            "description": "日水同宫",
+            "effect": "思维清晰、表达突出，学习与名望机会较多。",
+            "planets": ["SUN", "MERCURY"]}
+
+
+def yoga_dharma_karmadhipati(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
+    """Dharma-Karmadhipati Yoga: Lord of 9th and 10th in kendra."""
+    for pid in ["JUPITER", "SATURN", "MERCURY", "VENUS"]:
+        rasi = _get_rasi(planet_positions, pid)
+        if rasi is None:
+            continue
+        if _is_in_kendra(rasi, asc_rasi):
+            return {"name": "DharmaKarmadhipati", "group": "raja/sambandha",
+                    "description": "九宫主或十宫主在角宫",
+                    "effect": "责任感与上进心较强，容易在事业路径上取得阶段性成就。",
+                    "planets": [pid]}
+    return None
+
+
+def yoga_adhi(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
+    """Adhi Yoga: Benefics in 6th, 7th, 8th from Moon."""
+    moon_rasi = _get_rasi(planet_positions, "MOON")
+    if moon_rasi is None:
+        return None
+    for pid in ["JUPITER", "VENUS", "MERCURY"]:
+        rasi = _get_rasi(planet_positions, pid)
+        if rasi is None:
+            continue
+        offset = (rasi - moon_rasi) % 12
+        if offset in (5, 6, 7):
+            return {"name": "Adhi", "group": "lunar/raja",
+                    "description": "吉星在月亮的6/7/8宫",
+                    "effect": "组织能力与管理潜力较强，易获职位与权责提升。",
+                    "planets": [pid]}
+    return None
+
+
+def yoga_sunapha(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
+    """Sunapha Yoga: Benefic planets in 2nd from Moon."""
+    moon_rasi = _get_rasi(planet_positions, "MOON")
+    if moon_rasi is None:
+        return None
+    for pid in ["JUPITER", "VENUS", "MERCURY"]:
+        rasi = _get_rasi(planet_positions, pid)
+        if rasi is None:
+            continue
+        offset = (rasi - moon_rasi) % 12
+        if offset == 1:
+            return {"name": "Sunapha", "group": "lunar",
+                    "description": "吉星在月亮的第2宫",
+                    "effect": "聪慧、有资源整合能力，常带来名望与财富机会。",
+                    "planets": [pid]}
+    return None
+
+
+def yoga_anapha(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
+    """Anapha Yoga: Benefic planets in 12th from Moon."""
+    moon_rasi = _get_rasi(planet_positions, "MOON")
+    if moon_rasi is None:
+        return None
+    for pid in ["JUPITER", "VENUS", "MERCURY"]:
+        rasi = _get_rasi(planet_positions, pid)
+        if rasi is None:
+            continue
+        offset = (rasi - moon_rasi) % 12
+        if offset == 11:
+            return {"name": "Anapha", "group": "lunar",
+                    "description": "吉星在月亮的第12宫",
+                    "effect": "财富积累、良好合作伙伴",
+                    "planets": [pid]}
+    return None
+
+
+def yoga_subha(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
+    """Subha Yoga: Benefic planets on both sides of Moon (2nd and 12th)."""
+    moon_rasi = _get_rasi(planet_positions, "MOON")
+    if moon_rasi is None:
+        return None
+    has_2nd = False
+    has_12th = False
+    for pid in ["JUPITER", "VENUS", "MERCURY"]:
+        rasi = _get_rasi(planet_positions, pid)
+        if rasi is None:
+            continue
+        offset = (rasi - moon_rasi) % 12
+        if offset == 1:
+            has_2nd = True
+        if offset == 11:
+            has_12th = True
+    if has_2nd and has_12th:
+        return {"name": "Subha", "group": "lunar",
+                "description": "月亮两侧皆有吉星",
+                "effect": "外在气质与表达较佳，人际印象与口碑较好。",
+                "planets": ["JUPITER", "VENUS", "MERCURY"]}
+    return None
+
+
+def yoga_yogakaraka(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
+    """Yogakaraka: Planet that rules both a kendra and a trikona for the ascendant."""
+    yogakarakas = {
+        1: "SATURN",   # Taurus
+        3: "VENUS",    # Cancer
+        4: "MERCURY",  # Leo
+        9: "VENUS",    # Capricorn
+    }
+    if asc_rasi in yogakarakas:
+        yk = yogakarakas[asc_rasi]
+        if yk in planet_positions:
+            return {"name": "Yogakaraka", "group": "raja",
+                    "description": f"{yk}是升星座的瑜伽卡拉卡",
+                    "effect": "关键主星具综合增益，做事更易形成结果。",
+                    "planets": [yk]}
+    return None
+
+
+def yoga_raja_generic(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
+    """Raja Yoga (generic)."""
+    for pid in ["JUPITER", "SATURN", "MARS", "MERCURY", "VENUS"]:
+        rasi = _get_rasi(planet_positions, pid)
+        if rasi is None:
+            continue
+        if _is_in_kendra(rasi, asc_rasi) or _is_in_trikona(rasi, asc_rasi):
+            return {"name": "RajaYogaGeneric", "group": "raja/sambandha",
+                    "description": f"{pid}在角宫或三合宫",
+                    "effect": "责任感与上进心较强，容易在事业路径上取得阶段性成就。",
+                    "planets": [pid]}
+    return None
+
+
+def yoga_kedara(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
+    """Kedara Yoga: Most planets in dual signs."""
+    dual_signs = {2, 5, 8, 11}
+    count_in_dual = 0
+    planets_in_dual = []
+    for pid in ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN"]:
+        rasi = _get_rasi(planet_positions, pid)
+        if rasi is None:
+            continue
+        if rasi in dual_signs:
+            count_in_dual += 1
+            planets_in_dual.append(pid)
+    if count_in_dual >= 4:
+        return {"name": "Kedara", "group": "naabhasa/sankhya",
+                "effect": "务实经营型，重视产出与可持续积累。",
+                "planets": planets_in_dual}
+    return None
+
+
+def yoga_ardha_chandra(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
+    """Ardha Chandra (half-moon) Yoga."""
+    moon_rasi = _get_rasi(planet_positions, "MOON")
+    if moon_rasi is None:
+        return None
+    malefics_in_kendra = 0
+    planets_mk = []
+    for pid in ["MARS", "SATURN", "SUN"]:
+        rasi = _get_rasi(planet_positions, pid)
+        if rasi is None:
+            continue
+        offset = (rasi - moon_rasi) % 12
+        if offset in (0, 3, 6, 9):
+            malefics_in_kendra += 1
+            planets_mk.append(pid)
+    if malefics_in_kendra >= 2:
+        return {"name": "ArdhaChandra", "group": "naabhasa",
+                "effect": "人生重心阶段性集中，易在某时期快速放大影响。",
+                "planets": planets_mk}
+    return None
+
+
 def detect_all_yogas(
     planet_positions: dict[str, dict[str, Any]],
     asc_rasi: int = 0,
@@ -203,13 +378,26 @@ def detect_all_yogas(
         yoga_dhana_2_11, yoga_dhana_lord,
         yoga_viparita_6_8_12,
         yoga_ashraya,
+        yoga_budha_aditya,
+        yoga_dharma_karmadhipati,
+        yoga_adhi,
+        yoga_sunapha,
+        yoga_anapha,
+        yoga_subha,
+        yoga_yogakaraka,
+        yoga_raja_generic,
+        yoga_kedara,
+        yoga_ardha_chandra,
     ]
 
+    seen_names = set()
     for detector in detectors:
         try:
             result = detector(planet_positions, asc_rasi)
             if result is not None:
-                yogas.append(result)
+                if result["name"] not in seen_names:
+                    yogas.append(result)
+                    seen_names.add(result["name"])
         except Exception:
             pass
 

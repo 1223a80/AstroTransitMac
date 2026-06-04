@@ -13,6 +13,10 @@ enum MarkdownExportBuilder {
         // Vedic export sections
         case vedicRasi, vedicNavamsa, vedicNakshatra, vedicDasa
         case vedicShadbala, vedicYoga
+        // NEW Vedic export sections
+        case signIndex, panchanga, solarDay, vedicDivisional
+        case moonChart, bhavaChart, planetRelationships
+        case arudha, jaiminiKarakas, ashtakavarga
 
         var id: String { rawValue }
 
@@ -46,12 +50,22 @@ enum MarkdownExportBuilder {
             case .vedicDasa: return "Daśā 时间线"
             case .vedicShadbala: return "Ṣaḍbala 评分"
             case .vedicYoga: return "Yōga 列表"
+            case .signIndex: return "星座索引表"
+            case .panchanga: return "五支历 Panchanga"
+            case .solarDay: return "日出日落"
+            case .vedicDivisional: return "分盘信息"
+            case .moonChart: return "Moon Chart"
+            case .bhavaChart: return "Bhava Chart"
+            case .planetRelationships: return "星体敌友关系"
+            case .arudha: return "Arudha"
+            case .jaiminiKarakas: return "Jaimini Karakas"
+            case .ashtakavarga: return "Ashtakavarga"
             }
         }
 
         static let timingSectionIDs: Set<ExportSection> = [.profection, .firdaria, .decennials, .zr, .returns, .timeline, .primaryDirections, .circumambulations]
 
-        static let vedicSectionIDs: Set<ExportSection> = [.vedicRasi, .vedicNavamsa, .vedicNakshatra, .vedicDasa, .vedicShadbala, .vedicYoga]
+        static let vedicSectionIDs: Set<ExportSection> = [.vedicRasi, .vedicNavamsa, .vedicNakshatra, .vedicDasa, .vedicShadbala, .vedicYoga, .signIndex, .panchanga, .solarDay, .vedicDivisional, .moonChart, .bhavaChart, .planetRelationships, .arudha, .jaiminiKarakas, .ashtakavarga]
 
         static let classicalSectionIDs: Set<ExportSection> = {
             var ids = Set(ExportSection.allCases)

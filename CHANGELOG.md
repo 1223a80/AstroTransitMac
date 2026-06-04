@@ -1,5 +1,124 @@
 # Changelog
 
+## 2026-06-04 — README 功能同步
+
+- **`README.md`** — 按当前代码事实重写产品概览，从“现代 + 古典”更新为“现代 + 古典 + Horary + 吠陀”
+- 同步补充吠陀 / Jyotish 工作流能力：Panchanga、日出日落、16 个主分盘、Moon / Bhava Chart、Arudha、Jaimini Karakas、Ashtakavarga、Dasa、Shadbala、Vedic Yogas
+- 新增“导出能力”说明，区分现代、古典、Horary、吠陀的 Markdown / JSON / CSV 覆盖面
+- 在“直接运行后端”中补入 `Examples/sample-vedic-ai-request.json`
+- 新增“吠陀模式输出范围”小节，列出当前 `mode: "vedic"` 的主要返回块及 `kalachakra_dasa` 仍为占位的事实
+
+## 2026-06-04 — P0 fixes: solar_day, Vara, divisional nakshatras, D9 aux points
+
+### P0#1 — `solar_day` 日出日落不产出数据
+- **`astro_backend_jyotish_panchanga.py`** — 重写 `calc_sunrise_sunset()`：用 `swe.rise_trans()`（原不存在的 `rise_transit` 改名），常量修正
+- **`astro_backend_jyotish.py`** — 调用时从 `birth.moment` 直接计算 `jd_0h` 传入
+
+### P0#2 — Panchanga Vara 星期错误
+- **`astro_backend_jyotish_panchanga.py`** — `calc_vara()` 增加 `utc_offset_hours` 参数，用本地日期算 weekday
+- **`astro_backend_jyotish.py`** — 调用传入标准时区偏移
+
+### P0#3 — 分盘度数/Nakshatra 未按分盘重算
+- **`astro_backend_jyotish_varga.py`** — 新增 `calc_varga_longitude()` 返回完整分盘经度
+- **`astro_backend_jyotish_divisional.py`** — 改用 `calc_varga_longitude` 计算度数/nakshatra
+
+### P0#4 — D9 的 Upagraha/Special Lagna 原样复制 D1
+- **`astro_backend_jyotish.py`** — D9 点位通过 `calc_varga_longitude(lon, 9)` 映射到 D9
+
+## 2026-06-04 — Review round 2: D2 Hora 重算 + 测试值断言
+
+### P1#2 — D2 Hora 映射到 Virgo 而非 Leo/Cancer
+- **`astro_backend_jyotish_varga.py`** — D2 公式修正：Odd 首半 → Leo(120)，Odd 后半 → Cancer(90)，Even 首半 → Cancer(90)，Even 后半 → Leo(120)。D2 分盘只使用 Leo 和 Cancer 两个符号
+- 影响：D2 Sun/Mars/Jupiter 正确落在 Leo(星座:5)，Mercury/Venus/Saturn 正确落在 Cancer(星座:4)
+
+### 测试增强
+- **`test_jyotish_focused.py`** — 新增 `TestDivisionalReferenceValues`（9 项）：按 `sample-vedic-ai-expected.txt` 锁定 D2 六个行星的 rasi、nakshatra、lord、degree 值断言
+- 重写 `test_divisional_nakshatra_uses_varga_lon`（原来只 print 无断言），改为断言 D2 Sun 的 nakshatra 从 natal Ashvini 变为 Magha
+
+### 验证
+- `python3 -m pytest python_tests/test_jyotish_smoke.py test_jyotish_reference_verify.py test_jyotish_focused.py -q` — 160 passed
+- `swift build` — Build complete
+- `swift test` — 10 passed in 5 suites
+- 端到端：D2 六个行星的 rasi/nakshatra/lord/degree 全部与样例一致
+
+### P1#1 — 时区因 DST 显示 UTC+9 而非 UTC+8
+- **`astro_backend_jyotish.py`** — `_build_expanded_meta()` 改用标准 UTC 偏移（通过 1 月 1 日 `utcoffset()` 获取，避免 DST）；`calculate_vedic()` 计算 JD 时使用固定标准偏移（`timezone(timedelta(hours=std_offset))` 而非 ZoneInfo），使行星位置与中国占星惯例一致
+- 影响：行星经度与预期文件匹配（Sun 从 DST 的 5.92° 恢复为 5.96°）
+
+### P1#2 — D2 Hora 公式未使用连续加倍
+- **`astro_backend_jyotish_varga.py`** — D2 改用 `(rasi_len % 15) * 2` 度数计算 + 动态符号偏移（Odd 首半 → 150/Virgo，Odd 后半 → 120/Leo，Even 首半 → 120/Leo，Even 后半 → 150/Virgo），每个 15° 半区映射为完整 30° 分盘符号
+- 影响：D2 结果与预期文件全部匹配（±1' 以内）
+
+### P2#3 — 分盘 ASC 仍用本命 Nakshatra
+- **`astro_backend_jyotish_divisional.py`** — ASC 的 `nakshatra` 改为 `_nakshatra_summary(asc_v_lon)`（基于分盘经度）
+
+### P3#4 — `utc_offset_text` 双加号 bug
+- **`astro_backend_jyotish.py`** — 格式化改为 `UTC+{std_offset_hours:.2f}`（移除 `+` 格式说明符）
+
+### 验证
+- `python3 -m pytest python_tests` — 151 passed
+- `swift build` — Build complete
+- `swift test` — 10 passed in 5 suites
+- 端到端：时区显示"东8区/UTC+8.00"、D2 Sun/Mars/ASC 符号和经度与预期匹配
+
+### 测试增强
+- **`test_jyotish_focused.py`** — 增加 6 项值正确性测试：Vara 值验证（1990-04-20 应为周五）、sunrise/sunset 返回非 None、D9 upagrahas ≠ D1、D9 special_lagnas ≠ D1、divisional nakshatra 基于分盘经度
+
+### 验证
+- `python3 -m pytest python_tests` — 151 passed
+- `swift build` — Build complete
+- `swift test` — 10 passed in 5 suites
+- 全量端到端：`transit_calc.py < sample-vedic-ai-request.json` 确认 4 项 P0 修复全部验证通过
+
+## 2026-06-04 — Vedic AI 导出完全移植
+
+### Python 后端 — 新增 7 个模块
+
+- **`astro_backend_jyotish_panchanga.py`**（新）— Panchanga 五支历（Tithi/Vara/Nakshatra/Yoga/Karana）+ 日出日落 Swiss Ephemeris 计算
+- **`astro_backend_jyotish_divisional.py`**（新）— 16 分盘构建器（D1-D60），月盘（Moon Chart）、Bhava 盘；统一 chart schema
+- **`astro_backend_jyotish_aux_points.py`**（新）— 11 种 Upagraha + 11 种 Special Lagna 计算（Dhuma/Vyatipata/Kaala/Gulika 等）
+- **`astro_backend_jyotish_relationships.py`**（新）— 行星敌友关系（天然/临时/复合），含五级复合敌友分类
+- **`astro_backend_jyotish_arudha.py`**（新）— Arudha Padas（AL/A2-A11/UL）
+- **`astro_backend_jyotish_jaimini.py`**（新）— Jaimini Chara Karakas（Atma→Dara）
+- **`astro_backend_jyotish_ashtakavarga.py`**（新）— BAV（Bhinnashtakavarga）+ SAV（Sarvatobhadra）基于 REKHA_MAP（Maitreya 公式直译）
+
+### 扩展已有模块
+
+- **`astro_backend_jyotish.py`** — 编排全部 7 个新模块；Antardasha 计算（9 子限/主限）；扩展 meta（timezone_label/ayanamsha_value/node_mode/sign_index_table）
+- **`astro_backend_jyotish_shadbala.py`** — 增加 meets_required/required_rupas/display_summary 字段
+- **`astro_backend_jyotish_yoga.py`** — 增加 8 个新瑜伽检测器（BudhaAditya/DharmaKarmadhipati/Adhi/Sunapha/Anapha/Subha/Yogakaraka/RajaYogaGeneric/Kedara/ArdhaChandra）
+
+### Swift 层
+
+- **`VedicResultModels.swift`** — 新增 25+ Codable 模型：Panchanga/SolarDay/DivisionalChart/MoonChart/BhavaChart/Relationships/Arudha/Jaimini/Ashtakavarga/Antardasha/Upagraha/SpecialLagna/ShadbalaSummary
+- **`MarkdownVedicExportBuilder.swift`** — 完全重构，按样例 section 顺序输出全部 15 个章节
+- **`MarkdownExportBuilder.swift`** — ExportSection 增加 7 个新 vedic section ID
+- **`VedicResultViews.swift`** — 修复 Yoga description 可选兼容
+
+### 测试
+
+- **`python_tests/test_jyotish_focused.py`**（新 62 测试）— 覆盖 panchanga/solar_day/divisional_charts/moon_chart/bhava_chart/planet_relationships/arudha/jaimini_karakas/ashtakavarga/vimshottari.antardashas/shadbala_extra
+- 现有全部测试通过：145 passed（smoke 35 + reference 48 + focused 62）
+
+### 验证
+
+- `python3 -m pytest python_tests/test_jyotish_smoke.py` — 35 passed
+- `python3 -m pytest python_tests/test_jyotish_reference_verify.py` — 48 passed
+- `python3 -m pytest python_tests/test_jyotish_focused.py` — 62 passed
+- `swift build` — Build complete
+- `swift test` — 10 passed in 5 suites
+- `python3 .../transit_calc.py < sample-vedic-ai-request.json` — 21 个顶层 sections 全部返回，JSON 可被 Swift VedicResult 解码
+
+### 剩余风险
+
+1. **Ashtakavarga SAV/BAV 数值**与参考样例偏差明显（算法结构正确，但 REKHA_MAP 索引偏移或三宫/一宫净化细节需调优）
+2. **日出日落**使用近似本地时计算（基于经度偏移），未使用准确的时区转换
+3. **Upagraha/Special Lagna** 的部分公式为近似（Cal/Gulika/Maandi 用简化算法）
+4. **Kalachakra Dasa** 仍为占位（需要完整的 Paka Lagna 系统）
+5. **Kunda/Varnada Lagna** 公式为简版，与 Maitreya 的精确 Lagna 系统不同
+6. 未做现代外行星（Uranus/Neptune/Pluto）的临时友谊计算（默认返回中性）
+7. **Bhava Chart** 在非 Whole Sign 宫位制下可能不准确
+
 ## 2026-06-04 — Vedic AI 导出 handoff 资产
 
 - **`VEDIC_AI_PORT_PLAN.md`** — 新增可直接交给实现 agent 的离线执行计划，明确了：
@@ -571,3 +690,14 @@ JSON 合约向后兼容：旧响应无 `section_errors` 字段时 Swift 解码�
 - `swift build` — 通过（27.28s）
 - `swift test` — 10 tests passed in 5 suites
 - `echo '{"mode":"nonexistent"}' | python3 .../transit_calc.py` → 干净 JSON 错误而非 `KeyError`
+
+## 2026-06-04 — 提交与安装收尾
+
+### 目标
+
+将已 review 通过的 Vedic/Jyotish 工作树改动整体提交，并使用 `dist/TransitStudio.app` 覆盖安装到 `/Applications/TransitStudio.app`。
+
+### 说明
+
+- 本次不再改动功能逻辑，只补充项目跟踪记录并执行提交/安装收尾。
+- 安装目标使用当前规范产物 `dist/TransitStudio.app`，避免从历史副本 `TransitStudio 2.app` / `TransitStudio 3.app` 取包。

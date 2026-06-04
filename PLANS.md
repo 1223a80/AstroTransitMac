@@ -95,3 +95,29 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
   - `./package_app.sh` → rebuilt `dist/TransitStudio.app` and updated `/Applications/TransitStudio.app`
   - installed app metadata verified as `CFBundleShortVersionString=1.1.0`, `CFBundleVersion=17`
 - Status: completed
+
+## 2026-06-04 — README 功能同步
+
+- Task: sync `README.md` with the current codebase's actual functional surface, especially Vedic/Jyotish, export coverage, and backend sample requests.
+- Focus:
+  - update the top-level product description from modern/classical only to modern/classical/horary/vedic
+  - refresh the feature overview to match the currently implemented modes and export capabilities
+  - add the Vedic sample request to the backend run examples
+  - document actual export formats and major Vedic output areas at a high level
+- Validation:
+  - manual read-through against current code entrypoints, export builders, and result panes
+- Status: completed
+
+## 2026-06-04 — 提交并覆盖安装
+
+- Task: commit the reviewed Vedic/Jyotish integration changes currently in the working tree, then install the packaged app from `dist/` into `/Applications`.
+- Focus:
+  - preserve the reviewed diff exactly as committed, without mixing in unrelated edits
+  - use the canonical packaged artifact `dist/TransitStudio.app` for the install step
+  - verify git status and installed app metadata after the copy
+- Planned steps:
+  - append this close-out note to project tracking files
+  - create a single commit for the reviewed working tree changes
+  - overwrite `/Applications/TransitStudio.app` from `dist/TransitStudio.app`
+  - verify `git status --short` and installed bundle version/build
+- Status: in progress

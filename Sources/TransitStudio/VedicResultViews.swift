@@ -230,7 +230,7 @@ struct VedicYogaListView: View {
                         Text(yoga.name).fontWeight(.semibold)
                         TagView(yoga.group)
                     }
-                    Text(yoga.description).font(.caption).foregroundStyle(.secondary)
+                    Text(yoga.description ?? yoga.effect).font(.caption).foregroundStyle(.secondary)
                     Text(yoga.effect).font(.caption2).foregroundStyle(.tertiary)
                     HStack(spacing: 2) {
                         ForEach(yoga.planets, id: \.self) { p in

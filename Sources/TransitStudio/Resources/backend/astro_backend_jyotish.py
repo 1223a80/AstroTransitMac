@@ -6,7 +6,8 @@ Mode: "vedic"
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+import math
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from astro_backend_core import (
@@ -29,6 +30,7 @@ from astro_backend_ephemeris import (
 )
 from astro_backend_jyotish_data import (
     AYANAMSHA_MAP,
+    AYANAMSHA_NAMES,
     DEFAULT_AYANAMSHA,
     NAKSHATRA_DATA,
     NAKSHATRA_LEN,
@@ -177,6 +179,7 @@ def _calc_rasi_chart(
         "angles": angle_rows,
         "houses": houses,
         "planets": planets_in_houses,
+        "cusps": cusps,
     }
 
 
@@ -197,20 +200,59 @@ def _calc_navamsa_chart(
     return navamsa_data
 
 
+# ─── Antardasha calculation ──────────────────────────────────────────
+
+def _calc_antardashas(
+    maha_lord: str,
+    maha_start: datetime,
+    maha_end: datetime,
+) -> list[dict[str, Any]]:
+    """Calculate Antardasha (sub-periods) within a Mahadasha.
+
+    Antardasha sequence starts with the same lord as the Mahadasha,
+    then follows the Vimsottari cycle.
+    Each Antardasha duration = (MD_years * AD_years) / 120 years.
+    """
+    # Find the starting index in the lord order
+    if maha_lord in VIMSOTTARI_LORD_ORDER:
+        start_idx = VIMSOTTARI_LORD_ORDER.index(maha_lord)
+    else:
+        return []
+
+    # Generate antardasha sequence (same order, starting from maha lord)
+    seq = VIMSOTTARI_LORD_ORDER[start_idx:] + VIMSOTTARI_LORD_ORDER[:start_idx]
+
+    maha_dur_years = VIMSOTTARI_DURATIONS.get(maha_lord, 0)
+    total_days = (maha_end - maha_start).days
+
+    antardashas = []
+    current = maha_start
+    for lord in seq:
+        ad_duration_years = (maha_dur_years * VIMSOTTARI_DURATIONS.get(lord, 0)) / VIMSOTTARI_TOTAL
+        ad_duration_days = ad_duration_years * 365.2425
+        end = current + timedelta(days=ad_duration_days)
+
+        # Don't exceed the Mahadasha end
+        if end > maha_end:
+            end = maha_end
+
+        antardashas.append({
+            "lord": lord,
+            "start": format_local(current),
+            "end": format_local(end),
+            "duration_years": round(ad_duration_years, 4),
+        })
+        current = end
+
+    return antardashas
+
+
 def _calc_vimsottari_dasa(
     moon_longitude: float,
     birth_dt: datetime,
     reference_dt: datetime,
 ) -> dict[str, Any]:
-    """Calculate Vimsottari Dasa timeline based on Moon's nakshatra at birth.
-
-    Returns dict with:
-      - birth_nakshatra: Moon's nakshatra at birth
-      - dasa_lord: Current mahadasa lord
-      - maha_dasas: List of all major periods with start/end dates
-      - current: Currently active period chain
-    """
-    from datetime import timedelta
+    """Calculate Vimsottari Dasa timeline with Antardasha support."""
 
     birth_nak_idx = nakshatra_index_for_longitude(moon_longitude)
     birth_nak = nakshatra_for_longitude(moon_longitude)
@@ -219,7 +261,6 @@ def _calc_vimsottari_dasa(
     start_idx = vimsottari_dasa_index_for_nakshatra(birth_nak_idx)
 
     # Calculate how much time has elapsed in the first dasa
-    # Based on the Moon's position within the nakshatra
     nak_offset = (moon_longitude % 360.0 - birth_nak["start_longitude"])
     if nak_offset < 0:
         nak_offset += 360.0
@@ -234,13 +275,11 @@ def _calc_vimsottari_dasa(
     dasa_seq = VIMSOTTARI_LORD_ORDER[start_idx:] + VIMSOTTARI_LORD_ORDER[:start_idx]
 
     # Calculate dates for each dasa
-    current_date = birth_dt
-    maha_dasas = []
-
-    # Subtract elapsed time from birth to get start of first dasa
     first_start = birth_dt - timedelta(days=elapsed_years * 365.2425)
 
     current_date = first_start
+    maha_dasas = []
+
     for lord in dasa_seq:
         duration_years = VIMSOTTARI_DURATIONS[lord]
         duration_days = duration_years * 365.2425
@@ -255,12 +294,20 @@ def _calc_vimsottari_dasa(
 
     # Find current dasa
     current_maha = None
-    for md in maha_dasas:
+    current_maha_idx = -1
+    for idx, md in enumerate(maha_dasas):
         md_start = datetime.strptime(md["start"], "%Y-%m-%d %H:%M").replace(tzinfo=birth_dt.tzinfo)
         md_end = datetime.strptime(md["end"], "%Y-%m-%d %H:%M").replace(tzinfo=birth_dt.tzinfo)
         if md_start <= reference_dt <= md_end:
             current_maha = md
+            current_maha_idx = idx
             break
+
+    # Add Antardasha to each Mahadasha
+    for md in maha_dasas:
+        md_start = datetime.strptime(md["start"], "%Y-%m-%d %H:%M").replace(tzinfo=birth_dt.tzinfo)
+        md_end = datetime.strptime(md["end"], "%Y-%m-%d %H:%M").replace(tzinfo=birth_dt.tzinfo)
+        md["antardashas"] = _calc_antardashas(md["lord"], md_start, md_end)
 
     return {
         "birth_nakshatra": birth_nak["name_sa"],
@@ -276,9 +323,7 @@ def _calc_yogini_dasa(
     reference_dt: datetime,
 ) -> dict[str, Any]:
     """Calculate Yogini Dasa (8 yoginis × varying durations, total 36 years)."""
-    from datetime import timedelta
 
-    # Yogini Dasa uses Moon's nakshatra pada
     nak = nakshatra_for_longitude(moon_longitude)
     pada = nak["pada"]  # 1-4
 
@@ -335,7 +380,6 @@ def _calc_ashtottari_dasa(
     reference_dt: datetime,
 ) -> dict[str, Any]:
     """Calculate Ashtottari Dasa (108-year cycle, different lord order from Vimsottari)."""
-    from datetime import timedelta
 
     nak_idx = nakshatra_index_for_longitude(moon_longitude)
 
@@ -382,19 +426,133 @@ def _calc_kalachakra_dasa(
     reference_dt: datetime,
 ) -> dict[str, Any]:
     """Calculate Kalachakra Dasa (based on sign wheel and birth ascendant)."""
-    # Simplified: returns placeholder structure
-    # Full implementation requires complete Paka Lagna system (V2)
     return {
         "note": "Kalachakra Dasa 完整实现需要 Paka Lagna 计算，请在 V2 扩展",
         "current_kalachakra": None,
     }
 
 
+# ─── Sign Index Table ─────────────────────────────────────────────────
+
+def _build_sign_index_table() -> list[dict[str, Any]]:
+    """Build the sign index reference table."""
+    signs_cn = ["白羊", "金牛", "双子", "巨蟹", "狮子", "处女",
+                "天秤", "天蝎", "射手", "摩羯", "水瓶", "双鱼"]
+    signs_en = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+                "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"]
+    return [{"index": i + 1, "name_en": signs_en[i], "name_zh": signs_cn[i]} for i in range(12)]
+
+
+# ─── Expanded Meta ────────────────────────────────────────────────────
+
+def _build_expanded_meta(
+    birth_dt: datetime,
+    birth_utc: str,
+    reference_dt: datetime,
+    reference_utc: str,
+    latitude: float,
+    longitude: float,
+    house_system: str,
+    zodiac: str,
+    ayanamsha: str,
+    sidereal: bool,
+) -> dict[str, Any]:
+    """Build expanded meta section."""
+    # Use standard (non-DST) UTC offset for display.
+    # birth_dt.utcoffset() includes DST (e.g. +9 for China Apr 1990),
+    # but most astrology sources expect the zone's standard offset (e.g. +8 for China).
+    from zoneinfo import ZoneInfo
+    tz_label = str(birth_dt.tzinfo) if birth_dt.tzinfo else "UTC"
+    std_offset_hours = 0.0
+    try:
+        # Get the standard (non-DST) offset by checking a date in standard time
+        tz_obj = ZoneInfo(tz_label) if birth_dt.tzinfo else None
+        if tz_obj:
+            # Use January (Northern Hemisphere winter) to avoid DST
+            std_dt = datetime(2024, 1, 1, tzinfo=tz_obj)
+            std_off = std_dt.utcoffset()
+            if std_off is not None:
+                std_offset_hours = std_off.total_seconds() / 3600.0
+    except Exception:
+        std_offset_hours = 0.0
+
+    if std_offset_hours >= 0:
+        utc_offset_text = f"东{int(std_offset_hours)}区 / UTC+{std_offset_hours:.2f}"
+        timezone_label = f"东{int(std_offset_hours)}区"
+    else:
+        utc_offset_text = f"西{int(abs(std_offset_hours))}区 / UTC{std_offset_hours:.2f}"
+        timezone_label = f"西{int(abs(std_offset_hours))}区"
+
+    # Ayanamsha value using Swiss Ephemeris
+    ayanamsha_value = 0.0
+    try:
+        # Use swe.get_ayanamsa for current ayanamsha
+        ayanamsha_value = round(swe.get_ayanamsa(jd_from_datetime(birth_dt)), 6)
+    except Exception:
+        pass
+
+    sidereal_mode_label = "恒星黄道 (Sidereal)" if sidereal else "回归黄道 (Tropical)"
+    ayanamsha_name = AYANAMSHA_NAMES.get(ayanamsha, ayanamsha)
+    node_mode = "True Node"
+    planet_position_mode = "Apparent"
+
+    meta = {
+        "birth_utc": birth_utc,
+        "birth_local": format_local(birth_dt),
+        "reference_utc": reference_utc,
+        "reference_local": format_local(reference_dt),
+        "latitude": latitude,
+        "longitude": longitude,
+        "house_system": house_system,
+        "ayanamsha": ayanamsha,
+        "ayanamsha_value": ayanamsha_value,
+        "zodiac": "sidereal" if sidereal else "tropical",
+        "ephemeris": "Swiss Ephemeris",
+        "timezone_label": timezone_label,
+        "utc_offset_text": utc_offset_text,
+        "sidereal_mode_label": sidereal_mode_label,
+        "ayanamsha_name": ayanamsha_name,
+        "node_mode": node_mode,
+        "planet_position_mode": planet_position_mode,
+        "sign_index_table": _build_sign_index_table(),
+    }
+    return meta
+
+
+# ─── Main Entry Point ────────────────────────────────────────────────
+
 def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
     """Main entry point for Vedic calculation."""
     birth = request["birth"]
     birth_dt = moment_to_local_datetime(birth["moment"])
-    birth_jd, birth_utc = moment_to_jd(birth["moment"])
+    # Compute JD using standard UTC offset (ignoring historical DST).
+    # Most astrology software uses the zone's standard offset regardless
+    # of ephemeral DST rules. ZoneInfo applies DST (e.g. UTC+9 for
+    # China 1990), but standard practice is fixed offset (e.g. UTC+8).
+    std_utc_offset = 0.0
+    try:
+        from zoneinfo import ZoneInfo
+        tz_obj = ZoneInfo(birth["moment"]["timezone"])
+        std_dt = datetime(2024, 1, 1, tzinfo=tz_obj)
+        std_off = std_dt.utcoffset()
+        if std_off is not None:
+            std_utc_offset = std_off.total_seconds() / 3600.0
+    except Exception:
+        pass
+    # Compute JD using fixed standard offset
+    _tz, _td = timezone, timedelta
+    std_tz = _tz(_td(hours=std_utc_offset))
+    std_birth_dt = datetime(
+        int(birth["moment"]["year"]), int(birth["moment"]["month"]),
+        int(birth["moment"]["day"]), int(birth["moment"]["hour"]),
+        int(birth["moment"]["minute"]), tzinfo=std_tz,
+    )
+    standard_jd = jd_from_datetime(std_birth_dt)
+    birth_utc_std = std_birth_dt.astimezone(_tz.utc).isoformat()
+
+    # Use standard JD for ephemeris calculations
+    birth_jd = standard_jd
+    birth_utc = birth_utc_std
 
     # Reference time for dasa calculations (default: birth time if not provided)
     if "reference" in request:
@@ -409,7 +567,6 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
     zodiac = birth.get("zodiac", "sidereal_lahiri")
     house_system = birth.get("houseSystem", "whole_sign")
     # Extract ayanamsha from zodiac string to match what Swift sends
-    # Swift sends "sidereal_raman", "sidereal_lahiri", or "tropical"
     if zodiac.startswith("sidereal_"):
         ayanamsha = zodiac[len("sidereal_"):]
     else:
@@ -447,30 +604,146 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
         birth_jd, latitude, longitude, house_system, sidereal, positions_with_nak, warnings
     )
 
+    # Extract ASC longitude
+    asc_lon = 0.0
+    if rasi_chart and rasi_chart.get("angles"):
+        for a in rasi_chart["angles"]:
+            if a.get("id") == "ASC":
+                asc_lon = a["longitude"]
+                break
+
+    # Build expanded meta
+    meta = _build_expanded_meta(
+        birth_dt, birth_utc, reference_dt, reference_utc,
+        latitude, longitude, house_system, zodiac, ayanamsha, sidereal,
+    )
+
     # Build response
     response: dict[str, Any] = {
-        "meta": {
-            "birth_utc": birth_utc,
-            "birth_local": format_local(birth_dt),
-            "reference_utc": reference_utc,
-            "reference_local": format_local(reference_dt),
-            "latitude": latitude,
-            "longitude": longitude,
-            "house_system": house_system,
-            "ayanamsha": ayanamsha,
-            "zodiac": "sidereal" if sidereal else "tropical",
-            "ephemeris": "Swiss Ephemeris",
-        },
+        "meta": meta,
         "rasi_chart": rasi_chart,
         "planets": positions_with_nak,
         "warnings": warnings,
     }
 
-    # Navamsa if requested
+    # ── Panchanga & Solar Day ──
+    try:
+        from astro_backend_jyotish_panchanga import calc_panchanga, calc_sunrise_sunset
+        sun_lon = raw_positions.get("SUN", {}).get("longitude", 0.0)
+        moon_lon = raw_positions.get("MOON", {}).get("longitude", 0.0)
+        response["panchanga"] = calc_panchanga(sun_lon, moon_lon, birth_jd, utc_offset_hours=std_utc_offset)
+        response["solar_day"] = calc_sunrise_sunset(birth_jd, latitude, longitude,
+            utc_offset_hours=std_utc_offset,
+            jd_0h=swe.julday(birth["moment"]["year"], birth["moment"]["month"], birth["moment"]["day"], 0.0) - 0.5)
+    except Exception as e:
+        warnings.append(f"Panchanga 计算失败：{e}")
+
+    # ── Navamsa if requested ──
     if "D9" in requested_vargas or requested_full:
         response["navamsa"] = _calc_navamsa_chart(raw_positions)
 
-    # Vimsottari Dasa (always included)
+    # ── Divisional Charts (16 vargas) ──
+    try:
+        from astro_backend_jyotish_divisional import (
+            build_divisional_charts,
+            build_moon_chart,
+            build_bhava_chart,
+        )
+        # Build all 16 charts
+        div_charts = build_divisional_charts(raw_positions, asc_lon)
+        response["divisional_charts"] = div_charts
+
+        # Moon Chart
+        response["moon_chart"] = build_moon_chart(raw_positions, asc_lon)
+
+        # Bhava Chart
+        cusps = rasi_chart.get("cusps", []) if rasi_chart else []
+        response["bhava_chart"] = build_bhava_chart(raw_positions, asc_lon, cusps)
+    except Exception as e:
+        warnings.append(f"Divisional chart 构建失败：{e}")
+
+    # ── Upagrahas & Special Lagnas (for D1 and D9) ──
+    try:
+        from astro_backend_jyotish_aux_points import (
+            calc_upagrahas,
+            calc_special_lagnas,
+            add_aux_points_to_chart,
+        )
+        sun_lon = raw_positions.get("SUN", {}).get("longitude", 0.0)
+        moon_lon = raw_positions.get("MOON", {}).get("longitude", 0.0)
+        upagrahas = calc_upagrahas(sun_lon, asc_lon, birth_jd)
+        special_lagnas = calc_special_lagnas(sun_lon, moon_lon, asc_lon, birth_jd)
+        response["upagrahas"] = upagrahas
+        response["special_lagnas"] = special_lagnas
+
+        if "divisional_charts" in response:
+            if "D1" in response["divisional_charts"]:
+                response["divisional_charts"]["D1"]["upagrahas"] = upagrahas
+                response["divisional_charts"]["D1"]["special_lagnas"] = special_lagnas
+            if "D9" in response["divisional_charts"]:
+                # Map upagrahas through D9 varga
+                from astro_backend_jyotish_varga import calc_varga_longitude
+                from astro_backend_jyotish_divisional import _nakshatra_summary, _format_degree
+                d9_upagrahas = []
+                for upa in upagrahas:
+                    v_lon = calc_varga_longitude(upa["longitude"], 9)
+                    v_rasi = zodiac_sign_index(v_lon)
+                    d9_upagrahas.append({
+                        **upa,
+                        "longitude": round(v_lon, 4),
+                        "rasi": v_rasi,
+                        "rasi_name": ["白羊","金牛","双子","巨蟹","狮子","处女",
+                                      "天秤","天蝎","射手","摩羯","水瓶","双鱼"][v_rasi],
+                        "degree_text": _format_degree(v_lon % 30),
+                        "nakshatra": _nakshatra_summary(v_lon),
+                    })
+                response["divisional_charts"]["D9"]["upagrahas"] = d9_upagrahas
+
+                # Map special lagnas through D9 varga
+                d9_lagnas = []
+                for lagna in special_lagnas:
+                    v_lon = calc_varga_longitude(lagna["longitude"], 9)
+                    v_rasi = zodiac_sign_index(v_lon)
+                    d9_lagnas.append({
+                        **lagna,
+                        "longitude": round(v_lon, 4),
+                        "rasi": v_rasi,
+                        "degree_text": _format_degree(v_lon % 30),
+                        "nakshatra": _nakshatra_summary(v_lon),
+                    })
+                response["divisional_charts"]["D9"]["special_lagnas"] = d9_lagnas
+    except Exception as e:
+        warnings.append(f"Aux points 计算失败：{e}")
+
+    # ── Planet Relationships ──
+    try:
+        from astro_backend_jyotish_relationships import compute_planet_relationships
+        response["planet_relationships"] = compute_planet_relationships(raw_positions)
+    except Exception as e:
+        warnings.append(f"Planet relationships 计算失败：{e}")
+
+    # ── Arudha ──
+    try:
+        from astro_backend_jyotish_arudha import compute_arudha
+        response["arudha"] = compute_arudha(asc_lon, raw_positions)
+    except Exception as e:
+        warnings.append(f"Arudha 计算失败：{e}")
+
+    # ── Jaimini Karakas ──
+    try:
+        from astro_backend_jyotish_jaimini import compute_chara_karakas
+        response["jaimini_karakas"] = compute_chara_karakas(raw_positions)
+    except Exception as e:
+        warnings.append(f"Jaimini 计算失败：{e}")
+
+    # ── Ashtakavarga ──
+    try:
+        from astro_backend_jyotish_ashtakavarga import compute_ashtakavarga
+        response["ashtakavarga"] = compute_ashtakavarga(raw_positions, asc_lon)
+    except Exception as e:
+        warnings.append(f"Ashtakavarga 计算失败：{e}")
+
+    # ── Vimsottari Dasa (with Antardasha) ──
     if "MOON" in raw_positions:
         response["vimshottari"] = _calc_vimsottari_dasa(
             raw_positions["MOON"]["longitude"],
@@ -498,24 +771,17 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
             raw_positions, birth_dt, reference_dt,
         )
 
-    # Shadbala
+    # ── Shadbala ──
     if requested_shadbala:
         try:
             from astro_backend_jyotish_shadbala import calc_shadbala
-            # Extract ASC longitude from rasi chart for Dig Bala
-            asc_lon = 0.0
-            if rasi_chart and rasi_chart.get("angles"):
-                for a in rasi_chart["angles"]:
-                    if a.get("id") == "ASC":
-                        asc_lon = a["longitude"]
-                        break
             shadbala = calc_shadbala(raw_positions, birth_jd, latitude, longitude, asc_longitude=asc_lon)
             if shadbala:
                 response["shadbala"] = shadbala
         except Exception as e:
             warnings.append(f"Shadbala 计算失败：{e}")
 
-    # Yogas
+    # ── Yogas ──
     if requested_yogas:
         try:
             from astro_backend_jyotish_yoga import detect_all_yogas

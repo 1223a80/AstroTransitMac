@@ -1,6 +1,6 @@
 # Transit Studio
 
-Transit Studio 是一个运行在 macOS 上、基于 SwiftUI 的占星计算应用原型。界面层使用 Swift 编写，计算工作委托给随应用打包的 Python 后端，并通过 `pyswisseph` 完成。当前项目同时覆盖现代与古典两套工作流，并提供图轮、导出和 AI 辅助分析工具。
+Transit Studio 是一个运行在 macOS 上、基于 SwiftUI 的占星计算应用。界面层使用 Swift 编写，计算工作委托给随应用打包的 Python 后端，并通过 `pyswisseph` 完成。当前项目同时覆盖现代、古典、卜卦与吠陀四套工作流，并提供图轮、导出和 AI 辅助分析工具。
 
 ## 功能概览
 
@@ -16,11 +16,24 @@ Transit Studio 是一个运行在 macOS 上、基于 SwiftUI 的占星计算应�
   - 支持生时矫正（Rectify），采用 1 分钟 / 5 秒 / 1 秒三级滑杆细化，并显示 Python 后端实时进度。
 - 卜卦工作流：
   - 支持 Horary 起盘与结果展示。
+- 吠陀 / Jyotish 工作流：
+  - 支持 sidereal 模式与多种 ayanamsha（Lahiri、Raman、Krishnamurti、Yukteshwar、True Citra 等）。
+  - 支持 Panchanga（Tithi / Vara / Nakshatra / Yoga / Karana）与日出日落。
+  - 支持 Rasi、Navamsa 以及一组 divisional charts（D1 / D2 / D3 / D4 / D7 / D9 / D10 / D12 / D16 / D20 / D24 / D27 / D30 / D40 / D45 / D60）。
+  - 支持 Moon Chart、Bhava Chart、Upagrahas、Special Lagnas、Arudha、Jaimini Karakas、Ashtakavarga、Vimshottari / Yogini / Ashtottari Dasa、Shadbala 与 Vedic Yogas。
 - 通用工具能力：
   - 支持星盘图（Chart Wheel）可视化。
-  - 支持导出 Markdown、JSON 和类 CSV 文本格式结果。
-  - 支持部分结果页的 AI 分析标签页，包括本命、时间点、窗口扫描、古典与 Horary。
+  - 支持导出 Markdown、JSON 和 CSV / 类 CSV 文本格式结果；古典与吠陀支持按 section 选择 Markdown 导出。
+  - 支持部分结果页的 AI 分析标签页，包括本命、时间点、窗口扫描、古典与 Horary；吠陀导出内容也面向 AI 消费组织。
   - 支持自定义天体、小行星星历策略、节点模式和小行星下载辅助。
+
+## 导出能力
+
+- 现代本命 / 时间点 / 窗口扫描：支持 Markdown、JSON 与 CSV 导出。
+- 现代高级模式（Synastry / Composite / Davison / Progression / Solar Arc / Harmonic）：支持至少 Markdown 与 JSON 导出。
+- 古典模式：支持最完整的 Markdown / JSON / CSV 导出，覆盖角点、宫位、行星、Lots、相位、接纳、时间技法、返照、主限、沿界推进、Prenatal Syzygy、Almuten、Hyleg / Alcocoden 等。
+- Horary：支持结构化 Markdown / JSON / CSV 导出，覆盖问题元数据、radicality、significators、Moon storyline、receptions、lots 与 advanced candidates。
+- 吠陀模式：支持带 section picker 的 Markdown 导出，以及 JSON / CSV 导出；Markdown 可覆盖基本信息、重要设置、星座索引表、Panchanga、日出日落、分盘信息、Moon / Bhava Chart、敌友关系、Arudha、Yogas、Jaimini Karakas、Ashtakavarga、Dasa 与 Shadbala。
 
 ## 项目结构
 
@@ -77,6 +90,7 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-davison-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-progressions-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-solar-arc-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-vedic-ai-request.json
 ```
 
 PowerShell 等价写法：
@@ -131,6 +145,42 @@ calculation_assumptions
 - Hyleg / Alcocoden 的输出是审计数据包，不包含寿命年数。
 
 更详细的后端契约说明见 `docs/backend-contracts.md`。
+
+## 吠陀模式输出范围
+
+`mode: "vedic"` 当前可返回的大块数据包括：
+
+```text
+meta
+rasi_chart
+planets
+navamsa
+panchanga
+solar_day
+divisional_charts
+moon_chart
+bhava_chart
+upagrahas
+special_lagnas
+planet_relationships
+arudha
+jaimini_karakas
+ashtakavarga
+vimshottari
+yogini_dasa
+ashtottari_dasa
+kalachakra_dasa
+shadbala
+yogas
+warnings
+```
+
+其中：
+
+- `vimshottari` 包含 Mahadasha 及其 Antardasha。
+- `divisional_charts` 当前覆盖 16 个主分盘。
+- `kalachakra_dasa` 仍是占位接口，不应视为完整算法交付。
+- 吠陀 Markdown 导出按 AI 可消费文本组织，不等于全部字段都会在 CSV 中完整展开。
 
 ## 打包
 

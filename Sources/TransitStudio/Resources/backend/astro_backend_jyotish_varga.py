@@ -55,20 +55,16 @@ def _a_red(value: float, limit: float) -> float:
 
 
 def calc_varga(longitude: float, division: int, params: dict[str, Any] | None = None) -> int:
-    """Calculate the Varga (divisional) chart rasi index for a given longitude.
+    """Calculate the Varga (divisional) chart rasi index for a given longitude."""
+    varga_lon = calc_varga_longitude(longitude, division, params)
+    return _get_rasi(_red_deg(varga_lon))
 
-    Args:
-        longitude: Tropical/sidereal longitude in degrees.
-        division: Varga division number (1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60).
-            Special: 108 (D108), 144 (D144), 0 (Bhava)
-        params: Optional dict with mode overrides:
-            - horaLagnaMode: 0=Parasara (default), 1=Continuous
-            - drekkanaMode: 0=Parasara (default), 1=Continuous
-            - chaturthamsaMode: 0=Parasara (default), 1=Continuous
-            - houseUseCusps: bool
 
-    Returns:
-        Rasi index (0-11) in the varga chart.
+def calc_varga_longitude(longitude: float, division: int, params: dict[str, Any] | None = None) -> float:
+    """Calculate the full Varga longitude (not reduced to rasi).
+
+    Returns the varga chart longitude in degrees (0-360), preserving
+    intra-sign position for degree/nakshatra computation.
     """
     if params is None:
         params = {}
@@ -82,14 +78,14 @@ def calc_varga(longitude: float, division: int, params: dict[str, Any] | None = 
         ret = longitude
 
     elif division == 2:
-        # D2: Hora
-        hora_mode = params.get("horaLagnaMode", 0)
-        if hora_mode == 0:
-            # Parasara: odd rasis get first hora (0-15), even rasis get second
-            ret = _a_red(longitude - 15, 60) + 90
-        else:
-            # Continuous
-            ret = 2 * longitude
+        # D2: Hora — continuous doubling with Parasara sign selection.
+        # Each 15° half-sign (hora) maps to a full 30° varga sign.
+        # Odd signs (fiery): first half (0-15°) → Leo(120), second half (15-30°) → Cancer(90)
+        # Even signs (earthy): first half (0-15°) → Cancer(90), second half (15-30°) → Leo(120)
+        # Degree within varga sign = (rasi_len % 15) * 2  (0-30°)
+        inner_deg = (rasi_len % 15.0) * 2.0
+        hora_offset = 120.0 if (is_odd == (rasi_len < 15.0)) else 90.0
+        ret = inner_deg + hora_offset
 
     elif division == 3:
         # D3: Drekkana
@@ -203,7 +199,7 @@ def calc_varga(longitude: float, division: int, params: dict[str, Any] | None = 
     else:
         raise ValueError(f"Unsupported varga division: {division}")
 
-    return _get_rasi(_red_deg(ret))
+    return _red_deg(ret)
 
 
 def _get_dvadasamsa_longitude(longitude: float) -> float:

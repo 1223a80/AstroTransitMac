@@ -14,6 +14,19 @@ struct VedicResult: Codable {
     let yogas: [VedicYoga]?
     let warnings: [String]?
 
+    // NEW sections
+    let panchanga: VedicPanchanga?
+    let solarDay: VedicSolarDay?
+    let divisionalCharts: [String: VedicDivisionalChart]?
+    let moonChart: VedicDerivedChart?
+    let bhavaChart: VedicDerivedChart?
+    let planetRelationships: VedicRelationships?
+    let arudha: [String: VedicArudhaPada]?
+    let jaiminiKarakas: VedicJaiminiKarakas?
+    let ashtakavarga: VedicAshtakavarga?
+    let upagrahas: [VedicUpagraha]?
+    let specialLagnas: [VedicSpecialLagna]?
+
     enum CodingKeys: String, CodingKey {
         case meta
         case rasiChart = "rasi_chart"
@@ -25,6 +38,17 @@ struct VedicResult: Codable {
         case shadbala
         case yogas
         case warnings
+        case panchanga
+        case solarDay = "solar_day"
+        case divisionalCharts = "divisional_charts"
+        case moonChart = "moon_chart"
+        case bhavaChart = "bhava_chart"
+        case planetRelationships = "planet_relationships"
+        case arudha
+        case jaiminiKarakas = "jaimini_karakas"
+        case ashtakavarga
+        case upagrahas
+        case specialLagnas = "special_lagnas"
     }
 }
 
@@ -42,6 +66,15 @@ struct VedicMeta: Codable {
     let zodiac: String
     let ephemeris: String
 
+    // NEW
+    let timezoneLabel: String?
+    let utcOffsetText: String?
+    let siderealModeLabel: String?
+    let ayanamshaValue: Double?
+    let nodeMode: String?
+    let planetPositionMode: String?
+    let signIndexTable: [VedicSignIndexEntry]?
+
     enum CodingKeys: String, CodingKey {
         case birthUtc = "birth_utc"
         case birthLocal = "birth_local"
@@ -50,6 +83,27 @@ struct VedicMeta: Codable {
         case latitude, longitude
         case houseSystem = "house_system"
         case ayanamsha, zodiac, ephemeris
+        case timezoneLabel = "timezone_label"
+        case utcOffsetText = "utc_offset_text"
+        case siderealModeLabel = "sidereal_mode_label"
+        case ayanamshaValue = "ayanamsha_value"
+        case nodeMode = "node_mode"
+        case planetPositionMode = "planet_position_mode"
+        case signIndexTable = "sign_index_table"
+    }
+}
+
+struct VedicSignIndexEntry: Codable, Identifiable {
+    let index: Int
+    let nameEn: String
+    let nameZh: String
+
+    var id: Int { index }
+
+    enum CodingKeys: String, CodingKey {
+        case index
+        case nameEn = "name_en"
+        case nameZh = "name_zh"
     }
 }
 
@@ -213,6 +267,182 @@ struct VedicTara: Codable {
     }
 }
 
+// MARK: - Panchanga
+
+struct VedicPanchanga: Codable {
+    let tithi: VedicPanchangaItem
+    let vara: VedicPanchangaItem
+    let nakshatra: VedicPanchangaItem
+    let yoga: VedicPanchangaItem
+    let karana: VedicPanchangaItem
+}
+
+struct VedicPanchangaItem: Codable {
+    let index: Int
+    let nameSa: String
+    let nameZh: String
+    let startLongitude: Double
+    let endLongitude: Double
+    let lord: String?
+    let paksha: String?
+
+    enum CodingKeys: String, CodingKey {
+        case index
+        case nameSa = "name_sa"
+        case nameZh = "name_zh"
+        case startLongitude = "start_longitude"
+        case endLongitude = "end_longitude"
+        case lord, paksha
+    }
+}
+
+// MARK: - Solar Day
+
+struct VedicSolarDay: Codable {
+    let sunriseLocal: String?
+    let sunsetLocal: String?
+
+    enum CodingKeys: String, CodingKey {
+        case sunriseLocal = "sunrise_local"
+        case sunsetLocal = "sunset_local"
+    }
+}
+
+// MARK: - Divisional Charts
+
+struct VedicDivisionalChart: Codable {
+    let chartId: String
+    let chartName: String
+    let vargaNum: Int?
+    let planets: [String: VedicDivisionalPlanet]
+    let upagrahas: [VedicUpagraha]?
+    let specialLagnas: [VedicSpecialLagna]?
+
+    enum CodingKeys: String, CodingKey {
+        case chartId = "chart_id"
+        case chartName = "chart_name"
+        case vargaNum = "varga_num"
+        case planets
+        case upagrahas
+        case specialLagnas = "special_lagnas"
+    }
+}
+
+struct VedicDivisionalPlanet: Codable, Identifiable {
+    let bodyId: String
+    let name: String
+    let longitude: Double
+    let vargaRasi: Int
+    let vargaRasiSign: String
+    let vargaDegree: Double
+    let degreeText: String
+    let nakshatra: VedicNakshatraSummary?
+
+    var id: String { bodyId }
+
+    enum CodingKeys: String, CodingKey {
+        case bodyId = "body_id"
+        case name, longitude
+        case vargaRasi = "varga_rasi"
+        case vargaRasiSign = "varga_rasi_sign"
+        case vargaDegree = "varga_degree"
+        case degreeText = "degree_text"
+        case nakshatra
+    }
+}
+
+struct VedicNakshatraSummary: Codable {
+    let nameSa: String
+    let pada: Int
+    let lord: String
+
+    enum CodingKeys: String, CodingKey {
+        case nameSa = "name_sa"
+        case pada, lord
+    }
+}
+
+// MARK: - Moon / Bhava Chart
+
+struct VedicDerivedChart: Codable {
+    let chartId: String
+    let chartName: String
+    let planets: [String: VedicDerivedPlanet]
+    let angles: [VedicAngle]?
+    let moonRasi: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case chartId = "chart_id"
+        case chartName = "chart_name"
+        case planets
+        case angles
+        case moonRasi = "moon_rasi"
+    }
+}
+
+struct VedicDerivedPlanet: Codable, Identifiable {
+    let bodyId: String
+    let name: String
+    let longitude: Double
+    let rasi: Int
+    let rasiName: String
+    let degreeText: String
+    let house: Int?
+    let nakshatra: VedicNakshatraSummary?
+
+    var id: String { bodyId }
+
+    enum CodingKeys: String, CodingKey {
+        case bodyId = "body_id"
+        case name, longitude, rasi, house
+        case rasiName = "rasi_name"
+        case degreeText = "degree_text"
+        case nakshatra
+    }
+}
+
+// MARK: - Upagrahas & Special Lagnas
+
+struct VedicUpagraha: Codable, Identifiable {
+    let id: String
+    let nameSa: String
+    let nameZh: String
+    let longitude: Double
+    let rasi: Int
+    let rasiName: String
+    let degreeText: String
+    let nakshatra: VedicNakshatraSummary?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case nameSa = "name_sa"
+        case nameZh = "name_zh"
+        case longitude, rasi
+        case rasiName = "rasi_name"
+        case degreeText = "degree_text"
+        case nakshatra
+    }
+}
+
+struct VedicSpecialLagna: Codable, Identifiable {
+    let id: String
+    let nameSa: String
+    let nameZh: String
+    let longitude: Double
+    let rasi: Int
+    let degreeText: String?
+    let nakshatra: VedicNakshatraSummary?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case nameSa = "name_sa"
+        case nameZh = "name_zh"
+        case longitude, rasi
+        case degreeText = "degree_text"
+        case nakshatra
+    }
+}
+
 // MARK: - Navamsa
 
 struct VedicNavamsaPosition: Codable, Identifiable {
@@ -229,6 +459,100 @@ struct VedicNavamsaPosition: Codable, Identifiable {
         case navamsaRasi = "navamsa_rasi"
         case navamsaRasiName = "navamsa_rasi_name"
     }
+}
+
+// MARK: - Planet Relationships
+
+struct VedicRelationships: Codable {
+    let naisargika: VedicFriendshipSection
+    let temporary: VedicFriendshipSection
+    let compound: VedicCompoundSection
+}
+
+struct VedicFriendshipSection: Codable {
+    let data: [String: [String: Int]]
+    let labels: [String: String]?
+}
+
+struct VedicCompoundSection: Codable {
+    let data: [String: [String: Int]]
+    let labels: [String: String]?
+    let labelsSa: [String: String]?
+
+    enum CodingKeys: String, CodingKey {
+        case data, labels
+        case labelsSa = "labels_sa"
+    }
+}
+
+// MARK: - Arudha
+
+struct VedicArudhaPada: Codable, Identifiable {
+    let padaName: String
+    let rasi: Int
+    let rasiName: String
+    let house: Int
+
+    var id: String { padaName }
+
+    enum CodingKeys: String, CodingKey {
+        case padaName = "pada_name"
+        case rasi
+        case rasiName = "rasi_name"
+        case house
+    }
+}
+
+// MARK: - Jaimini
+
+struct VedicJaiminiKarakas: Codable {
+    let charaKarakas: [VedicCharaKaraka]
+    let system: String
+    let note: String?
+
+    enum CodingKeys: String, CodingKey {
+        case charaKarakas = "chara_karakas"
+        case system, note
+    }
+}
+
+struct VedicCharaKaraka: Codable, Identifiable {
+    let karakaType: Int
+    let planet: String
+    let planetName: String
+    let longitudeInRasi: Double
+    let effectiveLongitude: Double
+    let nameSa: String
+    let nameZh: String
+
+    var id: String { "\(karakaType)-\(planet)" }
+
+    enum CodingKeys: String, CodingKey {
+        case karakaType = "karaka_type"
+        case planet
+        case planetName = "planet_name"
+        case longitudeInRasi = "longitude_in_rasi"
+        case effectiveLongitude = "effective_longitude"
+        case nameSa = "name_sa"
+        case nameZh = "name_zh"
+    }
+}
+
+// MARK: - Ashtakavarga
+
+struct VedicAshtakavarga: Codable {
+    let bav: VedicBAV
+    let sav: VedicSAV
+}
+
+struct VedicBAV: Codable {
+    let planets: [String: [Int]]
+}
+
+struct VedicSAV: Codable {
+    let rekha: [Int]
+    let trikona: [Int]?
+    let ekadhi: [Int]?
 }
 
 // MARK: - Dasa
@@ -252,6 +576,7 @@ struct DasaPeriod: Codable, Identifiable {
     let durationYears: Int
     let start: String
     let end: String
+    let antardashas: [AntardashaPeriod]?
 
     var id: String { "\(lord)-\(start)" }
 
@@ -259,6 +584,22 @@ struct DasaPeriod: Codable, Identifiable {
         case lord
         case durationYears = "duration_years"
         case start, end
+        case antardashas
+    }
+}
+
+struct AntardashaPeriod: Codable, Identifiable {
+    let lord: String
+    let start: String
+    let end: String
+    let durationYears: Double
+
+    var id: String { "\(lord)-\(start)-\(end)" }
+
+    enum CodingKeys: String, CodingKey {
+        case lord
+        case start, end
+        case durationYears = "duration_years"
     }
 }
 
@@ -326,6 +667,11 @@ struct ShadbalaRow: Codable, Identifiable {
     let required: Int
     let percent: Double
 
+    // NEW
+    let requiredRupas: Double?
+    let meetsRequired: Bool?
+    let displaySummary: ShadbalaSummary?
+
     var id: String { "shadbala-\(shadbalaTotal)" }
 
     enum CodingKeys: String, CodingKey {
@@ -338,6 +684,24 @@ struct ShadbalaRow: Codable, Identifiable {
         case shadbalaTotal = "shadbala_total"
         case shadbalaRupas = "shadbala_rupas"
         case required, percent
+        case requiredRupas = "required_rupas"
+        case meetsRequired = "meets_required"
+        case displaySummary = "display_summary"
+    }
+}
+
+struct ShadbalaSummary: Codable {
+    let total: Double
+    let rupas: Double
+    let required: Int
+    let requiredRupas: Double
+    let meetsRequired: Bool
+    let percent: Double
+
+    enum CodingKeys: String, CodingKey {
+        case total, rupas, required, percent
+        case requiredRupas = "required_rupas"
+        case meetsRequired = "meets_required"
     }
 }
 
@@ -346,7 +710,7 @@ struct ShadbalaRow: Codable, Identifiable {
 struct VedicYoga: Codable, Identifiable {
     let name: String
     let group: String
-    let description: String
+    let description: String?
     let effect: String
     let planets: [String]
 

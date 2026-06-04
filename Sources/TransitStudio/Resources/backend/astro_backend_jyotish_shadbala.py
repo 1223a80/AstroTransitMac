@@ -214,6 +214,10 @@ def calc_shadbala(
         req = required.get(pid, 300)
         pct = min(100.0, total / req * 100.0)
 
+        rupas = total / 60.0
+        required_rupas = req / 60.0
+        meets = total >= req
+
         result[pid] = {
             "sthāna_bala": round(sb, 1),
             "dig_bala": round(db, 1),
@@ -222,9 +226,19 @@ def calc_shadbala(
             "naiṣargika_bala": round(nb, 1),
             "dṛg_bala": 0.0,  # Not implemented in simplified version
             "shadbala_total": round(total, 1),
-            "shadbala_rupas": round(total / 60.0, 1),
+            "shadbala_rupas": round(rupas, 2),
             "required": req,
+            "required_rupas": round(required_rupas, 2),
+            "meets_required": meets,
             "percent": round(pct, 1),
+            "display_summary": {
+                "total": round(total, 1),
+                "rupas": round(rupas, 2),
+                "required": req,
+                "required_rupas": round(required_rupas, 2),
+                "meets_required": meets,
+                "percent": round(pct, 1),
+            },
         }
 
     return result

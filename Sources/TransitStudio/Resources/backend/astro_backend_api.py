@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+from datetime import datetime
 from typing import Any
 
 from backend_runtime import apply_runtime_options
@@ -307,7 +308,6 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
             # new age, but this year's exact Solar Return still falls on a
             # later calendar date.
             try:
-                from datetime import datetime
                 sr_exact = datetime.strptime(current_sr["exact_local"], "%Y-%m-%d %H:%M")
                 prof_start = datetime.strptime(prof_start_local, "%Y-%m-%d %H:%M")
                 if sr_exact.date() < prof_start.date():
