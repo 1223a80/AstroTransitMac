@@ -163,6 +163,7 @@ extension ContentView {
             let request = SolarArcRequest(
                 mode: "solar_arc", birth: birth, reference: makeMoment(from: classicalReferenceDate),
                 nodeMode: modernNodeMode, aspects: selectedAspectRequests(orb: globalOrb),
+                patternsEnabled: false,
                 ephemerisPath: normalizedEphemerisPath, noAsteroids: noAsteroids, requireEphemeris: requireEphemeris
             )
             let result = try await BackendClient.solarArc(request: request, pythonPath: pythonPath)
@@ -296,6 +297,7 @@ extension ContentView {
                 birth: birth,
                 reference: makeMoment(from: classicalReferenceDate),
                 aspectOrb: classicalAspectOrb,
+                returnMode: nil,
                 ephemerisPath: normalizedEphemerisPath,
                 noAsteroids: noAsteroids,
                 requireEphemeris: requireEphemeris
@@ -339,6 +341,7 @@ extension ContentView {
                 birth: birth,
                 reference: makeMoment(from: classicalReferenceDate),
                 aspectOrb: classicalAspectOrb,
+                returnMode: nil,
                 ephemerisPath: normalizedEphemerisPath,
                 noAsteroids: noAsteroids,
                 requireEphemeris: requireEphemeris

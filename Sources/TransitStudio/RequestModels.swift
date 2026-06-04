@@ -71,9 +71,21 @@ struct ClassicalRequest: Codable {
     let birth: BirthSettings
     let reference: ChartMoment
     let aspectOrb: Double
+    let returnMode: String?
     let ephemerisPath: String?
     let noAsteroids: Bool
     let requireEphemeris: String
+
+    enum CodingKeys: String, CodingKey {
+        case mode
+        case birth
+        case reference
+        case aspectOrb = "aspectOrb"
+        case returnMode = "returnMode"
+        case ephemerisPath = "ephemerisPath"
+        case noAsteroids = "noAsteroids"
+        case requireEphemeris = "requireEphemeris"
+    }
 }
 
 struct HoraryRequest: Codable {

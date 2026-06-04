@@ -140,16 +140,18 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     body_lons = {row["body_id"]: row["longitude"] for row in sa_positioned}
     aspects_internal: list[dict[str, Any]] = []
     try:
-        aspects_internal = find_aspects(sa_positioned, sa_positioned, aspect_specs)
+        aspects_internal = find_aspects(sa_positioned, sa_positioned, aspect_specs, skip_self_aspects=True)
     except Exception:
         aspects_internal = []
     house_map = {row["body_id"]: row.get("house", 1) for row in sa_positioned}
     patterns: list[dict[str, Any]] = []
-    try:
-        patterns = find_patterns(body_lons, aspects_internal, house_map)
-    except Exception as exc:
-        warnings.append(f"Solar Arc 图形识别失败：{exc}")
-        section_errors["patterns"] = str(exc)
+    patterns_enabled = request.get("patterns_enabled", False)
+    if patterns_enabled:
+        try:
+            patterns = find_patterns(body_lons, aspects_internal, house_map)
+        except Exception as exc:
+            warnings.append(f"Solar Arc 图形识别失败：{exc}")
+            section_errors["patterns"] = str(exc)
 
     return {
         "meta": {
@@ -167,4 +169,34 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
         "patterns": patterns,
         "warnings": warnings,
         "section_errors": section_errors if section_errors else None,
+        "duplicate_theme_warning": (
+            "Solar Arc 与 Secondary Progression 可能命中相似的 natal 目标。"
+            "若两者同时激活同一本命点且容许度接近，请勿重复加权。"
+        ),
     }
+
+def find_sa_progression_overlap(
+    sa_aspects: list[dict[str, Any]],
+    progression_aspects: list[dict[str, Any]],
+    orb_threshold: float = 1.0,
+) -> list[dict[str, str]]:
+    """Detect overlapping themes between Solar Arc and Secondary Progression."""
+    overlaps: list[dict[str, str]] = []
+    sa_by_target: dict[str, list[dict[str, Any]]] = {}
+    for a in sa_aspects:
+        target = a.get("natal_body_name", "")
+        sa_by_target.setdefault(target, []).append(a)
+    for a in progression_aspects:
+        target = a.get("natal_body_name", "")
+        if target in sa_by_target:
+            for sa_a in sa_by_target[target]:
+                if abs(sa_a.get("orb", 99) - a.get("orb", 99)) <= orb_threshold:
+                    overlaps.append({
+                        "target": target,
+                        "sa_aspect": f"{sa_a.get('transit_body_name', '')} {sa_a.get('aspect_name', '')} {sa_a.get('natal_body_name', '')}",
+                        "progression_aspect": f"{a.get('transit_body_name', '')} {a.get('aspect_name', '')} {a.get('natal_body_name', '')}",
+                        "sa_orb": str(round(sa_a.get("orb", 0), 2)),
+                        "progression_orb": str(round(a.get("orb", 0), 2)),
+                        "note": "同源信号，请勿重复加权",
+                    })
+    return overlaps

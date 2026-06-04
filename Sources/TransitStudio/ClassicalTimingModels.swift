@@ -291,6 +291,7 @@ struct TimingTimelineItem: Codable, Identifiable {
     let endLocal: String
     let kind: String
     let technique: String?
+    let layer: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -299,6 +300,7 @@ struct TimingTimelineItem: Codable, Identifiable {
         case endLocal = "end_local"
         case kind
         case technique
+        case layer
     }
 }
 

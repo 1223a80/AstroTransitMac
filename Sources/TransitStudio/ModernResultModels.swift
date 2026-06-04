@@ -351,6 +351,7 @@ struct SolarArcRequest: Codable {
     let reference: ChartMoment
     let nodeMode: String
     let aspects: [AspectRequest]
+    let patternsEnabled: Bool?
     let ephemerisPath: String?
     let noAsteroids: Bool
     let requireEphemeris: String
@@ -361,6 +362,7 @@ struct SolarArcRequest: Codable {
         case reference
         case nodeMode = "node_mode"
         case aspects
+        case patternsEnabled = "patterns_enabled"
         case ephemerisPath = "ephemeris_path"
         case noAsteroids = "no_asteroids"
         case requireEphemeris = "require_ephemeris"

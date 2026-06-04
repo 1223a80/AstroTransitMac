@@ -314,14 +314,23 @@ extension MarkdownExportBuilder {
         var lines = [
             "## 统一时间线",
             "",
-            "| 技法 | 标题 | 开始 | 结束 | 类型 |",
-            "| --- | --- | --- | --- | --- |"
+            "| 分层 | 技法 | 标题 | 开始 | 结束 | 类型 |",
+            "| --- | --- | --- | --- | --- | --- |"
         ]
         for item in items {
             let tech = item.technique ?? ""
             let kind = item.kind == "event" ? "事件" : "周期"
             let end = item.startLocal == item.endLocal ? "" : item.endLocal
-            lines.append("| \(tech) | \(item.title) | \(item.startLocal) | \(end) | \(kind) |")
+            let layer = item.layer ?? ""
+            let layerName: String
+            switch layer {
+            case "active_periods": layerName = "活跃周期"
+            case "active_returns": layerName = "有效返照"
+            case "events": layerName = "事件"
+            case "historical": layerName = "历史参考"
+            default: layerName = layer
+            }
+            lines.append("| \(layerName) | \(tech) | \(item.title) | \(item.startLocal) | \(end) | \(kind) |")
         }
         lines.append("")
         return lines
@@ -366,7 +375,8 @@ extension MarkdownExportBuilder {
                 "| --- | --- | ---: | --- | ---: |",
             ]
             lines += snap.planets.map {
-                "| \($0.name) | \($0.degreeText) | \($0.house) | \($0.motion) | \($0.score) |"
+                let label = $0.scoreLabel.map { " (\($0))" } ?? ""
+                return "| \($0.name) | \($0.degreeText) | \($0.house) | \($0.motion) | \($0.score)\(label) |"
             }
         }
         if !snap.natalCrossAspects.isEmpty {

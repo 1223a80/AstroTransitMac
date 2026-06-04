@@ -8,6 +8,7 @@ from astro_backend_core import (
     BODY_REGISTRY,
     CLASSICAL_BODY_IDS,
     SIGNS,
+    completed_age,
     format_longitude,
     jd_from_datetime,
     norm360,
@@ -144,6 +145,8 @@ def calculate_primary_directions(
     sidereal: bool,
     warnings: list[str],
     max_age: int = 90,
+    reference_dt: datetime | None = None,
+    window_years: float = 3.0,
 ) -> list[dict[str, Any]]:
     obliq = obliquity(birth_jd)
     cusps, angles, _ = build_houses(birth_jd, latitude, longitude, house_system, sidereal, warnings)
@@ -210,4 +213,13 @@ def calculate_primary_directions(
             unique.append(d)
 
     unique.sort(key=lambda d: d["age_from_abs_arc"])
+
+    # Apply reference-age window filter (default ±3 years)
+    if reference_dt is not None:
+        ref_age = completed_age(birth_dt, reference_dt)
+        unique = [
+            d for d in unique
+            if ref_age - window_years <= d["age_from_abs_arc"] <= ref_age + window_years
+        ]
+
     return unique

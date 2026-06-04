@@ -127,6 +127,7 @@ def profection_summary(
         "house": house,
         "sign": SIGNS[sign_idx],
         "lord": lord,
+        "lordId": lord_id,
         "lord_condition": condition,
         "start_local": format_local(start),
         "end_local": format_local(end),
@@ -581,9 +582,9 @@ def timing_timeline(
         return ""
 
     rows = [
-        {"id": "profection", "technique": _technique("profection"), "title": "Annual Profection", "start_local": profection["start_local"], "end_local": profection["end_local"], "kind": "period"},
-        {"id": firdaria["id"], "technique": _technique(firdaria["id"]), "title": f"{firdaria['technique']} {firdaria['level']}", "start_local": firdaria["start_local"], "end_local": firdaria["end_local"], "kind": "period"},
-        {"id": decennials["id"], "technique": _technique(decennials["id"]), "title": f"{decennials['technique']} {decennials['level']}", "start_local": decennials["start_local"], "end_local": decennials["end_local"], "kind": "period"},
+        {"id": "profection", "technique": _technique("profection"), "title": "Annual Profection", "start_local": profection["start_local"], "end_local": profection["end_local"], "kind": "period", "layer": "active_periods"},
+        {"id": firdaria["id"], "technique": _technique(firdaria["id"]), "title": f"{firdaria['technique']} {firdaria['level']}", "start_local": firdaria["start_local"], "end_local": firdaria["end_local"], "kind": "period", "layer": "active_periods"},
+        {"id": decennials["id"], "technique": _technique(decennials["id"]), "title": f"{decennials['technique']} {decennials['level']}", "start_local": decennials["start_local"], "end_local": decennials["end_local"], "kind": "period", "layer": "active_periods"},
     ]
 
     if birth_dt and reference_dt:
@@ -605,6 +606,7 @@ def timing_timeline(
                         "start_local": format_local(dt),
                         "end_local": format_local(dt),
                         "kind": "event",
+                        "layer": "events",
                     })
                     break
 
@@ -616,6 +618,7 @@ def timing_timeline(
             "start_local": row["start_local"],
             "end_local": row["end_local"],
             "kind": "period",
+            "layer": "active_periods",
         })
 
     def _return_timeline_title(row: dict[str, Any], snap: dict[str, Any]) -> str:
@@ -629,6 +632,20 @@ def timing_timeline(
             return f"Previous {title}（上一次）"
         return title
 
+    def _return_layer(row: dict[str, Any], snap: dict[str, Any]) -> str:
+        label = snap.get("label")
+        body_id = row.get("body_id", "")
+        if label == "current_cycle_return":
+            return "active_returns"
+        if label == "previous_return":
+            # Long-period returns (Jupiter, Saturn) → historical
+            if body_id in ("JUPITER", "SATURN"):
+                return "historical"
+            # Short-period returns → events
+            return "events"
+        # next_return → events
+        return "events"
+
     for row in returns:
         snap = row.get("current_cycle_return") or row.get("next_return") or row.get("previous_return")
         if snap and snap.get("exact_local"):
@@ -640,6 +657,7 @@ def timing_timeline(
                 "start_local": snap["exact_local"],
                 "end_local": snap["exact_local"],
                 "kind": "event",
+                "layer": _return_layer(row, snap),
             })
 
     rows.sort(key=lambda row: (row["start_local"], row["title"]))

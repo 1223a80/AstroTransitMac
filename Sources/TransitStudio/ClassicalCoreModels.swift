@@ -82,6 +82,7 @@ struct ClassicalPlanetRow: Codable, Identifiable {
     let joy: String?
     let planetaryYears: Int?
     let score: Int
+    let scoreLabel: String?
     let notes: [String]?
     let scoreBreakdown: [ScoreBreakdownItem]
     let bonification: [ConditioningModifier]
@@ -115,6 +116,7 @@ struct ClassicalPlanetRow: Codable, Identifiable {
         case joy
         case planetaryYears = "planetary_years"
         case score
+        case scoreLabel = "score_label"
         case notes
         case scoreBreakdown = "score_breakdown"
         case bonification

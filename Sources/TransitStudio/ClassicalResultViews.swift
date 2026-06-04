@@ -486,7 +486,8 @@ struct ClassicalTimingView: View {
                 TimingSectionBox(title: "统一时间线") {
                     Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 6) {
                         GridRow {
-                            Text("技法").fontWeight(.medium).frame(width: 80, alignment: .leading)
+                            Text("分层").fontWeight(.medium).frame(width: 60, alignment: .leading)
+                            Text("技法").fontWeight(.medium).frame(width: 60, alignment: .leading)
                             Text("标题").fontWeight(.medium).frame(width: 120, alignment: .leading)
                             Text("开始").fontWeight(.medium).frame(width: 120, alignment: .leading)
                             Text("结束").fontWeight(.medium).frame(width: 120, alignment: .leading)
@@ -496,8 +497,21 @@ struct ClassicalTimingView: View {
                             .gridCellUnsizedAxes(.horizontal)
                         ForEach(timing.timeline) { item in
                             GridRow {
+                                let layerName: String = {
+                                    switch item.layer {
+                                    case "active_periods": return "活跃周期"
+                                    case "active_returns": return "有效返照"
+                                    case "events": return "事件"
+                                    case "historical": return "历史参考"
+                                    default: return item.layer ?? ""
+                                    }
+                                }()
+                                Text(layerName)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 60, alignment: .leading)
                                 Text(item.technique ?? "")
-                                    .frame(width: 80, alignment: .leading)
+                                    .frame(width: 60, alignment: .leading)
                                 Text(item.title)
                                     .frame(width: 120, alignment: .leading)
                                 Text(item.startLocal)
@@ -670,7 +684,7 @@ struct ClassicalJudgementView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 16) {
                 ForEach(planets) { planet in
-                    TimingSectionBox(title: "\(planet.name) 评分 \(planet.score)") {
+                    TimingSectionBox(title: "\(planet.name) 评分 \(planet.score)\(planet.scoreLabel.map { " (\($0))" } ?? "")") {
                         VStack(alignment: .leading, spacing: 10) {
                             if !planet.scoreBreakdown.isEmpty {
                                 VStack(alignment: .leading, spacing: 6) {

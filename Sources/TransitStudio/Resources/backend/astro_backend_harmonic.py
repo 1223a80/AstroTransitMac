@@ -100,7 +100,23 @@ def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str
 
     aspects: list[dict[str, Any]] = []
     try:
-        aspects = find_aspects(harmonic_planet_rows, harmonic_planet_rows, aspect_specs)
+        # Exclude lunar nodes from harmonic aspect calculation
+        harmonic_aspect_bodies = [
+            row for row in harmonic_planet_rows
+            if row["body_id"] not in {"TRUE_NODE", "SOUTH_TRUE_NODE", "MEAN_NODE", "SOUTH_MEAN_NODE"}
+        ]
+        aspects = find_aspects(harmonic_aspect_bodies, harmonic_aspect_bodies, aspect_specs, skip_self_aspects=True)
+        # Deduplicate bidirectional pairs: sort bodyA and bodyB
+        seen: set[tuple[str, str, str]] = set()
+        deduped: list[dict[str, Any]] = []
+        for a in aspects:
+            body_a = a["transit_body_id"]
+            body_b = a["natal_body_id"]
+            key = (min(body_a, body_b), max(body_a, body_b), a["aspect_id"])
+            if key not in seen:
+                seen.add(key)
+                deduped.append(a)
+        aspects = deduped
     except Exception as exc:
         warnings.append(f"Harmonic 相位计算失败：{exc}")
         section_errors["aspects"] = str(exc)
@@ -117,6 +133,7 @@ def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str
         "planets": harmonic_planet_rows,
         "angles": harmonic_angle_rows,
         "houses": harmonic_house_rows,
+        "houses_experimental": True,
         "aspects": aspects,
         "warnings": warnings,
         "harmonic_order": harmonic_order,

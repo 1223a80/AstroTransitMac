@@ -181,6 +181,22 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
         for body_id in ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"]
     ]
 
+    # Filter returns by return_mode
+    return_mode = request.get("returnMode", "full")
+    if return_mode != "full":
+        # Always include Solar + Lunar
+        keep_ids = {"SUN", "MOON"}
+        prof_lord_id = profection.get("lordId", "")
+        if return_mode == "compact":
+            # Add profection lord's return
+            if prof_lord_id and prof_lord_id in BODY_REGISTRY:
+                keep_ids.add(prof_lord_id)
+        elif return_mode == "relationship":
+            keep_ids |= {"VENUS"}
+        elif return_mode == "study":
+            keep_ids |= {"MERCURY", "JUPITER"}
+        returns = [r for r in returns if r["body_id"] in keep_ids]
+
     antiscia = calculate_antiscia(planet_rows, planet_positions, aspect_orb)
     section_errors: dict[str, str] = {}
 
@@ -189,6 +205,7 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
         from astro_backend_primary_directions import calculate_primary_directions
         primary_directions = calculate_primary_directions(
             birth_jd, birth_dt, latitude, longitude, house_system, sidereal, warnings,
+            reference_dt=reference_dt,
         )
     except Exception as exc:
         warnings.append(f"Primary Directions 计算失败：{exc}")
@@ -248,6 +265,107 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
         "_source_tradition": "Hellenistic",
         "timeline": timing_timeline(profection, firdaria, decennials, zodiacal_releasing, returns, birth_dt, reference_dt),
     }
+
+    # Build activated lord focus
+    activated_lord_focus: dict[str, Any] | None = None
+    prof_lord_id = profection.get("lordId") or ""
+    prof_lord_name = profection.get("lord") or ""
+    if prof_lord_id:
+        lord_return = next((r for r in returns if r["body_id"] == prof_lord_id), None)
+        lord_natal = next((p for p in planet_rows if p["id"] == prof_lord_id), None)
+        activated_lord_focus = {
+            "lord_id": prof_lord_id,
+            "lord_name": prof_lord_name,
+            "natal_condition": lord_natal.get("score_label", "") if lord_natal else "",
+            "natal_score": lord_natal.get("score", 0) if lord_natal else 0,
+            "natal_house": lord_natal.get("house", 0) if lord_natal else 0,
+            "return_title": lord_return["title"] if lord_return else None,
+            "return_exact_local": (lord_return.get("current_cycle_return") or {}).get("exact_local") if lord_return else None,
+            "keywords": {
+                "SUN": "自我、权威、 vitality",
+                "MOON": "情绪、家庭、习惯",
+                "MERCURY": "沟通、学习、旅行",
+                "VENUS": "关系、价值、美感",
+                "MARS": "行动、竞争、冲突",
+                "JUPITER": "扩张、好运、智慧",
+                "SATURN": "责任、限制、结构",
+            }.get(prof_lord_id, ""),
+        }
+
+    # Birthday transition detection
+    birthday_transition: dict[str, Any] | None = None
+    solar_return = next((r for r in returns if r["body_id"] == "SUN"), None)
+    if solar_return:
+        current_sr = solar_return.get("current_cycle_return")
+        next_sr = solar_return.get("next_return")
+        prof_start_local = profection.get("start_local", "")
+        prof_end_local = profection.get("end_local", "")
+        if current_sr and next_sr:
+            # Profection has advanced to new age but SR hasn't perfected yet
+            # Check if current SR exact date is before profection start
+            try:
+                from datetime import datetime
+                sr_exact = datetime.strptime(current_sr["exact_local"], "%Y-%m-%d %H:%M")
+                prof_start = datetime.strptime(prof_start_local, "%Y-%m-%d %H:%M")
+                if sr_exact < prof_start:
+                    birthday_transition = {
+                        "detected": True,
+                        "note": "年小限已换岁，但 Solar Return 尚未精确。此为生日过渡窗口。",
+                        "profection_age": profection.get("age"),
+                        "profection_start": prof_start_local,
+                        "current_solar_return": current_sr["exact_local"],
+                        "next_solar_return": next_sr.get("exact_local", ""),
+                    }
+            except (ValueError, TypeError, KeyError):
+                pass
+
+    # Top signatures
+    top_signatures: list[dict[str, Any]] = []
+
+    # Best aspects (closest orb)
+    all_aspects = snapshot.get("aspects", [])
+    sorted_aspects = sorted(all_aspects, key=lambda a: a.get("orb") if a.get("orb") is not None else 999)
+    for a in sorted_aspects[:5]:
+        top_signatures.append({
+            "type": "aspect",
+            "description": f"{a.get('body_a', '')} {a.get('aspect', '')} {a.get('body_b', '')}",
+            "orb": a.get("orb"),
+            "strength": "tight" if a.get("orb") is not None and abs(a["orb"]) < 1.0 else "moderate",
+        })
+
+    # Current cycle returns
+    for r in returns:
+        curr = r.get("current_cycle_return")
+        if curr:
+            top_signatures.append({
+                "type": "return",
+                "description": f"{r['title']} — {curr['exact_local']}",
+                "orb": None,
+                "strength": "active",
+            })
+
+    # Profection lord highlight
+    if activated_lord_focus:
+        top_signatures.append({
+            "type": "profection_lord",
+            "description": f"年主 {activated_lord_focus['lord_name']}（评分 {activated_lord_focus['natal_score']}，{activated_lord_focus['natal_condition']}）",
+            "orb": None,
+            "strength": "active",
+        })
+
+    # Top primary directions (closest to reference age)
+    try:
+        ref_age = max(0, (reference_dt - birth_dt).days / 365.2425)
+    except Exception:
+        ref_age = 0
+    if primary_directions:
+        for pd_entry in primary_directions[:3]:
+            top_signatures.append({
+                "type": "primary_direction",
+                "description": f"{pd_entry['promissor']} → {pd_entry['significator']} {pd_entry['aspect_name']} @ {pd_entry['age_from_abs_arc']:.1f}y",
+                "orb": None,
+                "strength": "approaching" if pd_entry.get("age_from_abs_arc", 0) > ref_age else "past",
+            })
     return {
         "meta": {
             "birth_utc": birth_utc,
@@ -277,6 +395,9 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
         "primary_directions": primary_directions,
         "circumambulations": circumambulations,
         "timing": timing,
+        "top_signatures": top_signatures[:10],
+        "birthday_transition": birthday_transition,
+        "activated_lord_focus": activated_lord_focus,
         "planetary_returns": returns,
         "prenatal_syzygy": prenatal_syzygy,
         "almuten_figuris": almuten,
@@ -302,7 +423,7 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
             "combust_orb_deg": 8.5,
             "under_beams_orb_deg": 15.0,
             "naibod_rate": 0.9856,
-            "primary_directions_method": "Placidus Semi-Arc",
+            "primary_directions_method": "Naibod (Platicus)",
             "modern_planets_excluded_from_scoring": True,
             "scoring_includes_conditioning": True,
             "sign_based_receptions_downgraded": True,

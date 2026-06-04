@@ -154,7 +154,7 @@ def calculate_progressions(request: dict[str, Any], warnings: list[str]) -> dict
 
     prog_to_prog: list[dict[str, Any]] = []
     try:
-        prog_to_prog = find_aspects(prog_positioned, prog_positioned, aspect_specs)
+        prog_to_prog = find_aspects(prog_positioned, prog_positioned, aspect_specs, skip_self_aspects=True)
     except Exception as exc:
         warnings.append(f"Progressed→Progressed 相位计算失败：{exc}")
         section_errors["progressed_to_progressed"] = str(exc)

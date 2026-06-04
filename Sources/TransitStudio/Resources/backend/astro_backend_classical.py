@@ -175,6 +175,17 @@ def calculate_classical_planets(
         accidental = house_strength(house)
         accidental_score = 3 if accidental == "角宫" else 1 if accidental == "续宫" else -1
         base_score = dignity_score + phase_score + motion_score + sect_score + accidental_score + hayz_score + joy_score
+        # Human-readable score interpretation
+        if base_score >= 10:
+            score_label = "强而有力"
+        elif base_score >= 5:
+            score_label = "状态良好"
+        elif base_score >= 1:
+            score_label = "一般可用"
+        elif base_score >= -4:
+            score_label = "偏弱受克"
+        else:
+            score_label = "严重衰弱"
         notes = dignity_notes + phase_notes + motion_notes + sect_notes + hayz_notes + joy_notes + [accidental]
         score_breakdown = dignity_breakdown + [phase_breakdown, motion_breakdown, sect_breakdown, hayz_breakdown, joy_breakdown, {"label": "accidental", "score": accidental_score, "value": accidental}]
 
@@ -209,6 +220,7 @@ def calculate_classical_planets(
                 "joy": joy,
                 "planetary_years": PLANETARY_YEARS.get(body_id, 0),
                 "score": base_score,
+                "score_label": score_label,
                 "notes": notes,
                 "score_breakdown": score_breakdown,
                 "bonification": [],
@@ -564,7 +576,8 @@ def return_summary(
 
     t1 = start
     first = orb_at(t1, spec, natal_longitude, warnings, warning_keys, sidereal=sidereal)
-    previous_exact: datetime | None = None
+    previous_exact: datetime | None = None      # Most recent return before reference → current_cycle
+    prev_previous_exact: datetime | None = None # Return before that → previous_return
     next_exact: datetime | None = None
     max_iterations = 20000
     iterations = 0
@@ -582,6 +595,7 @@ def return_summary(
         if abs(f1 - f2) < 20 and ((f1 <= 0 <= f2) or (f1 >= 0 >= f2)):
             exact = refine_crossing(t1, t2, spec, natal_longitude, warnings, warning_keys, sidereal=sidereal)
             if exact <= reference_dt:
+                prev_previous_exact = previous_exact
                 previous_exact = exact
             else:
                 next_exact = exact
@@ -656,12 +670,9 @@ def return_summary(
             "house_overlay": r_overlay,
         }
 
-    previous_snapshot = _build_snapshot(previous_exact, "previous_return") if previous_exact else None
+    previous_snapshot = _build_snapshot(prev_previous_exact, "previous_return") if prev_previous_exact else None
+    current_snapshot = _build_snapshot(previous_exact, "current_cycle_return") if previous_exact else None
     next_snapshot = _build_snapshot(next_exact, "next_return") if next_exact else None
-
-    current_cycle_snapshot: dict[str, Any] | None = None
-    if previous_snapshot is not None:
-        current_cycle_snapshot = {**previous_snapshot, "label": "current_cycle_return"}
 
     return {
         "id": body_id.lower(),
@@ -671,7 +682,7 @@ def return_summary(
         "no_hit_in_user_window": False,
         "suggested_window": None,
         "previous_return": previous_snapshot,
-        "current_cycle_return": current_cycle_snapshot,
+        "current_cycle_return": current_snapshot,
         "next_return": next_snapshot,
         "search_start_local": format_local(start),
         "search_end_local": format_local(end),

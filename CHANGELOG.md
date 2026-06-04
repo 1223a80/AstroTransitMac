@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-06-03 — Output audit fixes (12 issues across 3 phases)
+
+### P0 — Bug fixes
+- **`astro_backend_classical.py`** — 修复 Previous/Current 返照重复：return_summary 现在追踪两次历史穿越（prev_previous → previous_return，previous → current_cycle_return），不再浅拷贝
+- **`astro_backend_primary_directions.py`** — Primary Directions 默认窗口过滤 ±3 年（通过 reference_dt 参数），不再从出生输出到 120 岁
+- **`astro_backend_harmonic.py`** — Harmonic 去重：添加 skip_self_aspects=True、节点排除、双向对去重；houses 标记 houses_experimental=True
+- **`astro_backend_classical.py`** / **`ClassicalCoreModels.swift`** — 评分系统增加 score_label 字段（"强而有力"、"状态良好"、"一般可用"、"偏弱受克"、"严重衰弱"）
+
+### P1 — 展示与层级设计
+- **`astro_backend_classical_timing.py`** — 时间线分层：active_periods / active_returns / events / historical
+- **`astro_backend_api.py`** — 返照输出模式：支持 returnMode（compact/relationship/study/full），过滤返照列表
+- **`astro_backend_solar_arc.py`** — Solar Arc 图形模式默认关闭（patterns_enabled=False）
+- **`astro_backend_api.py`** — 年主联动高亮：activated_lord_focus 包含年主状态、相关返照、关键词
+
+### P2 — 展示优化
+- **`astro_backend_api.py`** — 生日边界提示：检测年小限换岁但 Solar Return 未精确的情况
+- **`astro_backend_api.py`** — Top 5 优先级摘要：收集最佳相位 + 激活返照 + 年主 + 主方向
+- **`astro_backend_harmonic.py`** — Harmonic 宫位标记实验性
+- **`astro_backend_solar_arc.py`** — SA/Progression 同源重复提示
+
+### Schema 更新
+- **`ClassicalTimingModels.swift`** — TimelineItem 增加 layer 字段
+- **`ModernResultModels.swift`** — SolarArcRequest 增加 patternsEnabled 字段
+- **`RequestModels.swift`** — ClassicalRequest 增加 returnMode 字段
+
 ## 2026-06-02 — README 中文化
 
 - **`README.md`** — 将项目说明从英文翻译为中文，并按当前代码事实补齐功能概览、现代子模式、图轮 / AI 分析 / 导出能力、后端运行示例与验证说明

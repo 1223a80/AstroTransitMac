@@ -93,7 +93,7 @@ def calculate_davison(request: dict[str, Any], warnings: list[str]) -> dict[str,
     section_errors: dict[str, str] = {}
     aspects: list[dict[str, Any]] = []
     try:
-        aspects = find_aspects(positioned, positioned, aspect_specs)
+        aspects = find_aspects(positioned, positioned, aspect_specs, skip_self_aspects=True)
     except Exception as exc:
         warnings.append(f"Davison 相位计算失败：{exc}")
         section_errors["aspects"] = str(exc)

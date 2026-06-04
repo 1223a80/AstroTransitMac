@@ -90,6 +90,18 @@ extension MarkdownExportBuilder {
         var lines = [
             "## 评分总表",
             "",
+            "| 星体 | 总分 | 状态标签 |",
+            "| --- | ---: | --- |"
+        ]
+        for planet in rows {
+            let label = planet.scoreLabel ?? ""
+            lines.append("| \(planet.name) | \(planet.score) | \(label) |")
+        }
+        lines.append("")
+        lines += [
+            "",
+            "### 详细评分明细",
+            "",
             "| 星体 | 评分项 | 值 | 分值 |",
             "| --- | --- | --- | ---: |"
         ]
