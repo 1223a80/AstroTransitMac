@@ -496,15 +496,33 @@ extension ContentView {
                 .font(.headline)
                 .padding(.top, 8)
 
-            let sections = MarkdownExportBuilder.ExportSection.allCases
+            let sections = MarkdownExportBuilder.ExportSection.classicalSectionIDs
             let timingIDs = MarkdownExportBuilder.ExportSection.timingSectionIDs
             let diagnosticIDs: Set<MarkdownExportBuilder.ExportSection> = [.activeOverview, .warnings]
+            let natalSections = sections.filter { !timingIDs.contains($0) && !diagnosticIDs.contains($0) }.sorted { $0.label < $1.label }
+            let timingSections = sections.filter(timingIDs.contains).sorted { $0.label < $1.label }
+            let diagSections = sections.filter(diagnosticIDs.contains).sorted { $0.label < $1.label }
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 6) {
-                    sectionToggleGroup(title: "本命", sections: sections.filter { !timingIDs.contains($0) && !diagnosticIDs.contains($0) })
-                    sectionToggleGroup(title: "时间技法", sections: sections.filter(timingIDs.contains))
-                    sectionToggleGroup(title: "诊断", sections: sections.filter(diagnosticIDs.contains))
+                VStack(alignment: .leading, spacing: 8) {
+                    sectionToggleGroup(
+                        title: "本命",
+                        sections: natalSections,
+                        allSections: Set(natalSections),
+                        selection: $classicalExportSections
+                    )
+                    sectionToggleGroup(
+                        title: "时间技法",
+                        sections: timingSections,
+                        allSections: Set(timingSections),
+                        selection: $classicalExportSections
+                    )
+                    sectionToggleGroup(
+                        title: "诊断",
+                        sections: diagSections,
+                        allSections: Set(diagSections),
+                        selection: $classicalExportSections
+                    )
                 }
             }
 
@@ -527,16 +545,53 @@ extension ContentView {
         .frame(width: 400, height: 400)
     }
 
-    private func sectionToggleGroup(title: String, sections: [MarkdownExportBuilder.ExportSection]) -> some View {
-        GroupBox(label: Text(title).font(.subheadline.weight(.medium))) {
-            ForEach(sections) { section in
+    private func sectionToggleGroup(
+        title: String,
+        sections: [MarkdownExportBuilder.ExportSection],
+        allSections: Set<MarkdownExportBuilder.ExportSection>,
+        selection: Binding<Set<MarkdownExportBuilder.ExportSection>>
+    ) -> some View {
+        let allSelected = allSections.isSubset(of: selection.wrappedValue)
+        let noneSelected = selection.wrappedValue.intersection(allSections).isEmpty
+
+        return GroupBox {
+            VStack(alignment: .leading, spacing: 6) {
                 Toggle(isOn: Binding(
-                    get: { classicalExportSections.contains(section) },
-                    set: { if $0 { classicalExportSections.insert(section) } else { classicalExportSections.remove(section) } }
+                    get: { allSelected },
+                    set: { newValue in
+                        if newValue {
+                            selection.wrappedValue.formUnion(allSections)
+                        } else {
+                            selection.wrappedValue.subtract(allSections)
+                        }
+                    }
                 )) {
-                    Text(section.label).font(.caption)
+                    HStack(spacing: 4) {
+                        Text(title)
+                            .font(.subheadline.weight(.medium))
+                        if noneSelected {
+                            Text("（全不选）")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .toggleStyle(.checkbox)
+
+                Divider()
+
+                ForEach(sections) { section in
+                    Toggle(isOn: Binding(
+                        get: { selection.wrappedValue.contains(section) },
+                        set: { if $0 { selection.wrappedValue.insert(section) } else { selection.wrappedValue.remove(section) } }
+                    )) {
+                        Text(section.label).font(.caption)
+                    }
+                    .toggleStyle(.checkbox)
+                    .padding(.leading, 20)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -804,16 +859,19 @@ extension ContentView {
                     description: calculationProgressText.isEmpty ? "正在调用后端计算。" : calculationProgressText
                 )
             } else if let result = vedicResult {
-                VStack(alignment: .leading, spacing: 10) {
-                    Picker("视图", selection: $vedicSelectedTab) {
-                        Text("综览").tag("overview")
-                        Text("Daśā").tag("dasa")
-                        Text("Ṣaḍbala").tag("shadbala")
-                        Text("Yōga").tag("yoga")
-                        Text("Navāṃśa").tag("navamsa")
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal)
+                VStack(alignment: .leading, spacing: 6) {
+                    ResultPaneToolbar(
+                        selection: $vedicSelectedTab,
+                        tabRows: [[(id: "overview", title: "综览"), (id: "dasa", title: "Daśā"), (id: "shadbala", title: "Ṣaḍbala"), (id: "yoga", title: "Yōga"), (id: "navamsa", title: "Navāṃśa")]],
+                        moreTabs: [],
+                        currentTabTitle: vedicTabTitle,
+                        markdownProvider: { MarkdownExportBuilder.vedic(result, sections: vedicExportSections) },
+                        jsonProvider: { TextExportBuilder.json(result) },
+                        csvProvider: { TextExportBuilder.csv(result) },
+                        basename: "vedic_chart",
+                        classicalSectionPicker: { showVedicExportSheet = true }
+                    )
+                    .padding(.horizontal, 14)
 
                     Group {
                         switch vedicSelectedTab {
@@ -851,6 +909,9 @@ extension ContentView {
                     .padding(.horizontal, 14)
                 }
                 .padding(.vertical, 8)
+                .sheet(isPresented: $showVedicExportSheet) {
+                    vedicExportSheet
+                }
             } else {
                 EmptyStateView(
                     title: "等待吠陀排盘",
@@ -859,5 +920,55 @@ extension ContentView {
                 )
             }
         }
+    }
+
+    var vedicTabTitle: String {
+        switch vedicSelectedTab {
+        case "overview": return "综览"
+        case "dasa": return "Daśā"
+        case "shadbala": return "Ṣaḍbala"
+        case "yoga": return "Yōga"
+        case "navamsa": return "Navāṃśa"
+        default: return ""
+        }
+    }
+
+    @ViewBuilder
+    private var vedicExportSheet: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("选择导出内容")
+                .font(.headline)
+                .padding(.top, 8)
+
+            let vedicSections = MarkdownExportBuilder.ExportSection.vedicSectionIDs
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    sectionToggleGroup(
+                        title: "吠陀",
+                        sections: Array(vedicSections).sorted { $0.label < $1.label },
+                        allSections: vedicSections,
+                        selection: $vedicExportSections
+                    )
+                }
+            }
+
+            HStack {
+                Button("取消") { showVedicExportSheet = false }
+                Spacer()
+                Button("全选") { vedicExportSections = vedicSections }
+                Button("全不选") { vedicExportSections = [] }
+                Button("导出 Markdown") {
+                    let md = MarkdownExportBuilder.vedic(vedicResult!, sections: vedicExportSections)
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(md, forType: .string)
+                    showVedicExportSheet = false
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(vedicExportSections.isEmpty)
+            }
+        }
+        .padding()
+        .frame(width: 380, height: 360)
     }
 }

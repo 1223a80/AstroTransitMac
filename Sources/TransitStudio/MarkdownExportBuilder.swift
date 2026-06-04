@@ -10,6 +10,10 @@ enum MarkdownExportBuilder {
         case almuten, hyleg, prenatalSyzygy
         case warnings
 
+        // Vedic export sections
+        case vedicRasi, vedicNavamsa, vedicNakshatra, vedicDasa
+        case vedicShadbala, vedicYoga
+
         var id: String { rawValue }
 
         var label: String {
@@ -36,9 +40,35 @@ enum MarkdownExportBuilder {
             case .hyleg: return "Hyleg/Alcocoden"
             case .prenatalSyzygy: return "产前朔望"
             case .warnings: return "警告"
+            case .vedicRasi: return "Rāśi 盘 (D1)"
+            case .vedicNavamsa: return "Navāṃśa (D9)"
+            case .vedicNakshatra: return "Nakṣatra 详情"
+            case .vedicDasa: return "Daśā 时间线"
+            case .vedicShadbala: return "Ṣaḍbala 评分"
+            case .vedicYoga: return "Yōga 列表"
             }
         }
 
         static let timingSectionIDs: Set<ExportSection> = [.profection, .firdaria, .decennials, .zr, .returns, .timeline, .primaryDirections, .circumambulations]
+
+        static let vedicSectionIDs: Set<ExportSection> = [.vedicRasi, .vedicNavamsa, .vedicNakshatra, .vedicDasa, .vedicShadbala, .vedicYoga]
+
+        static let classicalSectionIDs: Set<ExportSection> = {
+            var ids = Set(ExportSection.allCases)
+            ids.subtract(vedicSectionIDs)
+            return ids
+        }()
+    }
+}
+
+// MARK: - Vedic Export Facade
+
+extension MarkdownExportBuilder {
+    static func vedic(_ result: VedicResult) -> String {
+        MarkdownVedicExportBuilder.export(result)
+    }
+
+    static func vedic(_ result: VedicResult, sections: Set<ExportSection>) -> String {
+        MarkdownVedicExportBuilder.export(result, sections: sections)
     }
 }

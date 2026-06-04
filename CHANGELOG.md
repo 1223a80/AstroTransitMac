@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-06-04 — Vedic AI 导出 handoff 资产
+
+- **`VEDIC_AI_PORT_PLAN.md`** — 新增可直接交给实现 agent 的离线执行计划，明确了：
+  - 本地 source of truth 文件
+  - 需要参照的 `maitreya8` Jyotish 计算文件
+  - Python / Swift 的职责边界
+  - 目标输出 section、JSON 契约、拆分模块、测试要求、review 拷打点
+- **`PLANS.md`** — 恢复为原有项目计划内容，不再覆盖
+- **`Examples/sample-vedic-ai-request.json`** — 新增固定请求基准（1990-04-20 08:30，北京，`sidereal_citra`）
+- **`Examples/sample-vedic-ai-expected.txt`** — 新增用户提供的完整 AI 导出样例，作为实现与 review 的对照基准
+- **`.gitignore`** — 新增 `maitreya8-reference/` 忽略规则；该目录用于本地离线参考，不参与后续实现 diff
+- **本地参考仓库** — 已抓取 `maitreya8-reference/` 供离线 agent 直接读取 `src/jyotish/` 相关实现文件
+
+## 2026-06-04 — Vedic 能力评估（对照 Maitreya8）
+
+- Review-only task: 依据当前本地 Jyotish/Vedic 实现与 `martin-pe/maitreya8` 的公开源码树，评估当前吠陀占星能力等级、已实现范围、简化实现、以及关键缺口。
+- 结论方向：当前实现已超过“演示/玩具级”，具备可用的基础排盘、Nakṣatra、Ayanāṃśa、Vimśottarī/Yoginī/Aṣṭottarī、部分 Varga、简化 Ṣaḍbala、少量 Yōga、Swift UI 与 Markdown 导出；但距离 Maitreya8 的成熟 Jyotish 平台仍有明显差距，尤其在 Ashtakavarga、Jaimini、完整 Kalachakra、Transit/Partner 等系统。
+- 验证：`python3 -m pytest python_tests/test_jyotish_smoke.py -q` 通过（35 passed）；另做了 `calculate_vedic(full=True)` 运行时烟雾检查，确认当前返回 `rasi_chart`、`planets`、`navamsa`、`vimshottari`、`yogini_dasa`、`ashtottari_dasa`、`shadbala`、`yogas`。
+- 本条为评估记录，不涉及产品源码功能修改。
+
 ## 2026-06-04 — Vedic 修复: 6 个 review findings + 参考数据校核
 
 ### Bug 修复

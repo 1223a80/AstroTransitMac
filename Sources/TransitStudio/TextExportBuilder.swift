@@ -329,6 +329,43 @@ enum TextExportBuilder {
         String(format: "%.8f", value)
     }
 
+    static func csv(_ result: VedicResult) -> String {
+        var rows: [[String]] = [["Planet", "Longitude", "Sign", "Degree", "House", "Nakshatra", "Pada"]]
+        let chartPlanets = result.rasiChart?.planets ?? [:]
+        if let planets = result.planets {
+            for (pid, planet) in planets.sorted(by: { $0.value.longitude < $1.value.longitude }) {
+                let nak = planet.nakshatra?.nakshatra
+                let house = chartPlanets[pid]?.house ?? planet.house ?? 0
+                rows.append([
+                    pid,
+                    number(planet.longitude),
+                    planet.sign,
+                    planet.degreeText,
+                    "\(house)",
+                    nak?.nameSa ?? "-",
+                    nak.map { "\($0.pada)" } ?? "-"
+                ])
+            }
+        }
+
+        // Add Shadbala if present
+        if let sb = result.shadbala {
+            rows.append([])
+            rows.append(["Shadbala", "Sthana", "Dig", "Kala", "Cheshta", "Naisargika", "Drig", "Total", "Percent"])
+            for pid in ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN"] {
+                guard let row = sb[pid] else { continue }
+                rows.append([
+                    pid,
+                    number(row.sthanaBala), number(row.digBala), number(row.kalaBala),
+                    number(row.cheshtaBala), number(row.naisargikaBala), number(row.drigBala),
+                    number(row.shadbalaTotal), "\(Int(row.percent))%"
+                ])
+            }
+        }
+
+        return csv(rows)
+    }
+
     private static func natalAspects(from result: TransitResult) -> [AspectHit] {
         var seen = Set<String>()
         return result.aspects.filter { aspect in

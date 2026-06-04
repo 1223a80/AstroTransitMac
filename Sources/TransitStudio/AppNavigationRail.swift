@@ -49,7 +49,7 @@ struct AppNavigationRail: View {
                     .padding(.horizontal, 10)
             }
 
-            HStack(spacing: 6) {
+            VStack(spacing: 2) {
                 practiceModeButton(for: .modern, icon: "sparkles")
                 practiceModeButton(for: .classical, icon: "scroll")
                 practiceModeButton(for: .vedic, icon: "sun.max")
@@ -202,7 +202,7 @@ struct AppNavigationRail: View {
                         .font(.callout.weight(isSelected ? .semibold : .regular))
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .center)
+            .frame(maxWidth: .infinity, alignment: isCollapsed ? .center : .leading)
             .padding(.horizontal, isCollapsed ? 4 : 10)
             .padding(.vertical, 8)
             .foregroundStyle(isSelected ? Color.accentColor : Color.primary)

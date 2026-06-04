@@ -14,8 +14,12 @@ __pycache__/
 .DS_Store
 *.DS_Store
 .opencode/
+.codegraph/
 
 # Local packaging and snapshots
 dist/
 backups/
 *.zip
+
+# Local offline reference repos
+maitreya8-reference/

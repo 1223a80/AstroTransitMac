@@ -1,0 +1,28 @@
+{
+  "mode": "vedic",
+  "birth": {
+    "moment": {
+      "year": 1990,
+      "month": 4,
+      "day": 20,
+      "hour": 8,
+      "minute": 30,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 39.93,
+    "longitude": 116.41,
+    "houseSystem": "whole_sign",
+    "zodiac": "sidereal_citra",
+    "boundsSystem": "egyptian",
+    "triplicitySystem": "dorothean"
+  },
+  "reference": {
+    "year": 2026,
+    "month": 6,
+    "day": 4,
+    "hour": 12,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "full": true
+}

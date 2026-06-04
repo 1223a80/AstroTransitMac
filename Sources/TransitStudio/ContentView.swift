@@ -112,7 +112,7 @@ struct ContentView: View {
     @State var scanConfigText = ""
     @State var classicalSelectedTab = "planets"
     @State var showClassicalExportSheet = false
-    @State var classicalExportSections: Set<MarkdownExportBuilder.ExportSection> = Set(MarkdownExportBuilder.ExportSection.allCases)
+    @State var classicalExportSections: Set<MarkdownExportBuilder.ExportSection> = Set(MarkdownExportBuilder.ExportSection.classicalSectionIDs)
     @State var horarySelectedTab = "overview"
     @State var modernNatalSelectedTab = "natal_positions"
     @State var momentSelectedTab = "aspects"
@@ -133,6 +133,8 @@ struct ContentView: View {
     @State var vedicAyanamsha = "lahiri"
     @State var vedicSelectedTab = "overview"
     @State var vedicFullMode = false
+    @State var showVedicExportSheet = false
+    @State var vedicExportSections: Set<MarkdownExportBuilder.ExportSection> = Set(MarkdownExportBuilder.ExportSection.vedicSectionIDs)
 
     static let houseSystemOptions = [
         PickerOption(id: "whole_sign", title: "Whole Sign"),
