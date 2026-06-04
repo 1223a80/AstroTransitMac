@@ -52,6 +52,7 @@ struct AppNavigationRail: View {
             HStack(spacing: 6) {
                 practiceModeButton(for: .modern, icon: "sparkles")
                 practiceModeButton(for: .classical, icon: "scroll")
+                practiceModeButton(for: .vedic, icon: "sun.max")
             }
             .padding(.horizontal, 8)
         }
@@ -79,8 +80,10 @@ struct AppNavigationRail: View {
         VStack(alignment: .leading, spacing: 6) {
             if selectedPracticeMode == .modern {
                 modernSubModeButtons
-            } else {
+            } else if selectedPracticeMode == .classical {
                 classicalModeButtons
+            } else {
+                vedicModeButtons
             }
             navigationButton(title: "时间点", icon: "clock", mode: .moment)
             navigationButton(title: "窗口扫描", icon: "calendar.badge.clock", mode: .scan)
@@ -93,6 +96,12 @@ struct AppNavigationRail: View {
             navigationButton(title: "本命设置", icon: "person.crop.circle", mode: .settings)
             navigationButton(title: "Horary", icon: "questionmark.bubble", mode: .horary)
             navigationButton(title: "生时矫正", icon: "clock.arrow.circlepath", mode: .rectify)
+        }
+    }
+
+    private var vedicModeButtons: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            navigationButton(title: "吠陀排盘", icon: "sun.max.circle", mode: .settings)
         }
     }
 

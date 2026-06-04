@@ -72,6 +72,8 @@ def _swift_values() -> dict[str, list[str]]:
         "ALL_NODE_MODES": _parse_swift_array(text, "allNodeModes"),
         "ALL_PATTERN_IDS": _parse_swift_array(text, "allPatternIDs"),
         "ALL_CHART_SHAPE_IDS": _parse_swift_array(text, "allChartShapeIDs"),
+        "VEDIC_BODY_IDS": _parse_swift_array(text, "vedicBodyIDs"),
+        "ALL_VARGAS": _parse_swift_array(text, "vargaIDs"),
     }
 
 
@@ -117,6 +119,12 @@ def _python_values() -> dict[str, list[str]]:
         "ALL_CHART_SHAPE_IDS": sorted(
             _parse_python_value(PYTHON_CONSTANTS_PATH, "ALL_CHART_SHAPE_IDS")
         ),
+        "VEDIC_BODY_IDS": sorted(
+            _parse_python_value(PYTHON_CONSTANTS_PATH, "VEDIC_BODY_IDS")
+        ),
+        "ALL_VARGAS": sorted(
+            _parse_python_value(PYTHON_CONSTANTS_PATH, "ALL_VARGAS")
+        ),
     }
 
 
@@ -152,6 +160,8 @@ def test_body_id_labels() -> None:
     missing = [bid for bid in body_ids if bid not in body_labels]
     if missing:
         pytest.fail(f"Body IDs missing labels: {missing}")
+    assert body_labels.get("RAHU") == "罗睺"
+    assert body_labels.get("KETU") == "计都"
 
 
 def test_aspect_id_labels() -> None:

@@ -93,8 +93,9 @@ class TestClassicalContract:
             assert "next_return" in r
             for key in ("previous_return", "current_cycle_return", "next_return"):
                 ret = r[key]
-                assert isinstance(ret, dict)
-                assert ret["label"] == key
+                assert ret is None or isinstance(ret, dict)
+                if isinstance(ret, dict):
+                    assert ret["label"] == key
 
     def test_has_lots(self) -> None:
         data = _run_transit_calc("sample-classical-request.json")

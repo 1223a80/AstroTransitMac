@@ -398,6 +398,7 @@ struct HarmonicResult: Codable {
     let planets: [PositionRow]
     let angles: [ClassicalPoint]
     let houses: [HouseRow]
+    let housesExperimental: Bool?
     let aspects: [AspectHit]
     let warnings: [String]
     let harmonicOrder: Int
@@ -408,6 +409,7 @@ struct HarmonicResult: Codable {
         case planets
         case angles
         case houses
+        case housesExperimental = "houses_experimental"
         case aspects
         case warnings
         case harmonicOrder = "harmonic_order"

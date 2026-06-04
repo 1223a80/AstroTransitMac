@@ -99,6 +99,23 @@ struct HoraryRequest: Codable {
     let requireEphemeris: String
 }
 
+struct VedicRequest: Codable {
+    let mode: String
+    let birth: BirthSettings
+    let reference: ChartMoment?
+    let full: Bool
+    let ephemerisPath: String?
+    let noAsteroids: Bool
+    let requireEphemeris: String
+
+    enum CodingKeys: String, CodingKey {
+        case mode, birth, reference, full
+        case ephemerisPath = "ephemerisPath"
+        case noAsteroids = "noAsteroids"
+        case requireEphemeris = "requireEphemeris"
+    }
+}
+
 struct NatalProfile: Codable, Identifiable {
     let id: UUID
     var name: String

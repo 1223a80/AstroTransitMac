@@ -167,6 +167,10 @@ struct BackendClient {
         try await run(request: request, pythonPath: pythonPath)
     }
 
+    static func vedic(request: VedicRequest, pythonPath: String) async throws -> VedicResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
     static func run<Request: Encodable, Response: Decodable>(
         request: Request,
         pythonPath: String

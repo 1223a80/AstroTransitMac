@@ -74,6 +74,8 @@ var targetPlanetOptions: [TargetPositionOption] {
             return fullNatalResult != nil
         case .classical:
             return classicalResult != nil
+        case .vedic:
+            return vedicResult != nil
         }
     }
 

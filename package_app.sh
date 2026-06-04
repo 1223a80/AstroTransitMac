@@ -6,12 +6,15 @@ cd "$ROOT_DIR"
 
 PRODUCT_NAME="TransitStudio"
 BUNDLE_ID="com.gacu.TransitStudio"
-APP_VERSION="1.0.0"
-BUILD_VERSION="16"
+APP_VERSION="1.1.0"
+BUILD_VERSION="17"
 SWIFTPM_BUILD_PATH="${SWIFTPM_BUILD_PATH:-/private/tmp/astrotransit-package-build}"
 BUILD_DIR="$SWIFTPM_BUILD_PATH/arm64-apple-macosx/release"
 OUTPUT_ROOT="${APP_OUTPUT_DIR:-$ROOT_DIR/dist}"
 APP_DIR="$OUTPUT_ROOT/${PRODUCT_NAME}.app"
+INSTALL_ROOT="${APP_INSTALL_ROOT:-/Applications}"
+INSTALL_APP_PATH="${APP_INSTALL_PATH:-$INSTALL_ROOT/${PRODUCT_NAME}.app}"
+SKIP_INSTALL="${SKIP_INSTALL:-0}"
 CONTENTS_DIR="$APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
@@ -159,4 +162,13 @@ codesign --force --deep --sign - "$APP_DIR"
 sleep 0.2
 clean_xattrs
 
+if [[ "$SKIP_INSTALL" != "1" ]]; then
+    rm -rf "$INSTALL_APP_PATH"
+    ditto --noextattr --noqtn "$APP_DIR" "$INSTALL_APP_PATH"
+    xattr -cr "$INSTALL_APP_PATH" || true
+fi
+
 echo "$APP_DIR"
+if [[ "$SKIP_INSTALL" != "1" ]]; then
+    echo "$INSTALL_APP_PATH"
+fi

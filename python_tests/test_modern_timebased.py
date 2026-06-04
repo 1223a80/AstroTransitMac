@@ -4,6 +4,7 @@ import pytest
 from typing import Any
 
 from astro_backend_core import angular_separation, norm360
+from astro_backend_harmonic import calculate_harmonic
 from astro_backend_progressions import calculate_progressions, _calc_lunation
 from astro_backend_solar_arc import calculate_solar_arc
 
@@ -33,6 +34,16 @@ ASPECTS = [
     {"id": "square", "name": "刑相", "angle": 90, "orb": 6},
     {"id": "sextile", "name": "六合", "angle": 60, "orb": 6},
 ]
+
+HARMONIC_REQUEST = {
+    "mode": "harmonic",
+    "birth": NAtAL_BIRTH,
+    "harmonic_order": 4,
+    "house_system": "whole_sign",
+    "zodiac": "tropical",
+    "node_mode": "true_node",
+    "aspects": ASPECTS,
+}
 
 
 class TestLunation:
@@ -277,3 +288,38 @@ class TestSolarArc:
         warnings: list[str] = []
         result = calculate_solar_arc(request, warnings)
         assert isinstance(result["arc_value"], float)
+
+    def test_patterns_disabled_by_default(self) -> None:
+        request = {
+            "mode": "solar_arc",
+            "birth": NAtAL_BIRTH,
+            "reference": REFERENCE,
+            "house_system": "whole_sign",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": ASPECTS,
+        }
+        warnings: list[str] = []
+        result = calculate_solar_arc(request, warnings)
+        assert result["patterns"] == []
+
+    def test_duplicate_theme_warning_removed(self) -> None:
+        request = {
+            "mode": "solar_arc",
+            "birth": NAtAL_BIRTH,
+            "reference": REFERENCE,
+            "house_system": "whole_sign",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": ASPECTS,
+        }
+        warnings: list[str] = []
+        result = calculate_solar_arc(request, warnings)
+        assert "duplicate_theme_warning" not in result
+
+
+class TestHarmonic:
+    def test_houses_marked_experimental(self) -> None:
+        warnings: list[str] = []
+        result = calculate_harmonic(HARMONIC_REQUEST, warnings)
+        assert result["houses_experimental"] is True

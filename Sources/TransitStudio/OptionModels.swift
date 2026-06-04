@@ -3,6 +3,7 @@ import Foundation
 enum PracticeMode: String, CaseIterable, Identifiable {
     case modern
     case classical
+    case vedic
 
     var id: String { rawValue }
 
@@ -12,6 +13,8 @@ enum PracticeMode: String, CaseIterable, Identifiable {
             return "现代"
         case .classical:
             return "古典"
+        case .vedic:
+            return "吠陀"
         }
     }
 }

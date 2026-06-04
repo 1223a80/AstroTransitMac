@@ -128,6 +128,12 @@ struct ContentView: View {
     @State var modernAIAnalysis = ""
     @State var modernSelectedTab = "planets"
 
+    // Vedic astrology state
+    @State var vedicResult: VedicResult?
+    @State var vedicAyanamsha = "lahiri"
+    @State var vedicSelectedTab = "overview"
+    @State var vedicFullMode = false
+
     static let houseSystemOptions = [
         PickerOption(id: "whole_sign", title: "Whole Sign"),
         PickerOption(id: "placidus", title: "Placidus"),
@@ -139,7 +145,18 @@ struct ContentView: View {
 
     static let zodiacOptions = [
         PickerOption(id: "tropical", title: "Tropical"),
-        PickerOption(id: "sidereal_lahiri", title: "Lahiri Sidereal")
+        PickerOption(id: "sidereal_lahiri", title: "Lahiri Sidereal"),
+        PickerOption(id: "sidereal_raman", title: "Raman Sidereal"),
+        PickerOption(id: "sidereal_krishnamurti", title: "Krishnamurti Sidereal"),
+        PickerOption(id: "sidereal_yukteshwar", title: "Yukteshwar Sidereal"),
+    ]
+
+    static let ayanamshaOptions = [
+        PickerOption(id: "lahiri", title: "Lahiri"),
+        PickerOption(id: "raman", title: "Raman"),
+        PickerOption(id: "krishnamurti", title: "Krishnamurti"),
+        PickerOption(id: "yukteshwar", title: "Yukteshwar"),
+        PickerOption(id: "suryasiddhanta", title: "Surya Siddhanta"),
     ]
 
     static let boundsOptions = [

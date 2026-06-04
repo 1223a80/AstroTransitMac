@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
+from astro_backend_api import calculate_classical
 from astro_backend_classical import (
     add_years_approx,
     angular_separation,
@@ -594,3 +595,62 @@ class TestPlanetNotes:
             for p in planets
         )
         assert any_with_notes, "expected at least one planet to have non-empty notes"
+
+
+class TestClassicalOutputAuditFixes:
+    def test_birthday_transition_ignores_same_day_alignment(
+        self, sample_classical_request: dict[str, object]
+    ) -> None:
+        warnings: list[str] = []
+        result = calculate_classical(sample_classical_request, warnings)
+        assert result["birthday_transition"] is None
+
+    def test_birthday_transition_detects_prior_calendar_day_solar_return(
+        self, sample_classical_request: dict[str, object]
+    ) -> None:
+        request = {
+            **sample_classical_request,
+            "birth": {
+                **sample_classical_request["birth"],
+                "moment": {
+                    **sample_classical_request["birth"]["moment"],
+                    "hour": 0,
+                    "minute": 0,
+                },
+            },
+            "reference": {
+                **sample_classical_request["reference"],
+                "month": 1,
+                "day": 1,
+                "hour": 12,
+                "minute": 0,
+            },
+        }
+        warnings: list[str] = []
+        result = calculate_classical(request, warnings)
+        transition = result["birthday_transition"]
+        assert transition is not None
+        assert transition["detected"] is True
+        assert transition["current_solar_return"].startswith("2025-12-31")
+
+    def test_timeline_includes_multiple_return_snapshots_per_body(
+        self, sample_classical_request: dict[str, object]
+    ) -> None:
+        warnings: list[str] = []
+        result = calculate_classical(sample_classical_request, warnings)
+        return_titles = [
+            item["title"]
+            for item in result["timing"]["timeline"]
+            if "Return" in item["title"]
+        ]
+        assert any(title.startswith("Current Saturn Return") for title in return_titles)
+        assert any(title.startswith("Previous Saturn Return") for title in return_titles)
+        assert any(title.startswith("Next Solar Return") for title in return_titles)
+
+    def test_invalid_return_mode_falls_back_to_full(
+        self, sample_classical_request: dict[str, object]
+    ) -> None:
+        request = {**sample_classical_request, "returnMode": "bogus"}
+        warnings: list[str] = []
+        result = calculate_classical(request, warnings)
+        assert len(result["planetary_returns"]) == 7

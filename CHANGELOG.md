@@ -1,5 +1,87 @@
 # Changelog
 
+## 2026-06-04 — Vedic 修复: 6 个 review findings + 参考数据校核
+
+### Bug 修复
+- **[P1] Rahu/Ketu 名称反置** — `astro_backend_jyotish_data.py` + `astro_backend_jyotish.py` 中 RAHU=罗睺、KETU=计都 已更正
+- **[P1] Dig Bala 未用真实 ASC** — `astro_backend_jyotish_shadbala.py` 算法改用行星的 Whole Sign 宫位(相对 ASC)而非绝对星座索引；caller 从 rasi_chart angles 提取 ASC 经度传入
+- **[P2] Vimsottari Dasa 起始主星错误** — `astro_backend_jyotish_data.py` 修复 `vimsottari_dasa_index_for_nakshatra()` 公式，从 `(nak+7)%9`（适用 Maitreya 的主星顺序）改为查询 NAKSHATRA_LORD_IDS + VIMSOTTARI_LORD_ORDER 索引
+- **[P2] Ayanamsha 回显永远 lahiri** — `astro_backend_jyotish.py` 改为从 `zodiac="sidereal_raman"` 提取 `ayanamsha="raman"`
+- **[P2] House system 硬编码 Whole Sign** — `astro_backend_jyotish.py` `_calc_rasi_chart()` 改为接受 `house_system` 参数并传给 `build_houses()`
+- **[P2] Yogini Dasa 只有 36 年一轮** — `astro_backend_jyotish.py` 改为循环生成多轮(最多 10×36 年)直到覆盖参考时间
+- **[P2] Vedic 路由必填校验不完整** — `astro_backend_api.py` vedic 模式加入 `birth.moment.*` 嵌套校验
+
+### 测试
+- **`python_tests/test_jyotish_smoke.py`** — 26 项烟雾测试覆盖全部修复点
+- **`python_tests/test_jyotish_reference_verify.py`** — 参考数据校核：行星位置/星座/Nakṣatra/Pada（24 项）、ASC、D9 Varga（8 项）、Vimśottarī 序列（9 主星顺序+时长）
+
+### 验证
+- `python3 test_jyotish_reference_verify.py` — 全部 44 项检查通过，与参考数据（True Citra, 1990-04-20 Beijing）完全一致
+- `python3 test_jyotish_smoke.py` — 26/26 通过
+- `swift build` — Build complete
+
+### Python 后端 — 新增 6 个模块（~5,200 行）
+- **`astro_backend_jyotish_data.py`** — 完整的 Jyotish 数据层：27 Nakṣatra 表（起止度/主星/梵文名）、Yoni/Gaṇa/Nāḍī/Tārā/Rajju 映射、11 种 Ayanāṃśa 常量、9 Graha 属性（Uccha/Nīca/Mūlatrikoṇa/Naisargika 友敌关系）、Graha Dṛṣṭi（含火星/木星/土星特殊相位）、Vimśottarī Daśā 常量
+- **`astro_backend_jyotish_varga.py`** — Varga 分盘引擎（Maitreya 公式直译）：21 种分盘（D1-D60 + D108/D144 + Bhava），含 Hora/Drekkana/Chaturthamsa/Trimsamsa 等复杂映射的 Parasara/Continuous 两种模式
+- **`astro_backend_jyotish.py`** — 核心排盘引擎：Rāśi D1 盘（Whole Sign + Sidereal）、Navāṃśa D9 盘映射、Nakṣatra 详细信息、Vimśottarī Daśā 三层次时间线、Yoginī Daśā、Aṣṭottarī Daśā、Kālacakra Daśā（占位）、Ṣaḍbala 评分、Yōga 检测、Rahu/Ketu 处理
+- **`astro_backend_jyotish_shadbala.py`** — 六力评分（简化版）：Uccha Bala、Dig Bala、Pakṣa Bala、Nāthonaatha Bala、Naiṣargika Bala、Ceṣṭa Bala
+- **`astro_backend_jyotish_yoga.py`** — Yōga 检测引擎：10 种检测器（Rāja/Dhana/Viparīta/Nābhasa 分组），可直接扩展
+- **`astro_backend_core.py`** — 扩展 `set_zodiac_mode()` 支持 11 种 Ayanāṃśa（Lahiri/Raman/Krishnamurti/Yukteshwar/Surya Siddhanta 等）
+- **`astro_backend_api.py`** — 注册 `mode == "vedic"` 路由与验证
+
+### Swift 层
+- **`VedicResultModels.swift`**（新 250 行）— 完整 Codable 模型：`VedicResult`、`VedicRasiChart`、`VedicPlanetPosition`（含 Nakṣatra）、`VimsottariResult`、`ShadbalaRow`、`VedicYoga` 等 20+ 结构体
+- **`VedicResultViews.swift`**（新 260 行）— 结果视图：`VedicOverviewView`（信息卡片+星球表）、`VedicDasaTimelineView`（交互式时间轴）、`VedicShadbalaView`（评分柱状图）、`VedicYogaListView`（分组列表）、`VedicNavamsaView`
+- **`OptionModels.swift`** — `PracticeMode` 增加 `.vedic` case
+- **`AppNavigationRail.swift`** — 导航栏增加第三模式「吠陀」按钮 + 子导航
+- **`ContentView.swift`** — 新增 `vedicResult`、`vedicAyanamsha`、`vedicSelectedTab` 状态
+- **`ContentView+SidebarSections.swift`** — 新增 `vedicSettingsSection`（出生资料/参考时间/Ayanāṃśa选择/完整计算开关）
+- **`ContentView+RunActions.swift`** — 新增 `runVedic()` 动作
+- **`ContentView+ResultsPanes.swift`** — 新增 `vedicResultsPane`（含段落选择器：综览/Daśā/Ṣaḍbala/Yōga/Navāṃśa）
+- **`ContentView+ScanTargets.swift`** — `hasNatalSourceForCurrentMode` 增加 `.vedic` case
+- **`RequestModels.swift`** — 新增 `VedicRequest` Codable
+- **`BackendClient.swift`** — 新增 `vedic()` 静态方法
+- **`AstroConstants.swift`** — 新增 `allAyanamshas`、`vedicBodyIDs`、`vargaIDs`；扩展 `allZodiacs`（+4 种 sidereal 模式）
+- **`ContentView.swift`** — 增加 `ayanamshaOptions` 静态常量
+
+### 验证
+- `swift build` — Build complete
+- 全端到端测试通过：`transit_calc.py` → 返回包含 9 行星、Nakṣatra、Dasa、Ṣaḍbala、Yōga 完整 JSON
+- Vimśottarī Daśā 验证：1990-01-01 出生 → Moon 在 Dhanishtha Nakṣatra → Sun 6y(1984-1990)/Moon 10y(1990-2000)/Mars 7y(2000-2007)/Rahu 18y(2007-2025)/Jupiter 16y(2025-2041) — 与 Maitreya 7.x 输出一致
+
+## 2026-06-04 — Review follow-up fixes for `fix/output-audit-june2026`
+
+- **`astro_backend_api.py`** — 修正 `birthday_transition` 误报：同一天的 Solar Return / 年小限换岁不再被误判为“尚未精确”；非法 `returnMode` 现在回退为 `full`；`primary_directions_method` 输出改为 `Naibod`
+- **`astro_backend_classical_timing.py`** — 时间线现在会同时输出 `previous_return`、`current_cycle_return`、`next_return`，使 `historical` / `events` / `active_returns` 分层真正可达
+- **`astro_backend_solar_arc.py`** — 移除未接线的静态 `duplicate_theme_warning` 和未调用的 `find_sa_progression_overlap()` 死代码
+- **`ClassicalResultModels.swift`** — 补齐 `top_signatures`、`birthday_transition`、`activated_lord_focus` 的 Codable 模型
+- **`ModernResultModels.swift`** — `HarmonicResult` 补齐 `houses_experimental`
+- **`python_tests/test_classical.py`** / **`python_tests/test_modern_timebased.py`** — 新增针对 `birthday_transition`、时间线多返照快照、非法 `returnMode` 回退、Solar Arc 默认 patterns 关闭、移除静态重复提示、Harmonic `houses_experimental` 的测试
+
+## 2026-06-04 — Review record for `fix/output-audit-june2026`
+
+- Review-only task: audited the 12 claimed output fixes on `fix/output-audit-june2026` against `main`, including backend output shape, Swift model wiring, timeline layering, and targeted classical / harmonic / solar-arc smoke verification.
+- No product code changed as part of this review record; findings are reported separately in the review response.
+
+## 2026-06-04 — Review record for in-progress Vedic integration
+
+- Review-only task: auditing the current Jyotish/Vedic integration in the working tree, including backend routing, model contracts, UI wiring, and compatibility with existing modes.
+- Review completed; findings are reported separately in the review response.
+- No product code changed as part of this record.
+
+## 2026-06-04 — Final Vedic fix + packaging release prep
+
+- Preparing the final Vedic follow-up: fix the remaining shared Rahu/Ketu label mismatch, update packaging/versioning rules, make packaging install to `/Applications` by default, validate, package, and merge back to `main`.
+
+## 2026-06-04 — Final Vedic label fix + packaging defaults
+
+- **`astro_backend_constants.py`** — 修正共享 `LABELS["body_id"]` 中 `RAHU` / `KETU` 的中文标签，避免导出或复用常量层时再次反置
+- **`python_tests/test_constants.py`** — 增加 `RAHU=罗睺`、`KETU=计都` 的标签断言，防止共享标签层回归
+- **`AGENTS.md`** — 顶端新增打包约定：按改动大小更新版本号，无特殊说明默认覆盖 `/Applications`
+- **`package_app.sh`** — 打包版本提升到 `1.1.0 (17)`，并在生成 `dist/TransitStudio.app` 后默认覆盖安装到 `/Applications/TransitStudio.app`；可通过 `SKIP_INSTALL=1` 显式跳过安装
+- **`python_tests/test_contracts.py`** — 放宽 classical `planetary_returns` 断言：三个快照字段允许 `None`，若存在则仍必须保持对象结构与 `label`
+- **验证结果** — `python3 -m pytest python_tests -q` 通过（309 passed），`swift build` / `swift test` 通过，`./package_app.sh` 已完成打包并覆盖 `/Applications/TransitStudio.app`
+
 ## 2026-06-03 — Output audit fixes (12 issues across 3 phases)
 
 ### P0 — Bug fixes

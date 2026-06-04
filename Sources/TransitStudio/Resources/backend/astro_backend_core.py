@@ -169,10 +169,38 @@ def moment_to_jd(moment: dict[str, Any]) -> tuple[float, str]:
 
 
 def set_zodiac_mode(zodiac: str) -> bool:
-    sidereal = zodiac == "sidereal_lahiri"
-    if sidereal:
+    """Configure sidereal mode for Swiss Ephemeris.
+
+    Supports:
+      - "tropical" / "" → tropical mode (False returned)
+      - "sidereal_lahiri" (legacy), "sidereal_raman", "sidereal_krishnamurti",
+        "sidereal_yukteshwar", plus any key from AYANAMSHA_MAP.
+      - Plain ayanamsha names ("lahiri", "raman", etc.) also accepted.
+    Returns True if any sidereal mode is active, False for tropical.
+    """
+    if not zodiac or zodiac == "tropical":
+        swe.set_sid_mode(swe.SIDM_FAGAN_BRADLEY)  # reset to default
+        return False
+
+    # Strip "sidereal_" prefix if present
+    key = zodiac.lower().replace("sidereal_", "")
+
+    # Import ayanamsha map (lazy to avoid circular imports)
+    try:
+        from astro_backend_jyotish_data import AYANAMSHA_MAP
+        sid_code = AYANAMSHA_MAP.get(key)
+        if sid_code is not None:
+            swe.set_sid_mode(sid_code)
+            return True
+    except ImportError:
+        pass
+
+    # Fallback: only "sidereal_lahiri" recognized without the data module
+    if key == "lahiri":
         swe.set_sid_mode(swe.SIDM_LAHIRI)
-    return sidereal
+        return True
+
+    return False
 
 
 def public_position(row: dict[str, Any]) -> dict[str, Any]:

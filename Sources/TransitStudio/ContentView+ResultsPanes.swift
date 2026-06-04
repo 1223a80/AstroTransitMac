@@ -43,6 +43,7 @@ extension ContentView {
         switch mode {
         case .settings:
             if practiceMode == .classical { return "保存本命盘并古典排盘" }
+            if practiceMode == .vedic { return "计算吠陀排盘" }
             switch modernSubMode {
             case .natal: return "保存本命盘并现代排盘"
             case .synastry: return "计算合盘"
@@ -71,6 +72,9 @@ extension ContentView {
         switch mode {
         case .settings:
             if practiceMode == .classical {
+                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+            }
+            if practiceMode == .vedic {
                 return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
             }
             switch modernSubMode {
@@ -114,6 +118,7 @@ extension ContentView {
         switch mode {
         case .settings:
             if practiceMode == .classical { return AnyView(classicalResultsPane) }
+            if practiceMode == .vedic { return AnyView(vedicResultsPane) }
             switch modernSubMode {
             case .natal: return AnyView(modernNatalResultsPane)
             case .synastry: return AnyView(synastryResultsPane)
@@ -783,6 +788,74 @@ extension ContentView {
                     title: "等待计算",
                     systemImage: "clock.arrow.circlepath",
                     description: "点击左侧「计算生时矫正」按钮开始计算。"
+                )
+            }
+        }
+    }
+
+    // MARK: - Vedic Results Pane
+
+    var vedicResultsPane: some View {
+        Group {
+            if isRunning {
+                EmptyStateView(
+                    title: "吠陀计算中",
+                    systemImage: "hourglass",
+                    description: calculationProgressText.isEmpty ? "正在调用后端计算。" : calculationProgressText
+                )
+            } else if let result = vedicResult {
+                VStack(alignment: .leading, spacing: 10) {
+                    Picker("视图", selection: $vedicSelectedTab) {
+                        Text("综览").tag("overview")
+                        Text("Daśā").tag("dasa")
+                        Text("Ṣaḍbala").tag("shadbala")
+                        Text("Yōga").tag("yoga")
+                        Text("Navāṃśa").tag("navamsa")
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal)
+
+                    Group {
+                        switch vedicSelectedTab {
+                        case "overview":
+                            VedicOverviewView(result: result)
+                        case "dasa":
+                            if let dasa = result.vimshottari {
+                                VedicDasaTimelineView(dasa: dasa)
+                            } else {
+                                Text("无 Daśā 数据").foregroundStyle(.secondary)
+                            }
+                        case "shadbala":
+                            if let shadbala = result.shadbala {
+                                VedicShadbalaView(shadbala: shadbala)
+                            } else {
+                                Text("开启完整计算以获得 Ṣaḍbala 评分").foregroundStyle(.secondary)
+                            }
+                        case "yoga":
+                            if let yogas = result.yogas, !yogas.isEmpty {
+                                VedicYogaListView(yogas: yogas)
+                            } else {
+                                Text("未检测到 Yōga").foregroundStyle(.secondary)
+                            }
+                        case "navamsa":
+                            if let navamsa = result.navamsa {
+                                VedicNavamsaView(navamsa: navamsa)
+                            } else {
+                                Text("开启完整计算以获得 Navāṃśa 数据").foregroundStyle(.secondary)
+                            }
+                        default:
+                            VedicOverviewView(result: result)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.horizontal, 14)
+                }
+                .padding(.vertical, 8)
+            } else {
+                EmptyStateView(
+                    title: "等待吠陀排盘",
+                    systemImage: "sun.max.circle",
+                    description: "填写出生设置后开始排盘。"
                 )
             }
         }

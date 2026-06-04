@@ -183,6 +183,8 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
 
     # Filter returns by return_mode
     return_mode = request.get("returnMode", "full")
+    if return_mode not in {"full", "compact", "relationship", "study"}:
+        return_mode = "full"
     if return_mode != "full":
         # Always include Solar + Lunar
         keep_ids = {"SUN", "MOON"}
@@ -301,13 +303,14 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
         prof_start_local = profection.get("start_local", "")
         prof_end_local = profection.get("end_local", "")
         if current_sr and next_sr:
-            # Profection has advanced to new age but SR hasn't perfected yet
-            # Check if current SR exact date is before profection start
+            # A transition window exists when profection has turned over to the
+            # new age, but this year's exact Solar Return still falls on a
+            # later calendar date.
             try:
                 from datetime import datetime
                 sr_exact = datetime.strptime(current_sr["exact_local"], "%Y-%m-%d %H:%M")
                 prof_start = datetime.strptime(prof_start_local, "%Y-%m-%d %H:%M")
-                if sr_exact < prof_start:
+                if sr_exact.date() < prof_start.date():
                     birthday_transition = {
                         "detected": True,
                         "note": "年小限已换岁，但 Solar Return 尚未精确。此为生日过渡窗口。",
@@ -423,7 +426,7 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
             "combust_orb_deg": 8.5,
             "under_beams_orb_deg": 15.0,
             "naibod_rate": 0.9856,
-            "primary_directions_method": "Naibod (Platicus)",
+            "primary_directions_method": "Naibod",
             "modern_planets_excluded_from_scoring": True,
             "scoring_includes_conditioning": True,
             "sign_based_receptions_downgraded": True,
@@ -437,6 +440,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
     mode = request.get("mode", "")
     required_by_mode: dict[str, list[str]] = {
         "classical": ["birth", "reference"],
+        "vedic": ["birth"],
         "horary": ["chart"],
         "scan": ["start", "end"],
         "rectify": ["birth_date", "center_time"],
@@ -476,7 +480,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             for f in ("latitude", "longitude"):
                 if f not in p:
                     missing.append(f"{side}.{f}")
-    if mode in ("progression", "solar_arc", "harmonic"):
+    if mode in ("progression", "solar_arc", "harmonic", "vedic"):
         if "birth" in request:
             b = request["birth"]
             if "moment" not in b:
@@ -522,6 +526,9 @@ def main() -> None:
             response = calculate_horary(request, warnings)
         elif mode == "classical":
             response = calculate_classical(request, warnings)
+        elif mode == "vedic":
+            from astro_backend_jyotish import calculate_vedic
+            response = calculate_vedic(request, warnings)
         elif mode == "rectify":
             from astro_backend_rectify import compute_window
             response = compute_window(request)

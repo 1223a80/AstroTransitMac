@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import ClassVar
 
 ALL_MODES: list[str] = ["transit", "classical", "horary", "scan", "rectify",
-                        "synastry", "composite", "davison", "progression", "solar_arc", "harmonic"]
+                        "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
+                        "vedic"]
 
 ALL_NODE_MODES: list[str] = ["true_node", "mean_node"]
 
@@ -19,7 +20,9 @@ ALL_HOUSE_SYSTEMS: list[str] = [
     "whole_sign", "placidus", "porphyry", "regiomontanus", "alcabitius", "equal",
 ]
 
-ALL_ZODIACS: list[str] = ["tropical", "sidereal_lahiri"]
+ALL_ZODIACS: list[str] = ["tropical", "sidereal_lahiri", "sidereal_raman", "sidereal_krishnamurti",
+                        "sidereal_yukteshwar", "sidereal_citra", "sidereal_revati",
+                        "sidereal_pushya_paksha", "sidereal_suryasiddhanta"]
 
 ALL_BOUNDS_SYSTEMS: list[str] = ["egyptian", "ptolemaic"]
 
@@ -35,6 +38,7 @@ ALL_BODY_IDS: list[str] = [
     "CHIRON", "PHOLUS", "CERES", "PALLAS", "JUNO", "VESTA",
     "MEAN_NODE", "TRUE_NODE", "SOUTH_MEAN_NODE", "SOUTH_TRUE_NODE",
     "MEAN_LILITH", "OSCU_LILITH",
+    "RAHU", "KETU",
 ]
 
 CLASSICAL_BODY_IDS: list[str] = [
@@ -44,6 +48,16 @@ CLASSICAL_BODY_IDS: list[str] = [
 ASTEROID_BODY_IDS: set[str] = {
     "CHIRON", "PHOLUS", "CERES", "PALLAS", "JUNO", "VESTA",
 }
+
+VEDIC_BODY_IDS: list[str] = [
+    "SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN",
+    "RAHU", "KETU",
+]
+
+ALL_VARGAS: list[str] = [
+    "D1", "D2", "D3", "D4", "D6", "D7", "D8", "D9", "D10",
+    "D12", "D16", "D20", "D24", "D27", "D30", "D40", "D45", "D60",
+]
 
 ALL_ASPECT_IDS: list[str] = [
     "conjunction", "opposition", "trine", "square", "sextile",
@@ -62,6 +76,7 @@ LABELS: ClassVar[dict[str, dict[str, str]]] = {
         "MEAN_NODE": "北交点", "TRUE_NODE": "北交点（真）",
         "SOUTH_MEAN_NODE": "南交点", "SOUTH_TRUE_NODE": "南交点（真）",
         "MEAN_LILITH": "黑月（均）", "OSCU_LILITH": "黑月（瞬）",
+        "RAHU": "罗睺", "KETU": "计都",
     },
     "aspect_id": {
         "conjunction": "合相", "opposition": "冲相", "trine": "拱相",

@@ -647,11 +647,13 @@ def timing_timeline(
         return "events"
 
     for row in returns:
-        snap = row.get("current_cycle_return") or row.get("next_return") or row.get("previous_return")
-        if snap and snap.get("exact_local"):
-            eid = f"return-{row['body_id'].lower()}"
+        eid = f"return-{row['body_id'].lower()}"
+        for field_name in ("previous_return", "current_cycle_return", "next_return"):
+            snap = row.get(field_name)
+            if not snap or not snap.get("exact_local"):
+                continue
             rows.append({
-                "id": eid,
+                "id": f"{eid}-{field_name}",
                 "technique": _technique(eid),
                 "title": _return_timeline_title(row, snap),
                 "start_local": snap["exact_local"],

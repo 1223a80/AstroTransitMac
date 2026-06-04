@@ -41,3 +41,57 @@ python3 -m pytest python_tests/ -x
 rm -rf .build && swift build && swift test
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-request.json | python3 -m json.tool | head -30
 ```
+
+## 2026-06-04 — Output Audit Branch Review
+
+- Task: review `fix/output-audit-june2026` against `main` and verify whether the reported 12 fixes are fully implemented and correctly wired through backend, Swift models, and presentation/export layers.
+- Focus: contract drift, partially wired output fields, timeline/return behavior, and validation gaps around new classical / harmonic / solar-arc outputs.
+- Method: inspect `git diff main...HEAD`, trace new fields across Python output and Swift consumption, and run only minimal targeted smoke checks for classical / harmonic / solar-arc behavior.
+- Status: completed
+
+## 2026-06-04 — Review Follow-up Fixes
+
+- Task: implement the 6 confirmed review findings on `fix/output-audit-june2026`.
+- Changes:
+  - Fix `birthday_transition` to compare calendar dates rather than same-day datetimes.
+  - Emit timeline rows for `previous_return` / `current_cycle_return` / `next_return` instead of a single `or`-selected snapshot.
+  - Remove Solar Arc's static duplicate-theme warning and the unused overlap helper.
+  - Make invalid `returnMode` values fall back to `full`.
+  - Add missing Swift Codable fields for classical summary outputs and Harmonic `houses_experimental`.
+  - Rename `primary_directions_method` output to `Naibod`.
+- Validation:
+  - `python3 -m pytest python_tests/test_classical.py python_tests/test_modern_timebased.py -q`
+  - `python3 -m pytest python_tests/ -q --ignore=python_tests/test_contracts.py`
+  - `swift build`
+  - `swift test --disable-sandbox`
+  - Targeted smoke checks for classical timeline / birthday transition and Solar Arc / Harmonic outputs
+- Status: completed
+
+## 2026-06-04 — Vedic Integration Review
+
+- Task: review the in-progress Vedic/Jyotish integration in the working tree and identify bugs, regressions, contract mismatches, or validation gaps before merge.
+- Focus: Python backend routing/data correctness, Swift Codable/model wiring, UI state flow, and compatibility impact on existing classical/modern modes.
+- Method: inspect the current worktree diff and untracked Vedic files, trace request/response contracts end to end, and report findings with file/line references.
+- Status: completed
+
+## 2026-06-04 — Vedic Final Fixes + Packaging + Merge
+
+- Task: fix the final Rahu/Ketu label mismatch in shared constants, add the packaging/version rule to `AGENTS.md`, update packaging to bump version and overwrite `/Applications` by default, validate the touched areas, package the app, and merge the verified work back to `main`.
+- Planned changes:
+  - correct shared `LABELS["body_id"]` for `RAHU` / `KETU`
+  - add the requested packaging rule at the top of `AGENTS.md`
+  - bump packaged app version from `1.0.0` to `1.1.0` and build number from `16` to `17`
+  - make `package_app.sh` install `TransitStudio.app` into `/Applications` by default after building `dist/TransitStudio.app`
+  - add a regression assertion so the shared label table cannot drift again
+- Validation:
+  - `python3 -m pytest python_tests/test_jyotish_smoke.py python_tests/test_jyotish_reference_verify.py python_tests/test_constants.py -q`
+  - `swift build`
+  - `./package_app.sh`
+  - inspect packaged/installed app metadata and merge into `main` if validation passes
+- Validation completed:
+  - `python3 -m pytest python_tests -q` → 309 passed
+  - `swift build` → passed
+  - `swift test` → passed
+  - `./package_app.sh` → rebuilt `dist/TransitStudio.app` and updated `/Applications/TransitStudio.app`
+  - installed app metadata verified as `CFBundleShortVersionString=1.1.0`, `CFBundleVersion=17`
+- Status: completed

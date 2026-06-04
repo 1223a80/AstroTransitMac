@@ -21,6 +21,9 @@ struct ClassicalResult: Codable {
     let warnings: [String]
     let sectionErrors: [String: String]?
     let calculationAssumptions: CalculationAssumptions?
+    let topSignatures: [TopSignature]?
+    let birthdayTransition: BirthdayTransition?
+    let activatedLordFocus: ActivatedLordFocus?
 
     enum CodingKeys: String, CodingKey {
         case meta
@@ -43,6 +46,58 @@ struct ClassicalResult: Codable {
         case warnings
         case sectionErrors = "section_errors"
         case calculationAssumptions = "calculation_assumptions"
+        case topSignatures = "top_signatures"
+        case birthdayTransition = "birthday_transition"
+        case activatedLordFocus = "activated_lord_focus"
+    }
+}
+
+struct TopSignature: Codable, Identifiable {
+    let type: String
+    let description: String
+    let orb: Double?
+    let strength: String?
+
+    var id: String { "\(type):\(description)" }
+}
+
+struct BirthdayTransition: Codable {
+    let detected: Bool
+    let note: String
+    let profectionAge: Int?
+    let profectionStart: String?
+    let currentSolarReturn: String?
+    let nextSolarReturn: String?
+
+    enum CodingKeys: String, CodingKey {
+        case detected
+        case note
+        case profectionAge = "profection_age"
+        case profectionStart = "profection_start"
+        case currentSolarReturn = "current_solar_return"
+        case nextSolarReturn = "next_solar_return"
+    }
+}
+
+struct ActivatedLordFocus: Codable {
+    let lordID: String
+    let lordName: String
+    let natalCondition: String?
+    let natalScore: Int?
+    let natalHouse: Int?
+    let returnTitle: String?
+    let returnExactLocal: String?
+    let keywords: String?
+
+    enum CodingKeys: String, CodingKey {
+        case lordID = "lord_id"
+        case lordName = "lord_name"
+        case natalCondition = "natal_condition"
+        case natalScore = "natal_score"
+        case natalHouse = "natal_house"
+        case returnTitle = "return_title"
+        case returnExactLocal = "return_exact_local"
+        case keywords
     }
 }
 

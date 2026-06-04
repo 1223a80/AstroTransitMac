@@ -169,34 +169,4 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
         "patterns": patterns,
         "warnings": warnings,
         "section_errors": section_errors if section_errors else None,
-        "duplicate_theme_warning": (
-            "Solar Arc 与 Secondary Progression 可能命中相似的 natal 目标。"
-            "若两者同时激活同一本命点且容许度接近，请勿重复加权。"
-        ),
     }
-
-def find_sa_progression_overlap(
-    sa_aspects: list[dict[str, Any]],
-    progression_aspects: list[dict[str, Any]],
-    orb_threshold: float = 1.0,
-) -> list[dict[str, str]]:
-    """Detect overlapping themes between Solar Arc and Secondary Progression."""
-    overlaps: list[dict[str, str]] = []
-    sa_by_target: dict[str, list[dict[str, Any]]] = {}
-    for a in sa_aspects:
-        target = a.get("natal_body_name", "")
-        sa_by_target.setdefault(target, []).append(a)
-    for a in progression_aspects:
-        target = a.get("natal_body_name", "")
-        if target in sa_by_target:
-            for sa_a in sa_by_target[target]:
-                if abs(sa_a.get("orb", 99) - a.get("orb", 99)) <= orb_threshold:
-                    overlaps.append({
-                        "target": target,
-                        "sa_aspect": f"{sa_a.get('transit_body_name', '')} {sa_a.get('aspect_name', '')} {sa_a.get('natal_body_name', '')}",
-                        "progression_aspect": f"{a.get('transit_body_name', '')} {a.get('aspect_name', '')} {a.get('natal_body_name', '')}",
-                        "sa_orb": str(round(sa_a.get("orb", 0), 2)),
-                        "progression_orb": str(round(a.get("orb", 0), 2)),
-                        "note": "同源信号，请勿重复加权",
-                    })
-    return overlaps

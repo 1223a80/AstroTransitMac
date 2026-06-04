@@ -7,6 +7,8 @@ extension ContentView {
         case .settings:
             if practiceMode == .classical {
                 await runClassical()
+            } else if practiceMode == .vedic {
+                await runVedic()
             } else {
                 switch modernSubMode {
                 case .natal: await runModernNatal()
@@ -542,6 +544,45 @@ extension ContentView {
             rectifyLevel3Response = response
             rectifyActiveLevel = 3
             rectifyLevel3ResponseID += 1
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    // MARK: - Vedic Calculation
+
+    @MainActor
+    func runVedic() async {
+        guard let latitude = parseDouble(birthLatitude), let longitude = parseDouble(birthLongitude) else {
+            errorMessage = "经纬度需要是数字。"
+            return
+        }
+
+        isRunning = true
+        errorMessage = nil
+        defer { isRunning = false }
+
+        do {
+            let birth = BirthSettings(
+                moment: makeMoment(from: natalDate),
+                latitude: latitude,
+                longitude: longitude,
+                houseSystem: selectedHouseSystem,
+                zodiac: "sidereal_\(vedicAyanamsha)",
+                boundsSystem: selectedBoundsSystem,
+                triplicitySystem: selectedTriplicitySystem
+            )
+            let request = VedicRequest(
+                mode: "vedic",
+                birth: birth,
+                reference: makeMoment(from: classicalReferenceDate),
+                full: vedicFullMode,
+                ephemerisPath: normalizedEphemerisPath,
+                noAsteroids: noAsteroids,
+                requireEphemeris: requireEphemeris
+            )
+            let result = try await BackendClient.vedic(request: request, pythonPath: pythonPath)
+            vedicResult = result
         } catch {
             errorMessage = error.localizedDescription
         }

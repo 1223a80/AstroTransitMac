@@ -28,6 +28,8 @@ extension ContentView {
         case .settings:
             if practiceMode == .classical {
                 return AnyView(classicalSettingsSection)
+            } else if practiceMode == .vedic {
+                return AnyView(vedicSettingsSection)
             }
             return AnyView(modernSettingsSidebar)
         case .horary:
@@ -322,6 +324,31 @@ extension ContentView {
                 }
             }
             collapsible("古典参数") { classicalParameterSection }
+        }
+    }
+
+    var vedicSettingsSection: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            collapsible("本命盘资料") { natalProfileSection }
+            collapsible("本命盘") { natalSettingsSection }
+            collapsible("参考时间") {
+                VStack(alignment: .leading, spacing: 10) {
+                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+                        GridRow {
+                            Text("参考").foregroundStyle(.secondary)
+                            DateTimeInput(date: $classicalReferenceDate)
+                        }
+                    }
+                    Text("用于 Daśā 当前期判断。").font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            collapsible("吠陀参数") {
+                VStack(alignment: .leading, spacing: 10) {
+                    pickerRow("Ayanāṃśa", selection: $vedicAyanamsha, options: Self.ayanamshaOptions)
+                    Toggle("完整计算", isOn: $vedicFullMode)
+                        .font(.caption)
+                }
+            }
         }
     }
 
