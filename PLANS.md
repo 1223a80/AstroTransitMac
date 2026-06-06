@@ -183,4 +183,8 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
   - `git status --short --branch`
   - `git log origin/main..HEAD --oneline`
   - 人工审查新增文档是否和当前项目约束一致
-- Status: in progress
+- Validation completed:
+  - 文档修改已覆盖 `AGENTS.md`、`README.md`、`docs/README.md`、`docs/git-workflow.md`
+  - 已将遗留的“提交并覆盖安装”条目标记为 `superseded`
+  - 本地提交已按任务拆分完成，待统一推送到 GitHub
+- Status: completed
