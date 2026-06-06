@@ -163,6 +163,10 @@ def calc_shadbala(
     """Calculate Shadbala (six-fold strength) for all 7 visible planets.
 
     Returns dict with each planet's 6 balas + total + percentage.
+
+    This implementation is still incomplete because full Sthana/Kala/Drik
+    subcomponents are not yet modeled. The numeric totals are exposed for
+    inspection, but minimum-requirement pass/fail judgments are suppressed.
     """
     result: dict[str, dict[str, Any]] = {}
 
@@ -216,8 +220,6 @@ def calc_shadbala(
 
         rupas = total / 60.0
         required_rupas = req / 60.0
-        meets = total >= req
-
         result[pid] = {
             "sthāna_bala": round(sb, 1),
             "dig_bala": round(db, 1),
@@ -229,16 +231,12 @@ def calc_shadbala(
             "shadbala_rupas": round(rupas, 2),
             "required": req,
             "required_rupas": round(required_rupas, 2),
-            "meets_required": meets,
+            "meets_required": None,
             "percent": round(pct, 1),
-            "display_summary": {
-                "total": round(total, 1),
-                "rupas": round(rupas, 2),
-                "required": req,
-                "required_rupas": round(required_rupas, 2),
-                "meets_required": meets,
-                "percent": round(pct, 1),
-            },
+            "is_complete": False,
+            "status": "incomplete",
+            "note": "Full Sthana/Dig/Kala/Cheshta/Naisargika/Drik implementation pending; no meets_required judgment is allowed.",
+            "display_summary": None,
         }
 
     return result

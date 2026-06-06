@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-06-04 — Vedic horoscope 输出硬伤修复
+
+- **`astro_backend_jyotish.py` / `astro_backend_api.py`** — 吠陀模式支持基于地点回退时区（中国坐标默认 `Asia/Shanghai`），统一按标准 UTC 偏移生成 `birth_local` / `birth_utc` / `timezone_label` / `utc_offset_text`，并在 D1 whole-sign 锚点校验失败时提前报错 `timezone or birth UTC conversion failed.`，停止派生输出
+- **`astro_backend_jyotish_panchanga.py`** — 修正 Karana 序列起点，避免把本应为 `Gara` 的结果算成 `Vanija`
+- **`astro_backend_jyotish_divisional.py`** — 修正 D1 分盘宫位映射与 Moon Chart 度数显示；Moon Chart / D1 分盘不再出现超过 30° 的星座内度数，D1 分盘宫位改为相对 varga ASC 计算
+- **`astro_backend_jyotish_data.py` / `astro_backend_jyotish_relationships.py`** — 按经典七曜修正天然敌友表，并将 Rahu/Ketu 从经典 Naisargika 表中剥离，避免错误混表
+- **`astro_backend_jyotish_shadbala.py`** — 将当前 Shadbala 输出明确标记为 `incomplete`，取消 `meets_required` / `display_summary` 的误导性“达标/未达标”判断
+- **`astro_backend_jyotish_yoga.py`** — 移除过度泛化的 `RajaYogaGeneric`，并把现有简化 yoga 输出统一标记为 `condition_only` / `needs_strength_check`
+- **`VedicResultModels.swift` / `MarkdownVedicExportBuilder.swift` / `VedicResultViews.swift`** — 同步新字段并修正导出/界面显示：补充出生 UTC、去掉裸数字星座索引展示、分盘/Moon Chart 改显示星座名、Shadbala 改显示“不完整”、Yoga 改显示条件性标记
+- **`python_tests/test_jyotish_smoke.py` / `python_tests/test_jyotish_focused.py`** — 新增 2004-08-09 Linyi / Asia-Shanghai 样例断言，覆盖 UTC 转换、D1 anchor、Panchanga、Vimshottari、Moon Chart 度数、时区默认回退与 Shadbala incomplete 契约
+
 ## 2026-06-04 — README 功能同步
 
 - **`README.md`** — 按当前代码事实重写产品概览，从“现代 + 古典”更新为“现代 + 古典 + Horary + 吠陀”

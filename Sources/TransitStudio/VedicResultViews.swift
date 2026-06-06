@@ -25,7 +25,7 @@ struct VedicOverviewView: View {
 
                 // Strongest planet
                 if let shadbala = result.shadbala {
-                    let sorted = shadbala.sorted { $0.value.percent > $1.value.percent }
+                    let sorted = shadbala.filter { $0.value.isComplete == true }.sorted { $0.value.percent > $1.value.percent }
                     if let best = sorted.first {
                         InfoCard(title: "最强 Graha", value: best.key, subtitle: "\(best.value.percent)% Ṣaḍbala")
                     }
@@ -36,6 +36,10 @@ struct VedicOverviewView: View {
             // Birth details
             GroupBox("出生信息") {
                 LabeledContent("日期", value: result.meta.birthLocal)
+                LabeledContent("UTC", value: result.meta.birthUtc)
+                if let timezone = result.meta.timezoneLabel {
+                    LabeledContent("时区", value: timezone)
+                }
                 LabeledContent("经纬度", value: "\(result.meta.latitude)° / \(result.meta.longitude)°")
                 LabeledContent("Ayanāṃśa", value: result.meta.ayanamsha)
             }
@@ -100,6 +104,15 @@ struct VedicDasaTimelineView: View {
                     Text(dasa.birthNakshatra).fontWeight(.semibold)
                 }
                 .padding(.horizontal)
+
+                if let lord = dasa.birthNakshatraLord, let balance = dasa.dashaBalance {
+                    HStack {
+                        Text("起始主运").font(.caption).foregroundStyle(.secondary)
+                        Text("\(lord) 余额 \(balance.years)Y\(balance.months)M\(balance.days)D")
+                            .fontWeight(.semibold)
+                    }
+                    .padding(.horizontal)
+                }
 
                 Divider()
 
@@ -208,6 +221,9 @@ struct ShadbalaRowView: View {
                     Text("Ceṣṭa \(Int(row.cheshtaBala))").font(.caption2).foregroundStyle(.secondary)
                     Text("Naiṣargika \(Int(row.naisargikaBala))").font(.caption2).foregroundStyle(.secondary)
                     Text("Total \(Int(row.shadbalaTotal))v / \(row.required)r").font(.caption2).foregroundStyle(.secondary)
+                    if row.isComplete == false {
+                        Text("Incomplete").font(.caption2).foregroundStyle(.orange)
+                    }
                 }
                 Spacer()
                 Text("\(row.shadbalaRupas, specifier: "%.1f") Rūpa")
@@ -229,6 +245,12 @@ struct VedicYogaListView: View {
                     HStack {
                         Text(yoga.name).fontWeight(.semibold)
                         TagView(yoga.group)
+                        if yoga.conditionOnly == true {
+                            TagView("condition only")
+                        }
+                        if yoga.needsStrengthCheck == true {
+                            TagView("needs check")
+                        }
                     }
                     Text(yoga.description ?? yoga.effect).font(.caption).foregroundStyle(.secondary)
                     Text(yoga.effect).font(.caption2).foregroundStyle(.tertiary)

@@ -176,8 +176,8 @@ def calc_compound_friendship(
 
 # ─── Compute All Relationships ───────────────────────────────────────
 
-_ALL_PLANETS = ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN",
-                "RAHU", "KETU"]
+_CLASSICAL_PLANETS = ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN"]
+_ALL_PLANETS = _CLASSICAL_PLANETS + ["RAHU", "KETU"]
 _EXTRA_BODIES = ["URANUS", "NEPTUNE", "PLUTO", "ASC"]
 
 
@@ -194,6 +194,8 @@ def compute_planet_relationships(
 
     all_bodies = _ALL_PLANETS + [b for b in _EXTRA_BODIES if b in planet_positions]
 
+    naisargika_bodies = [b for b in _CLASSICAL_PLANETS if b in all_bodies]
+
     for a in all_bodies:
         naisargika_rows[a] = {}
         temporary_rows[a] = {}
@@ -204,7 +206,7 @@ def compute_planet_relationships(
                 continue
 
             # Naisargika (natural)
-            if a in NAISARGIKA_FRIENDSHIP and b in NAISARGIKA_FRIENDSHIP[a]:
+            if a in naisargika_bodies and b in naisargika_bodies and a in NAISARGIKA_FRIENDSHIP and b in NAISARGIKA_FRIENDSHIP[a]:
                 nat = NAISARGIKA_FRIENDSHIP[a][b]
             else:
                 nat = 1  # neutral for unknown combos
@@ -215,9 +217,14 @@ def compute_planet_relationships(
             # Compound
             comp = calc_compound_friendship(nat, tmp)
 
-            naisargika_rows[a][b] = nat
             temporary_rows[a][b] = tmp
             compound_rows[a][b] = comp
+            if a in naisargika_bodies and b in naisargika_bodies:
+                naisargika_rows[a][b] = nat
+
+    for a in list(naisargika_rows.keys()):
+        if a not in naisargika_bodies:
+            naisargika_rows.pop(a, None)
 
     return {
         "naisargika": {

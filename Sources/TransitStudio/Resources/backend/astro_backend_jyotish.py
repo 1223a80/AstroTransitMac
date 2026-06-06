@@ -44,6 +44,110 @@ from astro_backend_jyotish_varga import calc_varga, varga_rasi_for_planet
 from astro_backend_jyotish_data import VIMSOTTARI_LORD_ORDER, VIMSOTTARI_DURATIONS, VIMSOTTARI_TOTAL
 from astro_backend_jyotish_data import vimsottari_dasa_index_for_nakshatra
 
+def _default_timezone_name(latitude: float, longitude: float) -> str:
+    """Best-effort timezone fallback for Vedic birth data."""
+    if 73.0 <= longitude <= 135.5 and 18.0 <= latitude <= 54.5:
+        return "Asia/Shanghai"
+    return "UTC"
+
+
+def _resolved_timezone_name(
+    moment: dict[str, Any],
+    latitude: float,
+    longitude: float,
+    fallback_timezone: str | None = None,
+) -> str:
+    zone_text = str(moment.get("timezone", "")).strip()
+    if zone_text:
+        return zone_text
+    return fallback_timezone or _default_timezone_name(latitude, longitude)
+
+
+def _standard_offset_hours(local_dt: datetime) -> float:
+    offset = local_dt.utcoffset() or timedelta(0)
+    dst = local_dt.dst() or timedelta(0)
+    return (offset - dst).total_seconds() / 3600.0
+
+
+def _format_utc_offset(hours: float) -> str:
+    sign = "+" if hours >= 0 else "-"
+    total_minutes = int(round(abs(hours) * 60.0))
+    whole_hours = total_minutes // 60
+    minutes = total_minutes % 60
+    if minutes == 0:
+        return f"UTC{sign}{whole_hours}"
+    return f"UTC{sign}{whole_hours:02d}:{minutes:02d}"
+
+
+def _prepare_standard_moment(
+    moment: dict[str, Any],
+    latitude: float,
+    longitude: float,
+    fallback_timezone: str | None = None,
+) -> dict[str, Any]:
+    timezone_name = _resolved_timezone_name(moment, latitude, longitude, fallback_timezone)
+    normalized_moment = {**moment, "timezone": timezone_name}
+    try:
+        local_dt = moment_to_local_datetime(normalized_moment)
+    except ValueError as exc:
+        raise ValueError(f"timezone or birth UTC conversion failed. {exc}") from exc
+
+    std_offset_hours = _standard_offset_hours(local_dt)
+    std_tz = timezone(timedelta(hours=std_offset_hours), name=timezone_name)
+    fixed_local_dt = datetime(
+        int(moment["year"]),
+        int(moment["month"]),
+        int(moment["day"]),
+        int(moment["hour"]),
+        int(moment["minute"]),
+        tzinfo=std_tz,
+    )
+    return {
+        "moment": normalized_moment,
+        "timezone_name": timezone_name,
+        "standard_offset_hours": std_offset_hours,
+        "local_dt": fixed_local_dt,
+        "utc": fixed_local_dt.astimezone(timezone.utc).isoformat(),
+        "jd_ut": jd_from_datetime(fixed_local_dt),
+    }
+
+
+def _whole_sign_house(longitude: float, asc_longitude: float) -> int:
+    return ((zodiac_sign_index(longitude) - zodiac_sign_index(asc_longitude)) % 12) + 1
+
+
+def _validate_rasi_anchor(rasi_chart: dict[str, Any], house_system: str) -> list[str]:
+    if house_system != "whole_sign":
+        return []
+
+    errors: list[str] = []
+    asc_row = next((row for row in rasi_chart.get("angles", []) if row.get("id") == "ASC"), None)
+    if asc_row is None:
+        return ["timezone or birth UTC conversion failed. Missing ASC in D1 chart."]
+
+    asc_lon = asc_row["longitude"]
+    asc_rasi = zodiac_sign_index(asc_lon)
+    if asc_row.get("house") != 1:
+        errors.append("timezone or birth UTC conversion failed. ASC is not in house 1 under whole sign.")
+
+    for index, house in enumerate(rasi_chart.get("houses", []), start=1):
+        expected_sign = ["白羊", "金牛", "双子", "巨蟹", "狮子", "处女", "天秤", "天蝎", "射手", "摩羯", "水瓶", "双鱼"][(asc_rasi + index - 1) % 12]
+        if house.get("sign") != expected_sign:
+            errors.append(
+                f"timezone or birth UTC conversion failed. Whole-sign house {index} expected {expected_sign} but got {house.get('sign')}."
+            )
+            break
+
+    for pid, planet in rasi_chart.get("planets", {}).items():
+        expected_house = _whole_sign_house(planet["longitude"], asc_lon)
+        if planet.get("house") != expected_house:
+            errors.append(
+                f"timezone or birth UTC conversion failed. {pid} house mismatch in D1 ({planet.get('house')} vs {expected_house})."
+            )
+            break
+
+    return errors
+
 
 def _resolve_vedic_positions(
     jd_ut: float,
@@ -270,6 +374,12 @@ def _calc_vimsottari_dasa(
     first_duration_years = VIMSOTTARI_DURATIONS[first_lord]
     elapsed_years = first_duration_years * nak_progress
     remaining_years = first_duration_years - elapsed_years
+    remaining_days = round(remaining_years * 365.2425)
+
+    balance_years = int(remaining_days // 365)
+    leftover_days = int(remaining_days - balance_years * 365)
+    balance_months = leftover_days // 30
+    balance_days = leftover_days % 30
 
     # Build sequence starting from birth
     dasa_seq = VIMSOTTARI_LORD_ORDER[start_idx:] + VIMSOTTARI_LORD_ORDER[:start_idx]
@@ -312,6 +422,14 @@ def _calc_vimsottari_dasa(
     return {
         "birth_nakshatra": birth_nak["name_sa"],
         "birth_nakshatra_index": birth_nak_idx,
+        "birth_nakshatra_lord": first_lord,
+        "dasha_balance": {
+            "lord": first_lord,
+            "years": balance_years,
+            "months": balance_months,
+            "days": balance_days,
+            "total_days": remaining_days,
+        },
         "maha_dasas": maha_dasas,
         "current_mahadasa": current_maha,
     }
@@ -440,7 +558,7 @@ def _build_sign_index_table() -> list[dict[str, Any]]:
                 "天秤", "天蝎", "射手", "摩羯", "水瓶", "双鱼"]
     signs_en = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
                 "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"]
-    return [{"index": i + 1, "name_en": signs_en[i], "name_zh": signs_cn[i]} for i in range(12)]
+    return [{"index": i, "name_en": signs_en[i], "name_zh": signs_cn[i]} for i in range(12)]
 
 
 # ─── Expanded Meta ────────────────────────────────────────────────────
@@ -456,33 +574,10 @@ def _build_expanded_meta(
     zodiac: str,
     ayanamsha: str,
     sidereal: bool,
+    timezone_name: str,
+    standard_offset_hours: float,
 ) -> dict[str, Any]:
     """Build expanded meta section."""
-    # Use standard (non-DST) UTC offset for display.
-    # birth_dt.utcoffset() includes DST (e.g. +9 for China Apr 1990),
-    # but most astrology sources expect the zone's standard offset (e.g. +8 for China).
-    from zoneinfo import ZoneInfo
-    tz_label = str(birth_dt.tzinfo) if birth_dt.tzinfo else "UTC"
-    std_offset_hours = 0.0
-    try:
-        # Get the standard (non-DST) offset by checking a date in standard time
-        tz_obj = ZoneInfo(tz_label) if birth_dt.tzinfo else None
-        if tz_obj:
-            # Use January (Northern Hemisphere winter) to avoid DST
-            std_dt = datetime(2024, 1, 1, tzinfo=tz_obj)
-            std_off = std_dt.utcoffset()
-            if std_off is not None:
-                std_offset_hours = std_off.total_seconds() / 3600.0
-    except Exception:
-        std_offset_hours = 0.0
-
-    if std_offset_hours >= 0:
-        utc_offset_text = f"东{int(std_offset_hours)}区 / UTC+{std_offset_hours:.2f}"
-        timezone_label = f"东{int(std_offset_hours)}区"
-    else:
-        utc_offset_text = f"西{int(abs(std_offset_hours))}区 / UTC{std_offset_hours:.2f}"
-        timezone_label = f"西{int(abs(std_offset_hours))}区"
-
     # Ayanamsha value using Swiss Ephemeris
     ayanamsha_value = 0.0
     try:
@@ -508,8 +603,8 @@ def _build_expanded_meta(
         "ayanamsha_value": ayanamsha_value,
         "zodiac": "sidereal" if sidereal else "tropical",
         "ephemeris": "Swiss Ephemeris",
-        "timezone_label": timezone_label,
-        "utc_offset_text": utc_offset_text,
+        "timezone_label": timezone_name,
+        "utc_offset_text": _format_utc_offset(standard_offset_hours),
         "sidereal_mode_label": sidereal_mode_label,
         "ayanamsha_name": ayanamsha_name,
         "node_mode": node_mode,
@@ -524,46 +619,30 @@ def _build_expanded_meta(
 def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
     """Main entry point for Vedic calculation."""
     birth = request["birth"]
-    birth_dt = moment_to_local_datetime(birth["moment"])
-    # Compute JD using standard UTC offset (ignoring historical DST).
-    # Most astrology software uses the zone's standard offset regardless
-    # of ephemeral DST rules. ZoneInfo applies DST (e.g. UTC+9 for
-    # China 1990), but standard practice is fixed offset (e.g. UTC+8).
-    std_utc_offset = 0.0
-    try:
-        from zoneinfo import ZoneInfo
-        tz_obj = ZoneInfo(birth["moment"]["timezone"])
-        std_dt = datetime(2024, 1, 1, tzinfo=tz_obj)
-        std_off = std_dt.utcoffset()
-        if std_off is not None:
-            std_utc_offset = std_off.total_seconds() / 3600.0
-    except Exception:
-        pass
-    # Compute JD using fixed standard offset
-    _tz, _td = timezone, timedelta
-    std_tz = _tz(_td(hours=std_utc_offset))
-    std_birth_dt = datetime(
-        int(birth["moment"]["year"]), int(birth["moment"]["month"]),
-        int(birth["moment"]["day"]), int(birth["moment"]["hour"]),
-        int(birth["moment"]["minute"]), tzinfo=std_tz,
-    )
-    standard_jd = jd_from_datetime(std_birth_dt)
-    birth_utc_std = std_birth_dt.astimezone(_tz.utc).isoformat()
+    latitude = float(birth["latitude"])
+    longitude = float(birth["longitude"])
 
-    # Use standard JD for ephemeris calculations
-    birth_jd = standard_jd
-    birth_utc = birth_utc_std
+    birth_prepared = _prepare_standard_moment(birth["moment"], latitude, longitude)
+    birth_dt = birth_prepared["local_dt"]
+    birth_jd = birth_prepared["jd_ut"]
+    birth_utc = birth_prepared["utc"]
+    birth_timezone_name = birth_prepared["timezone_name"]
+    std_utc_offset = birth_prepared["standard_offset_hours"]
 
     # Reference time for dasa calculations (default: birth time if not provided)
     if "reference" in request:
-        reference_dt = moment_to_local_datetime(request["reference"])
-        _, reference_utc = moment_to_jd(request["reference"])
+        reference_prepared = _prepare_standard_moment(
+            request["reference"],
+            latitude,
+            longitude,
+            fallback_timezone=birth_timezone_name,
+        )
+        reference_dt = reference_prepared["local_dt"]
+        reference_utc = reference_prepared["utc"]
     else:
         reference_dt = birth_dt
         reference_utc = birth_utc
 
-    latitude = float(birth["latitude"])
-    longitude = float(birth["longitude"])
     zodiac = birth.get("zodiac", "sidereal_lahiri")
     house_system = birth.get("houseSystem", "whole_sign")
     # Extract ayanamsha from zodiac string to match what Swift sends
@@ -616,7 +695,19 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
     meta = _build_expanded_meta(
         birth_dt, birth_utc, reference_dt, reference_utc,
         latitude, longitude, house_system, zodiac, ayanamsha, sidereal,
+        birth_timezone_name, std_utc_offset,
     )
+
+    anchor_errors = _validate_rasi_anchor(rasi_chart, house_system)
+    if anchor_errors:
+        warnings.extend(anchor_errors)
+        return {
+            "error": "timezone or birth UTC conversion failed.",
+            "meta": meta,
+            "rasi_chart": rasi_chart,
+            "planets": positions_with_nak,
+            "warnings": warnings,
+        }
 
     # Build response
     response: dict[str, Any] = {

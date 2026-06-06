@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from astro_backend_core import zodiac_sign_index, norm360, SIGNS, format_longitude
+from astro_backend_core import SIGNS, format_longitude, zodiac_sign_index
 from astro_backend_jyotish_data import (
     VARGA_DEFINITIONS,
     NAKSHATRA_LEN,
@@ -22,6 +22,7 @@ from astro_backend_jyotish_varga import calc_varga, calc_varga_longitude, varga_
 
 def _format_degree(lon: float) -> str:
     """Format longitude as degrees°minutes'."""
+    lon = lon % 30.0
     deg = int(lon)
     minute = int((lon - deg) * 60)
     return f"{deg}°{minute:02d}'"
@@ -83,6 +84,9 @@ def _build_varga_chart(
     Returns a standardized chart dict.
     """
     name_sa, name_zh = VARGA_NAMES.get(varga_id, (varga_id, varga_id))
+    asc_v_lon = calc_varga_longitude(asc_longitude, varga_num)
+    asc_v_rasi = zodiac_sign_index(asc_v_lon)
+    asc_v_deg = asc_v_lon % 30.0
 
     # Calculate varga rasi for each planet
     varga_planets = {}
@@ -90,6 +94,7 @@ def _build_varga_chart(
         v_lon = calc_varga_longitude(pos["longitude"], varga_num)  # full varga longitude
         v_rasi = zodiac_sign_index(v_lon)
         v_deg = v_lon % 30.0
+        house = ((v_rasi - asc_v_rasi) % 12) + 1
         varga_planets[pid] = {
             "body_id": pid,
             "name": pos.get("name", pid),
@@ -101,15 +106,12 @@ def _build_varga_chart(
                 "天秤", "天蝎", "射手", "摩羯", "水瓶", "双鱼"
             ][v_rasi],
             "varga_degree": round(v_deg, 2),
+            "house": house,
             "degree_text": _format_degree(v_deg),
             "nakshatra": _nakshatra_summary(v_lon),  # nakshatra from varga longitude
         }
 
     # ASC in varga
-    asc_v_lon = calc_varga_longitude(asc_longitude, varga_num)
-    asc_v_rasi = zodiac_sign_index(asc_v_lon)
-    asc_v_deg = asc_v_lon % 30.0
-
     varga_planets["ASC"] = {
         "body_id": "ASC",
         "name": "Asc",
@@ -121,6 +123,7 @@ def _build_varga_chart(
             "天秤", "天蝎", "射手", "摩羯", "水瓶", "双鱼"
         ][asc_v_rasi],
         "varga_degree": round(asc_v_deg, 2),
+        "house": 1,
         "degree_text": _format_degree(asc_v_deg),
         "nakshatra": _nakshatra_summary(asc_v_lon),
     }
@@ -196,7 +199,7 @@ def build_moon_chart(
     for pid, pos in planet_positions.items():
         orig_rasi = zodiac_sign_index(pos["longitude"])
         shifted_rasi = (orig_rasi - moon_rasi) % 12
-        shifted_lon = (pos["longitude"] - moon_rasi * 30.0) % 360.0
+        shifted_deg = pos["longitude"] % 30.0
         planets[pid] = {
             "body_id": pid,
             "name": pos.get("name", pid),
@@ -206,7 +209,8 @@ def build_moon_chart(
                 "白羊", "金牛", "双子", "巨蟹", "狮子", "处女",
                 "天秤", "天蝎", "射手", "摩羯", "水瓶", "双鱼"
             ][shifted_rasi],
-            "degree_text": pos.get("degree_text", ""),
+            "degree_text": _format_degree(shifted_deg),
+            "house": shifted_rasi + 1,
             "nakshatra": _nakshatra_summary(pos["longitude"]),
         }
 
@@ -222,7 +226,8 @@ def build_moon_chart(
             "白羊", "金牛", "双子", "巨蟹", "狮子", "处女",
             "天秤", "天蝎", "射手", "摩羯", "水瓶", "双鱼"
         ][shifted_asc_rasi],
-        "degree_text": _format_degree(asc_longitude),
+        "degree_text": _format_degree(asc_longitude % 30.0),
+        "house": shifted_asc_rasi + 1,
         "nakshatra": _nakshatra_summary(asc_longitude),
     }
 

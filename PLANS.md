@@ -121,3 +121,32 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
   - overwrite `/Applications/TransitStudio.app` from `dist/TransitStudio.app`
   - verify `git status --short` and installed bundle version/build
 - Status: in progress
+
+## 2026-06-04 — Vedic horoscope 输出硬伤修复
+
+- Task: 只修复 Vedic horoscope 输出结果本身的硬伤，不做解释性文案改写；重点覆盖时区/UTC 基准、D1 anchor 校验、Panchanga / Vimshottari、星座索引、D1/Moon Chart 映射、Shadbala 完整性标注、天然敌友表、Yoga 过度泛化、以及根盘失败时的派生输出早停。
+- Constraints:
+  - 仅改动真实错误输出，不扩写说明性文本
+  - 先修根盘与时间换算，再修依赖 D1 的派生模块
+  - 若无法在当前回合完成完整 Shadbala 六分项，则必须显式标注 `incomplete` 并禁止“未达标”判断
+  - 尝试创建任务分支，但当前环境对 `.git` 写入受限，分支创建已被执行环境拒绝；先在现有工作树完成修复
+- Planned changes:
+  - 在 `astro_backend_jyotish.py` 增加时区解析/默认回退、D1 anchor 校验与 failure gate，并统一 meta 中本地/UTC/时区输出
+  - 修正 `astro_backend_jyotish_panchanga.py` 的 Karana 计算边界，补足 Vimshottari balance 输出
+  - 修正 `astro_backend_jyotish_divisional.py` 的 Moon Chart 度数与 D1/Whole Sign 映射一致性
+  - 修正 `astro_backend_jyotish_data.py` / `astro_backend_jyotish_relationships.py` 的天然敌友表与节点处理
+  - 修正 `astro_backend_jyotish_shadbala.py` 输出契约，避免用不完整实现给出 `meets_required=false`
+  - 收紧 `astro_backend_jyotish_yoga.py` 输出，区分 `condition_only` 与需要强度校验的 yoga
+  - 新增/更新针对 2004-08-09 16:16 Asia/Shanghai 样例的 focused pytest
+- Validation:
+  - `python3 -m pytest python_tests/test_jyotish_smoke.py python_tests/test_jyotish_focused.py -q`
+  - `python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-vedic-ai-request.json`
+  - 用户给定 2004-08-09 16:16 / Linyi / Asia-Shanghai 样例的定向 JSON smoke check
+- Validation completed:
+  - `python3 -m pytest python_tests/test_jyotish_smoke.py python_tests/test_jyotish_focused.py -q` → 119 passed
+  - `python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-vedic-ai-request.json` → 成功返回完整 Vedic JSON；时区显示为 `Asia/Shanghai` / `UTC+8`，Shadbala 标记为 `incomplete`
+  - 用户样例 `2004-08-09 16:16 / Linyi / Asia/Shanghai` → D1 ASC/Moon/Sun/Rahu、Panchanga、Vimshottari balance、Moon Chart 度数、Shadbala incomplete 均与修复目标一致
+- Remaining validation gap:
+  - `swift build` 已通过
+  - `swift test` 需要越过沙箱写入用户 SwiftPM 缓存；已按流程申请，但执行环境提权额度被系统拒绝，本回合无法完成
+- Status: completed

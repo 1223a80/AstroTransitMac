@@ -63,6 +63,24 @@ def positions_with_reference():
     return calculate_vedic(request, [])
 
 
+@pytest.fixture(scope="module")
+def linyi_reference_result():
+    from astro_backend_jyotish import calculate_vedic
+    request = {
+        "birth": {
+            "moment": {"year": 2004, "month": 8, "day": 9, "hour": 16, "minute": 16,
+                       "timezone": "Asia/Shanghai"},
+            "latitude": 35.0576, "longitude": 118.3346,
+            "houseSystem": "whole_sign",
+            "zodiac": "sidereal_lahiri",
+        },
+        "reference": {"year": 2004, "month": 8, "day": 9, "hour": 16, "minute": 16,
+                      "timezone": "Asia/Shanghai"},
+        "full": True,
+    }
+    return calculate_vedic(request, [])
+
+
 # ─── 1. Panchanga ────────────────────────────────────────────────────
 
 class TestPanchanga:
@@ -391,6 +409,15 @@ class TestPlanetRelationships:
         from astro_backend_jyotish_data import NAISARGIKA_FRIENDSHIP
         assert NAISARGIKA_FRIENDSHIP["SUN"]["SATURN"] == 2  # enemy
 
+    def test_naisargika_classical_values_follow_reference(self):
+        from astro_backend_jyotish_data import NAISARGIKA_FRIENDSHIP
+        assert NAISARGIKA_FRIENDSHIP["SUN"]["MARS"] == 0
+        assert NAISARGIKA_FRIENDSHIP["SUN"]["MERCURY"] == 1
+        assert NAISARGIKA_FRIENDSHIP["MOON"]["MERCURY"] == 0
+        assert NAISARGIKA_FRIENDSHIP["MERCURY"]["MOON"] == 2
+        assert "RAHU" not in NAISARGIKA_FRIENDSHIP
+        assert "KETU" not in NAISARGIKA_FRIENDSHIP
+
 
 # ─── 7. Arudha ──────────────────────────────────────────────────────
 
@@ -549,12 +576,85 @@ class TestShadbalaExtended:
         sun_sb = positions_with_reference["shadbala"]["SUN"]
         assert "required_rupas" in sun_sb
 
-    def test_shadbala_has_display_summary(self, positions_with_reference):
+    def test_shadbala_is_marked_incomplete(self, positions_with_reference):
         sun_sb = positions_with_reference["shadbala"]["SUN"]
-        assert "display_summary" in sun_sb
+        assert sun_sb["status"] == "incomplete"
+        assert sun_sb["is_complete"] is False
+        assert sun_sb["meets_required"] is None
+        assert sun_sb["display_summary"] is None
 
-    def test_shadbala_display_summary_fields(self, positions_with_reference):
-        sun_sb = positions_with_reference["shadbala"]["SUN"]
-        ds = sun_sb["display_summary"]
-        for field in ("total", "rupas", "required", "required_rupas", "meets_required", "percent"):
-            assert field in ds, f"missing {field} in display_summary"
+
+class TestLinyi2004Reference:
+    def test_meta_utc_and_local(self, linyi_reference_result):
+        meta = linyi_reference_result["meta"]
+        assert meta["birth_local"] == "2004-08-09 16:16"
+        assert meta["birth_utc"] == "2004-08-09T08:16:00+00:00"
+        assert meta["timezone_label"] == "Asia/Shanghai"
+        assert meta["utc_offset_text"] == "UTC+8"
+
+    def test_d1_anchor_positions(self, linyi_reference_result):
+        asc = next(a for a in linyi_reference_result["rasi_chart"]["angles"] if a["id"] == "ASC")
+        moon = linyi_reference_result["planets"]["MOON"]
+        sun = linyi_reference_result["planets"]["SUN"]
+        rahu = linyi_reference_result["planets"]["RAHU"]
+
+        assert asc["sign"] == "射手"
+        assert 248.5 <= asc["longitude"] <= 248.9
+
+        assert moon["sign"] == "金牛"
+        assert 38.8 <= moon["longitude"] <= 39.1
+        assert moon["nakshatra"]["nakshatra"]["name_sa"] == "Krittika"
+        assert moon["nakshatra"]["nakshatra"]["pada"] == 4
+
+        assert sun["sign"] == "巨蟹"
+        assert 113.0 <= sun["longitude"] <= 113.3
+
+        assert rahu["sign"] == "白羊"
+        assert 11.7 <= rahu["longitude"] <= 12.1
+
+    def test_panchanga_reference_values(self, linyi_reference_result):
+        p = linyi_reference_result["panchanga"]
+        assert p["tithi"]["paksha"] == "Krishna"
+        assert p["tithi"]["name_sa"] == "Navami"
+        assert p["nakshatra"]["name_sa"] == "Krittika"
+        assert p["yoga"]["name_sa"] == "Dhruva"
+        assert p["karana"]["name_sa"] == "Gara"
+
+    def test_vimshottari_reference_values(self, linyi_reference_result):
+        v = linyi_reference_result["vimshottari"]
+        assert v["birth_nakshatra_lord"] == "SUN"
+        assert v["dasha_balance"]["lord"] == "SUN"
+        assert v["dasha_balance"]["years"] == 0
+        assert v["dasha_balance"]["months"] == 5
+        assert 24 <= v["dasha_balance"]["days"] <= 28
+        assert [md["lord"] for md in v["maha_dasas"][:4]] == ["SUN", "MOON", "MARS", "RAHU"]
+        assert v["maha_dasas"][0]["start"][:7] == "1999-02"
+        assert v["maha_dasas"][0]["end"][:7] == "2005-02"
+        assert v["maha_dasas"][1]["end"][:7] == "2015-02"
+        assert v["maha_dasas"][2]["end"][:7] == "2022-02"
+        assert v["maha_dasas"][3]["end"][:7] == "2040-02"
+
+    def test_moon_chart_degree_modulo_30(self, linyi_reference_result):
+        asc = linyi_reference_result["moon_chart"]["planets"]["ASC"]
+        assert asc["degree_text"].startswith("8°39'")
+
+    def test_yoga_output_is_condition_only(self, linyi_reference_result):
+        yogas = {y["name"]: y for y in linyi_reference_result["yogas"]}
+        assert "RajaYogaGeneric" not in yogas
+        assert yogas["Gaja Kesari"]["condition_only"] is True
+        assert yogas["Gaja Kesari"]["needs_strength_check"] is True
+
+    def test_missing_timezone_defaults_to_asia_shanghai(self):
+        from astro_backend_jyotish import calculate_vedic
+        request = {
+            "birth": {
+                "moment": {"year": 2004, "month": 8, "day": 9, "hour": 16, "minute": 16},
+                "latitude": 35.0576, "longitude": 118.3346,
+                "houseSystem": "whole_sign",
+                "zodiac": "sidereal_lahiri",
+            },
+            "reference": {"year": 2004, "month": 8, "day": 9, "hour": 16, "minute": 16},
+        }
+        result = calculate_vedic(request, [])
+        assert result["meta"]["timezone_label"] == "Asia/Shanghai"
+        assert result["meta"]["birth_utc"] == "2004-08-09T08:16:00+00:00"

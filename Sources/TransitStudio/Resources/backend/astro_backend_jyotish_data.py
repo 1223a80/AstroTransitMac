@@ -261,18 +261,17 @@ MOOLATRIKONA_RASI: dict[str, int] = {
     "SATURN": 10,   # Aquarius (0-20°)
 }
 
-# Natural (Naisargika) friendship table
+# Natural (Naisargika) friendship table for the classical seven planets.
 # -1=self, 0=friend, 1=neutral, 2=enemy
+# Rahu/Ketu are intentionally excluded from this canonical table.
 NAISARGIKA_FRIENDSHIP: dict[str, dict[str, int]] = {
-    "SUN":     {"SUN": -1, "MOON": 0, "MARS": 2, "MERCURY": 0, "JUPITER": 0, "VENUS": 0, "SATURN": 2, "RAHU": 2, "KETU": 2},
-    "MOON":    {"SUN": 0, "MOON": -1, "MARS": 2, "MERCURY": 1, "JUPITER": 2, "VENUS": 0, "SATURN": 2, "RAHU": 2, "KETU": 2},
-    "MARS":    {"SUN": 0, "MOON": 1, "MARS": -1, "MERCURY": 2, "JUPITER": 0, "VENUS": 2, "SATURN": 2, "RAHU": 1, "KETU": 1},
-    "MERCURY": {"SUN": 0, "MOON": 1, "MARS": 2, "MERCURY": -1, "JUPITER": 0, "VENUS": 0, "SATURN": 0, "RAHU": 1, "KETU": 1},
-    "JUPITER": {"SUN": 0, "MOON": 0, "MARS": 2, "MERCURY": 0, "JUPITER": -1, "VENUS": 0, "SATURN": 2, "RAHU": 2, "KETU": 2},
-    "VENUS":   {"SUN": 0, "MOON": 0, "MARS": 2, "MERCURY": 0, "JUPITER": 0, "VENUS": -1, "SATURN": 0, "RAHU": 1, "KETU": 1},
-    "SATURN":  {"SUN": 2, "MOON": 1, "MARS": 2, "MERCURY": 0, "JUPITER": 2, "VENUS": 0, "SATURN": -1, "RAHU": 1, "KETU": 1},
-    "RAHU":    {"SUN": 2, "MOON": 2, "MARS": 1, "MERCURY": 1, "JUPITER": 2, "VENUS": 1, "SATURN": 1, "RAHU": -1, "KETU": 0},
-    "KETU":    {"SUN": 2, "MOON": 2, "MARS": 1, "MERCURY": 1, "JUPITER": 2, "VENUS": 1, "SATURN": 1, "RAHU": 0, "KETU": -1},
+    "SUN":     {"SUN": -1, "MOON": 0, "MARS": 0, "MERCURY": 1, "JUPITER": 0, "VENUS": 2, "SATURN": 2},
+    "MOON":    {"SUN": 0, "MOON": -1, "MARS": 1, "MERCURY": 0, "JUPITER": 1, "VENUS": 1, "SATURN": 1},
+    "MARS":    {"SUN": 0, "MOON": 0, "MARS": -1, "MERCURY": 2, "JUPITER": 0, "VENUS": 1, "SATURN": 1},
+    "MERCURY": {"SUN": 0, "MOON": 2, "MARS": 1, "MERCURY": -1, "JUPITER": 1, "VENUS": 0, "SATURN": 1},
+    "JUPITER": {"SUN": 0, "MOON": 0, "MARS": 0, "MERCURY": 2, "VENUS": 2, "SATURN": 1, "JUPITER": -1},
+    "VENUS":   {"SUN": 2, "MOON": 2, "MARS": 1, "MERCURY": 0, "JUPITER": 1, "SATURN": 0, "VENUS": -1},
+    "SATURN":  {"SUN": 2, "MOON": 2, "MARS": 2, "MERCURY": 0, "JUPITER": 1, "VENUS": 0, "SATURN": -1},
 }
 
 FRIENDSHIP_LABELS = {-1: "self", 0: "friend", 1: "neutral", 2: "enemy"}

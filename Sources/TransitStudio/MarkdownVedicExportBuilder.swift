@@ -68,9 +68,13 @@ enum MarkdownVedicExportBuilder {
 
     static func basicInfoSection(_ result: VedicResult) -> String {
         var md = "## 基本信息\n\n"
-        md += "- 出生时间: \(result.meta.birthLocal)\n"
+        md += "- 出生本地时间: \(result.meta.birthLocal)\n"
+        md += "- 出生 UTC: \(result.meta.birthUtc)\n"
         if let ref = result.meta.referenceLocal {
-            md += "- 参考时间: \(ref)\n"
+            md += "- 参考本地时间: \(ref)\n"
+        }
+        if let refUtc = result.meta.referenceUtc {
+            md += "- 参考 UTC: \(refUtc)\n"
         }
         md += "- 经纬度: \(result.meta.longitude), \(result.meta.latitude)\n"
         if let tz = result.meta.timezoneLabel {
@@ -110,7 +114,7 @@ enum MarkdownVedicExportBuilder {
     static func signIndexSection(_ result: VedicResult) -> String {
         guard let table = result.meta.signIndexTable, !table.isEmpty else { return "" }
         var md = "## 星座索引表\n\n"
-        let entries = table.map { "\($0.index):\($0.nameEn)(\($0.nameZh))" }.joined(separator: ", ")
+        let entries = table.map { "\($0.nameEn)(\($0.nameZh))" }.joined(separator: ", ")
         md += "\(entries)\n\n"
         return md
     }
@@ -159,17 +163,17 @@ enum MarkdownVedicExportBuilder {
 
             for (_, planet) in sortedPlanets {
                 let signName = planet.vargaRasiSign
-                let house = (planet.vargaRasi + 1) % 12 + 1
+                let house = planet.house ?? 0
                 let nak = planet.nakshatra
                 let nakStr = nak.map { "\($0.nameSa) Pada:\($0.pada) Lord:\($0.lord)" } ?? ""
-                md += "    - \(planet.name) 星座:\(planet.vargaRasi) 宫位:\(house) 度数:\(planet.degreeText) \(nakStr)\n"
+                md += "    - \(planet.name) 星座:\(signName) 宫位:\(house) 度数:\(planet.degreeText) \(nakStr)\n"
             }
 
             // Upagrahas and special lagnas for D1 and D9
             if let upas = chart.upagrahas, !upas.isEmpty {
                 md += "  虚点(Upagrahas):\n"
                 for upa in upas {
-                    md += "    - \(upa.nameSa) 星座:\(upa.rasi)\n"
+                    md += "    - \(upa.nameSa) 星座:\(upa.rasiName)\n"
                 }
             }
             if let lagnas = chart.specialLagnas, !lagnas.isEmpty {
@@ -192,7 +196,7 @@ enum MarkdownVedicExportBuilder {
         for (pid, planet) in mc.planets.sorted(by: { $0.value.longitude < $1.value.longitude }) {
             let nak = planet.nakshatra
             let nakStr = nak.map { "\($0.nameSa) Pada:\($0.pada) Lord:\($0.lord)" } ?? ""
-            md += "    - \(pid) 星座:\(planet.rasi) 度数:\(planet.degreeText) \(nakStr)\n"
+            md += "    - \(pid) 星座:\(planet.rasiName) 度数:\(planet.degreeText) \(nakStr)\n"
         }
         md += "\n"
         return md
@@ -207,7 +211,7 @@ enum MarkdownVedicExportBuilder {
         for (pid, planet) in bc.planets.sorted(by: { $0.value.longitude < $1.value.longitude }) {
             let nak = planet.nakshatra
             let nakStr = nak.map { "\($0.nameSa) Pada:\($0.pada) Lord:\($0.lord)" } ?? ""
-            md += "    - \(pid) 星座:\(planet.rasi) 宫位:\(planet.house ?? 0) 度数:\(planet.degreeText) \(nakStr)\n"
+            md += "    - \(pid) 星座:\(planet.rasiName) 宫位:\(planet.house ?? 0) 度数:\(planet.degreeText) \(nakStr)\n"
         }
         md += "\n"
         return md
@@ -292,7 +296,7 @@ enum MarkdownVedicExportBuilder {
         var md = "## Arudha (D1)\n\n"
         for key in ["AL", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "UL"] {
             guard let pada = arudha[key] else { continue }
-            md += "- \(key): 星座:\(pada.rasi) 宫位:\(pada.house)\n"
+            md += "- \(key): 星座:\(pada.rasiName) 宫位:\(pada.house)\n"
         }
         md += "\n"
         return md
@@ -305,7 +309,11 @@ enum MarkdownVedicExportBuilder {
         var md = "## Yogas (D1)\n\n"
         for yoga in yogas {
             let desc = yoga.description ?? yoga.effect
-            md += "- \(yoga.name) [\(yoga.group)]: \(desc)\n"
+            var flags: [String] = []
+            if yoga.conditionOnly == true { flags.append("condition only") }
+            if yoga.needsStrengthCheck == true { flags.append("needs strength check") }
+            let suffix = flags.isEmpty ? "" : " [" + flags.joined(separator: ", ") + "]"
+            md += "- \(yoga.name) [\(yoga.group)]\(suffix): \(desc)\n"
         }
         md += "\n"
         return md
@@ -396,9 +404,13 @@ enum MarkdownVedicExportBuilder {
         var md = "## Shadbala\n\n"
         for pid in ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN"] {
             guard let row = sb[pid] else { continue }
-            let meets = row.meetsRequired ?? false
-            let meetsStr = meets ? "达标" : "未达标"
-            md += "- \(pid): 总分 \(Int(row.shadbalaTotal)) / \(String(format: "%.2f", row.shadbalaRupas)) Rupas，要求 \(row.required) / \(String(format: "%.2f", row.requiredRupas ?? 0)) Rupas，\(meetsStr)\n"
+            if row.meetsRequired == nil || row.status == "incomplete" {
+                md += "- \(pid): 总分 \(Int(row.shadbalaTotal)) / \(String(format: "%.2f", row.shadbalaRupas)) Rupas，当前实现不完整，禁止达标判断\n"
+            } else {
+                let meets = row.meetsRequired ?? false
+                let meetsStr = meets ? "达标" : "未达标"
+                md += "- \(pid): 总分 \(Int(row.shadbalaTotal)) / \(String(format: "%.2f", row.shadbalaRupas)) Rupas，要求 \(row.required) / \(String(format: "%.2f", row.requiredRupas ?? 0)) Rupas，\(meetsStr)\n"
+            }
             md += "  分项: Sthana \(Int(row.sthanaBala)), Dig \(Int(row.digBala)), Kala \(Int(row.kalaBala)), Cheshta \(Int(row.cheshtaBala)), Naisargika \(Int(row.naisargikaBala)), Drik \(Int(row.drigBala))\n"
         }
         md += "\n"

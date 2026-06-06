@@ -223,3 +223,12 @@ class TestValidation:
         }}
         err = validate_required_fields(req)
         assert err is None, f"expected None, got {err}"
+
+    def test_vedic_missing_timezone_uses_location_default(self):
+        from astro_backend_api import validate_required_fields
+        req = {"mode": "vedic", "birth": {
+            "moment": {"year": 2004, "month": 8, "day": 9, "hour": 16, "minute": 16},
+            "latitude": 35.0576, "longitude": 118.3346,
+        }}
+        err = validate_required_fields(req)
+        assert err is None, f"vedic timezone should be optional, got {err}"

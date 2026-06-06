@@ -179,14 +179,17 @@ def calc_karana(sun_longitude: float, moon_longitude: float) -> dict[str, Any]:
     start = karana_index * 6.0
     end = (karana_index + 1) * 6.0
 
-    if karana_index >= 56:
-        # Fixed karanas
-        fixed_idx = karana_index - 56
+    if karana_index == 0:
+        name_sa = "Kinstughna"
+        name_zh = "金私都拿 (Kinstughna)"
+    elif karana_index >= 57:
+        # Final three fixed karanas near Amavasya
+        fixed_idx = karana_index - 57
         name_sa = KARANA_NAMES_SA_FIXED[fixed_idx]
         name_zh = KARANA_NAMES_ZH_FIXED[fixed_idx]
     else:
-        # Movable karanas
-        movable_idx = karana_index % 7
+        # Movable karanas repeat from index 1 through 56
+        movable_idx = (karana_index - 1) % 7
         name_sa = KARANA_NAMES_SA_MOVABLE[movable_idx]
         name_zh = KARANA_NAMES_ZH_MOVABLE[movable_idx]
 

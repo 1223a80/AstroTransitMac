@@ -335,6 +335,7 @@ struct VedicDivisionalPlanet: Codable, Identifiable {
     let vargaRasi: Int
     let vargaRasiSign: String
     let vargaDegree: Double
+    let house: Int?
     let degreeText: String
     let nakshatra: VedicNakshatraSummary?
 
@@ -346,6 +347,7 @@ struct VedicDivisionalPlanet: Codable, Identifiable {
         case vargaRasi = "varga_rasi"
         case vargaRasiSign = "varga_rasi_sign"
         case vargaDegree = "varga_degree"
+        case house
         case degreeText = "degree_text"
         case nakshatra
     }
@@ -560,14 +562,31 @@ struct VedicSAV: Codable {
 struct VimsottariResult: Codable {
     let birthNakshatra: String
     let birthNakshatraIndex: Int
+    let birthNakshatraLord: String?
+    let dashaBalance: DashaBalance?
     let mahaDasas: [DasaPeriod]
     let currentMahadasa: DasaPeriod?
 
     enum CodingKeys: String, CodingKey {
         case birthNakshatra = "birth_nakshatra"
         case birthNakshatraIndex = "birth_nakshatra_index"
+        case birthNakshatraLord = "birth_nakshatra_lord"
+        case dashaBalance = "dasha_balance"
         case mahaDasas = "maha_dasas"
         case currentMahadasa = "current_mahadasa"
+    }
+}
+
+struct DashaBalance: Codable {
+    let lord: String
+    let years: Int
+    let months: Int
+    let days: Int
+    let totalDays: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case lord, years, months, days
+        case totalDays = "total_days"
     }
 }
 
@@ -670,6 +689,9 @@ struct ShadbalaRow: Codable, Identifiable {
     // NEW
     let requiredRupas: Double?
     let meetsRequired: Bool?
+    let isComplete: Bool?
+    let status: String?
+    let note: String?
     let displaySummary: ShadbalaSummary?
 
     var id: String { "shadbala-\(shadbalaTotal)" }
@@ -686,6 +708,8 @@ struct ShadbalaRow: Codable, Identifiable {
         case required, percent
         case requiredRupas = "required_rupas"
         case meetsRequired = "meets_required"
+        case isComplete = "is_complete"
+        case status, note
         case displaySummary = "display_summary"
     }
 }
@@ -713,6 +737,14 @@ struct VedicYoga: Codable, Identifiable {
     let description: String?
     let effect: String
     let planets: [String]
+    let conditionOnly: Bool?
+    let needsStrengthCheck: Bool?
 
     var id: String { "\(group)-\(name)-\(planets.joined())" }
+
+    enum CodingKeys: String, CodingKey {
+        case name, group, description, effect, planets
+        case conditionOnly = "condition_only"
+        case needsStrengthCheck = "needs_strength_check"
+    }
 }

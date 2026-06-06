@@ -486,12 +486,18 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             if "moment" not in b:
                 missing.append("birth.moment")
             else:
-                for f in _PERSON_MOMENT_FIELDS:
+                required_fields = ("year", "month", "day", "hour", "minute")
+                if mode != "vedic":
+                    required_fields = _PERSON_MOMENT_FIELDS
+                for f in required_fields:
                     if f not in b["moment"]:
                         missing.append(f"birth.moment.{f}")
         if "reference" in request:
             ref = request["reference"]
-            for f in ("year", "month", "day", "hour", "minute", "timezone"):
+            ref_fields = ("year", "month", "day", "hour", "minute")
+            if mode != "vedic":
+                ref_fields = ("year", "month", "day", "hour", "minute", "timezone")
+            for f in ref_fields:
                 if f not in ref:
                     missing.append(f"reference.{f}")
     if missing:
