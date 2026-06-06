@@ -24,6 +24,7 @@ struct AppSettingsView: View {
     @AppStorage("llmAPIKey") private var llmAPIKey = ""
     @AppStorage("savedLLMModels") private var savedLLMModels = "glm-4.7-flash"
     @AppStorage("aiPromptStyle") private var aiPromptStyle = "general"
+    @AppStorage("aiReasoningEffort") private var aiReasoningEffort = "max"
     @AppStorage("aiPromptGeneral") private var aiPromptGeneral = AIPromptDefaults.text(for: "general")
     @AppStorage("aiPromptNatal") private var aiPromptNatal = AIPromptDefaults.text(for: "natal")
     @AppStorage("aiPromptTransit") private var aiPromptTransit = AIPromptDefaults.text(for: "transit")
@@ -134,6 +135,14 @@ struct AppSettingsView: View {
                     .font(.caption)
                     .foregroundStyle(apiTestStatus.hasPrefix("成功") ? .green : .secondary)
             }
+
+            pickerRow("思考深度", selection: $aiReasoningEffort, options: [
+                .init(id: "", title: "关"),
+                .init(id: "low", title: "低"),
+                .init(id: "medium", title: "中"),
+                .init(id: "high", title: "高"),
+                .init(id: "max", title: "最大"),
+            ])
 
             pickerRow("默认提示词", selection: $aiPromptStyle, options: promptStyleOptions)
 

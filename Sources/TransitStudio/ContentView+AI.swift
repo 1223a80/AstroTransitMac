@@ -10,7 +10,8 @@ extension ContentView {
         await analyze(
             title: "时间点行运对本命相位",
             markdown: MarkdownExportBuilder.moment(momentResult),
-            assign: { momentAIAnalysis = $0 }
+            assignText: { momentAIAnalysis = $0 },
+            assignReasoning: { momentAIReasoning = $0 }
         )
     }
 
@@ -23,7 +24,8 @@ extension ContentView {
         await analyze(
             title: "本命盘分析",
             markdown: MarkdownExportBuilder.natal(momentResult),
-            assign: { momentAIAnalysis = $0 }
+            assignText: { momentAIAnalysis = $0 },
+            assignReasoning: { momentAIReasoning = $0 }
         )
     }
 
@@ -36,7 +38,8 @@ extension ContentView {
         await analyze(
             title: "窗口扫描命中分析",
             markdown: MarkdownExportBuilder.scan(scanResult),
-            assign: { scanAIAnalysis = $0 }
+            assignText: { scanAIAnalysis = $0 },
+            assignReasoning: { scanAIReasoning = $0 }
         )
     }
 
@@ -49,7 +52,8 @@ extension ContentView {
         await analyze(
             title: "本命盘 / 古典分析",
             markdown: MarkdownExportBuilder.classical(classicalResult),
-            assign: { classicalAIAnalysis = $0 }
+            assignText: { classicalAIAnalysis = $0 },
+            assignReasoning: { classicalAIReasoning = $0 }
         )
     }
 
@@ -62,24 +66,71 @@ extension ContentView {
         await analyze(
             title: "Horary 问题分析",
             markdown: MarkdownExportBuilder.horary(horaryResult),
-            assign: { horaryAIAnalysis = $0 }
+            assignText: { horaryAIAnalysis = $0 },
+            assignReasoning: { horaryAIReasoning = $0 }
         )
     }
 
     @MainActor
-    func analyze(title: String, markdown: String, assign: @escaping (String) -> Void) async {
+    func analyzeModernResult(modeKey: String, title: String, markdown: String) async {
+        await analyze(
+            title: title,
+            markdown: markdown,
+            assignText: { modernAIAnalysisByMode[modeKey] = $0 },
+            assignReasoning: { modernAIReasoningByMode[modeKey] = $0 }
+        )
+    }
+
+    /// Streaming AI analysis. Both closures run on MainActor.
+    /// `assignText` receives the full accumulated visible text on each chunk;
+    /// `assignReasoning` receives the full accumulated reasoning text.
+    @MainActor
+    func analyze(
+        title: String,
+        markdown: String,
+        assignText: @escaping (String) -> Void,
+        assignReasoning: @escaping (String) -> Void
+    ) async {
         isAnalyzingAI = true
+        // Reset both fields
+        assignText("")
+        assignReasoning("")
         defer { isAnalyzingAI = false }
+
+        let config = LLMAnalysisClient.Configuration(
+            baseURL: llmBaseURL,
+            model: llmModel,
+            apiKey: llmAPIKey,
+            reasoningEffort: aiReasoningEffort
+        )
+
+        let stream = LLMAnalysisClient().analyzeStreaming(
+            title: title,
+            structuredMarkdown: markdown,
+            note: aiNote,
+            promptStyle: aiPromptStyle,
+            customSystemPrompt: selectedAIPromptText,
+            configuration: config
+        )
+
+        var accumulatedText = ""
+        var accumulatedReasoning = ""
+
         do {
-            let response = try await LLMAnalysisClient().analyze(
-                title: title,
-                structuredMarkdown: markdown,
-                note: aiNote,
-                promptStyle: aiPromptStyle,
-                customSystemPrompt: selectedAIPromptText,
-                configuration: .init(baseURL: llmBaseURL, model: llmModel, apiKey: llmAPIKey)
-            )
-            assign(response)
+            for try await chunk in stream {
+                if !chunk.content.isEmpty {
+                    accumulatedText += chunk.content
+                    assignText(accumulatedText)
+                }
+                if !chunk.reasoning.isEmpty {
+                    accumulatedReasoning += chunk.reasoning
+                    assignReasoning(accumulatedReasoning)
+                }
+            }
+            // If no content arrived via stream (e.g. empty response), mark error
+            if accumulatedText.isEmpty {
+                errorMessage = "AI 分析返回了空内容。"
+            }
         } catch {
             errorMessage = error.localizedDescription
         }

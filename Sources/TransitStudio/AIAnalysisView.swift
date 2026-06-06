@@ -1,7 +1,18 @@
 import SwiftUI
 
+/// Tracks the current stage of a streaming AI analysis.
+enum StreamingPhase: Equatable {
+    /// Model is producing reasoning / chain-of-thought text.
+    case thinking
+    /// Model is generating the visible response text.
+    case generating
+    /// Streaming has finished.
+    case done
+}
+
 struct AIAnalysisView: View {
     let analysis: String
+    let reasoning: String
     let isAnalyzing: Bool
     let canAnalyze: Bool
     let analyze: () -> Void
@@ -10,6 +21,38 @@ struct AIAnalysisView: View {
     @AppStorage("savedLLMModels") private var savedLLMModels = "glm-4.7-flash"
     @AppStorage("aiPromptStyle") private var aiPromptStyle = "general"
     @AppStorage("aiNote") private var aiNote = ""
+    @AppStorage("aiReasoningEffort") private var aiReasoningEffort = "max"
+
+    @State private var reasoningExpanded = true
+
+    private var streamingPhase: StreamingPhase {
+        guard isAnalyzing else { return .done }
+        if !analysis.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return .generating
+        }
+        if !reasoning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return .thinking
+        }
+        return .thinking
+    }
+
+    private var actionButtonLabel: String {
+        guard isAnalyzing else { return "生成分析" }
+        switch streamingPhase {
+        case .thinking: return "思考中"
+        case .generating: return "生成中"
+        case .done: return "生成分析"
+        }
+    }
+
+    private var actionButtonIcon: String {
+        guard isAnalyzing else { return "sparkles" }
+        switch streamingPhase {
+        case .thinking: return "brain.head.profile"
+        case .generating: return "sparkles"
+        case .done: return "sparkles"
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -28,7 +71,7 @@ struct AIAnalysisView: View {
                 Button {
                     analyze()
                 } label: {
-                    Label(isAnalyzing ? "分析中" : "生成分析", systemImage: isAnalyzing ? "hourglass" : "sparkles")
+                    Label(actionButtonLabel, systemImage: actionButtonIcon)
                 }
                 .disabled(isAnalyzing || !canAnalyze)
             }
@@ -48,6 +91,47 @@ struct AIAnalysisView: View {
                     .textFieldStyle(.roundedBorder)
             }
 
+            // Reasoning (thinking) section — collapsible
+            if !reasoning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            reasoningExpanded.toggle()
+                        }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: reasoningExpanded ? "chevron.down" : "chevron.right")
+                                .font(.caption)
+                            Text("💭 思考过程")
+                                .font(.subheadline.weight(.medium))
+                            Spacer()
+                            if streamingPhase == .thinking {
+                                ProgressView()
+                                    .scaleEffect(0.6)
+                                    .frame(height: 12)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+
+                    if reasoningExpanded {
+                        ScrollView {
+                            Text(reasoning)
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .textSelection(.enabled)
+                        }
+                        .frame(maxHeight: 200)
+                        .padding(8)
+                        .background(Color.secondary.opacity(0.06))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                }
+            }
+
+            // Main analysis text
             if analysis.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 EmptyStateView(
                     title: canAnalyze ? "尚未生成 AI 分析" : "请先在设置页填写 API Key",

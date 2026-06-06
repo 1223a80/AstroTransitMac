@@ -32,30 +32,41 @@ enum MarkdownModernExportBuilder {
     }
 
     static func compositeOrDavison(title: String, result: CompositeResult) -> String {
+        compositeOrDavisonContent(title: title, meta: result.meta, planets: result.planets, aspects: result.aspects, patterns: result.patterns, warnings: result.warnings)
+    }
+
+    static func compositeOrDavison(title: String, result: DavisonResult) -> String {
+        compositeOrDavisonContent(title: title, meta: result.meta, planets: result.planets, aspects: result.aspects, patterns: result.patterns, warnings: result.warnings)
+    }
+
+    private static func compositeOrDavisonContent(
+        title: String, meta: ModernMeta, planets: [PositionRow],
+        aspects: [AspectHit], patterns: [PatternResult]?, warnings: [String]
+    ) -> String {
         var lines: [String] = ["# \(title) 盘"]
-        lines.append(contentsOf: metaLines(result.meta))
+        lines.append(contentsOf: metaLines(meta))
         lines.append("")
         lines.append("## 行星位置")
-        lines.append(contentsOf: MarkdownExportBuilder.positionSection(title, result.planets))
+        lines.append(contentsOf: MarkdownExportBuilder.positionSection(title, planets))
         lines.append("")
         lines.append("## 相位")
-        if result.aspects.isEmpty {
+        if aspects.isEmpty {
             lines.append("无相位。")
         } else {
             lines.append("| 天体A | 相位 | 天体B | 分隔角 | 容许度 |")
             lines.append("|-------|------|-------|--------|--------|")
-            for asp in result.aspects {
+            for asp in aspects {
                 lines.append("| \(asp.transitBodyName) | \(asp.aspectName) | \(asp.natalBodyName) | \(MarkdownExportBuilder.degree(asp.separation, digits: 2)) | \(MarkdownExportBuilder.degree(asp.orb, digits: 2)) |")
             }
         }
-        if let patterns = result.patterns, !patterns.isEmpty {
+        if let p = patterns, !p.isEmpty {
             lines.append("")
             lines.append("## 图形模式")
-            for p in patterns {
-                lines.append("- **\(p.typeName)**（\(p.confidence)）：\(p.members.joined(separator: ", "))")
+            for pt in p {
+                lines.append("- **\(pt.typeName)**（\(pt.confidence)）：\(pt.members.joined(separator: ", "))")
             }
         }
-        lines.append(contentsOf: MarkdownExportBuilder.warnings(result.warnings))
+        lines.append(contentsOf: MarkdownExportBuilder.warnings(warnings))
         return lines.joined(separator: "\n")
     }
 

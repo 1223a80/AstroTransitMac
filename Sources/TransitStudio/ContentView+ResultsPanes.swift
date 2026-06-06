@@ -204,6 +204,7 @@ extension ContentView {
         case "ai":
             AIAnalysisView(
                 analysis: momentAIAnalysis,
+                reasoning: momentAIReasoning,
                 isAnalyzing: isAnalyzingAI,
                 canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ) {
@@ -277,6 +278,7 @@ extension ContentView {
         case "ai":
             AIAnalysisView(
                 analysis: momentAIAnalysis,
+                reasoning: momentAIReasoning,
                 isAnalyzing: isAnalyzingAI,
                 canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ) {
@@ -341,6 +343,7 @@ extension ContentView {
         case "ai":
             AIAnalysisView(
                 analysis: scanAIAnalysis,
+                reasoning: scanAIReasoning,
                 isAnalyzing: isAnalyzingAI,
                 canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ) {
@@ -425,6 +428,7 @@ extension ContentView {
         case "ai":
             AIAnalysisView(
                 analysis: horaryAIAnalysis,
+                reasoning: horaryAIReasoning,
                 isAnalyzing: isAnalyzingAI,
                 canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ) {
@@ -685,6 +689,7 @@ extension ContentView {
         case "ai":
             AIAnalysisView(
                 analysis: classicalAIAnalysis,
+                reasoning: classicalAIReasoning,
                 isAnalyzing: isAnalyzingAI,
                 canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ) {
@@ -749,7 +754,16 @@ extension ContentView {
     var synastryResultsPane: some View {
         Group {
             if let result = modernResultData, case .synastry(let r) = result {
-                SynastryResultPane(result: r, selectedTab: $modernSelectedTab)
+                SynastryResultPane(
+                    result: r,
+                    selectedTab: $modernSelectedTab,
+                    analysis: modernAIAnalysisByMode["synastry", default: ""],
+                    reasoning: modernAIReasoningByMode["synastry", default: ""],
+                    isAnalyzing: isAnalyzingAI,
+                    canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                ) {
+                    Task { await analyzeModernResult(modeKey: "synastry", title: "Synastry 关系分析", markdown: MarkdownModernExportBuilder.synastry(r)) }
+                }
             } else {
                 EmptyStateView(title: "等待 Synastry 计算", systemImage: "person.2", description: "填写两人出生信息后开始计算。")
             }
@@ -759,7 +773,17 @@ extension ContentView {
     var compositeResultsPane: some View {
         Group {
             if let result = modernResultData, case .composite(let r) = result {
-                CompositeDavisonResultPane(title: "Composite", result: r, selectedTab: $modernSelectedTab)
+                CompositeDavisonResultPane(
+                    title: "Composite",
+                    result: r,
+                    selectedTab: $modernSelectedTab,
+                    analysis: modernAIAnalysisByMode["composite", default: ""],
+                    reasoning: modernAIReasoningByMode["composite", default: ""],
+                    isAnalyzing: isAnalyzingAI,
+                    canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                ) {
+                    Task { await analyzeModernResult(modeKey: "composite", title: "Composite 关系盘分析", markdown: MarkdownModernExportBuilder.compositeOrDavison(title: "Composite", result: r)) }
+                }
             } else {
                 EmptyStateView(title: "等待 Composite 计算", systemImage: "circle.hexagongrid", description: "填写两人出生信息后开始计算。")
             }
@@ -769,7 +793,17 @@ extension ContentView {
     var davisonResultsPane: some View {
         Group {
             if let result = modernResultData, case .davison(let r) = result {
-                CompositeDavisonResultPane(title: "Davison", result: r, selectedTab: $modernSelectedTab)
+                CompositeDavisonResultPane(
+                    title: "Davison",
+                    result: r,
+                    selectedTab: $modernSelectedTab,
+                    analysis: modernAIAnalysisByMode["davison", default: ""],
+                    reasoning: modernAIReasoningByMode["davison", default: ""],
+                    isAnalyzing: isAnalyzingAI,
+                    canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                ) {
+                    Task { await analyzeModernResult(modeKey: "davison", title: "Davison 关系盘分析", markdown: MarkdownModernExportBuilder.compositeOrDavison(title: "Davison", result: r)) }
+                }
             } else {
                 EmptyStateView(title: "等待 Davison 计算", systemImage: "arrow.triangle.merge", description: "填写两人出生信息后开始计算。")
             }
@@ -779,7 +813,16 @@ extension ContentView {
     var progressionResultsPane: some View {
         Group {
             if let result = modernResultData, case .progression(let r) = result {
-                ProgressionResultPane(result: r, selectedTab: $modernSelectedTab)
+                ProgressionResultPane(
+                    result: r,
+                    selectedTab: $modernSelectedTab,
+                    analysis: modernAIAnalysisByMode["progression", default: ""],
+                    reasoning: modernAIReasoningByMode["progression", default: ""],
+                    isAnalyzing: isAnalyzingAI,
+                    canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                ) {
+                    Task { await analyzeModernResult(modeKey: "progression", title: "次限推进盘分析", markdown: MarkdownModernExportBuilder.progression(r)) }
+                }
             } else {
                 EmptyStateView(title: "等待次限推进计算", systemImage: "forward.fill", description: "填写出生和参考时间后开始计算。")
             }
@@ -789,7 +832,16 @@ extension ContentView {
     var solarArcResultsPane: some View {
         Group {
             if let result = modernResultData, case .solarArc(let r) = result {
-                SolarArcResultPane(result: r, selectedTab: $modernSelectedTab)
+                SolarArcResultPane(
+                    result: r,
+                    selectedTab: $modernSelectedTab,
+                    analysis: modernAIAnalysisByMode["solar_arc", default: ""],
+                    reasoning: modernAIReasoningByMode["solar_arc", default: ""],
+                    isAnalyzing: isAnalyzingAI,
+                    canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                ) {
+                    Task { await analyzeModernResult(modeKey: "solar_arc", title: "Solar Arc 盘分析", markdown: MarkdownModernExportBuilder.solarArc(r)) }
+                }
             } else {
                 EmptyStateView(title: "等待 Solar Arc 计算", systemImage: "sun.max", description: "填写出生和参考时间后开始计算。")
             }

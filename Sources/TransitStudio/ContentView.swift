@@ -70,6 +70,7 @@ struct ContentView: View {
     @AppStorage("aiPromptClassical") var aiPromptClassical = AIPromptDefaults.text(for: "classical")
     @AppStorage("aiPromptHorary") var aiPromptHorary = AIPromptDefaults.text(for: "horary")
     @AppStorage("aiNote") var aiNote = ""
+    @AppStorage("aiReasoningEffort") var aiReasoningEffort = "max"
     @AppStorage("momentPresetsJSON") var momentPresetsJSON = ""
     @AppStorage("scanPresetsJSON") var scanPresetsJSON = ""
     @State var momentPresetName = ""
@@ -77,9 +78,13 @@ struct ContentView: View {
     @State var scanPresetName = ""
     @State var selectedScanPresetID = ""
     @State var momentAIAnalysis = ""
+    @State var momentAIReasoning = ""
     @State var scanAIAnalysis = ""
+    @State var scanAIReasoning = ""
     @State var classicalAIAnalysis = ""
+    @State var classicalAIReasoning = ""
     @State var horaryAIAnalysis = ""
+    @State var horaryAIReasoning = ""
     @State var isAnalyzingAI = false
     @State var isRunning = false
     @State var isNavigationCollapsed = false
@@ -125,7 +130,8 @@ struct ContentView: View {
     @State var modernPersonBLongitude = "-74.0060"
     @State var modernNodeMode = "true_node"
     @State var modernHarmonicOrder = 4
-    @State var modernAIAnalysis = ""
+    @State var modernAIAnalysisByMode: [String: String] = [:]
+    @State var modernAIReasoningByMode: [String: String] = [:]
     @State var modernSelectedTab = "planets"
 
     // Vedic astrology state

@@ -5,6 +5,21 @@ import SwiftUI
 struct SynastryResultPane: View {
     let result: SynastryResult
     @Binding var selectedTab: String
+    let analysis: String
+    let reasoning: String
+    let isAnalyzing: Bool
+    let canAnalyze: Bool
+    let onAnalyze: () -> Void
+
+    init(result: SynastryResult, selectedTab: Binding<String>, analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
+        self.result = result
+        self._selectedTab = selectedTab
+        self.analysis = analysis
+        self.reasoning = reasoning
+        self.isAnalyzing = isAnalyzing
+        self.canAnalyze = canAnalyze
+        self.onAnalyze = onAnalyze
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -72,7 +87,14 @@ struct SynastryResultPane: View {
         case "json":
             RawJSONView(value: result)
         case "ai":
-            EmptyView()
+            AIAnalysisView(
+                analysis: analysis,
+                reasoning: reasoning,
+                isAnalyzing: isAnalyzing,
+                canAnalyze: canAnalyze
+            ) {
+                onAnalyze()
+            }
         default:
             AspectTableView(title: "跨盘相位", leftColumnTitle: "A天体", rightColumnTitle: "B天体", aspects: result.crossAspects)
         }
@@ -108,6 +130,22 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
     let title: String
     let result: T
     @Binding var selectedTab: String
+    let analysis: String
+    let reasoning: String
+    let isAnalyzing: Bool
+    let canAnalyze: Bool
+    let onAnalyze: () -> Void
+
+    init(title: String, result: T, selectedTab: Binding<String>, analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
+        self.title = title
+        self.result = result
+        self._selectedTab = selectedTab
+        self.analysis = analysis
+        self.reasoning = reasoning
+        self.isAnalyzing = isAnalyzing
+        self.canAnalyze = canAnalyze
+        self.onAnalyze = onAnalyze
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -168,7 +206,14 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
         case "diagnostics", "json":
             RawJSONView(value: result)
         case "ai":
-            EmptyView()
+            AIAnalysisView(
+                analysis: analysis,
+                reasoning: reasoning,
+                isAnalyzing: isAnalyzing,
+                canAnalyze: canAnalyze
+            ) {
+                onAnalyze()
+            }
         default:
             PositionTableView(title: "\(title) 行星位置", positions: result.planets)
         }
@@ -184,6 +229,21 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
 struct ProgressionResultPane: View {
     let result: ProgressionResult
     @Binding var selectedTab: String
+    let analysis: String
+    let reasoning: String
+    let isAnalyzing: Bool
+    let canAnalyze: Bool
+    let onAnalyze: () -> Void
+
+    init(result: ProgressionResult, selectedTab: Binding<String>, analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
+        self.result = result
+        self._selectedTab = selectedTab
+        self.analysis = analysis
+        self.reasoning = reasoning
+        self.isAnalyzing = isAnalyzing
+        self.canAnalyze = canAnalyze
+        self.onAnalyze = onAnalyze
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -258,7 +318,14 @@ struct ProgressionResultPane: View {
         case "diagnostics", "json":
             RawJSONView(value: result)
         case "ai":
-            EmptyView()
+            AIAnalysisView(
+                analysis: analysis,
+                reasoning: reasoning,
+                isAnalyzing: isAnalyzing,
+                canAnalyze: canAnalyze
+            ) {
+                onAnalyze()
+            }
         default:
             PositionTableView(title: "次限推进盘", positions: result.progressedPlanets)
         }
@@ -301,6 +368,21 @@ struct ProgressedLunationView: View {
 struct SolarArcResultPane: View {
     let result: SolarArcResult
     @Binding var selectedTab: String
+    let analysis: String
+    let reasoning: String
+    let isAnalyzing: Bool
+    let canAnalyze: Bool
+    let onAnalyze: () -> Void
+
+    init(result: SolarArcResult, selectedTab: Binding<String>, analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
+        self.result = result
+        self._selectedTab = selectedTab
+        self.analysis = analysis
+        self.reasoning = reasoning
+        self.isAnalyzing = isAnalyzing
+        self.canAnalyze = canAnalyze
+        self.onAnalyze = onAnalyze
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -370,7 +452,14 @@ struct SolarArcResultPane: View {
         case "diagnostics", "json":
             RawJSONView(value: result)
         case "ai":
-            EmptyView()
+            AIAnalysisView(
+                analysis: analysis,
+                reasoning: reasoning,
+                isAnalyzing: isAnalyzing,
+                canAnalyze: canAnalyze
+            ) {
+                onAnalyze()
+            }
         default:
             PositionTableView(title: "Solar Arc 盘", positions: result.solarArcPlanets)
         }

@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-06-06 — AI 分析流式输出整理与审查修正
+
+- **`LLMAnalysisClient.swift`** — 新增流式 AI 分析能力，支持 `content` + `reasoning` 双流块输出；补上 UTF-8 安全的 SSE 行解析，避免按单字节拼接导致中文 token / reasoning 文本损坏
+- **`AIAnalysisView.swift`** — 新增流式阶段显示与可折叠思考过程区块，按钮状态从「思考中」到「生成中」动态切换
+- **`AppSettingsView.swift`** — AI 设置中新增 `aiReasoningEffort` 选项，允许关闭或调整 reasoning effort
+- **`ContentView+AI.swift` / `ContentView.swift` / `ContentView+ResultsPanes.swift`** — AI 分析改为流式消费；现代模式的 AI 正文与思考过程改为按 `synastry/composite/davison/progression/solar_arc` 分桶存储，修复不同 pane 间串台
+- **`ModernResultViews.swift`** — Synastry / Composite / Davison / Progression / Solar Arc 的 `AI分析` tab 正式接入 `AIAnalysisView`
+- **`MarkdownModernExportBuilder.swift`** — 为 `DavisonResult` 补齐 `compositeOrDavison` 导出重载，避免现代模式 AI 入口编译失败
+- 验证：`swift build` 通过；代码审查中发现并修复了 2 个真实问题
+  - SSE 逐字节字符串拼接会破坏 UTF-8 流式输出
+  - 现代模式共用一份 AI 状态会导致不同结果 pane 的分析内容互相覆盖
+  - `swift test` 仍需越过沙箱写 SwiftPM 用户缓存，当前执行环境未放行
+
 ## 2026-06-04 — Vedic horoscope 输出硬伤修复
 
 - **`astro_backend_jyotish.py` / `astro_backend_api.py`** — 吠陀模式支持基于地点回退时区（中国坐标默认 `Asia/Shanghai`），统一按标准 UTC 偏移生成 `birth_local` / `birth_utc` / `timezone_label` / `utc_offset_text`，并在 D1 whole-sign 锚点校验失败时提前报错 `timezone or birth UTC conversion failed.`，停止派生输出

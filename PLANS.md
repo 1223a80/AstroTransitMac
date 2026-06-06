@@ -150,3 +150,22 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
   - `swift build` 已通过
   - `swift test` 需要越过沙箱写入用户 SwiftPM 缓存；已按流程申请，但执行环境提权额度被系统拒绝，本回合无法完成
 - Status: completed
+
+## 2026-06-06 — LLM 前端改动审查与拆分提交
+
+- Task: 审查当前未提交的 LLM / AI 前端改动，将其与已提交的 Vedic 修复彻底分离，并在发现真实问题后先修正再提交。
+- Focus:
+  - 流式 SSE 解析是否正确处理 UTF-8 / 中文 token
+  - modern 各子模式的 AI 分析状态是否互相污染
+  - 现代模式 AI tab 接入后是否仍可通过本地编译
+- Review findings addressed:
+  - `LLMAnalysisClient.swift` 的 SSE 逐字节字符串拼接会破坏 UTF-8，多字节中文输出可能乱码；已改为按 `Data` 累积到换行后统一 UTF-8 解码
+  - `ContentView.swift` / `ContentView+AI.swift` / `ContentView+ResultsPanes.swift` 仍只共享一份 `modernAIAnalysis` / `modernAIReasoning`，切换 `synastry/composite/davison/progression/solar_arc` 会串台；已改为按 mode key 分桶
+- Validation:
+  - `swift build`
+  - 代码审查：LLMAnalysisClient / ContentView+AI / AIAnalysisView / ContentView+ResultsPanes / ModernResultViews
+- Validation completed:
+  - `swift build` → passed
+- Remaining validation gap:
+  - `swift test` 需要越过沙箱写 SwiftPM 用户缓存，当前执行环境未放行
+- Status: completed
