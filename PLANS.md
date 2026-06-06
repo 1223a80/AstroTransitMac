@@ -188,3 +188,91 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
   - 已将遗留的“提交并覆盖安装”条目标记为 `superseded`
   - 本地提交已按任务拆分完成，待统一推送到 GitHub
 - Status: completed
+
+## 2026-06-06 — P0 修复：窗口扫描开始按钮丢失
+
+- Task: 修复窗口扫描模式缺失“开始扫描 / 扫描窗口”入口按钮导致整个 scan 功能不可用的问题。
+- Root cause identified:
+  - `sidebar` 始终渲染 `runSection`
+  - 但 `runSection` 内部错误地把 `mode == .scan` 的执行按钮排除掉了
+  - 同时 `scanSidebarActionBar` 是死代码，从未挂载到任何视图树
+- Planned changes:
+  - 恢复 scan 模式在共享 `runSection` 中的执行按钮
+  - 删除或收敛未使用的 `scanSidebarActionBar` 死代码，避免再次出现“有实现、未接线”的假入口
+  - 运行最小编译验证，确认 scan 模式入口恢复且不影响其他模式
+- Validation:
+  - `swift build`
+  - 人工代码审查：确认 `mode == .scan` 时侧边栏存在执行按钮且调用 `runCurrentMode()`
+- Validation completed:
+  - `rg -n "scanSidebarActionBar|mode != \\.scan" Sources/TransitStudio` → 无匹配，确认错误分支和死代码已移除
+  - `swift build` → passed
+- Status: completed
+
+## 2026-06-06 — scan 启动按钮位置调整
+
+- Task: 将窗口扫描模式的“扫描窗口”启动按钮从底部共享运行区挪到侧边栏顶部标题行右侧，减少滚动并让入口更显眼。
+- Planned changes:
+  - 在 `ContentView+SidebarSections.swift` 的标题行中，仅对 `mode == .scan` 显示右侧主按钮
+  - scan 模式不再渲染底部共享 `runSection`，避免重复入口
+  - 其他模式维持原有布局不变
+- Validation:
+  - `swift build`
+  - 代码审查：确认 scan 模式只有顶部一个主按钮，且仍调用 `runCurrentMode()`
+- Validation completed:
+  - `swift build` → passed
+  - 代码审查确认：scan 模式按钮位于标题行右侧，底部共享 `runSection` 对 scan 已关闭，其他模式仍保留原布局
+- Status: completed
+
+## 2026-06-06 — scan P0 收尾打包并推送
+
+- Task: 将窗口扫描相关 P0 修复（恢复入口 + 标题栏按钮调整）打包覆盖到 `/Applications`，然后整理提交并推送到 GitHub。
+- Planned changes:
+  - 将当前打包 build 号从 `18` 提升到 `19`，保留 `1.1.1` 作为 patch 版本
+  - 重新运行 `./package_app.sh` 覆盖安装 `/Applications/TransitStudio.app`
+  - 校验安装后 bundle 版本
+  - 提交 `scan` 修复相关源码、`package_app.sh`、`PLANS.md`、`CHANGELOG.md`
+  - 推送 `main` 到 `origin/main`
+- Validation:
+  - `./package_app.sh`
+  - `plutil -extract CFBundleShortVersionString raw -o - /Applications/TransitStudio.app/Contents/Info.plist`
+  - `plutil -extract CFBundleVersion raw -o - /Applications/TransitStudio.app/Contents/Info.plist`
+  - `git status --short --branch`
+- Validation completed:
+  - `./package_app.sh` → passed
+  - `dist/TransitStudio.app` version verified as `1.1.1 (19)`
+  - `/Applications/TransitStudio.app` version verified as `1.1.1 (19)`
+  - 当前工作树仅剩本轮待提交源码 / 文档 / 打包脚本改动
+- Status: completed
+
+## 2026-06-06 — ACG 地图算法口径核实与个人计算准备
+
+- Task: 查证 ACG / astrocartography 的主流权威计算口径，确认本项目现有后端哪些天文计算层可以直接复用；若用户未提供出生资料，则先完成方法说明与输入清单，不臆造个人结果。
+- Focus:
+  - 区分 ACG 四角线、Local Space、Relocation chart 这三类常被混称的方法
+  - 核实上升/下降线采用 `in mundo` 还是仅用黄经投影的主流分歧
+  - 核实项目内 `Swiss Ephemeris + build_houses()` 是否足以支撑后续一次性计算
+- Planned steps:
+  - 查阅 astro.com / Astrodienst 与 Swiss Ephemeris 文档中的 ACG / locational astrology 说明
+  - 检查本地后端是否已有现成 ACG 输出；若没有，只确认可复用的底层计算能力
+  - 向用户返回方法结论、当前能做的计算范围、以及实际个人计算所需出生参数
+- Validation:
+  - 人工审查外部资料
+  - 人工审查 `astro_backend_api.py`、`astro_backend_ephemeris.py`、`astro_backend_core.py`
+- Status: completed
+
+## 2026-06-06 — 用户样例 ACG 个人计算
+
+- Task: 基于用户已确认的出生资料，按标准 `in mundo astrocartography` 口径输出个人 ACG 四角线结果；不新建产品接口，只做一次性本地计算。
+- Input confirmed:
+  - `2004-08-09 16:16`
+  - `35.057183N, 118.334337E`
+  - `UTC+8 / Asia/Shanghai`
+  - `无夏令时`
+- Planned steps:
+  - 用本地 Swiss Ephemeris 计算出生瞬间主要星体的黄道与赤道坐标
+  - 计算各星体 `MC/IC` 子午线与 `ASC/DSC` 升落曲线
+  - 汇总为便于阅读的城市/区域级解释，明确这是 ACG 而非 relocation chart
+- Validation:
+  - 本地 Python / Swiss Ephemeris 计算脚本成功运行
+  - 抽查结果几何关系：`IC = MC ± 180°`，`ASC/DSC` 为互补曲线
+- Status: in progress

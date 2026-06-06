@@ -4,10 +4,22 @@ extension ContentView {
     var sidebar: some View {
         ScrollView(.vertical) {
             VStack(alignment: .leading, spacing: 16) {
-                Text(sidebarTitle)
-                    .font(.title3.weight(.semibold))
+                HStack(alignment: .center, spacing: 12) {
+                    Text(sidebarTitle)
+                        .font(.title3.weight(.semibold))
+                    Spacer(minLength: 0)
+                    if mode == .scan {
+                        Button {
+                            Task { await runCurrentMode() }
+                        } label: {
+                            Label(isRunning ? "扫描中" : "扫描窗口", systemImage: isRunning ? "hourglass" : "play.fill")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(runDisabled)
+                    }
+                }
                 sidebarModeControls
-                if mode != .rectify {
+                if mode != .rectify && mode != .scan {
                     runSection
                 }
             }
@@ -124,19 +136,6 @@ extension ContentView {
         f.dateFormat = "HH:mm:ss"
         f.timeZone = selectedTimeZone
         return f.string(from: natalDate)
-    }
-
-    var scanSidebarActionBar: some View {
-        HStack {
-            Spacer()
-            Button {
-                Task { await runCurrentMode() }
-            } label: {
-                Label(isRunning ? "扫描中" : "扫描窗口", systemImage: isRunning ? "hourglass" : "play.fill")
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(runDisabled)
-        }
     }
 
     var momentTimeSection: some View {

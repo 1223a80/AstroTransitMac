@@ -6,37 +6,45 @@ cd "$ROOT_DIR"
 
 PRODUCT_NAME="TransitStudio"
 BUNDLE_ID="com.gacu.TransitStudio"
-APP_VERSION="1.1.0"
-BUILD_VERSION="17"
+APP_VERSION="1.1.1"
+BUILD_VERSION="19"
 SWIFTPM_BUILD_PATH="${SWIFTPM_BUILD_PATH:-/private/tmp/astrotransit-package-build}"
 BUILD_DIR="$SWIFTPM_BUILD_PATH/arm64-apple-macosx/release"
 OUTPUT_ROOT="${APP_OUTPUT_DIR:-$ROOT_DIR/dist}"
 APP_DIR="$OUTPUT_ROOT/${PRODUCT_NAME}.app"
+STAGING_ROOT="${APP_STAGING_ROOT:-/private/tmp/${PRODUCT_NAME}-package-stage}"
+STAGED_APP_DIR="$STAGING_ROOT/${PRODUCT_NAME}.app"
 INSTALL_ROOT="${APP_INSTALL_ROOT:-/Applications}"
 INSTALL_APP_PATH="${APP_INSTALL_PATH:-$INSTALL_ROOT/${PRODUCT_NAME}.app}"
 SKIP_INSTALL="${SKIP_INSTALL:-0}"
-CONTENTS_DIR="$APP_DIR/Contents"
+CONTENTS_DIR="$STAGED_APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
 ICONSET_DIR="/private/tmp/TransitStudio.iconset"
 
 clean_xattrs() {
-    xattr -cr "$APP_DIR" || true
-    find "$APP_DIR" -exec xattr -c {} + 2>/dev/null || true
+    local target="${1:?target required}"
+    xattr -cr "$target" || true
+    find "$target" -exec xattr -c {} + 2>/dev/null || true
+    while IFS= read -r path; do
+        xattr -d com.apple.FinderInfo "$path" 2>/dev/null || true
+        xattr -d "com.apple.fileprovider.fpfs#P" "$path" 2>/dev/null || true
+        xattr -d com.apple.provenance "$path" 2>/dev/null || true
+    done < <(find "$target" -print)
 }
 
 swift build -c release --build-path "$SWIFTPM_BUILD_PATH"
 
 mkdir -p "$OUTPUT_ROOT"
-rm -rf "$APP_DIR" "$ICONSET_DIR"
+rm -rf "$APP_DIR" "$STAGED_APP_DIR" "$ICONSET_DIR"
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR" "$ICONSET_DIR"
 
 cp "$BUILD_DIR/$PRODUCT_NAME" "$MACOS_DIR/$PRODUCT_NAME"
 chmod +x "$MACOS_DIR/$PRODUCT_NAME"
 
 ditto --noextattr --noqtn "$BUILD_DIR/AstroTransitMac_TransitStudio.bundle" "$RESOURCES_DIR/AstroTransitMac_TransitStudio.bundle"
-find "$APP_DIR" -name '*.pyc' -delete
-find "$APP_DIR" -name '__pycache__' -type d -empty -delete
+find "$STAGED_APP_DIR" -name '*.pyc' -delete
+find "$STAGED_APP_DIR" -name '__pycache__' -type d -empty -delete
 
 python3 - <<'PY'
 from pathlib import Path
@@ -157,15 +165,19 @@ cat > "$CONTENTS_DIR/Info.plist" <<PLIST
 PLIST
 
 sleep 0.5
-clean_xattrs
-codesign --force --deep --sign - "$APP_DIR"
+clean_xattrs "$STAGED_APP_DIR"
+codesign --force --deep --sign - "$STAGED_APP_DIR"
 sleep 0.2
-clean_xattrs
+clean_xattrs "$STAGED_APP_DIR"
+
+rm -rf "$APP_DIR"
+ditto --noextattr --noqtn "$STAGED_APP_DIR" "$APP_DIR"
+clean_xattrs "$APP_DIR"
 
 if [[ "$SKIP_INSTALL" != "1" ]]; then
     rm -rf "$INSTALL_APP_PATH"
-    ditto --noextattr --noqtn "$APP_DIR" "$INSTALL_APP_PATH"
-    xattr -cr "$INSTALL_APP_PATH" || true
+    ditto --noextattr --noqtn "$STAGED_APP_DIR" "$INSTALL_APP_PATH"
+    clean_xattrs "$INSTALL_APP_PATH"
 fi
 
 echo "$APP_DIR"

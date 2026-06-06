@@ -3,16 +3,14 @@ import SwiftUI
 extension ContentView {
     var runSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if mode != .scan {
-                Button {
-                    Task { await runCurrentMode() }
-                } label: {
-                    Label(isRunning ? "计算中" : runButtonTitle, systemImage: isRunning ? "hourglass" : "play.fill")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(runDisabled)
+            Button {
+                Task { await runCurrentMode() }
+            } label: {
+                Label(isRunning ? "计算中" : runButtonTitle, systemImage: isRunning ? "hourglass" : "play.fill")
+                    .frame(maxWidth: .infinity)
             }
+            .buttonStyle(.borderedProminent)
+            .disabled(runDisabled)
 
             if let calculationProgress {
                 VStack(alignment: .leading, spacing: 4) {

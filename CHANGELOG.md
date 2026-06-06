@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-06-06 — 用户样例 ACG 个人计算（跟踪记录）
+
+- **`PLANS.md`** — 追加用户样例 ACG 计算任务，记录已确认出生资料与本次采用的标准 `in mundo astrocartography` 口径
+- 本次预期为一次性本地计算，不修改产品源码接口；最终结果以对话输出为准
+
+## 2026-06-06 — ACG 地图算法口径核实（跟踪记录）
+
+- **`PLANS.md`** — 追加一条 ACG / astrocartography 研究与个人计算准备任务，明确本次先核实算法口径、区分 ACG / Local Space / Relocation chart，并确认项目后端可复用 `Swiss Ephemeris` 与宫位计算基础
+- 本次未修改产品源码；若要输出个人 ACG 结果，仍需用户提供出生年月日、精确出生时间、出生地与时区
+
+## 2026-06-06 — P0 修复：窗口扫描开始按钮恢复
+
+- **`ContentView+ResultsPanes.swift`** — 共享 `runSection` 不再错误排除 `mode == .scan`；窗口扫描现在重新显示主执行按钮并可触发 `runCurrentMode()`
+- **`ContentView+SidebarSections.swift`** — 删除未接线的 `scanSidebarActionBar` 死代码，避免后续误判为“扫描入口已存在”
+- **`package_app.sh`** — 打包版本从 `1.1.0 (17)` 提升到 `1.1.1 (18)`，用于本次 P0 修复后的覆盖安装
+
+## 2026-06-06 — scan 启动按钮移至标题栏
+
+- **`ContentView+SidebarSections.swift`** — 窗口扫描模式的主启动按钮从底部共享运行区移动到侧边栏标题行右侧；scan 模式不再显示底部重复入口，其他模式布局保持不变
+- **`package_app.sh`** — 打包 build 号从 `18` 提升到 `19`，用于本轮窗口扫描入口布局调整后的重新覆盖安装
+- **`package_app.sh`** — 补强扩展属性清理逻辑，显式移除 `com.apple.FinderInfo` / `com.apple.fileprovider.fpfs#P` / `com.apple.provenance`，修复本轮覆盖安装时 `codesign` 因 detritus 失败的问题
+- **`package_app.sh`** — 打包流程改为先在 `/private/tmp` staging 目录组装并签名，再同步到 `dist/` 与 `/Applications`，规避 `dist/` 路径上的 File Provider 扩展属性再次污染签名产物
+
 ## 2026-06-06 — Git 历史遗留清理与流程文档加固
 
 - **`AGENTS.md`** — 强化 Git 规则：明确“本地提交不等于 GitHub 已同步”，要求在声明完成前检查 `git status --short --branch` 与 `git log origin/main..HEAD`；要求在脏工作树中先分拣任务边界、关闭过期的 `PLANS.md` in-progress 项，并在 push 前保证提交边界与 `PLANS.md` / `CHANGELOG.md` 对齐
