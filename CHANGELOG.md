@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-06-06 — Git 历史遗留清理与流程文档加固
+
+- **`AGENTS.md`** — 强化 Git 规则：明确“本地提交不等于 GitHub 已同步”，要求在声明完成前检查 `git status --short --branch` 与 `git log origin/main..HEAD`；要求在脏工作树中先分拣任务边界、关闭过期的 `PLANS.md` in-progress 项，并在 push 前保证提交边界与 `PLANS.md` / `CHANGELOG.md` 对齐
+- **`README.md`** — 新增“Git 卫生”小节，给人类维护者一套最小自查流程，避免再次混淆本地提交与远端同步状态
+- **`docs/README.md`** / **`docs/git-workflow.md`**（新）— 新增面向仓库协作的 Git 流程文档，覆盖起始状态检查、任务边界、review 前检查、push 前确认和 push 后核验
+- **`PLANS.md`** — 将遗留的“提交并覆盖安装”条目标记为 `superseded`，避免后续继续把已经失效的 in-progress 记录当作活跃任务
+- 本次目标不是修改业务逻辑，而是清理 Git / 文档层面的历史遗留，降低再次出现“任务混写、状态误判、未 push 误以为已上 GitHub”的概率
+
 ## 2026-06-06 — AI 分析流式输出整理与审查修正
 
 - **`LLMAnalysisClient.swift`** — 新增流式 AI 分析能力，支持 `content` + `reasoning` 双流块输出；补上 UTF-8 安全的 SSE 行解析，避免按单字节拼接导致中文 token / reasoning 文本损坏

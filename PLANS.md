@@ -120,7 +120,7 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
   - create a single commit for the reviewed working tree changes
   - overwrite `/Applications/TransitStudio.app` from `dist/TransitStudio.app`
   - verify `git status --short` and installed bundle version/build
-- Status: in progress
+- Status: superseded by later verified commits on `main`; do not reuse this entry as a live task
 
 ## 2026-06-04 — Vedic horoscope 输出硬伤修复
 
@@ -169,3 +169,18 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 - Remaining validation gap:
   - `swift test` 需要越过沙箱写 SwiftPM 用户缓存，当前执行环境未放行
 - Status: completed
+
+## 2026-06-06 — Git 历史遗留清理与文档防再犯
+
+- Task: 清理当前仓库里与 Git 状态认知相关的历史遗留问题，同步强化 `AGENTS.md` 和项目文档，避免再次出现“本地已提交但未 push”“多任务混在一个工作树里”“过期 in-progress 计划误导后续任务”的情况，并把当前 `main` 的本地提交统一推送到 GitHub。
+- Planned changes:
+  - 在 `AGENTS.md` 增加本地/远端状态核对、脏工作树先分拣、过期 `PLANS.md` 状态关闭、push 前后核验等明确规则
+  - 在 `README.md` 增加简版 Git 卫生流程，面向人类维护者
+  - 在 `docs/` 下新增 Git 流程文档，并加入 `docs/README.md` 索引
+  - 关闭 `PLANS.md` 中过期但仍显示 `in progress` 的遗留条目
+  - 完成文档提交后，将 `main` 推送到 `origin/main`
+- Validation:
+  - `git status --short --branch`
+  - `git log origin/main..HEAD --oneline`
+  - 人工审查新增文档是否和当前项目约束一致
+- Status: in progress

@@ -110,6 +110,22 @@ swift test
 
 更多 smoke test（包括 rectify）和沙箱说明见 `docs/validation.md`。
 
+## Git 卫生
+
+如果你在这个仓库里继续开发，建议遵守下面这套最小流程：
+
+```bash
+git status --short --branch
+git log origin/main..HEAD --oneline
+```
+
+- 先看当前工作树是否干净，以及本地 `main` 是否已经领先于 GitHub。
+- 一个任务一笔提交；如果本地同时混入多类改动，先拆开再提交。
+- 不要把“已经本地 commit”当成“已经同步到 GitHub”。
+- 在声称任务完成前，确认对应验证已经跑过，`PLANS.md` / `CHANGELOG.md` 已同步更新，并且 `git status --short --branch` 反映的远端状态符合预期。
+
+更详细的仓库操作约定见 [docs/git-workflow.md](docs/git-workflow.md) 和 [AGENTS.md](AGENTS.md)。
+
 ## 古典模式输出结构
 
 `mode: "classical"` 会返回这些主字段：

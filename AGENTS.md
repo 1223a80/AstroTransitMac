@@ -119,9 +119,14 @@ echo '{"mode":"rectify","birth_date":"1990-01-01","center_time":"12:00","timezon
 - Treat `main` as the review baseline, not the default scratch space for experimental edits.
 - For non-trivial work, create a task branch first. Branch names should be descriptive, such as `feature/modern-ui-export` or `fix/rectify-timeout`.
 - Keep one task per branch. Do not mix unrelated fixes into the same branch just because the files are nearby.
+- Local commits are not the same thing as GitHub state. Before claiming work is "on GitHub", explicitly check `git status --short --branch` and `git log origin/main..HEAD`.
+- Before editing in a dirty worktree, classify the existing changes by task. If multiple tasks are already mixed locally, split them into separate commits before pushing.
+- If a previous `PLANS.md` entry is still marked `in progress` but the task has effectively been superseded or finished, update that status before adding a new task entry.
 - `PLANS.md` explains intended work, `git diff` proves actual code changes, and `CHANGELOG.md` summarizes the result for humans. Do not use any one of the three as a substitute for the other two.
 - Before editing, read the relevant code and confirm the target files and contracts. Do not start from a guessed patch shape.
 - Before asking for review or declaring completion, run the required validation for the touched area and inspect `git diff --stat` plus the full `git diff`.
 - If the diff contains unrelated noise, stop and clean the task boundary before review.
 - Push branches to GitHub only after the local diff and validation output match the task plan.
+- Before pushing, make sure each logical task is represented by its own commit message and that `CHANGELOG.md` / `PLANS.md` entries line up with those commit boundaries.
+- After pushing, verify that the current branch is no longer ahead of its remote before reporting the task as synchronized.
 - Never force-push or rewrite shared history unless the human explicitly asks for it.
