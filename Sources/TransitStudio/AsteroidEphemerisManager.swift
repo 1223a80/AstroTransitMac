@@ -3,6 +3,7 @@ import Foundation
 enum AsteroidEphemerisError: LocalizedError {
     case invalidAsteroidID(Int)
     case downloadFailed(Int, String)
+    case invalidEphemerisData(Int)
 
     var errorDescription: String? {
         switch self {
@@ -10,6 +11,8 @@ enum AsteroidEphemerisError: LocalizedError {
             return "小行星编号无效：\(id)"
         case .downloadFailed(let id, let reason):
             return "小行星 \(id) 下载失败：\(reason)"
+        case .invalidEphemerisData(let id):
+            return "小行星 \(id) 下载内容不是有效的星历文件（可能是网盘限流或链接失效），已丢弃。"
         }
     }
 }
@@ -132,6 +135,10 @@ struct AsteroidEphemerisManager {
           mkdir -p "$EPHE/ast$ast"
           echo "Downloading asteroid $id -> $EPHE/ast$ast/$file"
           curl -L --fail --retry 3 -o "$EPHE/ast$ast/$file" "$BASE/ast$ast/$file?$KEY"
+          if [ "$(head -c 8 "$EPHE/ast$ast/$file")" != "SWISSEPH" ]; then
+            echo "❌ asteroid $id 下载内容无效（疑似网盘限流页面），已删除"
+            rm -f "$EPHE/ast$ast/$file"
+          fi
         done
 
         echo "Done."
@@ -175,13 +182,33 @@ struct AsteroidEphemerisManager {
 
         let (temporaryURL, response) = try await URLSession.shared.download(from: url)
         if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
+            try? FileManager.default.removeItem(at: temporaryURL)
             throw AsteroidEphemerisError.downloadFailed(id, "HTTP \(httpResponse.statusCode)")
+        }
+
+        // Dropbox can answer rate-limit / dead-link errors as HTTP 200 with an
+        // HTML page; saving that as .se1 silently corrupts the ephemeris
+        // directory. Every genuine Swiss Ephemeris file starts with "SWISSEPH".
+        guard isSwissEphemerisFile(at: temporaryURL) else {
+            try? FileManager.default.removeItem(at: temporaryURL)
+            throw AsteroidEphemerisError.invalidEphemerisData(id)
         }
 
         if FileManager.default.fileExists(atPath: fileURL.path) {
             try FileManager.default.removeItem(at: fileURL)
         }
         try FileManager.default.moveItem(at: temporaryURL, to: fileURL)
+    }
+
+    private static func isSwissEphemerisFile(at url: URL) -> Bool {
+        guard let handle = try? FileHandle(forReadingFrom: url) else {
+            return false
+        }
+        defer { try? handle.close() }
+        guard let prefix = try? handle.read(upToCount: 8) else {
+            return false
+        }
+        return prefix.elementsEqual("SWISSEPH".utf8)
     }
 
     private static func summaryText(existing: [Int], downloaded: [Int], failed: [Int]) -> String {
