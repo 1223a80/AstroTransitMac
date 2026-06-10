@@ -4,9 +4,9 @@ struct ClassicalPlanetTableView: View {
     let planets: [ClassicalPlanetRow]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             Text("七政古典状态")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             Table(planets) {
                 TableColumn("星体") { Text($0.name) }
                 TableColumn("位置") { Text($0.degreeText).monospacedDigit() }
@@ -39,19 +39,19 @@ struct ClassicalPointsView: View {
     let experimentalLots: [ClassicalPoint]?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
             Text("角点")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             PointTable(points: angles)
             Text("Hermetic Lots")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             PointTable(points: lots)
             if let expLots = experimentalLots, !expLots.isEmpty {
                 Text("实验性 Lots（来源未确认）")
-                    .font(.headline)
+                    .font(TS.Font.sectionTitle)
                     .foregroundStyle(.orange)
                 Text("以下 Lots 公式来源不确定，仅供参考")
-                    .font(.caption)
+                    .font(TS.Font.label)
                     .foregroundStyle(.secondary)
                 PointTable(points: expLots, showConfidence: true)
             }
@@ -92,9 +92,9 @@ struct ClassicalHouseTableView: View {
     let houses: [HouseRow]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             Text("宫位")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             Table(houses) {
                 TableColumn("宫") { Text("\($0.house)") }
                 TableColumn("宫头") { Text($0.cuspText).monospacedDigit() }
@@ -110,9 +110,9 @@ struct ClassicalAspectReceptionView: View {
     let receptions: [ReceptionRow]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
             Text("古典相位")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             Table(aspects) {
                 TableColumn("A") { Text($0.bodyA) }
                 TableColumn("相位") { Text($0.aspect) }
@@ -123,7 +123,7 @@ struct ClassicalAspectReceptionView: View {
             }
 
             Text("接纳")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             Table(receptions) {
                 TableColumn("接纳者") { Text($0.receiver) }
                 TableColumn("被接纳") { Text($0.received) }
@@ -146,6 +146,8 @@ struct ClassicalTimingView: View {
     let timing: TimingSummary
     let planetaryReturns: [SolarReturnSummary]
     let circumambulations: [Circumambulation]?
+    let birthdayTransition: BirthdayTransition?
+    let activatedLordFocus: ActivatedLordFocus?
 
     private var solarReturn: SolarReturnSummary? {
         planetaryReturns.first { $0.bodyID == "SUN" }
@@ -165,7 +167,17 @@ struct ClassicalTimingView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 16) {
+            LazyVStack(alignment: .leading, spacing: TS.Spacing.xl) {
+                // Birthday Transition card
+                if let transition = birthdayTransition, transition.detected {
+                    birthdayTransitionCard(transition)
+                }
+
+                // Activated Lord Focus card
+                if let lordFocus = activatedLordFocus {
+                    activatedLordCard(lordFocus)
+                }
+
                 ActiveOverviewView(
                     timing: timing,
                     planetaryReturns: planetaryReturns,
@@ -173,7 +185,7 @@ struct ClassicalTimingView: View {
                 )
 
                 TimingSectionBox(title: "Annual Profection") {
-                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
+                    Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: 8) {
                         GridRow {
                             Text("年龄").foregroundStyle(.secondary)
                             Text("\(timing.profection.age)岁")
@@ -210,8 +222,8 @@ struct ClassicalTimingView: View {
                     if let monthly = timing.profection.monthly {
                         Divider()
                         Text("月小限")
-                            .font(.headline)
-                        Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
+                            .font(TS.Font.sectionTitle)
+                        Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: 8) {
                             GridRow {
                                 Text("月份").foregroundStyle(.secondary)
                                 Text("第 \(monthly.month) 月")
@@ -234,9 +246,9 @@ struct ClassicalTimingView: View {
                     }
 
                     Divider()
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: TS.Spacing.sm) {
                         Text("逻辑链")
-                            .font(.headline)
+                            .font(TS.Font.sectionTitle)
                         ForEach(timing.profection.logicSteps, id: \.self) { step in
                             Text(step)
                         }
@@ -244,62 +256,62 @@ struct ClassicalTimingView: View {
                 }
 
                 TimingSectionBox(title: "Firdaria") {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: TS.Spacing.md) {
                         Text("\(timing.firdaria.ruler) \(timing.firdaria.level)")
-                            .font(.headline)
+                            .font(TS.Font.sectionTitle)
                         Text("\(timing.firdaria.startLocal) - \(timing.firdaria.endLocal)")
-                            .font(.caption)
+                            .font(TS.Font.label)
                             .foregroundStyle(.secondary)
                             .monospacedDigit()
                         if !timing.firdaria.notes.isEmpty {
                             Text(timing.firdaria.notes.joined(separator: "、"))
-                                .font(.caption)
+                                .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
                         }
                         if let next = timing.firdaria.nextTransition {
                             Text("下一次转换：\(next)")
-                                .font(.caption)
+                                .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
                                 .monospacedDigit()
                         }
                         if let houses = timing.firdaria.activatedHouses, !houses.isEmpty {
                             Text("激活宫位：\(houses.map { "第\($0)宫" }.joined(separator: "、"))")
-                                .font(.caption)
+                                .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
                         }
                         if let currentSub = timing.firdaria.currentSubPeriod {
                             Text("当前次限：\(currentSub.ruler) \(currentSub.startLocal) - \(currentSub.endLocal)")
-                                .font(.caption)
+                                .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
                                 .monospacedDigit()
                         }
                         if let method = timing.firdaria.method {
                             Text("\(method) / \(timing.firdaria.sourceTradition ?? "")")
-                                .font(.caption2)
+                                .font(TS.Font.detail)
                                 .foregroundStyle(.secondary)
                         }
 
                         if let subPeriods = timing.firdaria.subPeriods, !subPeriods.isEmpty {
                             Divider()
                             Text("次限")
-                                .font(.headline)
+                                .font(TS.Font.sectionTitle)
                             ForEach(subPeriods) { sub in
-                                HStack(alignment: .top, spacing: 10) {
+                                HStack(alignment: .top, spacing: TS.Spacing.lg) {
                                     Text(sub.ruler)
                                         .frame(width: 44, alignment: .leading)
                                     Text(sub.startLocal)
-                                        .font(.caption)
+                                        .font(TS.Font.label)
                                         .foregroundStyle(.secondary)
                                         .monospacedDigit()
                                     Text("-")
                                         .foregroundStyle(.secondary)
                                     Text(sub.endLocal)
-                                        .font(.caption)
+                                        .font(TS.Font.label)
                                         .foregroundStyle(.secondary)
                                         .monospacedDigit()
                                     Spacer()
                                     Text(String(format: "%.1f%%", sub.fraction * 100))
-                                        .font(.caption)
+                                        .font(TS.Font.label)
                                         .foregroundStyle(.secondary)
                                 }
                             }
@@ -308,40 +320,40 @@ struct ClassicalTimingView: View {
                 }
 
                 TimingSectionBox(title: "Decennials") {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: TS.Spacing.md) {
                         Text("\(timing.decennials.ruler) \(timing.decennials.level)")
-                            .font(.headline)
+                            .font(TS.Font.sectionTitle)
                         Text("\(timing.decennials.startLocal) - \(timing.decennials.endLocal)")
-                            .font(.caption)
+                            .font(TS.Font.label)
                             .foregroundStyle(.secondary)
                             .monospacedDigit()
                         if !timing.decennials.notes.isEmpty {
                             Text(timing.decennials.notes.joined(separator: "、"))
-                                .font(.caption)
+                                .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
                         }
 
                         if let subPeriods = timing.decennials.subPeriods, !subPeriods.isEmpty {
                             Divider()
                             Text("子限")
-                                .font(.headline)
+                                .font(TS.Font.sectionTitle)
                             ForEach(subPeriods) { sub in
-                                HStack(alignment: .top, spacing: 10) {
+                                HStack(alignment: .top, spacing: TS.Spacing.lg) {
                                     Text(sub.ruler)
                                         .frame(width: 44, alignment: .leading)
                                     Text(sub.startLocal)
-                                        .font(.caption)
+                                        .font(TS.Font.label)
                                         .foregroundStyle(.secondary)
                                         .monospacedDigit()
                                     Text("-")
                                         .foregroundStyle(.secondary)
                                     Text(sub.endLocal)
-                                        .font(.caption)
+                                        .font(TS.Font.label)
                                         .foregroundStyle(.secondary)
                                         .monospacedDigit()
                                     Spacer()
                                     Text(String(format: "%.1f%%", sub.fraction * 100))
-                                        .font(.caption)
+                                        .font(TS.Font.label)
                                         .foregroundStyle(.secondary)
                                 }
                             }
@@ -350,46 +362,46 @@ struct ClassicalTimingView: View {
                 }
 
                 TimingSectionBox(title: "Zodiacal Releasing") {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                         ForEach(timing.zodiacalReleasing) { zr in
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: TS.Spacing.md) {
                                 Text(zr.technique)
-                                    .font(.headline)
+                                    .font(TS.Font.sectionTitle)
                                 Text("\(zr.ruler) \(zr.sign ?? "")")
                                 Text("\(zr.startLocal) - \(zr.endLocal)")
-                                    .font(.caption)
+                                    .font(TS.Font.label)
                                     .foregroundStyle(.secondary)
                                     .monospacedDigit()
                                 if let next = zr.nextTransition {
                                     Text("下一次转换：\(next)")
-                                        .font(.caption)
+                                        .font(TS.Font.label)
                                         .foregroundStyle(.secondary)
                                         .monospacedDigit()
                                 }
                                 if let score = zr.importanceScore {
                                     Text("重要性评分：\(score)")
-                                        .font(.caption)
+                                        .font(TS.Font.label)
                                         .foregroundStyle(.secondary)
                                 }
                                 if let method = zr.method {
                                     Text("\(method) / \(zr.sourceTradition ?? "")")
-                                        .font(.caption2)
+                                        .font(TS.Font.detail)
                                         .foregroundStyle(.secondary)
                                 }
 
                                 if let lob = zr.loosingOfBond, lob {
                                     Label(zr.loosingOfBondDetail ?? "Loosing of the Bond", systemImage: "exclamationmark.triangle")
                                         .foregroundStyle(.orange)
-                                        .font(.caption)
+                                        .font(TS.Font.label)
                                 }
 
                                 if let l2 = zr.l2Periods, !l2.isEmpty {
                                     Divider()
                                     Text("L2 子周期")
-                                        .font(.subheadline)
+                                        .font(TS.Font.body)
                                         .foregroundStyle(.secondary)
                                     ForEach(l2) { period in
-                                        HStack(alignment: .top, spacing: 10) {
+                                        HStack(alignment: .top, spacing: TS.Spacing.lg) {
                                             Text(period.isActive == true ? "▶" : " ")
                                                 .foregroundStyle(.blue)
                                             Text(period.ruler)
@@ -397,14 +409,14 @@ struct ClassicalTimingView: View {
                                             Text(period.sign)
                                                 .frame(width: 44, alignment: .leading)
                                             Text("\(period.startLocal) - \(period.endLocal)")
-                                                .font(.caption)
+                                                .font(TS.Font.label)
                                                 .foregroundStyle(.secondary)
                                                 .monospacedDigit()
                                         }
 
                                         if let l3 = period.subPeriods, !l3.isEmpty, period.isActive == true {
                                             ForEach(l3) { l3p in
-                                                HStack(alignment: .top, spacing: 10) {
+                                                HStack(alignment: .top, spacing: TS.Spacing.lg) {
                                                     Text("   ")
                                                     Text(l3p.isActive == true ? "▶" : " ")
                                                         .foregroundStyle(.green)
@@ -413,7 +425,7 @@ struct ClassicalTimingView: View {
                                                     Text(l3p.sign)
                                                         .frame(width: 44, alignment: .leading)
                                                     Text("\(l3p.startLocal) - \(l3p.endLocal)")
-                                                        .font(.caption2)
+                                                        .font(TS.Font.detail)
                                                         .foregroundStyle(.secondary)
                                                         .monospacedDigit()
                                                 }
@@ -448,7 +460,7 @@ struct ClassicalTimingView: View {
                 }
 
                 TimingSectionBox(title: "Returns") {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                         ForEach(planetaryReturns.filter { $0.bodyID != "SUN" }) { summary in
                             if let previous = summary.previousReturn {
                                 TimingSectionBox(title: "Previous \(summary.title)（上一次）") {
@@ -466,12 +478,12 @@ struct ClassicalTimingView: View {
                                 }
                             }
                             if summary.previousReturn == nil && summary.currentCycleReturn == nil && summary.nextReturn == nil {
-                                VStack(alignment: .leading, spacing: 4) {
+                                VStack(alignment: .leading, spacing: TS.Spacing.sm) {
                                     Text("\(summary.title)：\(summary.noHitInUserWindow == true ? "未在搜索窗口内找到" : "无数据")")
                                         .foregroundStyle(.secondary)
                                     if let window = summary.suggestedWindow {
                                         Text(window)
-                                            .font(.caption)
+                                            .font(TS.Font.label)
                                             .foregroundStyle(.secondary)
                                     }
                                 }
@@ -484,7 +496,7 @@ struct ClassicalTimingView: View {
                 }
 
                 TimingSectionBox(title: "统一时间线") {
-                    Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 6) {
+                    Grid(alignment: .leading, horizontalSpacing: TS.Spacing.xl, verticalSpacing: 6) {
                         GridRow {
                             Text("分层").fontWeight(.medium).frame(width: 60, alignment: .leading)
                             Text("技法").fontWeight(.medium).frame(width: 60, alignment: .leading)
@@ -507,7 +519,7 @@ struct ClassicalTimingView: View {
                                     }
                                 }()
                                 Text(layerName)
-                                    .font(.caption2)
+                                    .font(TS.Font.detail)
                                     .foregroundStyle(.secondary)
                                     .frame(width: 60, alignment: .leading)
                                 Text(item.technique ?? "")
@@ -515,12 +527,12 @@ struct ClassicalTimingView: View {
                                 Text(item.title)
                                     .frame(width: 120, alignment: .leading)
                                 Text(item.startLocal)
-                                    .font(.caption)
+                                    .font(TS.Font.label)
                                     .foregroundStyle(.secondary)
                                     .frame(width: 120, alignment: .leading)
                                     .monospacedDigit()
                                 Text(item.startLocal == item.endLocal ? "" : item.endLocal)
-                                    .font(.caption)
+                                    .font(TS.Font.label)
                                     .foregroundStyle(.secondary)
                                     .frame(width: 120, alignment: .leading)
                                     .monospacedDigit()
@@ -535,6 +547,107 @@ struct ClassicalTimingView: View {
             .padding(.trailing, 8)
         }
     }
+
+    // MARK: - Birthday Transition Card
+
+    @ViewBuilder
+    private func birthdayTransitionCard(_ transition: BirthdayTransition) -> some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+            Label("生日过渡期", systemImage: "calendar.badge.exclamationmark")
+                .font(TS.Font.sectionTitle)
+                .foregroundStyle(TS.SemanticColor.warning)
+
+            Text(transition.note)
+                .font(TS.Font.body)
+                .textSelection(.enabled)
+
+            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.xl, verticalSpacing: TS.Spacing.md) {
+                if let age = transition.profectionAge {
+                    GridRow {
+                        Text("小限年龄").font(TS.Font.label).foregroundStyle(.secondary)
+                        Text("\(age)").font(TS.Font.mono).monospacedDigit()
+                    }
+                }
+                if let start = transition.profectionStart {
+                    GridRow {
+                        Text("小限起始").font(TS.Font.label).foregroundStyle(.secondary)
+                        Text(start).font(TS.Font.mono).textSelection(.enabled)
+                    }
+                }
+
+                if let current = transition.currentSolarReturn {
+                    GridRow {
+                        Text("当前太阳回归").font(TS.Font.label).foregroundStyle(.secondary)
+                        Text(current).font(TS.Font.mono).textSelection(.enabled)
+                    }
+                }
+                if let next = transition.nextSolarReturn {
+                    GridRow {
+                        Text("下次太阳回归").font(TS.Font.label).foregroundStyle(.secondary)
+                        Text(next).font(TS.Font.mono).textSelection(.enabled)
+                    }
+                }
+            }
+        }
+        .padding(TS.Padding.cardInner)
+        .background(TS.SemanticColor.warning.opacity(TS.Opacity.muted))
+        .clipShape(RoundedRectangle(cornerRadius: TS.Radius.card))
+    }
+
+    // MARK: - Activated Lord Focus Card
+
+    @ViewBuilder
+    private func activatedLordCard(_ lord: ActivatedLordFocus) -> some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+            HStack {
+                Label("年主聚焦: \(lord.lordName)", systemImage: "star.circle")
+                    .font(TS.Font.sectionTitle)
+                Spacer()
+                if let score = lord.natalScore {
+                    Text("评分 \(score)")
+                        .font(TS.Font.label)
+                        .padding(.horizontal, TS.Padding.chipHorizontal)
+                        .padding(.vertical, TS.Spacing.xs)
+                        .background(TS.SemanticColor.accentSubtle)
+                        .clipShape(RoundedRectangle(cornerRadius: TS.Radius.chip))
+                }
+            }
+
+            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.xl, verticalSpacing: TS.Spacing.md) {
+                if let condition = lord.natalCondition {
+                    GridRow {
+                        Text("本命状态").font(TS.Font.label).foregroundStyle(.secondary)
+                        Text(condition).font(TS.Font.body).textSelection(.enabled)
+                    }
+                }
+                if let house = lord.natalHouse {
+                    GridRow {
+                        Text("本命宫位").font(TS.Font.label).foregroundStyle(.secondary)
+                        Text("第 \(house) 宫").font(TS.Font.body).textSelection(.enabled)
+                    }
+                }
+            }
+
+            if let returnTitle = lord.returnTitle {
+                VStack(alignment: .leading, spacing: TS.Spacing.xs) {
+                    Text(returnTitle).font(TS.Font.body).textSelection(.enabled)
+                    if let exact = lord.returnExactLocal {
+                        Text(exact).font(TS.Font.mono).foregroundStyle(.secondary).textSelection(.enabled)
+                    }
+                }
+            }
+
+            if let keywords = lord.keywords, !keywords.isEmpty {
+                Text(keywords)
+                    .font(TS.Font.label)
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+            }
+        }
+        .padding(TS.Padding.cardInner)
+        .background(TS.SemanticColor.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: TS.Radius.card))
+    }
 }
 
 // MARK: - 当前激活技法总览
@@ -544,12 +657,11 @@ struct ActiveOverviewView: View {
     let circumambulations: [Circumambulation]?
 
     var body: some View {
-        GroupBox {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("当前激活技法总览")
-                    .font(.headline)
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Text("当前激活技法总览")
+                .font(TS.Font.sectionTitle)
 
-                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 6) {
+                Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.md) {
                     profectionRows
                     if let monthly = timing.profection.monthly {
                         monthlyRows(monthly)
@@ -564,8 +676,10 @@ struct ActiveOverviewView: View {
                     nearbyEventRows
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(TS.Padding.sectionGap)
+        .background(TS.SemanticColor.accentSubtle)
+        .clipShape(RoundedRectangle(cornerRadius: TS.Radius.card))
     }
 
     @ViewBuilder
@@ -577,7 +691,7 @@ struct ActiveOverviewView: View {
         GridRow {
             Text("").foregroundStyle(.secondary)
             Text("\(timing.profection.startLocal) - \(timing.profection.endLocal)")
-                .font(.caption).foregroundStyle(.secondary).monospacedDigit()
+                .font(TS.Font.label).foregroundStyle(.secondary).monospacedDigit()
         }
     }
 
@@ -599,7 +713,7 @@ struct ActiveOverviewView: View {
             GridRow {
                 Text("").foregroundStyle(.secondary)
                 Text("当前次限 \(sub.ruler) \(sub.startLocal) - \(sub.endLocal)")
-                    .font(.caption).foregroundStyle(.secondary).monospacedDigit()
+                    .font(TS.Font.label).foregroundStyle(.secondary).monospacedDigit()
             }
         }
     }
@@ -620,7 +734,7 @@ struct ActiveOverviewView: View {
                 Text("L\(zr.currentActiveLevel ?? "1") / \(zr.ruler) \(zr.sign ?? "")")
                 if let lob = zr.loosingOfBond, lob {
                     Label("LoB", systemImage: "exclamationmark.triangle")
-                        .foregroundStyle(.orange).font(.caption)
+                        .foregroundStyle(.orange).font(TS.Font.label)
                 }
             }
         }
@@ -671,7 +785,7 @@ struct ActiveOverviewView: View {
             GridRow {
                 Text("近期事件").foregroundStyle(.secondary)
                 Text(events.prefix(3).map { "\($0.title): \($0.startLocal)" }.joined(separator: "；"))
-                    .font(.caption)
+                    .font(TS.Font.label)
             }
         }
     }
@@ -682,16 +796,16 @@ struct ClassicalJudgementView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 16) {
+            LazyVStack(alignment: .leading, spacing: TS.Spacing.xl) {
                 ForEach(planets) { planet in
                     TimingSectionBox(title: "\(planet.name) 评分 \(planet.score)\(planet.scoreLabel.map { " (\($0))" } ?? "")") {
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                             if !planet.scoreBreakdown.isEmpty {
-                                VStack(alignment: .leading, spacing: 6) {
+                                VStack(alignment: .leading, spacing: TS.Spacing.md) {
                                     Text("评分明细")
-                                        .font(.headline)
+                                        .font(TS.Font.sectionTitle)
                                     ForEach(planet.scoreBreakdown) { item in
-                                        HStack(alignment: .top, spacing: 10) {
+                                        HStack(alignment: .top, spacing: TS.Spacing.lg) {
                                             Text(item.label)
                                                 .frame(width: 88, alignment: .leading)
                                                 .foregroundStyle(.secondary)
@@ -706,11 +820,11 @@ struct ClassicalJudgementView: View {
 
                             if let triplicityDetails = planet.triplicityDetails, !triplicityDetails.isEmpty {
                                 Divider()
-                                VStack(alignment: .leading, spacing: 6) {
+                                VStack(alignment: .leading, spacing: TS.Spacing.md) {
                                     Text("三分主星评估")
-                                        .font(.headline)
+                                        .font(TS.Font.sectionTitle)
                                     ForEach(triplicityDetails) { detail in
-                                        HStack(alignment: .top, spacing: 10) {
+                                        HStack(alignment: .top, spacing: TS.Spacing.lg) {
                                             Text(detail.label)
                                                 .frame(width: 44, alignment: .leading)
                                             Text(detail.ruler)
@@ -719,7 +833,7 @@ struct ClassicalJudgementView: View {
                                                 .frame(width: 24, alignment: .leading)
                                                 .foregroundStyle(detail.status == "强" ? .green : detail.status == "中" ? .orange : .red)
                                             Text(detail.notes.joined(separator: "、"))
-                                                .font(.caption)
+                                                .font(TS.Font.label)
                                                 .foregroundStyle(.secondary)
                                             Spacer(minLength: 0)
                                             Text("\(detail.score)")
@@ -757,14 +871,15 @@ struct TimingSectionBox<Content: View>: View {
     }
 
     var body: some View {
-        GroupBox {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(title)
-                    .font(.headline)
-                content
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Text(title)
+                .font(TS.Font.sectionTitle)
+            content
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(TS.Padding.sectionGap)
+        .background(TS.SemanticColor.cardBackground.opacity(0.5))
+        .clipShape(RoundedRectangle(cornerRadius: TS.Radius.card))
     }
 }
 
@@ -772,11 +887,11 @@ struct TimingAngleList: View {
     let points: [ClassicalPoint]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             Text("返照角点")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             ForEach(points) { point in
-                HStack(alignment: .top, spacing: 10) {
+                HStack(alignment: .top, spacing: TS.Spacing.lg) {
                     Text(point.name)
                         .frame(width: 50, alignment: .leading)
                     Text(point.degreeText)
@@ -794,11 +909,11 @@ struct TimingPlanetList: View {
     let planets: [ClassicalPlanetRow]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             Text("返照七政")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             ForEach(planets) { planet in
-                HStack(alignment: .top, spacing: 10) {
+                HStack(alignment: .top, spacing: TS.Spacing.lg) {
                     Text(planet.name)
                         .frame(width: 44, alignment: .leading)
                     Text(planet.degreeText)
@@ -824,8 +939,8 @@ struct ReturnSummaryView: View {
     let showCrossAspects: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: 8) {
                 GridRow {
                     Text("类型").foregroundStyle(.secondary)
                     Text(snapshot.label)
@@ -870,11 +985,11 @@ struct ReturnSummaryView: View {
 
             if let overlay = snapshot.houseOverlay, !overlay.isEmpty {
                 Divider()
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
                     Text("宫位叠加")
-                        .font(.headline)
+                        .font(TS.Font.sectionTitle)
                     ForEach(overlay) { item in
-                        HStack(alignment: .top, spacing: 10) {
+                        HStack(alignment: .top, spacing: TS.Spacing.lg) {
                             Text(item.planet)
                                 .frame(width: 44, alignment: .leading)
                             Text("返照第\(item.returnHouse)宫")
@@ -907,11 +1022,11 @@ struct ReturnCrossAspectList: View {
     let aspects: [ReturnCrossAspect]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             Text("返照与本命交叉")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             ForEach(aspects.prefix(12)) { aspect in
-                HStack(alignment: .top, spacing: 10) {
+                HStack(alignment: .top, spacing: TS.Spacing.lg) {
                     Text(aspect.leftBodyName)
                         .frame(width: 44, alignment: .leading)
                     Text(aspect.aspect)
@@ -933,11 +1048,11 @@ struct ModifierList: View {
     let rows: [ConditioningModifier]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             Text(title)
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             ForEach(rows) { row in
-                HStack(alignment: .top, spacing: 10) {
+                HStack(alignment: .top, spacing: TS.Spacing.lg) {
                     Text(row.source)
                         .frame(width: 44, alignment: .leading)
                     Text(row.aspect)
@@ -963,9 +1078,9 @@ struct AntisciaView: View {
     let antiscia: [AntisciaRow]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             Text("映点 / 反映点")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             Table(antiscia) {
                 TableColumn("行星") { Text($0.planet) }
                 TableColumn("映点位置") { Text($0.antisciaDegree).monospacedDigit() }
@@ -986,41 +1101,41 @@ struct CircumambulationsView: View {
     let circumambulations: [Circumambulation]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             Text("Circumambulations through the Bounds（沿界推进）")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             if circumambulations.isEmpty {
                 Text("无数据").foregroundStyle(.secondary)
             } else {
                 ForEach(circumambulations) { circ in
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: TS.Spacing.md) {
                         HStack {
                             Text("系统：\(circ.system)")
                             Text("当前界主：\(circ.currentRuler)")
                                 .fontWeight(.bold)
                         }
                         Text("Naibod rate：\(String(format: "%.4f", circ.naibodRate))°/年")
-                            .font(.caption)
+                            .font(TS.Font.label)
                             .foregroundStyle(.secondary)
                         if let info = circ.currentBoundInfo {
                             Text("当前推运位置：\(info)")
-                                .font(.caption)
+                                .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
                         }
                         if let lord = circ.boundLord, let sign = circ.boundSign,
                            let sDeg = circ.boundStartDegree, let eDeg = circ.boundEndDegree {
                             Text("当前宫限：\(sign) \(sDeg)°00 – \(eDeg)°00，主星 \(lord)")
-                                .font(.caption)
+                                .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
                         }
                         if let start = circ.boundStartDate, let end = circ.boundEndDate, !start.isEmpty {
                             Text("区间：\(start) → \(end)")
-                                .font(.caption)
+                                .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
                         }
                         if let pos = circ.currentDirectedPosition {
                             Text("Directed ASC：\(String(format: "%.4f", pos))°")
-                                .font(.caption)
+                                .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
                         }
                         Divider()
@@ -1065,11 +1180,11 @@ struct PrimaryDirectionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             Text("Primary Directions (主限法)")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             Text("共 \(directions.count) 条方向")
-                .font(.caption)
+                .font(TS.Font.label)
                 .foregroundStyle(.secondary)
             if directions.isEmpty {
                 Text("无数据").foregroundStyle(.secondary)
@@ -1099,7 +1214,7 @@ struct PrimaryDirectionsView: View {
                     TableColumn("备注") { row in
                         if let symbolic = row.symbolicDateFromSignedArc {
                             Text("出生前符号日: \(symbolic)")
-                                .font(.caption2)
+                                .font(TS.Font.detail)
                                 .foregroundStyle(.secondary)
                         } else {
                             Text("")
@@ -1116,8 +1231,8 @@ struct ClassicalDiagnosticsView: View {
 
     var body: some View {
         ScrollView {
-        LazyVStack(alignment: .leading, spacing: 14) {
-            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
+        LazyVStack(alignment: .leading, spacing: TS.Spacing.xl) {
+            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: 8) {
                 GridRow {
                     Text("出生 UTC").foregroundStyle(.secondary)
                     Text(result.meta.birthUTC).textSelection(.enabled)
@@ -1145,7 +1260,7 @@ struct ClassicalDiagnosticsView: View {
             }
 
             if let asteroidWarning = result.warnings.first(where: { $0.localizedCaseInsensitiveContains("asteroid") || $0.contains("小行星") }) {
-                GroupBox("小行星处理") {
+                TimingSectionBox(title: "小行星处理") {
                     Text(asteroidWarning)
                         .textSelection(.enabled)
                 }
@@ -1158,8 +1273,8 @@ struct ClassicalDiagnosticsView: View {
             }
 
             if let ambiguity = result.ambiguity {
-                GroupBox("技法主星汇总") {
-                    VStack(alignment: .leading, spacing: 8) {
+                TimingSectionBox(title: "技法主星汇总") {
+                    VStack(alignment: .leading, spacing: TS.Spacing.md) {
                         HStack {
                             Text("置信度").foregroundStyle(.secondary)
                             Text(ambiguity.confidence)
@@ -1178,7 +1293,7 @@ struct ClassicalDiagnosticsView: View {
                             Divider()
                             ForEach(ambiguity.conflictingSignals, id: \.self) { signal in
                                 Text(signal)
-                                    .font(.caption)
+                                    .font(TS.Font.label)
                                     .foregroundStyle(.secondary)
                             }
                         }
@@ -1187,8 +1302,8 @@ struct ClassicalDiagnosticsView: View {
             }
 
             if let syzygy = result.prenatalSyzygy {
-                GroupBox("产前朔望 (Prenatal Syzygy)") {
-                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 6) {
+                TimingSectionBox(title: "产前朔望 (Prenatal Syzygy)") {
+                    Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: 6) {
                         GridRow {
                             Text("类型").foregroundStyle(.secondary)
                             Text(syzygy.syzygyType == "new_moon" ? "朔月 (New Moon)" : "望月 (Full Moon)")
@@ -1214,7 +1329,7 @@ struct ClassicalDiagnosticsView: View {
                         if let note = syzygy.syzygyDegreeUsed {
                             GridRow {
                                 Text("度数说明").foregroundStyle(.secondary)
-                                Text(note).font(.caption)
+                                Text(note).font(TS.Font.label)
                             }
                         }
                         if let ruler = syzygy.ruler {
@@ -1226,7 +1341,7 @@ struct ClassicalDiagnosticsView: View {
                         if let mv = syzygy.methodVariant {
                             GridRow {
                                 Text("方法").foregroundStyle(.secondary)
-                                Text(mv).font(.caption)
+                                Text(mv).font(TS.Font.label)
                             }
                         }
                     }
@@ -1234,8 +1349,8 @@ struct ClassicalDiagnosticsView: View {
             }
 
             if let almuten = result.almutenFiguris {
-                GroupBox("Almuten Figuris (全盘最尊贵行星)") {
-                    VStack(alignment: .leading, spacing: 8) {
+                TimingSectionBox(title: "Almuten Figuris (全盘最尊贵行星)") {
+                    VStack(alignment: .leading, spacing: TS.Spacing.md) {
                         if let winner = almuten.winner {
                             HStack {
                                 Text("最尊贵行星").foregroundStyle(.secondary)
@@ -1259,7 +1374,7 @@ struct ClassicalDiagnosticsView: View {
                                         .monospacedDigit()
                                     Spacer()
                                     Text(entry.contributions.map { "\($0.point)(\($0.dignity)+\($0.weight))" }.joined(separator: " "))
-                                        .font(.caption)
+                                        .font(TS.Font.label)
                                         .foregroundStyle(.secondary)
                                 }
                             }
@@ -1269,10 +1384,10 @@ struct ClassicalDiagnosticsView: View {
             }
 
             if let hyleg = result.hylegAlcocoden {
-                GroupBox("Hyleg / Alcocoden (生命主星)") {
-                    VStack(alignment: .leading, spacing: 8) {
+                TimingSectionBox(title: "Hyleg / Alcocoden (生命主星)") {
+                    VStack(alignment: .leading, spacing: TS.Spacing.md) {
                         if let h = hyleg.hyleg, let selected = h.selected, !selected.isEmpty {
-                            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 6) {
+                            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: 6) {
                                 GridRow {
                                     Text("Hyleg").foregroundStyle(.secondary)
                                     Text(selected).fontWeight(.bold)
@@ -1286,14 +1401,14 @@ struct ClassicalDiagnosticsView: View {
                             }
                             if let candidates = h.candidates, !candidates.isEmpty {
                                 Divider()
-                                Text("候选列表").font(.headline)
+                                Text("候选列表").font(TS.Font.sectionTitle)
                                 ForEach(candidates) { c in
                                     HStack {
                                         Text(c.eligible == true ? "✓" : "✗")
                                         Text(c.name).frame(width: 44, alignment: .leading)
                                         Text("H\(c.house ?? 0)").foregroundStyle(.secondary)
                                         Text(c.reason)
-                                            .font(.caption)
+                                            .font(TS.Font.label)
                                             .foregroundStyle(c.eligible == true ? .green : .red)
                                         Spacer()
                                     }
@@ -1304,7 +1419,7 @@ struct ClassicalDiagnosticsView: View {
                         }
                         if let a = hyleg.alcocoden, let selected = a.selected, !selected.isEmpty {
                             Divider()
-                            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 6) {
+                            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: 6) {
                                 GridRow {
                                     Text("Alcocoden").foregroundStyle(.secondary)
                                     Text(selected).fontWeight(.bold)
@@ -1318,7 +1433,7 @@ struct ClassicalDiagnosticsView: View {
                             }
                             if let candidates = a.candidates, !candidates.isEmpty {
                                 Divider()
-                                Text("候选列表").font(.headline)
+                                Text("候选列表").font(TS.Font.sectionTitle)
                                 ForEach(candidates.prefix(7)) { c in
                                     HStack {
                                         Text("#\(c.rank ?? 0)").foregroundStyle(.secondary)
@@ -1326,7 +1441,7 @@ struct ClassicalDiagnosticsView: View {
                                         Text(c.dignityAtHyleg).foregroundStyle(.secondary)
                                         Text(c.seesHyleg == true ? "✓view" : "✗view")
                                             .foregroundStyle(c.seesHyleg == true ? .green : .red)
-                                        Text(c.ownConditionSummary ?? "").font(.caption).foregroundStyle(.secondary)
+                                        Text(c.ownConditionSummary ?? "").font(TS.Font.label).foregroundStyle(.secondary)
                                         Spacer()
                                     }
                                 }
@@ -1334,7 +1449,7 @@ struct ClassicalDiagnosticsView: View {
                         }
                         if let warn = hyleg.warning {
                             Text(warn)
-                                .font(.caption)
+                                .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -1343,7 +1458,7 @@ struct ClassicalDiagnosticsView: View {
 
             Spacer()
         }
-        .padding(4)
+        .padding(TS.Padding.resultContent)
         }
     }
 }

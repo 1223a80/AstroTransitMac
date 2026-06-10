@@ -13,7 +13,7 @@ struct DateTimeInput: View {
     }()
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: TS.Spacing.md) {
             DatePicker("", selection: $date, displayedComponents: [.date, .hourAndMinute])
                 .labelsHidden()
                 .onChange(of: date) { newValue in

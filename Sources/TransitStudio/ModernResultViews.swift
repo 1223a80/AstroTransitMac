@@ -22,10 +22,10 @@ struct SynastryResultPane: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             ResultPaneToolbar(
                 selection: $selectedTab,
-                tabRows: tabRows,
+                tabs: tabs,
                 moreTabs: moreTabs,
                 currentTabTitle: tabTitle,
                 markdownProvider: { markdown },
@@ -36,13 +36,13 @@ struct SynastryResultPane: View {
             selectedResultView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(14)
+        .padding(TS.Padding.resultContent)
     }
 
-    var tabRows: [[(String, String)]] {
+    var tabs: [(String, String)] {
         [
-            [("cross_aspects", "跨盘相位"), ("a_in_b_houses", "A入B宫"), ("b_in_a_houses", "B入A宫")],
-            [("person_a_planets", "A本命"), ("person_b_planets", "B本命"), ("ai", "AI分析")],
+            ("cross_aspects", "跨盘相位"), ("a_in_b_houses", "A入B宫"), ("b_in_a_houses", "B入A宫"),
+            ("person_a_planets", "A本命"), ("person_b_planets", "B本命"), ("ai", "AI分析"),
         ]
     }
 
@@ -110,14 +110,14 @@ struct HousePlacementView: View {
     let placements: [HousePlacement]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title).font(.headline)
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Text(title).font(TS.Font.sectionTitle)
             if placements.isEmpty {
-                Text("无数据").foregroundStyle(.secondary).frame(maxWidth: .infinity, maxHeight: .infinity)
+                EmptyStateView(title: "无数据", systemImage: "house")
             } else {
                 Table(placements) {
                     TableColumn("天体", value: \.bodyName)
-                    TableColumn("宫位") { Text("\($0.house)") }
+                    TableColumn("宫位") { Text("\($0.house)").monospacedDigit() }
                 }
             }
         }
@@ -148,10 +148,10 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             ResultPaneToolbar(
                 selection: $selectedTab,
-                tabRows: tabRows,
+                tabs: tabs,
                 moreTabs: moreTabs,
                 currentTabTitle: tabTitle,
                 markdownProvider: { markdown },
@@ -162,13 +162,13 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
             selectedResultView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(14)
+        .padding(TS.Padding.resultContent)
     }
 
-    var tabRows: [[(String, String)]] {
+    var tabs: [(String, String)] {
         [
-            [("planets", "行星"), ("angles", "角点"), ("houses", "宫位"), ("aspects", "相位")],
-            [("patterns", "图形"), ("ai", "AI分析")],
+            ("planets", "行星"), ("angles", "角点"), ("houses", "宫位"), ("aspects", "相位"),
+            ("patterns", "图形"), ("ai", "AI分析"),
         ]
     }
 
@@ -246,10 +246,10 @@ struct ProgressionResultPane: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             ResultPaneToolbar(
                 selection: $selectedTab,
-                tabRows: tabRows,
+                tabs: tabs,
                 moreTabs: moreTabs,
                 currentTabTitle: tabTitle,
                 markdownProvider: { markdown },
@@ -260,13 +260,13 @@ struct ProgressionResultPane: View {
             selectedResultView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(14)
+        .padding(TS.Padding.resultContent)
     }
 
-    var tabRows: [[(String, String)]] {
+    var tabs: [(String, String)] {
         [
-            [("progressed_planets", "推进盘"), ("natal_planets", "本命盘"), ("prog_to_natal", "推进→本命相位")],
-            [("prog_to_prog", "推进盘相位"), ("lunation", "推进月相"), ("ai", "AI分析")],
+            ("progressed_planets", "推进盘"), ("natal_planets", "本命盘"), ("prog_to_natal", "推进→本命相位"),
+            ("prog_to_prog", "推进盘相位"), ("lunation", "推进月相"), ("ai", "AI分析"),
         ]
     }
 
@@ -340,25 +340,29 @@ struct ProgressedLunationView: View {
     let lunation: ProgressedLunation
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("推进月相").font(.headline)
-            GroupBox {
-                Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
+            Text("推进月相").font(TS.Font.sectionTitle)
+
+            VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                Text(lunation.phaseName)
+                    .font(TS.Font.pageTitle)
+
+                Grid(alignment: .leading, horizontalSpacing: TS.Spacing.xl, verticalSpacing: TS.Spacing.md) {
                     GridRow {
-                        Text("日月夹角").foregroundStyle(.secondary)
+                        Text("日月夹角").foregroundStyle(.secondary).font(TS.Font.label)
                         Text("\(lunation.sunMoonSeparation, specifier: "%.2f")°")
+                            .font(TS.Font.mono).monospacedDigit()
                     }
                     GridRow {
-                        Text("最近相位").foregroundStyle(.secondary)
+                        Text("最近相位").foregroundStyle(.secondary).font(TS.Font.label)
                         Text("\(lunation.phaseAngle, specifier: "%.0f")°")
-                    }
-                    GridRow {
-                        Text("月相名称").foregroundStyle(.secondary)
-                        Text(lunation.phaseName).font(.title2.weight(.semibold))
+                            .font(TS.Font.mono).monospacedDigit()
                     }
                 }
-                .padding()
             }
+            .padding(TS.Padding.sectionGap)
+            .background(TS.SemanticColor.cardBackground.opacity(0.5))
+            .clipShape(RoundedRectangle(cornerRadius: TS.Radius.card))
         }
     }
 }
@@ -385,10 +389,10 @@ struct SolarArcResultPane: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             ResultPaneToolbar(
                 selection: $selectedTab,
-                tabRows: tabRows,
+                tabs: tabs,
                 moreTabs: moreTabs,
                 currentTabTitle: tabTitle,
                 markdownProvider: { markdown },
@@ -399,13 +403,13 @@ struct SolarArcResultPane: View {
             selectedResultView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(14)
+        .padding(TS.Padding.resultContent)
     }
 
-    var tabRows: [[(String, String)]] {
+    var tabs: [(String, String)] {
         [
-            [("sa_planets", "Solar Arc盘"), ("natal_planets", "本命盘"), ("sa_to_natal", "SA→本命相位")],
-            [("patterns", "图形"), ("ai", "AI分析")],
+            ("sa_planets", "Solar Arc盘"), ("natal_planets", "本命盘"), ("sa_to_natal", "SA→本命相位"),
+            ("patterns", "图形"), ("ai", "AI分析"),
         ]
     }
 
@@ -430,11 +434,11 @@ struct SolarArcResultPane: View {
     var selectedResultView: some View {
         switch selectedTab {
         case "sa_planets":
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 HStack {
-                    Text("Solar Arc").font(.headline)
+                    Text("Solar Arc").font(TS.Font.sectionTitle)
                     Spacer()
-                    Text("Arc: \(result.arcValue, specifier: "%.4f")°").font(.caption).monospacedDigit()
+                    Text("Arc: \(result.arcValue, specifier: "%.4f")°").font(TS.Font.label).monospacedDigit()
                 }
                 PositionTableView(title: "Solar Arc 盘", positions: result.solarArcPlanets)
             }
@@ -479,11 +483,10 @@ struct HarmonicResultPane: View {
     @Binding var selectedTab: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("H\(result.harmonicOrder) 调和盘").font(.headline)
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             ResultPaneToolbar(
                 selection: $selectedTab,
-                tabRows: tabRows,
+                tabs: tabs,
                 moreTabs: moreTabs,
                 currentTabTitle: tabTitle,
                 markdownProvider: { markdown },
@@ -494,12 +497,12 @@ struct HarmonicResultPane: View {
             selectedResultView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(14)
+        .padding(TS.Padding.resultContent)
     }
 
-    var tabRows: [[(String, String)]] {
+    var tabs: [(String, String)] {
         [
-            [("planets", "调和行星"), ("aspects", "调和相位"), ("json", "JSON")],
+            ("planets", "调和行星"), ("aspects", "调和相位"), ("json", "JSON"),
         ]
     }
 
@@ -539,27 +542,26 @@ struct PatternListView: View {
     let patterns: [PatternResult]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("图形模式").font(.headline)
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Text("图形模式").font(TS.Font.sectionTitle)
             if patterns.isEmpty {
-                Text("未检测到图形模式").foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                EmptyStateView(title: "未检测到图形模式", systemImage: "triangle")
             } else {
                 List(patterns) { pattern in
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: TS.Spacing.sm) {
                         HStack {
-                            Text(pattern.typeName).font(.subheadline.weight(.semibold))
+                            Text(pattern.typeName).font(TS.Font.sectionTitle)
                             Spacer()
-                            Text(pattern.confidence).font(.caption).foregroundStyle(.secondary)
-                            Text(pattern.orbSummary).font(.caption).foregroundStyle(.secondary)
+                            Text(pattern.confidence).font(TS.Font.label).foregroundStyle(.secondary)
+                            Text(pattern.orbSummary).font(TS.Font.label).foregroundStyle(.secondary)
                         }
                         Text("成员: \(pattern.members.joined(separator: ", "))")
-                            .font(.caption).foregroundStyle(.secondary)
+                            .font(TS.Font.label).foregroundStyle(.secondary)
                         if let sign = pattern.stelliumSign {
-                            Text("星座: \(sign)").font(.caption).foregroundStyle(.secondary)
+                            Text("星座: \(sign)").font(TS.Font.label).foregroundStyle(.secondary)
                         }
                         if let house = pattern.stelliumHouse {
-                            Text("宫位: \(house)").font(.caption).foregroundStyle(.secondary)
+                            Text("宫位: \(house)").font(TS.Font.label).foregroundStyle(.secondary)
                         }
                     }
                 }

@@ -34,6 +34,6 @@ struct ChartWheelView: View {
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
             }
         }
-        .padding(18)
+        .padding(TS.Padding.sidebarContent)
     }
 }

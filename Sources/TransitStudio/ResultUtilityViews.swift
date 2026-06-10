@@ -42,36 +42,40 @@ struct EmptyStateView: View {
     var description: String?
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: TS.Spacing.md) {
             Image(systemName: systemImage)
                 .font(.system(size: 34, weight: .regular))
                 .foregroundStyle(.secondary)
             Text(title)
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
             if let description {
                 Text(description)
+                    .font(TS.Font.body)
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(24)
+        .padding(TS.Spacing.xxl)
     }
 }
 struct WarningList: View {
     let warnings: [String]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             Divider()
 
             if warnings.isEmpty {
                 Label("没有警告", systemImage: "checkmark.circle")
+                    .font(TS.Font.body)
                     .foregroundStyle(.secondary)
             } else {
                 Text("警告")
-                    .font(.headline)
+                    .font(TS.Font.sectionTitle)
                 ForEach(warnings, id: \.self) { warning in
                     Text(warning)
+                        .font(TS.Font.body)
                         .textSelection(.enabled)
                 }
             }
@@ -91,16 +95,17 @@ struct SectionErrorList: View {
     ]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             Divider()
 
             Text("子模块错误")
-                .font(.headline)
-                .foregroundStyle(.red)
+                .font(TS.Font.sectionTitle)
+                .foregroundStyle(TS.SemanticColor.error)
 
             ForEach(Array(errors.keys).sorted(), id: \.self) { key in
                 let label = Self.sectionLabels[key] ?? key
                 Text("\(label): \(errors[key] ?? "")")
+                    .font(TS.Font.body)
                     .textSelection(.enabled)
                     .foregroundStyle(.secondary)
             }

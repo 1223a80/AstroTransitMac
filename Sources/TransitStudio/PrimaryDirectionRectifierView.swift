@@ -86,7 +86,7 @@ struct PrimaryDirectionRectifierView: View {
     // MARK: - Slider section
 
     private var sliderSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             HStack {
                 Text(activeLocalTimeString)
                     .font(.caption.monospacedDigit())
@@ -94,13 +94,13 @@ struct PrimaryDirectionRectifierView: View {
                 if activeLevel > 1, let c = activeCandidate, let s = c.offsetSeconds {
                     let totalSec = c.offsetMinutes * 60 + s
                     Text("(\(totalSec >= 0 ? "+" : "")\(totalSec)s)")
-                        .font(.caption2)
+                        .font(TS.Font.detail)
                         .foregroundStyle(.tertiary)
                 }
                 Spacer()
                 if let c = activeCandidate {
                     Text("方向: \(c.primaryDirections.count)")
-                        .font(.caption)
+                        .font(TS.Font.label)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -172,13 +172,13 @@ struct PrimaryDirectionRectifierView: View {
         maxText: String,
         offsetText: @escaping (Int) -> String
     ) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: TS.Spacing.md) {
             Text(label)
-                .font(.caption2)
+                .font(TS.Font.detail)
                 .foregroundStyle(.secondary)
                 .frame(width: 24, alignment: .trailing)
             Text(minText)
-                .font(.caption2)
+                .font(TS.Font.detail)
                 .foregroundStyle(.tertiary)
                 .frame(width: 52, alignment: .trailing)
             if range.upperBound > range.lowerBound {
@@ -192,7 +192,7 @@ struct PrimaryDirectionRectifierView: View {
                     .allowsHitTesting(false)
             }
             Text(maxText)
-                .font(.caption2)
+                .font(TS.Font.detail)
                 .foregroundStyle(.tertiary)
                 .frame(width: 52, alignment: .leading)
             Text(offsetText(value.wrappedValue))
@@ -205,13 +205,13 @@ struct PrimaryDirectionRectifierView: View {
     }
 
     private func loadingRow(_ label: String, text: String) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: TS.Spacing.md) {
             Text(label)
-                .font(.caption2)
+                .font(TS.Font.detail)
                 .foregroundStyle(.secondary)
                 .frame(width: 24, alignment: .trailing)
             Text(text)
-                .font(.caption)
+                .font(TS.Font.label)
                 .foregroundStyle(.tertiary)
                 .padding(.leading, 4)
             Spacer()
@@ -259,8 +259,8 @@ struct PrimaryDirectionRectifierView: View {
     // MARK: - Filter bar (2 rows)
 
     private var filterBar: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 6) {
+        VStack(alignment: .leading, spacing: TS.Spacing.sm) {
+            HStack(spacing: TS.Spacing.md) {
                 FilterField(text: $filterKeyword, placeholder: "关键词", width: 120)
                 FilterField(text: $filterAgeMin, placeholder: "最小年龄", width: 64)
                 FilterField(text: $filterAgeMax, placeholder: "最大年龄", width: 64)
@@ -270,11 +270,11 @@ struct PrimaryDirectionRectifierView: View {
                 if let c = activeCandidate {
                     let filtered = filteredDirections(c)
                     Text("\(filtered.count)/\(c.primaryDirections.count)")
-                        .font(.caption2)
+                        .font(TS.Font.detail)
                         .foregroundStyle(.tertiary)
                 }
             }
-            HStack(spacing: 6) {
+            HStack(spacing: TS.Spacing.md) {
                 FilterPicker(selection: $filterAspect, options: aspectOptions, placeholder: "相位")
                 FilterPicker(selection: $filterDir, options: dirOptions, placeholder: "方向")
                 FilterField(text: $filterTag, placeholder: "标签", width: 100)
@@ -381,14 +381,14 @@ private struct DirectionRow: View {
             TableDataCell(String(format: "%.1f", direction.shiftVsCenterDays), width: 64)
                 .foregroundStyle(direction.shiftVsCenterDays > 0 ? Color.red : Color.green)
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 3) {
+                HStack(spacing: TS.Spacing.xs) {
                     ForEach(direction.tags, id: \.self) { tag in
                         Text(tag)
-                            .font(.caption2)
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 2)
+                            .font(TS.Font.detail)
+                            .padding(.horizontal, TS.Spacing.md)
+                            .padding(.vertical, TS.Spacing.xs)
                             .background(Color.secondary.opacity(0.12))
-                            .cornerRadius(4)
+                            .cornerRadius(TS.Radius.chip)
                             .lineLimit(1)
                     }
                 }
@@ -396,7 +396,7 @@ private struct DirectionRow: View {
             }
             .frame(width: 200, alignment: .leading)
         }
-        .font(.caption)
+        .font(TS.Font.label)
         .padding(.vertical, 4)
     }
 }
@@ -427,9 +427,9 @@ private struct FilterField: View {
     @Binding var text: String; let placeholder: String; let width: CGFloat
     var body: some View {
         TextField(placeholder, text: $text)
-            .textFieldStyle(.plain).font(.caption)
-            .frame(width: width).padding(5)
-            .background(Color.secondary.opacity(0.08)).cornerRadius(4)
+            .textFieldStyle(.plain).font(TS.Font.label)
+            .frame(width: width).padding(TS.Spacing.md)
+            .background(Color.secondary.opacity(0.08)).cornerRadius(TS.Radius.chip)
     }
 }
 
@@ -440,7 +440,7 @@ private struct FilterPicker: View {
             Text("全部").tag("")
             ForEach(options, id: \.self) { opt in Text(opt).tag(opt) }
         }
-        .pickerStyle(.menu).font(.caption).frame(width: 72)
+        .pickerStyle(.menu).font(TS.Font.label).frame(width: 72)
     }
 }
 

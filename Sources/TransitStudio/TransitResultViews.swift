@@ -7,9 +7,9 @@ struct AspectTableView: View {
     let aspects: [AspectHit]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             Text(title)
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
 
             if aspects.isEmpty {
                 EmptyStateView(title: "没有命中相位", systemImage: "circle.dashed")
@@ -42,9 +42,9 @@ struct ScanTableView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             Text("精确 Transit 命中")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
 
             if hits.isEmpty {
                 EmptyStateView(title: "没有命中", systemImage: "circle.dashed")
@@ -78,9 +78,9 @@ struct PositionTableView: View {
     let positions: [PositionRow]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             Text(title)
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
 
             Table(positions) {
                 TableColumn("天体") { Text($0.name) }
@@ -100,8 +100,8 @@ struct DiagnosticsView: View {
     let result: TransitResult
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
+            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.md) {
                 GridRow {
                     Text("本命 UTC").foregroundStyle(.secondary)
                     Text(result.meta.natalUTC).textSelection(.enabled)
@@ -119,7 +119,7 @@ struct DiagnosticsView: View {
             WarningList(warnings: result.warnings)
             Spacer()
         }
-        .padding(4)
+        .padding(TS.Padding.resultContent)
     }
 }
 
@@ -134,8 +134,8 @@ struct ScanDiagnosticsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
+            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.md) {
                 GridRow {
                     Text("窗口").foregroundStyle(.secondary)
                     Text(result.meta.label).textSelection(.enabled)
@@ -169,6 +169,6 @@ struct ScanDiagnosticsView: View {
             WarningList(warnings: result.warnings)
             Spacer()
         }
-        .padding(4)
+        .padding(TS.Padding.resultContent)
     }
 }
