@@ -21,7 +21,10 @@ let package = Package(
         .testTarget(
             name: "TransitStudioTests",
             dependencies: ["TransitStudio"],
-            path: "SwiftTests"
+            path: "SwiftTests",
+            resources: [
+                .copy("Fixtures")
+            ]
         ),
     ]
 )

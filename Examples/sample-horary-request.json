@@ -1,0 +1,23 @@
+{
+  "mode": "horary",
+  "chart": {
+    "moment": {
+      "year": 2026,
+      "month": 5,
+      "day": 5,
+      "hour": 15,
+      "minute": 30,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "houseSystem": "regiomontanus",
+    "zodiac": "tropical",
+    "boundsSystem": "egyptian",
+    "triplicitySystem": "dorothean"
+  },
+  "questionText": "我最近能找到新工作吗？",
+  "placeName": "上海",
+  "aspectOrb": 3,
+  "ephemerisPath": null
+}

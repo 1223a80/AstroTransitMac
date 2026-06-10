@@ -1,0 +1,1997 @@
+{
+  "meta": {
+    "asked_local": "2026-05-05 15:30",
+    "asked_utc": "2026-05-05T07:30:00+00:00",
+    "place_name": "上海",
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "sect": "day chart",
+    "sun_horizon_status": "above horizon",
+    "house_system": "Regiomontanus",
+    "zodiac": "Tropical",
+    "bounds_system": "Egyptian",
+    "triplicity_system": "Dorothean",
+    "ephemeris": "Swiss Ephemeris"
+  },
+  "question_text": "我最近能找到新工作吗？",
+  "machine_summary": [
+    "Moon 位于第 3 宫，24°16'08\" 射手，顺行。",
+    "Moon 将于 2026-05-06 03:06 左右离开当前星座。",
+    "Moon VOC：是。",
+    "Radicality Flags：土星在 7 宫、Moon VOC。"
+  ],
+  "radicality_flags": [
+    {
+      "id": "saturn_in_7",
+      "label": "土星在 7 宫",
+      "severity": "caution"
+    },
+    {
+      "id": "moon_voc",
+      "label": "Moon VOC",
+      "severity": "caution"
+    }
+  ],
+  "moon_voc_criterion": "no applying Ptolemaic aspect to classical planets before sign exit",
+  "angles": [
+    {
+      "id": "ASC",
+      "name": "ASC",
+      "longitude": 186.18137235907224,
+      "sign": "天秤",
+      "degree_text": "06°10'53\" 天秤",
+      "house": 1,
+      "ruler": "金星",
+      "formula": null,
+      "formula_day": null,
+      "formula_night": null,
+      "used_formula": null
+    },
+    {
+      "id": "MC",
+      "name": "MC",
+      "longitude": 96.57857649862778,
+      "sign": "巨蟹",
+      "degree_text": "06°34'43\" 巨蟹",
+      "house": 10,
+      "ruler": "月亮",
+      "formula": null,
+      "formula_day": null,
+      "formula_night": null,
+      "used_formula": null
+    },
+    {
+      "id": "DSC",
+      "name": "DSC",
+      "longitude": 6.18137235907227,
+      "sign": "白羊",
+      "degree_text": "06°10'53\" 白羊",
+      "house": 7,
+      "ruler": "火星",
+      "formula": null,
+      "formula_day": null,
+      "formula_night": null,
+      "used_formula": null
+    },
+    {
+      "id": "IC",
+      "name": "IC",
+      "longitude": 276.5785764986278,
+      "sign": "摩羯",
+      "degree_text": "06°34'43\" 摩羯",
+      "house": 4,
+      "ruler": "土星",
+      "formula": null,
+      "formula_day": null,
+      "formula_night": null,
+      "used_formula": null
+    }
+  ],
+  "house_rulers": [
+    {
+      "house": 1,
+      "sign": "天秤",
+      "ruler": "金星"
+    },
+    {
+      "house": 2,
+      "sign": "天蝎",
+      "ruler": "火星"
+    },
+    {
+      "house": 3,
+      "sign": "射手",
+      "ruler": "木星"
+    },
+    {
+      "house": 4,
+      "sign": "摩羯",
+      "ruler": "土星"
+    },
+    {
+      "house": 5,
+      "sign": "水瓶",
+      "ruler": "土星"
+    },
+    {
+      "house": 6,
+      "sign": "双鱼",
+      "ruler": "木星"
+    },
+    {
+      "house": 7,
+      "sign": "白羊",
+      "ruler": "火星"
+    },
+    {
+      "house": 8,
+      "sign": "金牛",
+      "ruler": "金星"
+    },
+    {
+      "house": 9,
+      "sign": "双子",
+      "ruler": "水星"
+    },
+    {
+      "house": 10,
+      "sign": "巨蟹",
+      "ruler": "月亮"
+    },
+    {
+      "house": 11,
+      "sign": "狮子",
+      "ruler": "太阳"
+    },
+    {
+      "house": 12,
+      "sign": "处女",
+      "ruler": "水星"
+    }
+  ],
+  "planets": [
+    {
+      "id": "SUN",
+      "name": "太阳",
+      "longitude": 44.82594903398058,
+      "sign": "金牛",
+      "degree_text": "14°49'33\" 金牛",
+      "house": 8,
+      "speed": 0.9687257401279072,
+      "motion": "顺行",
+      "sect_status": "合昼派",
+      "domicile": "",
+      "detriment": "",
+      "exaltation": "",
+      "fall": "",
+      "triplicity": "",
+      "triplicity_details": [
+        {
+          "role": "day",
+          "label": "昼主",
+          "ruler": "金星",
+          "ruler_id": "VENUS",
+          "score": 2,
+          "status": "弱",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "果宫"
+          ]
+        },
+        {
+          "role": "night",
+          "label": "夜主",
+          "ruler": "月亮",
+          "ruler_id": "MOON",
+          "score": 2,
+          "status": "弱",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "果宫"
+          ]
+        },
+        {
+          "role": "part",
+          "label": "参与",
+          "ruler": "火星",
+          "ruler_id": "MARS",
+          "score": 7,
+          "status": "强",
+          "notes": [
+            "入庙",
+            "顺行",
+            "角宫"
+          ]
+        }
+      ],
+      "bound": "木星",
+      "decan": "月亮",
+      "solar_phase": "-",
+      "solar_condition": "-",
+      "sun_distance_deg": 0,
+      "accidental": "续宫",
+      "hayz": "",
+      "joy": "",
+      "planetary_years": 19,
+      "score": 3,
+      "score_label": "一般可用",
+      "notes": [
+        "合昼派",
+        "续宫"
+      ],
+      "score_breakdown": [
+        {
+          "label": "solar_phase",
+          "score": 0,
+          "value": "-",
+          "solar_condition": "-",
+          "sun_distance_deg": 0,
+          "threshold_profile": {
+            "cazimi_arcmin": 17.0,
+            "combust_deg": 8.5,
+            "under_beams_deg": 15.0
+          }
+        },
+        {
+          "label": "motion",
+          "score": 0,
+          "value": "顺行"
+        },
+        {
+          "label": "sect",
+          "score": 2,
+          "value": "合昼派",
+          "chart_sect": "day",
+          "planet_sect": "day",
+          "sect_agreement": true
+        },
+        {
+          "label": "hayz",
+          "score": 0,
+          "value": "",
+          "trace": {
+            "sign_gender": "fem",
+            "above_horizon": true,
+            "sect_agreement": true,
+            "is_hayz": false,
+            "note": "Sun not hayz: above_horizon and masculine sign both required"
+          }
+        },
+        {
+          "label": "joy",
+          "score": 0,
+          "value": ""
+        },
+        {
+          "label": "accidental",
+          "score": 1,
+          "value": "续宫"
+        }
+      ],
+      "bonification": [],
+      "maltreatment": [],
+      "dodekatemorion_longitude": 207.9114,
+      "dodekatemorion_ruler": "金星"
+    },
+    {
+      "id": "MOON",
+      "name": "月亮",
+      "longitude": 264.26894028528176,
+      "sign": "射手",
+      "degree_text": "24°16'08\" 射手",
+      "house": 3,
+      "speed": 11.857311312675117,
+      "motion": "顺行",
+      "sect_status": "违昼派",
+      "domicile": "",
+      "detriment": "",
+      "exaltation": "",
+      "fall": "",
+      "triplicity": "",
+      "triplicity_details": [
+        {
+          "role": "day",
+          "label": "昼主",
+          "ruler": "太阳",
+          "ruler_id": "SUN",
+          "score": 3,
+          "status": "弱",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "续宫"
+          ]
+        },
+        {
+          "role": "night",
+          "label": "夜主",
+          "ruler": "木星",
+          "ruler_id": "JUPITER",
+          "score": 4,
+          "status": "中",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "角宫"
+          ]
+        },
+        {
+          "role": "part",
+          "label": "参与",
+          "ruler": "土星",
+          "ruler_id": "SATURN",
+          "score": 4,
+          "status": "中",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "角宫"
+          ]
+        }
+      ],
+      "bound": "土星",
+      "decan": "土星",
+      "solar_phase": "可见",
+      "solar_condition": "visible",
+      "sun_distance_deg": 140.557,
+      "accidental": "果宫",
+      "hayz": "",
+      "joy": "",
+      "planetary_years": 25,
+      "score": -2,
+      "score_label": "偏弱受克",
+      "notes": [
+        "违昼派",
+        "果宫"
+      ],
+      "score_breakdown": [
+        {
+          "label": "solar_phase",
+          "score": 0,
+          "value": "可见",
+          "solar_condition": "visible",
+          "sun_distance_deg": 140.557,
+          "threshold_profile": {
+            "cazimi_arcmin": 17.0,
+            "combust_deg": 8.5,
+            "under_beams_deg": 15.0
+          }
+        },
+        {
+          "label": "motion",
+          "score": 0,
+          "value": "顺行"
+        },
+        {
+          "label": "sect",
+          "score": -1,
+          "value": "违昼派",
+          "chart_sect": "day",
+          "planet_sect": "night",
+          "sect_agreement": false
+        },
+        {
+          "label": "hayz",
+          "score": 0,
+          "value": "",
+          "trace": {
+            "sign_gender": "masc",
+            "above_horizon": false,
+            "sect_agreement": false,
+            "is_hayz": false
+          }
+        },
+        {
+          "label": "joy",
+          "score": 0,
+          "value": ""
+        },
+        {
+          "label": "accidental",
+          "score": -1,
+          "value": "果宫"
+        }
+      ],
+      "bonification": [],
+      "maltreatment": [],
+      "dodekatemorion_longitude": 171.2273,
+      "dodekatemorion_ruler": "水星"
+    },
+    {
+      "id": "MERCURY",
+      "name": "水星",
+      "longitude": 34.29031111294076,
+      "sign": "金牛",
+      "degree_text": "04°17'25\" 金牛",
+      "house": 8,
+      "speed": 1.990477991368419,
+      "motion": "顺行",
+      "sect_status": "随昼",
+      "domicile": "",
+      "detriment": "",
+      "exaltation": "",
+      "fall": "",
+      "triplicity": "",
+      "triplicity_details": [
+        {
+          "role": "day",
+          "label": "昼主",
+          "ruler": "金星",
+          "ruler_id": "VENUS",
+          "score": 2,
+          "status": "弱",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "果宫"
+          ]
+        },
+        {
+          "role": "night",
+          "label": "夜主",
+          "ruler": "月亮",
+          "ruler_id": "MOON",
+          "score": 2,
+          "status": "弱",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "果宫"
+          ]
+        },
+        {
+          "role": "part",
+          "label": "参与",
+          "ruler": "火星",
+          "ruler_id": "MARS",
+          "score": 7,
+          "status": "强",
+          "notes": [
+            "入庙",
+            "顺行",
+            "角宫"
+          ]
+        }
+      ],
+      "bound": "金星",
+      "decan": "水星",
+      "solar_phase": "日光下",
+      "solar_condition": "under_beams",
+      "sun_distance_deg": 10.5356,
+      "accidental": "续宫",
+      "hayz": "",
+      "joy": "",
+      "planetary_years": 20,
+      "score": 1,
+      "score_label": "一般可用",
+      "notes": [
+        "面主",
+        "日光下",
+        "随昼",
+        "续宫"
+      ],
+      "score_breakdown": [
+        {
+          "label": "decan",
+          "score": 1,
+          "value": "面主"
+        },
+        {
+          "label": "solar_phase",
+          "score": -3,
+          "value": "日光下",
+          "solar_condition": "under_beams",
+          "sun_distance_deg": 10.5356,
+          "threshold_profile": {
+            "cazimi_arcmin": 17.0,
+            "combust_deg": 8.5,
+            "under_beams_deg": 15.0
+          }
+        },
+        {
+          "label": "motion",
+          "score": 0,
+          "value": "顺行"
+        },
+        {
+          "label": "sect",
+          "score": 2,
+          "value": "随昼",
+          "mercury_condition": "oriental",
+          "chart_sect": "day",
+          "planet_sect": "day",
+          "sect_agreement": true
+        },
+        {
+          "label": "hayz",
+          "score": 0,
+          "value": "",
+          "trace": {
+            "sign_gender": "fem",
+            "above_horizon": true,
+            "sect_agreement": false,
+            "is_hayz": false
+          }
+        },
+        {
+          "label": "joy",
+          "score": 0,
+          "value": ""
+        },
+        {
+          "label": "accidental",
+          "score": 1,
+          "value": "续宫"
+        }
+      ],
+      "bonification": [],
+      "maltreatment": [],
+      "dodekatemorion_longitude": 81.4837,
+      "dodekatemorion_ruler": "水星"
+    },
+    {
+      "id": "VENUS",
+      "name": "金星",
+      "longitude": 73.50166742899647,
+      "sign": "双子",
+      "degree_text": "13°30'06\" 双子",
+      "house": 9,
+      "speed": 1.207108931534829,
+      "motion": "顺行",
+      "sect_status": "违昼派",
+      "domicile": "",
+      "detriment": "",
+      "exaltation": "",
+      "fall": "",
+      "triplicity": "",
+      "triplicity_details": [
+        {
+          "role": "day",
+          "label": "昼主",
+          "ruler": "土星",
+          "ruler_id": "SATURN",
+          "score": 4,
+          "status": "中",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "角宫"
+          ]
+        },
+        {
+          "role": "night",
+          "label": "夜主",
+          "ruler": "水星",
+          "ruler_id": "MERCURY",
+          "score": 3,
+          "status": "弱",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "续宫"
+          ]
+        },
+        {
+          "role": "part",
+          "label": "参与",
+          "ruler": "木星",
+          "ruler_id": "JUPITER",
+          "score": 4,
+          "status": "中",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "角宫"
+          ]
+        }
+      ],
+      "bound": "金星",
+      "decan": "火星",
+      "solar_phase": "可见",
+      "solar_condition": "visible",
+      "sun_distance_deg": 28.6757,
+      "accidental": "果宫",
+      "hayz": "",
+      "joy": "",
+      "planetary_years": 8,
+      "score": 0,
+      "score_label": "偏弱受克",
+      "notes": [
+        "界主",
+        "违昼派",
+        "果宫"
+      ],
+      "score_breakdown": [
+        {
+          "label": "bound",
+          "score": 2,
+          "value": "界主"
+        },
+        {
+          "label": "solar_phase",
+          "score": 0,
+          "value": "可见",
+          "solar_condition": "visible",
+          "sun_distance_deg": 28.6757,
+          "threshold_profile": {
+            "cazimi_arcmin": 17.0,
+            "combust_deg": 8.5,
+            "under_beams_deg": 15.0
+          }
+        },
+        {
+          "label": "motion",
+          "score": 0,
+          "value": "顺行"
+        },
+        {
+          "label": "sect",
+          "score": -1,
+          "value": "违昼派",
+          "chart_sect": "day",
+          "planet_sect": "night",
+          "sect_agreement": false
+        },
+        {
+          "label": "hayz",
+          "score": 0,
+          "value": "",
+          "trace": {
+            "sign_gender": "masc",
+            "above_horizon": true,
+            "sect_agreement": false,
+            "is_hayz": false
+          }
+        },
+        {
+          "label": "joy",
+          "score": 0,
+          "value": ""
+        },
+        {
+          "label": "accidental",
+          "score": -1,
+          "value": "果宫"
+        }
+      ],
+      "bonification": [],
+      "maltreatment": [],
+      "dodekatemorion_longitude": 222.02,
+      "dodekatemorion_ruler": "火星"
+    },
+    {
+      "id": "MARS",
+      "name": "火星",
+      "longitude": 19.671347567487295,
+      "sign": "白羊",
+      "degree_text": "19°40'17\" 白羊",
+      "house": 7,
+      "speed": 0.76327648170058,
+      "motion": "顺行",
+      "sect_status": "违昼派",
+      "domicile": "入庙",
+      "detriment": "",
+      "exaltation": "",
+      "fall": "",
+      "triplicity": "",
+      "triplicity_details": [
+        {
+          "role": "day",
+          "label": "昼主",
+          "ruler": "太阳",
+          "ruler_id": "SUN",
+          "score": 3,
+          "status": "弱",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "续宫"
+          ]
+        },
+        {
+          "role": "night",
+          "label": "夜主",
+          "ruler": "木星",
+          "ruler_id": "JUPITER",
+          "score": 4,
+          "status": "中",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "角宫"
+          ]
+        },
+        {
+          "role": "part",
+          "label": "参与",
+          "ruler": "土星",
+          "ruler_id": "SATURN",
+          "score": 4,
+          "status": "中",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "角宫"
+          ]
+        }
+      ],
+      "bound": "水星",
+      "decan": "太阳",
+      "solar_phase": "可见",
+      "solar_condition": "visible",
+      "sun_distance_deg": 25.1546,
+      "accidental": "角宫",
+      "hayz": "",
+      "joy": "",
+      "planetary_years": 15,
+      "score": 7,
+      "score_label": "状态良好",
+      "notes": [
+        "入庙",
+        "违昼派",
+        "角宫"
+      ],
+      "score_breakdown": [
+        {
+          "label": "domicile",
+          "score": 5,
+          "value": "入庙"
+        },
+        {
+          "label": "solar_phase",
+          "score": 0,
+          "value": "可见",
+          "solar_condition": "visible",
+          "sun_distance_deg": 25.1546,
+          "threshold_profile": {
+            "cazimi_arcmin": 17.0,
+            "combust_deg": 8.5,
+            "under_beams_deg": 15.0
+          }
+        },
+        {
+          "label": "motion",
+          "score": 0,
+          "value": "顺行"
+        },
+        {
+          "label": "sect",
+          "score": -1,
+          "value": "违昼派",
+          "chart_sect": "day",
+          "planet_sect": "night",
+          "sect_agreement": false
+        },
+        {
+          "label": "hayz",
+          "score": 0,
+          "value": "",
+          "trace": {
+            "sign_gender": "masc",
+            "above_horizon": true,
+            "sect_agreement": false,
+            "is_hayz": false
+          }
+        },
+        {
+          "label": "joy",
+          "score": 0,
+          "value": ""
+        },
+        {
+          "label": "accidental",
+          "score": 3,
+          "value": "角宫"
+        }
+      ],
+      "bonification": [],
+      "maltreatment": [],
+      "dodekatemorion_longitude": 236.0562,
+      "dodekatemorion_ruler": "火星"
+    },
+    {
+      "id": "JUPITER",
+      "name": "木星",
+      "longitude": 109.53383175385638,
+      "sign": "巨蟹",
+      "degree_text": "19°32'02\" 巨蟹",
+      "house": 10,
+      "speed": 0.14779092262784002,
+      "motion": "顺行",
+      "sect_status": "合昼派",
+      "domicile": "",
+      "detriment": "",
+      "exaltation": "旺",
+      "fall": "",
+      "triplicity": "",
+      "triplicity_details": [
+        {
+          "role": "day",
+          "label": "昼主",
+          "ruler": "金星",
+          "ruler_id": "VENUS",
+          "score": 2,
+          "status": "弱",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "果宫"
+          ]
+        },
+        {
+          "role": "night",
+          "label": "夜主",
+          "ruler": "火星",
+          "ruler_id": "MARS",
+          "score": 7,
+          "status": "强",
+          "notes": [
+            "入庙",
+            "顺行",
+            "角宫"
+          ]
+        },
+        {
+          "role": "part",
+          "label": "参与",
+          "ruler": "月亮",
+          "ruler_id": "MOON",
+          "score": 2,
+          "status": "弱",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "果宫"
+          ]
+        }
+      ],
+      "bound": "木星",
+      "decan": "水星",
+      "solar_phase": "可见",
+      "solar_condition": "visible",
+      "sun_distance_deg": 64.7079,
+      "accidental": "角宫",
+      "hayz": "",
+      "joy": "",
+      "planetary_years": 12,
+      "score": 9,
+      "score_label": "强而有力",
+      "notes": [
+        "旺",
+        "界主",
+        "合昼派",
+        "角宫"
+      ],
+      "score_breakdown": [
+        {
+          "label": "exaltation",
+          "score": 4,
+          "value": "旺"
+        },
+        {
+          "label": "bound",
+          "score": 2,
+          "value": "界主"
+        },
+        {
+          "label": "solar_phase",
+          "score": 0,
+          "value": "可见",
+          "solar_condition": "visible",
+          "sun_distance_deg": 64.7079,
+          "threshold_profile": {
+            "cazimi_arcmin": 17.0,
+            "combust_deg": 8.5,
+            "under_beams_deg": 15.0
+          }
+        },
+        {
+          "label": "motion",
+          "score": 0,
+          "value": "顺行"
+        },
+        {
+          "label": "sect",
+          "score": 2,
+          "value": "合昼派",
+          "chart_sect": "day",
+          "planet_sect": "day",
+          "sect_agreement": true
+        },
+        {
+          "label": "hayz",
+          "score": 0,
+          "value": "",
+          "trace": {
+            "sign_gender": "fem",
+            "above_horizon": true,
+            "sect_agreement": true,
+            "is_hayz": false
+          }
+        },
+        {
+          "label": "joy",
+          "score": 0,
+          "value": ""
+        },
+        {
+          "label": "accidental",
+          "score": 3,
+          "value": "角宫"
+        },
+        {
+          "label": "maltreatment",
+          "score": -2,
+          "value": "火星 刑相"
+        }
+      ],
+      "bonification": [],
+      "maltreatment": [
+        {
+          "source": "火星",
+          "aspect": "刑相",
+          "orb": 0.13751581363089826,
+          "applying": "离相",
+          "strength_score": 3,
+          "strength_label": "中",
+          "aspect_geometry": "degree",
+          "score_delta": -2,
+          "benefic_condition": "",
+          "strength_modifier": 1.0,
+          "base_delta": -2
+        }
+      ],
+      "dodekatemorion_longitude": 324.406,
+      "dodekatemorion_ruler": "土星"
+    },
+    {
+      "id": "SATURN",
+      "name": "土星",
+      "longitude": 9.626336322574177,
+      "sign": "白羊",
+      "degree_text": "09°37'35\" 白羊",
+      "house": 7,
+      "speed": 0.10982156805317571,
+      "motion": "顺行",
+      "sect_status": "合昼派",
+      "domicile": "",
+      "detriment": "",
+      "exaltation": "",
+      "fall": "落陷",
+      "triplicity": "参与",
+      "triplicity_details": [
+        {
+          "role": "day",
+          "label": "昼主",
+          "ruler": "太阳",
+          "ruler_id": "SUN",
+          "score": 3,
+          "status": "弱",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "续宫"
+          ]
+        },
+        {
+          "role": "night",
+          "label": "夜主",
+          "ruler": "木星",
+          "ruler_id": "JUPITER",
+          "score": 4,
+          "status": "中",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "角宫"
+          ]
+        },
+        {
+          "role": "part",
+          "label": "参与",
+          "ruler": "土星",
+          "ruler_id": "SATURN",
+          "score": 4,
+          "status": "中",
+          "notes": [
+            "未入庙",
+            "顺行",
+            "角宫"
+          ]
+        }
+      ],
+      "bound": "金星",
+      "decan": "火星",
+      "solar_phase": "可见",
+      "solar_condition": "visible",
+      "sun_distance_deg": 35.1996,
+      "accidental": "角宫",
+      "hayz": "Hayz",
+      "joy": "",
+      "planetary_years": 30,
+      "score": 5,
+      "score_label": "状态良好",
+      "notes": [
+        "落陷",
+        "三分 参与",
+        "合昼派",
+        "Hayz",
+        "角宫"
+      ],
+      "score_breakdown": [
+        {
+          "label": "fall",
+          "score": -4,
+          "value": "落陷"
+        },
+        {
+          "label": "triplicity",
+          "score": 1,
+          "value": "参与"
+        },
+        {
+          "label": "solar_phase",
+          "score": 0,
+          "value": "可见",
+          "solar_condition": "visible",
+          "sun_distance_deg": 35.1996,
+          "threshold_profile": {
+            "cazimi_arcmin": 17.0,
+            "combust_deg": 8.5,
+            "under_beams_deg": 15.0
+          }
+        },
+        {
+          "label": "motion",
+          "score": 0,
+          "value": "顺行"
+        },
+        {
+          "label": "sect",
+          "score": 2,
+          "value": "合昼派",
+          "chart_sect": "day",
+          "planet_sect": "day",
+          "sect_agreement": true
+        },
+        {
+          "label": "hayz",
+          "score": 3,
+          "value": "Hayz",
+          "trace": {
+            "sign_gender": "masc",
+            "above_horizon": true,
+            "sect_agreement": true,
+            "is_hayz": true
+          }
+        },
+        {
+          "label": "joy",
+          "score": 0,
+          "value": ""
+        },
+        {
+          "label": "accidental",
+          "score": 3,
+          "value": "角宫"
+        }
+      ],
+      "bonification": [],
+      "maltreatment": [],
+      "dodekatemorion_longitude": 115.516,
+      "dodekatemorion_ruler": "月亮"
+    }
+  ],
+  "significator_candidates": [
+    {
+      "id": "querent",
+      "role": "Querent",
+      "planet": "金星",
+      "source": "1H ruler",
+      "position": "13°30'06\" 双子",
+      "house": 9,
+      "condition": "顺行, score 0",
+      "planet_id": "VENUS"
+    },
+    {
+      "id": "moon",
+      "role": "Moon",
+      "planet": "月亮",
+      "source": "General significator",
+      "position": "24°16'08\" 射手",
+      "house": 3,
+      "condition": "顺行, score -2",
+      "planet_id": "MOON"
+    },
+    {
+      "id": "matter",
+      "role": "Matter / Outcome",
+      "planet": "月亮",
+      "source": "10H ruler",
+      "position": "24°16'08\" 射手",
+      "house": 3,
+      "condition": "顺行, score -2",
+      "planet_id": "MOON"
+    },
+    {
+      "id": "natural",
+      "role": "Natural significator",
+      "planet": "太阳",
+      "source": "Natural ruler",
+      "position": "14°49'33\" 金牛",
+      "house": 8,
+      "condition": "顺行, score 3",
+      "planet_id": "SUN"
+    }
+  ],
+  "moon_storyline": {
+    "current_position": "24°16'08\" 射手",
+    "current_house": 3,
+    "last_aspect": {
+      "id": "MOON|trine|MARS|202605050533",
+      "target_id": "MARS",
+      "target_name": "火星",
+      "aspect_id": "trine",
+      "aspect_name": "拱相",
+      "exact_local": "2026-05-05 05:33",
+      "moon_longitude": 264.26894028528176,
+      "target_longitude": 19.671347567487295,
+      "moon_house": 3,
+      "target_house": 7
+    },
+    "last_aspect_time": "2026-05-05 05:33",
+    "next_aspect": null,
+    "next_aspect_time": "",
+    "upcoming_aspects": [
+      {
+        "id": "MOON|trine|MERCURY|202605061554",
+        "target_id": "MERCURY",
+        "target_name": "水星",
+        "aspect_id": "trine",
+        "aspect_name": "拱相",
+        "exact_local": "2026-05-06 15:54",
+        "moon_longitude": 264.26894028528176,
+        "target_longitude": 34.29031111294076,
+        "moon_house": 3,
+        "target_house": 8
+      },
+      {
+        "id": "MOON|square|SATURN|202605062251",
+        "target_id": "SATURN",
+        "target_name": "土星",
+        "aspect_id": "square",
+        "aspect_name": "刑相",
+        "exact_local": "2026-05-06 22:51",
+        "moon_longitude": 264.26894028528176,
+        "target_longitude": 9.626336322574177,
+        "moon_house": 3,
+        "target_house": 7
+      },
+      {
+        "id": "MOON|trine|SUN|202605071244",
+        "target_id": "SUN",
+        "target_name": "太阳",
+        "aspect_id": "trine",
+        "aspect_name": "拱相",
+        "exact_local": "2026-05-07 12:44",
+        "moon_longitude": 264.26894028528176,
+        "target_longitude": 44.82594903398058,
+        "moon_house": 3,
+        "target_house": 8
+      },
+      {
+        "id": "MOON|square|MARS|202605072218",
+        "target_id": "MARS",
+        "target_name": "火星",
+        "aspect_id": "square",
+        "aspect_name": "刑相",
+        "exact_local": "2026-05-07 22:18",
+        "moon_longitude": 264.26894028528176,
+        "target_longitude": 19.671347567487295,
+        "moon_house": 3,
+        "target_house": 7
+      },
+      {
+        "id": "MOON|sextile|SATURN|202605091116",
+        "target_id": "SATURN",
+        "target_name": "土星",
+        "aspect_id": "sextile",
+        "aspect_name": "六合",
+        "exact_local": "2026-05-09 11:16",
+        "moon_longitude": 264.26894028528176,
+        "target_longitude": 9.626336322574177,
+        "moon_house": 3,
+        "target_house": 7
+      }
+    ],
+    "before_sign_exit_aspects": [],
+    "voc": true,
+    "sign_exit_local": "2026-05-06 03:06",
+    "next_sign": "摩羯",
+    "next_sign_ingress_time": "2026-05-06 03:06",
+    "first_after_ingress": {
+      "id": "MOON|trine|MERCURY|202605061554",
+      "target_id": "MERCURY",
+      "target_name": "水星",
+      "aspect_id": "trine",
+      "aspect_name": "拱相",
+      "exact_local": "2026-05-06 15:54",
+      "moon_longitude": 264.26894028528176,
+      "target_longitude": 34.29031111294076,
+      "moon_house": 3,
+      "target_house": 8
+    },
+    "first_after_ingress_time": "2026-05-06 15:54"
+  },
+  "key_significator_links": [
+    {
+      "id": "VENUS|MOON|link",
+      "pair": "Querent ruler – Matter ruler",
+      "aspect": "整宫冲相",
+      "type": "sign",
+      "orb": null,
+      "applying": "",
+      "perfects_before_sign_exit": false,
+      "next_perfection": "",
+      "perfection_reason": "separating",
+      "reception": ""
+    },
+    {
+      "id": "MOON|MOON|link",
+      "pair": "Moon – Matter ruler",
+      "aspect": "合相",
+      "type": "degree",
+      "orb": 0.0,
+      "applying": "离相",
+      "perfects_before_sign_exit": false,
+      "next_perfection": "",
+      "perfection_reason": "separating",
+      "reception": ""
+    },
+    {
+      "id": "VENUS|SUN|link",
+      "pair": "Querent ruler – Natural significator",
+      "aspect": "",
+      "type": "",
+      "orb": null,
+      "applying": "",
+      "perfects_before_sign_exit": false,
+      "next_perfection": "",
+      "perfection_reason": "no degree aspect",
+      "reception": ""
+    }
+  ],
+  "degree_based_key_aspects": [],
+  "planetary_speeds": [
+    {
+      "id": "SUN",
+      "planet": "太阳",
+      "speed": 0.9687257401279072,
+      "speed_state": "顺行",
+      "station": false
+    },
+    {
+      "id": "MOON",
+      "planet": "月亮",
+      "speed": 11.857311312675117,
+      "speed_state": "顺行",
+      "station": false
+    },
+    {
+      "id": "MERCURY",
+      "planet": "水星",
+      "speed": 1.990477991368419,
+      "speed_state": "顺行",
+      "station": false
+    },
+    {
+      "id": "VENUS",
+      "planet": "金星",
+      "speed": 1.207108931534829,
+      "speed_state": "顺行",
+      "station": false
+    },
+    {
+      "id": "MARS",
+      "planet": "火星",
+      "speed": 0.76327648170058,
+      "speed_state": "顺行",
+      "station": false
+    },
+    {
+      "id": "JUPITER",
+      "planet": "木星",
+      "speed": 0.14779092262784002,
+      "speed_state": "顺行",
+      "station": false
+    },
+    {
+      "id": "SATURN",
+      "planet": "土星",
+      "speed": 0.10982156805317571,
+      "speed_state": "顺行",
+      "station": false
+    }
+  ],
+  "solar_condition": [
+    {
+      "id": "MOON",
+      "planet": "月亮",
+      "condition": "可见",
+      "distance_from_sun": 140.55700874869882
+    },
+    {
+      "id": "MERCURY",
+      "planet": "水星",
+      "condition": "日光下",
+      "distance_from_sun": 10.535637921039836
+    },
+    {
+      "id": "VENUS",
+      "planet": "金星",
+      "condition": "可见",
+      "distance_from_sun": 28.675718395015892
+    },
+    {
+      "id": "MARS",
+      "planet": "火星",
+      "condition": "可见",
+      "distance_from_sun": 25.15460146649326
+    },
+    {
+      "id": "JUPITER",
+      "planet": "木星",
+      "condition": "可见",
+      "distance_from_sun": 64.7078827198758
+    },
+    {
+      "id": "SATURN",
+      "planet": "土星",
+      "condition": "可见",
+      "distance_from_sun": 35.19961271140642
+    }
+  ],
+  "negative_receptions": [
+    {
+      "id": "SATURN|negative|JUPITER|detriment",
+      "receiver": "土星",
+      "received": "木星",
+      "debility": "detriment",
+      "via_aspect": "整宫刑相",
+      "strength": "中"
+    },
+    {
+      "id": "SATURN|negative|MARS|fall",
+      "receiver": "土星",
+      "received": "火星",
+      "debility": "fall",
+      "via_aspect": "同宫",
+      "strength": "弱"
+    },
+    {
+      "id": "MARS|negative|JUPITER|fall",
+      "receiver": "火星",
+      "received": "木星",
+      "debility": "fall",
+      "via_aspect": "刑相",
+      "strength": "弱"
+    },
+    {
+      "id": "VENUS|negative|SATURN|detriment",
+      "receiver": "金星",
+      "received": "土星",
+      "debility": "detriment",
+      "via_aspect": "六合",
+      "strength": "中"
+    },
+    {
+      "id": "VENUS|negative|MARS|detriment",
+      "receiver": "金星",
+      "received": "火星",
+      "debility": "detriment",
+      "via_aspect": "六合",
+      "strength": "中"
+    }
+  ],
+  "lots_summary": [
+    {
+      "id": "fortune",
+      "lot": "Fortune",
+      "position": "15°37'28\" 金牛",
+      "house": 8,
+      "ruler": "金星",
+      "ruler_condition": "顺行, score 0",
+      "key_notes": ""
+    },
+    {
+      "id": "spirit",
+      "lot": "Spirit",
+      "position": "26°44'18\" 水瓶",
+      "house": 5,
+      "ruler": "土星",
+      "ruler_condition": "顺行, score 5",
+      "key_notes": ""
+    },
+    {
+      "id": "eros",
+      "lot": "Eros",
+      "position": "22°56'41\" 摩羯",
+      "house": 4,
+      "ruler": "土星",
+      "ruler_condition": "顺行, score 5",
+      "key_notes": ""
+    },
+    {
+      "id": "necessity",
+      "lot": "Necessity",
+      "position": "17°30'56\" 天秤",
+      "house": 1,
+      "ruler": "金星",
+      "ruler_condition": "顺行, score 0",
+      "key_notes": ""
+    }
+  ],
+  "advanced_candidates": [
+    {
+      "id": "translation",
+      "type": "Translation of Light",
+      "status": "not detected",
+      "details": "Moon 未能同时连接 Querent 和 Matter",
+      "planets": [],
+      "exact_time": null
+    },
+    {
+      "id": "collection",
+      "type": "Collection of Light",
+      "status": "not detected",
+      "details": "未找到满足条件的收集者",
+      "planets": [],
+      "exact_time": null
+    },
+    {
+      "id": "prohibition",
+      "type": "Prohibition",
+      "status": "not detected",
+      "details": "未检测到禁止相位",
+      "planets": [],
+      "exact_time": null
+    },
+    {
+      "id": "frustration",
+      "type": "Frustration",
+      "status": "detected",
+      "details": "Querent ruler 与 Matter ruler 正在离相，预期结果受阻",
+      "planets": [
+        "金星",
+        "月亮"
+      ],
+      "exact_time": null,
+      "frustrated_planet": "金星",
+      "reason": "separating aspect"
+    }
+  ],
+  "houses": [
+    {
+      "house": 1,
+      "sign": "天秤",
+      "cusp_longitude": 186.18137235907224,
+      "cusp_text": "06°10'53\" 天秤",
+      "ruler": "金星"
+    },
+    {
+      "house": 2,
+      "sign": "天蝎",
+      "cusp_longitude": 212.72672556935012,
+      "cusp_text": "02°43'36\" 天蝎",
+      "ruler": "火星"
+    },
+    {
+      "house": 3,
+      "sign": "射手",
+      "cusp_longitude": 242.6521888810721,
+      "cusp_text": "02°39'08\" 射手",
+      "ruler": "木星"
+    },
+    {
+      "house": 4,
+      "sign": "摩羯",
+      "cusp_longitude": 276.5785764986278,
+      "cusp_text": "06°34'43\" 摩羯",
+      "ruler": "土星"
+    },
+    {
+      "house": 5,
+      "sign": "水瓶",
+      "cusp_longitude": 310.2590775180663,
+      "cusp_text": "10°15'33\" 水瓶",
+      "ruler": "土星"
+    },
+    {
+      "house": 6,
+      "sign": "双鱼",
+      "cusp_longitude": 339.79380983897545,
+      "cusp_text": "09°47'38\" 双鱼",
+      "ruler": "木星"
+    },
+    {
+      "house": 7,
+      "sign": "白羊",
+      "cusp_longitude": 6.18137235907227,
+      "cusp_text": "06°10'53\" 白羊",
+      "ruler": "火星"
+    },
+    {
+      "house": 8,
+      "sign": "金牛",
+      "cusp_longitude": 32.72672556935015,
+      "cusp_text": "02°43'36\" 金牛",
+      "ruler": "金星"
+    },
+    {
+      "house": 9,
+      "sign": "双子",
+      "cusp_longitude": 62.65218888107211,
+      "cusp_text": "02°39'08\" 双子",
+      "ruler": "水星"
+    },
+    {
+      "house": 10,
+      "sign": "巨蟹",
+      "cusp_longitude": 96.57857649862778,
+      "cusp_text": "06°34'43\" 巨蟹",
+      "ruler": "月亮"
+    },
+    {
+      "house": 11,
+      "sign": "狮子",
+      "cusp_longitude": 130.25907751806633,
+      "cusp_text": "10°15'33\" 狮子",
+      "ruler": "太阳"
+    },
+    {
+      "house": 12,
+      "sign": "处女",
+      "cusp_longitude": 159.79380983897545,
+      "cusp_text": "09°47'38\" 处女",
+      "ruler": "水星"
+    }
+  ],
+  "lots": [
+    {
+      "id": "fortune",
+      "name": "Fortune",
+      "longitude": 45.62436361037339,
+      "sign": "金牛",
+      "degree_text": "15°37'28\" 金牛",
+      "house": 8,
+      "ruler": "金星",
+      "formula": "昼 ASC + Moon - Sun；夜 ASC + Sun - Moon",
+      "formula_day": "ASC + Moon - Sun",
+      "formula_night": "ASC + Sun - Moon",
+      "used_formula": "ASC + Moon - Sun",
+      "confidence": "high",
+      "lot_group": "main",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean"
+    },
+    {
+      "id": "spirit",
+      "name": "Spirit",
+      "longitude": 326.73838110777103,
+      "sign": "水瓶",
+      "degree_text": "26°44'18\" 水瓶",
+      "house": 5,
+      "ruler": "土星",
+      "formula": "昼 ASC + Sun - Moon；夜 ASC + Moon - Sun",
+      "formula_day": "ASC + Sun - Moon",
+      "formula_night": "ASC + Moon - Sun",
+      "used_formula": "ASC + Sun - Moon",
+      "confidence": "high",
+      "lot_group": "main",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean"
+    },
+    {
+      "id": "eros",
+      "name": "Eros",
+      "longitude": 292.94465868029766,
+      "sign": "摩羯",
+      "degree_text": "22°56'41\" 摩羯",
+      "house": 4,
+      "ruler": "土星",
+      "formula": "昼 ASC + Venus - Spirit；夜 ASC + Spirit - Venus",
+      "formula_day": "ASC + Venus - Spirit",
+      "formula_night": "ASC + Spirit - Venus",
+      "used_formula": "ASC + Venus - Spirit",
+      "confidence": "high",
+      "lot_group": "main",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean"
+    },
+    {
+      "id": "necessity",
+      "name": "Necessity",
+      "longitude": 197.51542485650486,
+      "sign": "天秤",
+      "degree_text": "17°30'56\" 天秤",
+      "house": 1,
+      "ruler": "金星",
+      "formula": "昼 ASC + Fortune - Mercury；夜 ASC + Mercury - Fortune",
+      "formula_day": "ASC + Fortune - Mercury",
+      "formula_night": "ASC + Mercury - Fortune",
+      "used_formula": "ASC + Fortune - Mercury",
+      "confidence": "high",
+      "lot_group": "main",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean"
+    },
+    {
+      "id": "courage",
+      "name": "Courage",
+      "longitude": 212.13438840195835,
+      "sign": "天蝎",
+      "degree_text": "02°08'04\" 天蝎",
+      "house": 1,
+      "ruler": "火星",
+      "formula": "昼 ASC + Fortune - Mars；夜 ASC + Mars - Fortune",
+      "formula_day": "ASC + Fortune - Mars",
+      "formula_night": "ASC + Mars - Fortune",
+      "used_formula": "ASC + Fortune - Mars",
+      "confidence": "high",
+      "lot_group": "main",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean"
+    },
+    {
+      "id": "victory",
+      "name": "Victory",
+      "longitude": 328.9768230051576,
+      "sign": "水瓶",
+      "degree_text": "28°58'37\" 水瓶",
+      "house": 5,
+      "ruler": "土星",
+      "formula": "昼 ASC + Jupiter - Spirit；夜 ASC + Spirit - Jupiter",
+      "formula_day": "ASC + Jupiter - Spirit",
+      "formula_night": "ASC + Spirit - Jupiter",
+      "used_formula": "ASC + Jupiter - Spirit",
+      "confidence": "high",
+      "lot_group": "main",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean"
+    },
+    {
+      "id": "nemesis",
+      "name": "Nemesis",
+      "longitude": 222.17939964687145,
+      "sign": "天蝎",
+      "degree_text": "12°10'46\" 天蝎",
+      "house": 2,
+      "ruler": "火星",
+      "formula": "昼 ASC + Fortune - Saturn；夜 ASC + Saturn - Fortune",
+      "formula_day": "ASC + Fortune - Saturn",
+      "formula_night": "ASC + Saturn - Fortune",
+      "used_formula": "ASC + Fortune - Saturn",
+      "confidence": "high",
+      "lot_group": "main",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean"
+    },
+    {
+      "id": "basis",
+      "name": "Basis",
+      "longitude": 108.09380443286273,
+      "sign": "巨蟹",
+      "degree_text": "18°05'38\" 巨蟹",
+      "house": 10,
+      "ruler": "月亮",
+      "formula": "昼 ASC + ASC - Moon；夜 ASC + ASC - Sun",
+      "formula_day": "ASC + ASC - Moon",
+      "formula_night": "ASC + ASC - Sun",
+      "used_formula": "ASC + ASC - Moon",
+      "confidence": "low",
+      "lot_group": "experimental",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean",
+      "formula_notes": "Day ASC+ASC-Moon, night ASC+ASC-Sun; attributed to Paulus Alexandrinus"
+    },
+    {
+      "id": "exaltation",
+      "name": "Exaltation",
+      "longitude": 30.00732139305282,
+      "sign": "金牛",
+      "degree_text": "00°00'26\" 金牛",
+      "house": 7,
+      "ruler": "金星",
+      "formula": "昼 ASC + Sun - Exaltation Degree；夜 ASC + Moon - Exaltation Degree",
+      "formula_day": "ASC + Sun - Exaltation Degree",
+      "formula_night": "ASC + Moon - Exaltation Degree",
+      "used_formula": "ASC + Sun - Exaltation Degree",
+      "confidence": "low",
+      "lot_group": "experimental",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean",
+      "formula_notes": "Uses exaltation degree of the Ascendant's exaltation ruler"
+    },
+    {
+      "id": "acquisition",
+      "name": "Acquisition",
+      "longitude": 107.29538985646991,
+      "sign": "巨蟹",
+      "degree_text": "17°17'43\" 巨蟹",
+      "house": 10,
+      "ruler": "月亮",
+      "formula": "昼 ASC + Spirit - Fortune；夜 ASC + Fortune - Spirit",
+      "formula_day": "ASC + Spirit - Fortune",
+      "formula_night": "ASC + Fortune - Spirit",
+      "used_formula": "ASC + Spirit - Fortune",
+      "confidence": "low",
+      "lot_group": "experimental",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean",
+      "formula_notes": "Day ASC+Spirit-Fortune, night ASC+Fortune-Spirit; Hermetic"
+    },
+    {
+      "id": "marriage",
+      "name": "Marriage",
+      "longitude": 73.50166742899646,
+      "sign": "双子",
+      "degree_text": "13°30'06\" 双子",
+      "house": 9,
+      "ruler": "水星",
+      "formula": "昼 ASC + Venus - ASC；夜 ASC + ASC - Venus",
+      "formula_day": "ASC + Venus - ASC",
+      "formula_night": "ASC + ASC - Venus",
+      "used_formula": "ASC + Venus - ASC",
+      "confidence": "low",
+      "lot_group": "experimental",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean",
+      "formula_notes": "Day formula ASC+Venus-ASC always equals Venus position; formula may be incorrect for this tradition"
+    },
+    {
+      "id": "children",
+      "name": "Children",
+      "longitude": 286.08886779035447,
+      "sign": "摩羯",
+      "degree_text": "16°05'20\" 摩羯",
+      "house": 4,
+      "ruler": "土星",
+      "formula": "昼 ASC + Jupiter - Saturn；夜 ASC + Saturn - Jupiter",
+      "formula_day": "ASC + Jupiter - Saturn",
+      "formula_night": "ASC + Saturn - Jupiter",
+      "used_formula": "ASC + Jupiter - Saturn",
+      "confidence": "low",
+      "lot_group": "experimental",
+      "source_tradition": "Hellenistic",
+      "method_variant": "standard_reverse_chaldaean",
+      "formula_notes": "Day ASC+Jupiter-Saturn, night ASC+Saturn-Jupiter; attributed to Paulus"
+    }
+  ],
+  "aspects": [
+    {
+      "id": "SUN|同宫|MERCURY|co_presence",
+      "body_a": "太阳",
+      "body_b": "水星",
+      "aspect": "同宫",
+      "aspect_type": "co_presence",
+      "aspect_geometry": "co_presence",
+      "aspect_kind": "sign-based aspect",
+      "orb": null,
+      "applying": null
+    },
+    {
+      "id": "SUN|整宫六合|JUPITER|sign",
+      "body_a": "太阳",
+      "body_b": "木星",
+      "aspect": "整宫六合",
+      "aspect_type": "sign",
+      "aspect_geometry": "sign",
+      "aspect_kind": "sign-based aspect",
+      "orb": null,
+      "applying": null
+    },
+    {
+      "id": "MOON|整宫冲相|VENUS|sign",
+      "body_a": "月亮",
+      "body_b": "金星",
+      "aspect": "整宫冲相",
+      "aspect_type": "sign",
+      "aspect_geometry": "sign",
+      "aspect_kind": "sign-based aspect",
+      "orb": null,
+      "applying": null
+    },
+    {
+      "id": "MOON|整宫拱相|MARS|sign",
+      "body_a": "月亮",
+      "body_b": "火星",
+      "aspect": "整宫拱相",
+      "aspect_type": "sign",
+      "aspect_geometry": "sign",
+      "aspect_kind": "sign-based aspect",
+      "orb": null,
+      "applying": null
+    },
+    {
+      "id": "MOON|整宫拱相|SATURN|sign",
+      "body_a": "月亮",
+      "body_b": "土星",
+      "aspect": "整宫拱相",
+      "aspect_type": "sign",
+      "aspect_geometry": "sign",
+      "aspect_kind": "sign-based aspect",
+      "orb": null,
+      "applying": null
+    },
+    {
+      "id": "MERCURY|整宫六合|JUPITER|sign",
+      "body_a": "水星",
+      "body_b": "木星",
+      "aspect": "整宫六合",
+      "aspect_type": "sign",
+      "aspect_geometry": "sign",
+      "aspect_kind": "sign-based aspect",
+      "orb": null,
+      "applying": null
+    },
+    {
+      "id": "VENUS|整宫六合|MARS|sign",
+      "body_a": "金星",
+      "body_b": "火星",
+      "aspect": "整宫六合",
+      "aspect_type": "sign",
+      "aspect_geometry": "sign",
+      "aspect_kind": "sign-based aspect",
+      "orb": null,
+      "applying": null
+    },
+    {
+      "id": "VENUS|整宫六合|SATURN|sign",
+      "body_a": "金星",
+      "body_b": "土星",
+      "aspect": "整宫六合",
+      "aspect_type": "sign",
+      "aspect_geometry": "sign",
+      "aspect_kind": "sign-based aspect",
+      "orb": null,
+      "applying": null
+    },
+    {
+      "id": "MARS|刑相|JUPITER|degree",
+      "body_a": "火星",
+      "body_b": "木星",
+      "aspect": "刑相",
+      "aspect_type": "degree",
+      "aspect_geometry": "degree",
+      "aspect_kind": "degree-based aspect",
+      "orb": 0.13751581363089826,
+      "applying": "离相"
+    },
+    {
+      "id": "MARS|同宫|SATURN|co_presence",
+      "body_a": "火星",
+      "body_b": "土星",
+      "aspect": "同宫",
+      "aspect_type": "co_presence",
+      "aspect_geometry": "co_presence",
+      "aspect_kind": "sign-based aspect",
+      "orb": null,
+      "applying": null
+    },
+    {
+      "id": "JUPITER|整宫刑相|SATURN|sign",
+      "body_a": "木星",
+      "body_b": "土星",
+      "aspect": "整宫刑相",
+      "aspect_type": "sign",
+      "aspect_geometry": "sign",
+      "aspect_kind": "sign-based aspect",
+      "orb": null,
+      "applying": null
+    }
+  ],
+  "receptions": [
+    {
+      "id": "JUPITER|receives|SUN|bound|整宫六合",
+      "receiver": "木星",
+      "received": "太阳",
+      "dignity": "bound",
+      "via_aspect": "整宫六合",
+      "aspect_geometry": "sign",
+      "aspect_orb": null,
+      "strength_score": 2,
+      "strength_label": "弱"
+    },
+    {
+      "id": "SATURN|receives|MOON|bound|整宫拱相",
+      "receiver": "土星",
+      "received": "月亮",
+      "dignity": "bound",
+      "via_aspect": "整宫拱相",
+      "aspect_geometry": "sign",
+      "aspect_orb": null,
+      "strength_score": 2,
+      "strength_label": "弱"
+    },
+    {
+      "id": "SATURN|receives|MOON|decan|整宫拱相",
+      "receiver": "土星",
+      "received": "月亮",
+      "dignity": "decan",
+      "via_aspect": "整宫拱相",
+      "aspect_geometry": "sign",
+      "aspect_orb": null,
+      "strength_score": 1,
+      "strength_label": "弱"
+    },
+    {
+      "id": "MERCURY|receives|JUPITER|decan|整宫六合",
+      "receiver": "水星",
+      "received": "木星",
+      "dignity": "decan",
+      "via_aspect": "整宫六合",
+      "aspect_geometry": "sign",
+      "aspect_orb": null,
+      "strength_score": 1,
+      "strength_label": "弱"
+    },
+    {
+      "id": "MARS|receives|VENUS|decan|整宫六合",
+      "receiver": "火星",
+      "received": "金星",
+      "dignity": "decan",
+      "via_aspect": "整宫六合",
+      "aspect_geometry": "sign",
+      "aspect_orb": null,
+      "strength_score": 1,
+      "strength_label": "弱"
+    },
+    {
+      "id": "SATURN|receives|VENUS|triplicity|整宫六合",
+      "receiver": "土星",
+      "received": "金星",
+      "dignity": "triplicity",
+      "via_aspect": "整宫六合",
+      "aspect_geometry": "sign",
+      "aspect_orb": null,
+      "strength_score": 3,
+      "strength_label": "弱"
+    },
+    {
+      "id": "VENUS|receives|SATURN|bound|整宫六合",
+      "receiver": "金星",
+      "received": "土星",
+      "dignity": "bound",
+      "via_aspect": "整宫六合",
+      "aspect_geometry": "sign",
+      "aspect_orb": null,
+      "strength_score": 2,
+      "strength_label": "弱"
+    },
+    {
+      "id": "MARS|receives|SATURN|domicile|同宫",
+      "receiver": "火星",
+      "received": "土星",
+      "dignity": "domicile",
+      "via_aspect": "同宫",
+      "aspect_geometry": "co_presence",
+      "aspect_orb": null,
+      "strength_score": 5,
+      "strength_label": "中"
+    },
+    {
+      "id": "MARS|receives|SATURN|decan|同宫",
+      "receiver": "火星",
+      "received": "土星",
+      "dignity": "decan",
+      "via_aspect": "同宫",
+      "aspect_geometry": "co_presence",
+      "aspect_orb": null,
+      "strength_score": 1,
+      "strength_label": "弱"
+    }
+  ],
+  "warnings": []
+}
