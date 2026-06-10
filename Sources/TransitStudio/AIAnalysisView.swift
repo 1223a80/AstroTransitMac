@@ -11,19 +11,16 @@ enum StreamingPhase: Equatable {
 }
 
 struct AIAnalysisView: View {
+    @EnvironmentObject private var appState: AppState
+
     let analysis: String
     let reasoning: String
     let isAnalyzing: Bool
     let canAnalyze: Bool
     let analyze: () -> Void
 
-    @AppStorage("llmModel") private var llmModel = "glm-4.7-flash"
-    @AppStorage("savedLLMModels") private var savedLLMModels = "glm-4.7-flash"
-    @AppStorage("aiPromptStyle") private var aiPromptStyle = "general"
-    @AppStorage("aiNote") private var aiNote = ""
-    @AppStorage("aiReasoningEffort") private var aiReasoningEffort = "max"
-
     @State private var reasoningExpanded = true
+    @State private var settingsExpanded = false
 
     private var streamingPhase: StreamingPhase {
         guard isAnalyzing else { return .done }
@@ -55,18 +52,12 @@ struct AIAnalysisView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            // Title row: title + action buttons only
             HStack {
-                Text("AI 分析")
-                    .font(.headline)
+                Text("分析操作")
+                    .font(TS.Font.sectionTitle)
                 Spacer()
-                Picker("模型", selection: $llmModel) {
-                    ForEach(savedModelList, id: \.self) { model in
-                        Text(model).tag(model)
-                    }
-                }
-                .labelsHidden()
-                .frame(width: 170)
                 CopyMarkdownButton(markdown: analysis)
                 Button {
                     analyze()
@@ -76,34 +67,54 @@ struct AIAnalysisView: View {
                 .disabled(isAnalyzing || !canAnalyze)
             }
 
-            HStack(alignment: .top, spacing: 12) {
-                Picker("提示词", selection: $aiPromptStyle) {
-                    Text("通用").tag("general")
-                    Text("本命盘").tag("natal")
-                    Text("行运").tag("transit")
-                    Text("窗口扫描").tag("scan")
-                    Text("古典").tag("classical")
-                    Text("Horary").tag("horary")
-                }
-                .frame(width: 180)
+            // Collapsible settings area
+            DisclosureGroup("AI 设置", isExpanded: $settingsExpanded) {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                    HStack(spacing: TS.Spacing.lg) {
+                        LabeledContent("模型") {
+                            Picker("", selection: $appState.llmModel) {
+                                ForEach(savedModelList, id: \.self) { model in
+                                    Text(model).tag(model)
+                                }
+                            }
+                            .labelsHidden()
+                            .frame(width: 170)
+                        }
 
-                TextField("备注会随排盘数据一起发送给 API", text: $aiNote)
-                    .textFieldStyle(.roundedBorder)
+                        LabeledContent("提示词") {
+                            Picker("", selection: $appState.aiPromptStyle) {
+                                Text("通用").tag("general")
+                                Text("本命盘").tag("natal")
+                                Text("行运").tag("transit")
+                                Text("窗口扫描").tag("scan")
+                                Text("古典").tag("classical")
+                                Text("Horary").tag("horary")
+                            }
+                            .labelsHidden()
+                            .frame(width: 140)
+                        }
+                    }
+
+                    TextField("备注会随排盘数据一起发送给 API", text: $appState.aiNote)
+                        .textFieldStyle(.roundedBorder)
+                }
+                .padding(.top, TS.Spacing.sm)
             }
+            .font(TS.Font.label)
 
             // Reasoning (thinking) section — collapsible
             if !reasoning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             reasoningExpanded.toggle()
                         }
                     } label: {
-                        HStack(spacing: 6) {
+                        HStack(spacing: TS.Spacing.md) {
                             Image(systemName: reasoningExpanded ? "chevron.down" : "chevron.right")
-                                .font(.caption)
-                            Text("💭 思考过程")
-                                .font(.subheadline.weight(.medium))
+                                .font(TS.Font.label)
+                            Text("思考过程")
+                                .font(TS.Font.sectionTitle)
                             Spacer()
                             if streamingPhase == .thinking {
                                 ProgressView()
@@ -118,15 +129,15 @@ struct AIAnalysisView: View {
                     if reasoningExpanded {
                         ScrollView {
                             Text(reasoning)
-                                .font(.callout)
+                                .font(TS.Font.body)
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .textSelection(.enabled)
                         }
                         .frame(maxHeight: 200)
-                        .padding(8)
+                        .padding(TS.Padding.cardInner)
                         .background(Color.secondary.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .clipShape(RoundedRectangle(cornerRadius: TS.Radius.chip))
                     }
                 }
             }
@@ -147,11 +158,11 @@ struct AIAnalysisView: View {
     }
 
     private var savedModelList: [String] {
-        let models = savedLLMModels
+        let models = appState.savedLLMModels
             .split(separator: "\n")
             .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
-        return models.isEmpty ? [llmModel] : models
+        return models.isEmpty ? [appState.llmModel] : models
     }
 
     private var normalizedMarkdown: String {
@@ -167,14 +178,14 @@ private struct MarkdownBlocksView: View {
     let markdown: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in
                 blockView(block)
             }
         }
         .textSelection(.enabled)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(4)
+        .padding(TS.Padding.resultContent)
     }
 
     private var blocks: [String] {
@@ -188,19 +199,19 @@ private struct MarkdownBlocksView: View {
         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.hasPrefix("### ") {
             Text(String(trimmed.dropFirst(4)))
-                .font(.headline)
-                .padding(.top, 10)
+                .font(TS.Font.sectionTitle)
+                .padding(.top, TS.Spacing.lg)
         } else if trimmed.hasPrefix("## ") {
             Text(String(trimmed.dropFirst(3)))
-                .font(.title3.weight(.semibold))
-                .padding(.top, 12)
+                .font(TS.Font.pageTitle)
+                .padding(.top, TS.Spacing.xl)
         } else if trimmed.hasPrefix("# ") {
             Text(String(trimmed.dropFirst(2)))
                 .font(.title2.weight(.semibold))
-                .padding(.top, 12)
+                .padding(.top, TS.Spacing.xl)
         } else if trimmed.isEmpty {
             Spacer()
-                .frame(height: 4)
+                .frame(height: TS.Spacing.sm)
         } else {
             Text((try? AttributedString(markdown: line)) ?? AttributedString(line))
                 .frame(maxWidth: .infinity, alignment: .leading)

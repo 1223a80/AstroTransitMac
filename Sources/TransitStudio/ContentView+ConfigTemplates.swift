@@ -58,9 +58,9 @@ var momentConfigTemplateJSON: String {
             if let orb = values["GLOBAL_ORB"].flatMap(Double.init) {
                 globalOrb = orb
             }
-            errorMessage = nil
+            calcVM.errorMessage = nil
         } catch {
-            errorMessage = "时间点模板解析失败：\(error.localizedDescription)"
+            calcVM.errorMessage = "时间点模板解析失败：\(error.localizedDescription)"
         }
     }
 
@@ -95,9 +95,9 @@ var momentConfigTemplateJSON: String {
             selectedAspects = resolveAspectSelection(parseList(values["ASPECTS"]))
             customAspectDegrees = formatCustomAspectDegrees(parseList(values["CUSTOM_ASPECT_DEGREES"]).compactMap(Double.init))
             customAsteroids = parseList(values["CUSTOM_ASTEROIDS"]).compactMap(Int.init).map(String.init).joined(separator: ", ")
-            errorMessage = nil
+            calcVM.errorMessage = nil
         } catch {
-            errorMessage = "窗口扫描模板解析失败：\(error.localizedDescription)"
+            calcVM.errorMessage = "窗口扫描模板解析失败：\(error.localizedDescription)"
         }
     }
 
@@ -191,7 +191,7 @@ func parseTemplateDate(_ value: String) -> Date? {
     // MARK: - Moment Presets
 
     var momentPresets: [MomentPreset] {
-        guard let data = momentPresetsJSON.data(using: .utf8),
+        guard let data = appState.momentPresetsJSON.data(using: .utf8),
               let presets = try? JSONDecoder().decode([MomentPreset].self, from: data)
         else {
             return []
@@ -207,13 +207,13 @@ func parseTemplateDate(_ value: String) -> Date? {
         else {
             return
         }
-        momentPresetsJSON = text
+        appState.momentPresetsJSON = text
     }
 
     func saveMomentPreset() {
         let name = momentPresetName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else {
-            errorMessage = "预设名称不能为空。"
+            calcVM.errorMessage = "预设名称不能为空。"
             return
         }
 
@@ -232,7 +232,7 @@ func parseTemplateDate(_ value: String) -> Date? {
         }
         saveMomentPresets(presets.sorted { $0.name.localizedCompare($1.name) == .orderedAscending })
         selectedMomentPresetID = preset.id.uuidString
-        errorMessage = nil
+        calcVM.errorMessage = nil
     }
 
     func loadSelectedMomentPreset() {
@@ -268,7 +268,7 @@ func parseTemplateDate(_ value: String) -> Date? {
     // MARK: - Scan Presets
 
     var scanPresets: [ScanPreset] {
-        guard let data = scanPresetsJSON.data(using: .utf8),
+        guard let data = appState.scanPresetsJSON.data(using: .utf8),
               let presets = try? JSONDecoder().decode([ScanPreset].self, from: data)
         else {
             return []
@@ -284,13 +284,13 @@ func parseTemplateDate(_ value: String) -> Date? {
         else {
             return
         }
-        scanPresetsJSON = text
+        appState.scanPresetsJSON = text
     }
 
     func saveScanPreset() {
         let name = scanPresetName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else {
-            errorMessage = "预设名称不能为空。"
+            calcVM.errorMessage = "预设名称不能为空。"
             return
         }
 
@@ -309,7 +309,7 @@ func parseTemplateDate(_ value: String) -> Date? {
         }
         saveScanPresets(presets.sorted { $0.name.localizedCompare($1.name) == .orderedAscending })
         selectedScanPresetID = preset.id.uuidString
-        errorMessage = nil
+        calcVM.errorMessage = nil
     }
 
     func loadSelectedScanPreset() {

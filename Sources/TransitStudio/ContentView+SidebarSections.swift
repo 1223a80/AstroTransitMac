@@ -3,16 +3,16 @@ import SwiftUI
 extension ContentView {
     var sidebar: some View {
         ScrollView(.vertical) {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(alignment: .center, spacing: 12) {
+            VStack(alignment: .leading, spacing: TS.Spacing.xl) {
+                HStack(alignment: .firstTextBaseline, spacing: TS.Spacing.md) {
                     Text(sidebarTitle)
-                        .font(.title3.weight(.semibold))
+                        .font(TS.Font.pageTitle)
                     Spacer(minLength: 0)
                     if mode == .scan {
                         Button {
                             Task { await runCurrentMode() }
                         } label: {
-                            Label(isRunning ? "扫描中" : "扫描窗口", systemImage: isRunning ? "hourglass" : "play.fill")
+                            Label(calcVM.isRunning ? "扫描中" : "扫描窗口", systemImage: calcVM.isRunning ? "hourglass" : "play.fill")
                         }
                         .buttonStyle(.borderedProminent)
                         .disabled(runDisabled)
@@ -23,7 +23,7 @@ extension ContentView {
                     runSection
                 }
             }
-            .padding(18)
+            .padding(TS.Padding.sidebarContent)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -45,13 +45,13 @@ extension ContentView {
             }
             return AnyView(modernSettingsSidebar)
         case .horary:
-            return AnyView(VStack(alignment: .leading, spacing: 18) {
+            return AnyView(VStack(alignment: .leading, spacing: TS.Spacing.xl) {
                 collapsible("Horary 问题") { horaryQuestionSection }
                 collapsible("地点") { horaryLocationSection }
                 collapsible("古典参数") { classicalParameterSection }
             })
         case .moment:
-            return AnyView(VStack(alignment: .leading, spacing: 18) {
+            return AnyView(VStack(alignment: .leading, spacing: TS.Spacing.xl) {
                 collapsible("时间") { momentTimeSection }
                 collapsible("当前本命盘") { natalSummarySection }
                 collapsible("时间点模板") {
@@ -68,7 +68,7 @@ extension ContentView {
                 collapsible("相位") { aspectSection }
             })
         case .scan:
-            return AnyView(VStack(alignment: .leading, spacing: 18) {
+            return AnyView(VStack(alignment: .leading, spacing: TS.Spacing.xl) {
                 collapsible("窗口") { scanWindowSection }
                 collapsible("当前本命盘") { natalSummarySection }
                 collapsible("扫描模板") {
@@ -97,9 +97,9 @@ extension ContentView {
     }
 
     var rectifySidebar: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
             collapsible("出生资料") {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
                     LabeledContent("日期", value: dateString)
                     LabeledContent("时间", value: rectifyTimeString)
                     LabeledContent("时区", value: timezoneLabel)
@@ -110,21 +110,21 @@ extension ContentView {
                     LabeledContent("Bounds", value: boundsLabel)
                     LabeledContent("Triplicity", value: triplicityLabel)
                 }
-                .font(.callout)
+                .font(TS.Font.body)
                 .monospacedDigit()
             }
 
             runSection
 
-            if let response = rectifyResponse {
+            if let response = calcVM.rectifyResponse {
                 collapsible("计算结果") {
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: TS.Spacing.md) {
                         LabeledContent("候选数", value: "\(response.totalCandidates)")
                         if let w = response.windowMinutes {
                             LabeledContent("窗口", value: "±\(w) 分钟")
                         }
                     }
-                    .font(.callout)
+                    .font(TS.Font.body)
                     .monospacedDigit()
                 }
             }
@@ -139,27 +139,27 @@ extension ContentView {
     }
 
     var momentTimeSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             dateTimeInputRow("行运时间", date: $transitDate)
         }
     }
 
     var horaryQuestionSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             HStack {
                 Text("起盘时间").foregroundStyle(.secondary)
                 DateTimeInput(date: $horaryDate)
                 Button("现在") { horaryDate = Date() }
             }
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 Text("问题文本")
-                    .font(.caption)
+                    .font(TS.Font.label)
                     .foregroundStyle(.secondary)
                 TextEditor(text: $horaryQuestionText)
-                    .font(.body)
+                    .font(TS.Font.body)
                     .frame(height: 120)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 6)
+                        RoundedRectangle(cornerRadius: TS.Radius.chip)
                             .stroke(Color.secondary.opacity(0.25))
                     )
             }
@@ -167,7 +167,7 @@ extension ContentView {
     }
 
     var horaryLocationSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             HStack {
                 Spacer()
                 Button {
@@ -178,7 +178,7 @@ extension ContentView {
                             horaryLatitude = String(format: "%.4f", payload.1)
                             horaryLongitude = String(format: "%.4f", payload.2)
                         case .failure(let error):
-                            errorMessage = error.localizedDescription
+                            calcVM.errorMessage = error.localizedDescription
                         }
                     }
                 } label: {
@@ -188,10 +188,10 @@ extension ContentView {
                 .disabled(currentLocationManager.isLocating)
             }
             Text(currentLocationManager.statusText)
-                .font(.caption)
+                .font(TS.Font.label)
                 .foregroundStyle(.secondary)
 
-            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
                 GridRow {
                     Text("地点名").foregroundStyle(.secondary)
                     TextField("例如 Shanghai, CN", text: $horaryPlaceName)
@@ -212,7 +212,7 @@ extension ContentView {
     }
 
     var scanWindowSection: some View {
-        Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+        Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
             GridRow {
                 Text("名称").foregroundStyle(.secondary)
                 TextField("May-Jun 2026", text: $scanWindowLabel)
@@ -248,7 +248,7 @@ extension ContentView {
     }
 
     var natalProfileSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             HStack {
                 TextField("资料名称", text: $natalProfileName)
                     .textFieldStyle(.roundedBorder)
@@ -272,7 +272,7 @@ extension ContentView {
     }
 
     var natalSettingsSection: some View {
-        Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+        Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
             GridRow {
                 Text("出生").foregroundStyle(.secondary)
                 DateTimeInput(date: $natalDate)
@@ -295,7 +295,7 @@ extension ContentView {
     }
 
     var natalSummarySection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             Text("\(dateTimeText(natalDate))  \(timezoneLabel)")
                 .monospacedDigit()
             Text("纬度 \(birthLatitude) / 经度 \(birthLongitude)")
@@ -306,19 +306,19 @@ extension ContentView {
     }
 
     var classicalSettingsSection: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
             collapsible("本命盘资料") { natalProfileSection }
             collapsible("本命盘") { natalSettingsSection }
             collapsible("参考时间") {
-                VStack(alignment: .leading, spacing: 10) {
-                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
                         GridRow {
                             Text("参考").foregroundStyle(.secondary)
                             DateTimeInput(date: $classicalReferenceDate)
                         }
                     }
                     Text("用于 annual profection、solar return 以及其他时间技法的落点判断。")
-                        .font(.caption)
+                        .font(TS.Font.label)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -327,32 +327,32 @@ extension ContentView {
     }
 
     var vedicSettingsSection: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
             collapsible("本命盘资料") { natalProfileSection }
             collapsible("本命盘") { natalSettingsSection }
             collapsible("参考时间") {
-                VStack(alignment: .leading, spacing: 10) {
-                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
                         GridRow {
                             Text("参考").foregroundStyle(.secondary)
                             DateTimeInput(date: $classicalReferenceDate)
                         }
                     }
-                    Text("用于 Daśā 当前期判断。").font(.caption).foregroundStyle(.secondary)
+                    Text("用于 Daśā 当前期判断。").font(TS.Font.label).foregroundStyle(.secondary)
                 }
             }
             collapsible("吠陀参数") {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                     pickerRow("Ayanāṃśa", selection: $vedicAyanamsha, options: Self.ayanamshaOptions)
                     Toggle("完整计算", isOn: $vedicFullMode)
-                        .font(.caption)
+                        .font(TS.Font.label)
                 }
             }
         }
     }
 
     private var modernSettingsSidebar: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
             switch modernSubMode {
             case .natal:
                 collapsible("本命盘资料") { natalProfileSection }
@@ -381,8 +381,8 @@ extension ContentView {
         Group {
             collapsible("本命盘") { natalSettingsSection }
             collapsible("参考时间") {
-                VStack(alignment: .leading, spacing: 10) {
-                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
                         GridRow {
                             Text("参考").foregroundStyle(.secondary)
                             DateTimeInput(date: $classicalReferenceDate)
@@ -398,7 +398,7 @@ extension ContentView {
         Group {
             collapsible("本命盘") { natalSettingsSection }
             collapsible("Harmonic 参数") {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                     HStack {
                         Text("阶数").foregroundStyle(.secondary)
                         Spacer()
@@ -411,8 +411,8 @@ extension ContentView {
     }
 
     private var personASection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
                 GridRow {
                     Text("出生").foregroundStyle(.secondary)
                     DateTimeInput(date: $natalDate)
@@ -430,8 +430,8 @@ extension ContentView {
     }
 
     private var personBSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
                 GridRow {
                     Text("出生").foregroundStyle(.secondary)
                     DateTimeInput(date: $modernPersonBDate)
@@ -449,7 +449,7 @@ extension ContentView {
     }
 
     private var modernParameterSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             pickerRow("宫制", selection: $selectedHouseSystem, options: Self.houseSystemOptions)
             pickerRow("黄道", selection: $selectedZodiac, options: Self.zodiacOptions)
             pickerRow("节点", selection: $modernNodeMode, options: Self.nodeModeOptions)
@@ -458,24 +458,24 @@ extension ContentView {
     }
 
     private var modernAspectSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             HStack {
-                Text("相位").foregroundStyle(.secondary).font(.caption)
+                Text("相位").foregroundStyle(.secondary).font(TS.Font.label)
                 Spacer()
-                HStack(spacing: 4) {
-                    Button("全选") { selectedAspects = Set(aspectOptions.map(\.id)) }.font(.caption)
-                    Button("全不选") { selectedAspects = [] }.font(.caption)
+                HStack(spacing: TS.Spacing.sm) {
+                    Button("全选") { selectedAspects = Set(aspectOptions.map(\.id)) }.font(TS.Font.label)
+                    Button("全不选") { selectedAspects = [] }.font(TS.Font.label)
                 }
             }
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: 6)], alignment: .leading, spacing: 6) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: TS.Spacing.md)], alignment: .leading, spacing: TS.Spacing.md) {
                 ForEach(aspectOptions) { aspect in
                     Toggle(aspect.name, isOn: toggleBinding(for: aspect.id, in: $selectedAspects))
                         .toggleStyle(.checkbox)
-                        .font(.caption)
+                        .font(TS.Font.label)
                 }
             }
             HStack {
-                Text("容许度").foregroundStyle(.secondary).font(.caption)
+                Text("容许度").foregroundStyle(.secondary).font(TS.Font.label)
                 Spacer()
                 Text("\(globalOrb, specifier: "%.1f")°").monospacedDigit()
             }
@@ -491,12 +491,12 @@ extension ContentView {
     }
 
     var classicalParameterSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             pickerRow("宫制", selection: $selectedHouseSystem, options: Self.houseSystemOptions)
             pickerRow("黄道", selection: $selectedZodiac, options: Self.zodiacOptions)
             pickerRow("界", selection: $selectedBoundsSystem, options: Self.boundsOptions)
             pickerRow("三分主", selection: $selectedTriplicitySystem, options: Self.triplicityOptions)
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 HStack {
                     Text("相位容许度").foregroundStyle(.secondary)
                     Spacer()
@@ -508,7 +508,7 @@ extension ContentView {
     }
 
     func dateTimeInputRow(_ title: String, date: Binding<Date>) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
+        HStack(alignment: .firstTextBaseline, spacing: TS.Spacing.lg) {
             Text(title).foregroundStyle(.secondary)
             DateTimeInput(date: date)
         }
@@ -535,15 +535,15 @@ extension ContentView {
     }
 
     func bodySection(title: String, selection: Binding<Set<String>>) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             ForEach(BodyGroup.allCases) { group in
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
                     selectionHeader(
                         group.title,
                         selectAll: { selection.wrappedValue.formUnion(bodyOptions.filter { $0.group == group }.map(\.id)) },
                         selectNone: { selection.wrappedValue.subtract(bodyOptions.filter { $0.group == group }.map(\.id)) }
                     )
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: 8)], alignment: .leading, spacing: 8) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: TS.Spacing.md)], alignment: .leading, spacing: TS.Spacing.md) {
                         ForEach(bodyOptions.filter { $0.group == group }) { body in
                             Toggle(body.name, isOn: toggleBinding(for: body.id, in: selection))
                                 .toggleStyle(.checkbox)
@@ -556,15 +556,15 @@ extension ContentView {
 
     func selectionHeader(_ title: String, selectAll: @escaping () -> Void, selectNone: @escaping () -> Void) -> some View {
         HStack {
-            Text(title).font(.caption).foregroundStyle(.secondary)
+            Text(title).font(TS.Font.label).foregroundStyle(.secondary)
             Spacer()
-            Button("全选", action: selectAll).font(.caption)
-            Button("全不选", action: selectNone).font(.caption)
+            Button("全选", action: selectAll).font(TS.Font.label)
+            Button("全不选", action: selectNone).font(TS.Font.label)
         }
     }
 
     func selectionTemplateSection(title: String, template: String, text: Binding<String>, apply: @escaping () -> Void) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             HStack {
                 CopyMarkdownButton(markdown: template, title: "复制参考格式")
                 Button("解析回填", action: apply)
@@ -572,14 +572,14 @@ extension ContentView {
             TextEditor(text: text)
                 .font(.system(.body, design: .monospaced))
                 .frame(height: 150)
-                .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.secondary.opacity(0.25)))
+                .overlay(RoundedRectangle(cornerRadius: TS.Radius.chip).stroke(Color.secondary.opacity(0.25)))
             Text("粘贴行式模板，格式为 KEY=VALUE；逗号分隔列表，`CUSTOM_TARGETS` 用 `|` 分隔多条目标。")
-                .font(.caption).foregroundStyle(.secondary)
+                .font(TS.Font.label).foregroundStyle(.secondary)
         }
     }
 
     func momentPresetTemplateSection(title: String, template: String, text: Binding<String>, apply: @escaping () -> Void) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             HStack {
                 TextField("预设名称", text: $momentPresetName).textFieldStyle(.roundedBorder)
                 Button("保存") { saveMomentPreset() }
@@ -605,14 +605,14 @@ extension ContentView {
             TextEditor(text: text)
                 .font(.system(.body, design: .monospaced))
                 .frame(height: 150)
-                .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.secondary.opacity(0.25)))
+                .overlay(RoundedRectangle(cornerRadius: TS.Radius.chip).stroke(Color.secondary.opacity(0.25)))
             Text("粘贴行式模板，格式为 KEY=VALUE；逗号分隔列表，`CUSTOM_TARGETS` 用 `|` 分隔多条目标。")
-                .font(.caption).foregroundStyle(.secondary)
+                .font(TS.Font.label).foregroundStyle(.secondary)
         }
     }
 
     func scanPresetTemplateSection(title: String, template: String, text: Binding<String>, apply: @escaping () -> Void) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             HStack {
                 TextField("预设名称", text: $scanPresetName).textFieldStyle(.roundedBorder)
                 Button("保存") { saveScanPreset() }
@@ -638,9 +638,9 @@ extension ContentView {
             TextEditor(text: text)
                 .font(.system(.body, design: .monospaced))
                 .frame(height: 150)
-                .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.secondary.opacity(0.25)))
+                .overlay(RoundedRectangle(cornerRadius: TS.Radius.chip).stroke(Color.secondary.opacity(0.25)))
             Text("粘贴行式模板，格式为 KEY=VALUE；逗号分隔列表，`CUSTOM_TARGETS` 用 `|` 分隔多条目标。")
-                .font(.caption).foregroundStyle(.secondary)
+                .font(TS.Font.label).foregroundStyle(.secondary)
         }
     }
 

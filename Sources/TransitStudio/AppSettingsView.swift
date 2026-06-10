@@ -13,25 +13,7 @@ private let ephemerisRequirementOptions = [
 
 struct AppSettingsView: View {
     var usesFixedFrame = true
-
-    @AppStorage("pythonPath") private var pythonPath = BackendClient.suggestedPythonPath()
-    @AppStorage("ephemerisPath") private var ephemerisPath = ""
-    @AppStorage("noAsteroids") private var noAsteroids = false
-    @AppStorage("requireEphemeris") private var requireEphemeris = "warn"
-    @AppStorage("autoDownloadAsteroids") private var autoDownloadAsteroids = true
-    @AppStorage("llmBaseURL") private var llmBaseURL = "https://open.bigmodel.cn/api/paas/v4"
-    @AppStorage("llmModel") private var llmModel = "glm-4.7-flash"
-    @AppStorage("llmAPIKey") private var llmAPIKey = ""
-    @AppStorage("savedLLMModels") private var savedLLMModels = "glm-4.7-flash"
-    @AppStorage("aiPromptStyle") private var aiPromptStyle = "general"
-    @AppStorage("aiReasoningEffort") private var aiReasoningEffort = "max"
-    @AppStorage("aiPromptGeneral") private var aiPromptGeneral = AIPromptDefaults.text(for: "general")
-    @AppStorage("aiPromptNatal") private var aiPromptNatal = AIPromptDefaults.text(for: "natal")
-    @AppStorage("aiPromptTransit") private var aiPromptTransit = AIPromptDefaults.text(for: "transit")
-    @AppStorage("aiPromptScan") private var aiPromptScan = AIPromptDefaults.text(for: "scan")
-    @AppStorage("aiPromptClassical") private var aiPromptClassical = AIPromptDefaults.text(for: "classical")
-    @AppStorage("aiPromptHorary") private var aiPromptHorary = AIPromptDefaults.text(for: "horary")
-    @AppStorage("aiNote") private var aiNote = ""
+    @EnvironmentObject private var appState: AppState
 
     @State private var swissephStatus = "正在检测 pyswisseph..."
     @State private var apiTestStatus = ""
@@ -49,52 +31,52 @@ struct AppSettingsView: View {
             settingsPage { asteroidCommandSettings }
                 .tabItem { Label("小行星", systemImage: "arrow.down.circle") }
         }
-        .padding(16)
+        .padding(TS.Padding.sectionGap)
         .frame(width: usesFixedFrame ? 620 : nil, height: usesFixedFrame ? 640 : nil)
-        .task(id: pythonPath) {
-            swissephStatus = await BackendClient.swissephStatus(pythonPath: pythonPath)
+        .task(id: appState.pythonPath) {
+            swissephStatus = await BackendClient.swissephStatus(pythonPath: appState.pythonPath)
         }
         .tint(.accentColor)
     }
 
     private var pythonSettings: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
             settingsTitle("Python / Swiss Ephemeris", subtitle: "后端解释器、星历路径和缺文件策略。")
 
-            field("Python 可执行文件", text: $pythonPath, placeholder: "/opt/homebrew/bin/python3")
+            field("Python 可执行文件", text: $appState.pythonPath, placeholder: "/opt/homebrew/bin/python3")
             Text(swissephStatus)
-                .font(.caption)
+                .font(TS.Font.label)
                 .foregroundStyle(swissephStatus.hasPrefix("已") ? .green : .orange)
 
-            field("Ephemeris 文件夹 可选", text: $ephemerisPath, placeholder: "~/Library/Application Support/TransitStudio/ephe")
+            field("Ephemeris 文件夹 可选", text: $appState.ephemerisPath, placeholder: "~/Library/Application Support/TransitStudio/ephe")
             Text("留空时普通行星使用 app 内置星历；输入自定义小行星时会自动使用推荐目录（~/Library/Application Support/TransitStudio/ephe）。")
-                .font(.caption)
+                .font(TS.Font.label)
                 .foregroundStyle(.secondary)
 
-            Toggle("自动下载缺失的小行星星历", isOn: $autoDownloadAsteroids)
+            Toggle("自动下载缺失的小行星星历", isOn: $appState.autoDownloadAsteroids)
                 .toggleStyle(.checkbox)
 
-            Toggle("不计算小行星", isOn: $noAsteroids)
+            Toggle("不计算小行星", isOn: $appState.noAsteroids)
                 .toggleStyle(.checkbox)
 
-            pickerRow("小行星星历", selection: $requireEphemeris, options: ephemerisRequirementOptions)
+            pickerRow("小行星星历", selection: $appState.requireEphemeris, options: ephemerisRequirementOptions)
 
             Spacer()
         }
     }
 
     private var aiSettings: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
             settingsTitle("AI 分析", subtitle: "API、模型、默认提示词和发送给 AI 的备注。")
 
-            field("API Base URL", text: $llmBaseURL, placeholder: "https://open.bigmodel.cn/api/paas/v4")
+            field("API Base URL", text: $appState.llmBaseURL, placeholder: "https://open.bigmodel.cn/api/paas/v4")
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 Text("模型名")
-                    .font(.caption)
+                    .font(TS.Font.label)
                     .foregroundStyle(.secondary)
                 HStack {
-                    Picker("模型名", selection: $llmModel) {
+                    Picker("模型名", selection: $appState.llmModel) {
                         ForEach(savedModelList, id: \.self) { model in
                             Text(model).tag(model)
                         }
@@ -102,7 +84,7 @@ struct AppSettingsView: View {
                     .labelsHidden()
                     .frame(width: 210)
 
-                    TextField("glm-4.7-flash", text: $llmModel)
+                    TextField("glm-4.7-flash", text: $appState.llmModel)
                         .textFieldStyle(.roundedBorder)
 
                     Button("保存模型") {
@@ -115,11 +97,11 @@ struct AppSettingsView: View {
                 }
             }
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 Text("API Key")
-                    .font(.caption)
+                    .font(TS.Font.label)
                     .foregroundStyle(.secondary)
-                SecureField("输入后自动保存到本地设置", text: $llmAPIKey)
+                SecureField("输入后自动保存到本地设置", text: $appState.llmAPIKey)
                     .textFieldStyle(.roundedBorder)
             }
 
@@ -129,14 +111,14 @@ struct AppSettingsView: View {
                 } label: {
                     Label(isTestingAPI ? "测试中" : "测试 API Key", systemImage: isTestingAPI ? "hourglass" : "checkmark.seal")
                 }
-                .disabled(isTestingAPI || llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(isTestingAPI || appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
                 Text(apiTestStatus)
-                    .font(.caption)
+                    .font(TS.Font.label)
                     .foregroundStyle(apiTestStatus.hasPrefix("成功") ? .green : .secondary)
             }
 
-            pickerRow("思考深度", selection: $aiReasoningEffort, options: [
+            pickerRow("思考深度", selection: $appState.aiReasoningEffort, options: [
                 .init(id: "", title: "关"),
                 .init(id: "low", title: "低"),
                 .init(id: "medium", title: "中"),
@@ -144,36 +126,36 @@ struct AppSettingsView: View {
                 .init(id: "max", title: "最大"),
             ])
 
-            pickerRow("默认提示词", selection: $aiPromptStyle, options: promptStyleOptions)
+            pickerRow("默认提示词", selection: $appState.aiPromptStyle, options: promptStyleOptions)
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 HStack {
                     Text("默认提示词内容")
-                        .font(.caption)
+                        .font(TS.Font.label)
                         .foregroundStyle(.secondary)
                     Spacer()
                     Button("恢复默认") {
-                        selectedPromptText.wrappedValue = AIPromptDefaults.text(for: aiPromptStyle)
+                        selectedPromptText.wrappedValue = AIPromptDefaults.text(for: appState.aiPromptStyle)
                     }
                 }
                 TextEditor(text: selectedPromptText)
                     .font(.body)
                     .frame(height: 150)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 6)
+                        RoundedRectangle(cornerRadius: TS.Radius.chip)
                             .stroke(Color.secondary.opacity(0.25))
                     )
             }
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 Text("备注")
-                    .font(.caption)
+                    .font(TS.Font.label)
                     .foregroundStyle(.secondary)
-                TextEditor(text: $aiNote)
+                TextEditor(text: $appState.aiNote)
                     .font(.body)
                     .frame(height: 130)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 6)
+                        RoundedRectangle(cornerRadius: TS.Radius.chip)
                             .stroke(Color.secondary.opacity(0.25))
                     )
             }
@@ -183,11 +165,11 @@ struct AppSettingsView: View {
     }
 
     private var asteroidCommandSettings: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
             settingsTitle("小行星数据", subtitle: "计算会自动检查并下载缺失文件；这里用于提前补齐或复制脚本。")
 
             field("小行星编号", text: $asteroidIDs, placeholder: "2101 2102 4450")
-            Toggle("计算前自动下载缺失文件", isOn: $autoDownloadAsteroids)
+            Toggle("计算前自动下载缺失文件", isOn: $appState.autoDownloadAsteroids)
                 .toggleStyle(.checkbox)
 
             HStack {
@@ -201,21 +183,21 @@ struct AppSettingsView: View {
                 SaveTextButton(text: asteroidDownloadCommand, title: "保存脚本", defaultFilename: "download_asteroids.sh")
             }
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 Text(asteroidDownloadLog.isEmpty ? "终端命令预览" : "下载日志")
-                    .font(.caption)
+                    .font(TS.Font.label)
                     .foregroundStyle(.secondary)
                 ScrollView {
                     Text(asteroidDownloadLog.isEmpty ? asteroidDownloadCommand : asteroidDownloadLog)
                         .font(.system(.body, design: .monospaced))
                         .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(10)
+                        .padding(TS.Spacing.lg)
                 }
                 .frame(minHeight: 260)
-                .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 6))
+                .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: TS.Radius.chip))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6)
+                    RoundedRectangle(cornerRadius: TS.Radius.chip)
                         .stroke(Color.secondary.opacity(0.25))
                 )
             }
@@ -225,7 +207,7 @@ struct AppSettingsView: View {
     }
 
     private var savedModelList: [String] {
-        let models = savedLLMModels
+        let models = appState.savedLLMModels
             .split(separator: "\n")
             .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
@@ -244,19 +226,19 @@ struct AppSettingsView: View {
     }
 
     private var selectedPromptText: Binding<String> {
-        switch aiPromptStyle {
+        switch appState.aiPromptStyle {
         case "natal":
-            return $aiPromptNatal
+            return $appState.aiPromptNatal
         case "transit":
-            return $aiPromptTransit
+            return $appState.aiPromptTransit
         case "scan":
-            return $aiPromptScan
+            return $appState.aiPromptScan
         case "classical":
-            return $aiPromptClassical
+            return $appState.aiPromptClassical
         case "horary":
-            return $aiPromptHorary
+            return $appState.aiPromptHorary
         default:
-            return $aiPromptGeneral
+            return $appState.aiPromptGeneral
         }
     }
 
@@ -268,7 +250,7 @@ struct AppSettingsView: View {
     }
 
     private var asteroidDownloadCommand: String {
-        AsteroidEphemerisManager.command(for: parsedAsteroidIDs, ephemerisPath: ephemerisPath)
+        AsteroidEphemerisManager.command(for: parsedAsteroidIDs, ephemerisPath: appState.ephemerisPath)
     }
 
     @MainActor
@@ -280,17 +262,17 @@ struct AppSettingsView: View {
         do {
             let result = try await AsteroidEphemerisManager.ensureAsteroids(
                 ids: parsedAsteroidIDs,
-                configuredEphemerisPath: ephemerisPath,
+                configuredEphemerisPath: appState.ephemerisPath,
                 bundledEphemerisPath: bundledEphemerisPath,
-                requireEphemeris: requireEphemeris
+                requireEphemeris: appState.requireEphemeris
             ) { message in
                 await MainActor.run {
                     asteroidDownloadLog = message
                 }
             }
             asteroidDownloadLog = result.log.isEmpty ? "小行星星历已就绪。" : result.log
-            if ephemerisPath.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                ephemerisPath = result.effectiveEphemerisPath ?? AsteroidEphemerisManager.recommendedEphemerisPath
+            if appState.ephemerisPath.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                appState.ephemerisPath = result.effectiveEphemerisPath ?? AsteroidEphemerisManager.recommendedEphemerisPath
             }
         } catch {
             asteroidDownloadLog = "下载失败：\(error.localizedDescription)"
@@ -308,22 +290,22 @@ struct AppSettingsView: View {
     }
 
     private func saveCurrentModel() {
-        let model = llmModel.trimmingCharacters(in: .whitespacesAndNewlines)
+        let model = appState.llmModel.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !model.isEmpty else { return }
         var models = savedModelList
         if !models.contains(model) {
             models.append(model)
         }
-        savedLLMModels = models.joined(separator: "\n")
-        llmModel = model
+        appState.savedLLMModels = models.joined(separator: "\n")
+        appState.llmModel = model
     }
 
     private func deleteCurrentModel() {
-        let model = llmModel.trimmingCharacters(in: .whitespacesAndNewlines)
+        let model = appState.llmModel.trimmingCharacters(in: .whitespacesAndNewlines)
         let models = savedModelList.filter { $0 != model }
         guard !models.isEmpty else { return }
-        savedLLMModels = models.joined(separator: "\n")
-        llmModel = models[0]
+        appState.savedLLMModels = models.joined(separator: "\n")
+        appState.llmModel = models[0]
     }
 
     @MainActor
@@ -337,8 +319,8 @@ struct AppSettingsView: View {
                 structuredMarkdown: "请只回复 OK。",
                 note: "",
                 promptStyle: "general",
-                customSystemPrompt: aiPromptGeneral,
-                configuration: .init(baseURL: llmBaseURL, model: llmModel, apiKey: llmAPIKey)
+                customSystemPrompt: appState.aiPromptGeneral,
+                configuration: .init(baseURL: appState.llmBaseURL, model: appState.llmModel, apiKey: appState.llmAPIKey)
             )
             apiTestStatus = "成功：API Key 可用"
             saveCurrentModel()
@@ -348,9 +330,9 @@ struct AppSettingsView: View {
     }
 
     private func field(_ title: String, text: Binding<String>, placeholder: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             Text(title)
-                .font(.caption)
+                .font(TS.Font.label)
                 .foregroundStyle(.secondary)
             TextField(placeholder, text: text)
                 .textFieldStyle(.roundedBorder)
@@ -383,11 +365,11 @@ struct AppSettingsView: View {
     }
 
     private func settingsTitle(_ title: String, subtitle: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: TS.Spacing.sm) {
             Text(title)
-                .font(.title3.weight(.semibold))
+                .font(TS.Font.pageTitle)
             Text(subtitle)
-                .font(.caption)
+                .font(TS.Font.label)
                 .foregroundStyle(.secondary)
         }
         .padding(.bottom, 2)

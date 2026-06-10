@@ -2,39 +2,42 @@ import SwiftUI
 
 extension ContentView {
     var runSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             Button {
                 Task { await runCurrentMode() }
             } label: {
-                Label(isRunning ? "计算中" : runButtonTitle, systemImage: isRunning ? "hourglass" : "play.fill")
+                Label(calcVM.isRunning ? "计算中" : runButtonTitle, systemImage: calcVM.isRunning ? "hourglass" : "play.fill")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .disabled(runDisabled)
 
-            if let calculationProgress {
-                VStack(alignment: .leading, spacing: 4) {
-                    ProgressView(value: calculationProgress)
-                    Text(calculationProgressText)
-                        .font(.caption)
+            if calcVM.calculationProgress != nil {
+                VStack(alignment: .leading, spacing: TS.Spacing.sm) {
+                    ProgressView(value: calcVM.calculationProgress)
+                    Text(calcVM.calculationProgressText)
+                        .font(TS.Font.label)
                         .foregroundStyle(.secondary)
+                        .monospacedDigit()
                 }
             }
 
-            if let errorMessage {
-                Text(errorMessage)
-                    .font(.callout)
-                    .foregroundStyle(.red)
+            if calcVM.errorMessage != nil {
+                Text(calcVM.errorMessage!)
+                    .font(TS.Font.body)
+                    .foregroundStyle(TS.SemanticColor.error)
                     .textSelection(.enabled)
             }
 
-            if !asteroidPreparationMessage.isEmpty {
-                Text(asteroidPreparationMessage)
-                    .font(.caption)
+            if !calcVM.asteroidPreparationMessage.isEmpty {
+                Text(calcVM.asteroidPreparationMessage)
+                    .font(TS.Font.label)
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
             }
         }
+        .padding(TS.Padding.cardInner)
+        .background(TS.SemanticColor.cardBackground, in: RoundedRectangle(cornerRadius: TS.Radius.card))
     }
 
     var runButtonTitle: String {
@@ -63,7 +66,7 @@ extension ContentView {
     }
 
     var runDisabled: Bool {
-        if isRunning {
+        if calcVM.isRunning {
             return true
         }
 
@@ -140,31 +143,31 @@ extension ContentView {
     // MARK: - Modern Natal Results Pane
     var modernNatalResultsPane: some View {
         Group {
-            if let momentResult {
-                VStack(alignment: .leading, spacing: 10) {
+            if calcVM.momentResult != nil {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                     ResultPaneToolbar(
-                        selection: $modernNatalSelectedTab,
-                        tabRows: modernNatalTabRows,
+                        selection: $calcVM.modernNatalSelectedTab,
+                        tabs: modernNatalTabs,
                         moreTabs: modernNatalMoreTabs,
                         currentTabTitle: modernNatalTabTitle,
-                        markdownProvider: { MarkdownExportBuilder.natal(momentResult) },
-                        jsonProvider: { TextExportBuilder.natalJSON(momentResult) },
-                        csvProvider: { TextExportBuilder.natalCSV(momentResult) },
+                        markdownProvider: { MarkdownExportBuilder.natal(calcVM.momentResult!) },
+                        jsonProvider: { TextExportBuilder.natalJSON(calcVM.momentResult!) },
+                        csvProvider: { TextExportBuilder.natalCSV(calcVM.momentResult!) },
                         basename: "natal_chart"
                     )
-                    modernNatalSelectedResultView(momentResult)
+                    modernNatalSelectedResultView(calcVM.momentResult!)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .padding(14)
+                .padding(TS.Padding.resultContent)
             } else {
                 EmptyStateView(title: "等待现代排盘", systemImage: "circle.grid.2x2", description: "填写出生设置并选择天体后开始排盘。")
             }
         }
     }
 
-    var modernNatalTabRows: [[(id: String, title: String)]] {
+    var modernNatalTabs: [(id: String, title: String)] {
         [
-            [("wheel", "星盘图"), ("natal_positions", "本命位置"), ("natal_aspects", "本命相位"), ("ai", "AI 分析")],
+            ("wheel", "星盘图"), ("natal_positions", "本命位置"), ("natal_aspects", "本命相位"), ("ai", "AI 分析"),
         ]
     }
 
@@ -173,7 +176,7 @@ extension ContentView {
     }
 
     var modernNatalTabTitle: String {
-        switch modernNatalSelectedTab {
+        switch calcVM.modernNatalSelectedTab {
         case "wheel": return "星盘图"
         case "natal_positions": return "本命位置"
         case "natal_aspects": return "本命相位"
@@ -185,7 +188,7 @@ extension ContentView {
 
     @ViewBuilder
     func modernNatalSelectedResultView(_ result: TransitResult) -> some View {
-        switch modernNatalSelectedTab {
+        switch calcVM.modernNatalSelectedTab {
         case "wheel":
             ChartWheelView(data: ChartWheelData(natalResult: result))
         case "natal_positions":
@@ -201,10 +204,10 @@ extension ContentView {
             DiagnosticsView(result: result)
         case "ai":
             AIAnalysisView(
-                analysis: momentAIAnalysis,
-                reasoning: momentAIReasoning,
-                isAnalyzing: isAnalyzingAI,
-                canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                analysis: aiVM.momentAnalysis,
+                reasoning: aiVM.momentReasoning,
+                isAnalyzing: aiVM.isAnalyzing,
+                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ) {
                 Task { await analyzeNatalResult() }
             }
@@ -216,31 +219,31 @@ extension ContentView {
     // MARK: - Moment Results Pane
     var momentResultsPane: some View {
         Group {
-            if let momentResult {
-                VStack(alignment: .leading, spacing: 10) {
+            if calcVM.momentResult != nil {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                     ResultPaneToolbar(
-                        selection: $momentSelectedTab,
-                        tabRows: momentTabRows,
+                        selection: $calcVM.momentSelectedTab,
+                        tabs: momentTabs,
                         moreTabs: momentMoreTabs,
                         currentTabTitle: momentTabTitle,
-                        markdownProvider: { MarkdownExportBuilder.moment(momentResult) },
-                        jsonProvider: { TextExportBuilder.json(momentResult) },
-                        csvProvider: { TextExportBuilder.csv(momentResult) },
+                        markdownProvider: { MarkdownExportBuilder.moment(calcVM.momentResult!) },
+                        jsonProvider: { TextExportBuilder.json(calcVM.momentResult!) },
+                        csvProvider: { TextExportBuilder.csv(calcVM.momentResult!) },
                         basename: "moment_chart"
                     )
-                    momentSelectedResultView(momentResult)
+                    momentSelectedResultView(calcVM.momentResult!)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .padding(14)
+                .padding(TS.Padding.resultContent)
             } else {
                 EmptyStateView(title: "等待计算", systemImage: "chart.line.uptrend.xyaxis", description: "选择天体、相位和容许度后开始计算。")
             }
         }
     }
 
-    var momentTabRows: [[(id: String, title: String)]] {
+    var momentTabs: [(id: String, title: String)] {
         [
-            [("wheel", "星盘图"), ("aspects", "相位"), ("transit_positions", "行运位置"), ("natal_positions", "本命位置"), ("ai", "AI 分析")],
+            ("wheel", "星盘图"), ("aspects", "相位"), ("transit_positions", "行运位置"), ("natal_positions", "本命位置"), ("ai", "AI 分析"),
         ]
     }
 
@@ -249,7 +252,7 @@ extension ContentView {
     }
 
     var momentTabTitle: String {
-        switch momentSelectedTab {
+        switch calcVM.momentSelectedTab {
         case "wheel": return "星盘图"
         case "aspects": return "相位"
         case "transit_positions": return "行运位置"
@@ -262,7 +265,7 @@ extension ContentView {
 
     @ViewBuilder
     func momentSelectedResultView(_ result: TransitResult) -> some View {
-        switch momentSelectedTab {
+        switch calcVM.momentSelectedTab {
         case "wheel":
             ChartWheelView(data: ChartWheelData(transitResult: result))
         case "aspects":
@@ -275,10 +278,10 @@ extension ContentView {
             DiagnosticsView(result: result)
         case "ai":
             AIAnalysisView(
-                analysis: momentAIAnalysis,
-                reasoning: momentAIReasoning,
-                isAnalyzing: isAnalyzingAI,
-                canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                analysis: aiVM.momentAnalysis,
+                reasoning: aiVM.momentReasoning,
+                isAnalyzing: aiVM.isAnalyzing,
+                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ) {
                 Task { await analyzeMomentResult() }
             }
@@ -290,31 +293,31 @@ extension ContentView {
     // MARK: - Scan Results Pane
     var scanResultsPane: some View {
         Group {
-            if let scanResult {
-                VStack(alignment: .leading, spacing: 10) {
+            if calcVM.scanResult != nil {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                     ResultPaneToolbar(
-                        selection: $scanSelectedTab,
-                        tabRows: scanTabRows,
+                        selection: $calcVM.scanSelectedTab,
+                        tabs: scanTabs,
                         moreTabs: scanMoreTabs,
                         currentTabTitle: scanTabTitle,
-                        markdownProvider: { MarkdownExportBuilder.scan(scanResult) },
-                        jsonProvider: { TextExportBuilder.json(scanResult) },
-                        csvProvider: { TextExportBuilder.csv(scanResult) },
+                        markdownProvider: { MarkdownExportBuilder.scan(calcVM.scanResult!) },
+                        jsonProvider: { TextExportBuilder.json(calcVM.scanResult!) },
+                        csvProvider: { TextExportBuilder.csv(calcVM.scanResult!) },
                         basename: "transit_scan"
                     )
-                    scanSelectedResultView(scanResult)
+                    scanSelectedResultView(calcVM.scanResult!)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .padding(14)
+                .padding(TS.Padding.resultContent)
             } else {
                 EmptyStateView(title: "等待扫描", systemImage: "calendar.badge.clock", description: "选择窗口、行运体、目标点和相位后开始扫描。")
             }
         }
     }
 
-    var scanTabRows: [[(id: String, title: String)]] {
+    var scanTabs: [(id: String, title: String)] {
         [
-            [("hits", "命中"), ("ai", "AI 分析")],
+            ("hits", "命中"), ("ai", "AI 分析"),
         ]
     }
 
@@ -323,7 +326,7 @@ extension ContentView {
     }
 
     var scanTabTitle: String {
-        switch scanSelectedTab {
+        switch calcVM.scanSelectedTab {
         case "hits": return "命中"
         case "ai": return "AI 分析"
         case "diagnostics": return "诊断"
@@ -333,17 +336,17 @@ extension ContentView {
 
     @ViewBuilder
     func scanSelectedResultView(_ result: ScanResult) -> some View {
-        switch scanSelectedTab {
+        switch calcVM.scanSelectedTab {
         case "hits":
             ScanTableView(hits: result.hits)
         case "diagnostics":
             ScanDiagnosticsView(result: result)
         case "ai":
             AIAnalysisView(
-                analysis: scanAIAnalysis,
-                reasoning: scanAIReasoning,
-                isAnalyzing: isAnalyzingAI,
-                canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                analysis: aiVM.scanAnalysis,
+                reasoning: aiVM.scanReasoning,
+                isAnalyzing: aiVM.isAnalyzing,
+                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ) {
                 Task { await analyzeScanResult() }
             }
@@ -355,32 +358,32 @@ extension ContentView {
     // MARK: - Horary Results Pane
     var horaryResultsPane: some View {
         Group {
-            if let horaryResult {
-                VStack(alignment: .leading, spacing: 10) {
+            if calcVM.horaryResult != nil {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                     ResultPaneToolbar(
-                        selection: $horarySelectedTab,
-                        tabRows: horaryTabRows,
+                        selection: $calcVM.horarySelectedTab,
+                        tabs: horaryTabs,
                         moreTabs: horaryMoreTabs,
                         currentTabTitle: horaryTabTitle,
-                        markdownProvider: { MarkdownExportBuilder.horary(horaryResult) },
-                        jsonProvider: { TextExportBuilder.json(horaryResult) },
-                        csvProvider: { TextExportBuilder.csv(horaryResult) },
+                        markdownProvider: { MarkdownExportBuilder.horary(calcVM.horaryResult!) },
+                        jsonProvider: { TextExportBuilder.json(calcVM.horaryResult!) },
+                        csvProvider: { TextExportBuilder.csv(calcVM.horaryResult!) },
                         basename: "horary_chart"
                     )
-                    horarySelectedResultView(horaryResult)
+                    horarySelectedResultView(calcVM.horaryResult!)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .padding(14)
+                .padding(TS.Padding.resultContent)
             } else {
                 EmptyStateView(title: "等待 Horary 起盘", systemImage: "questionmark.circle", description: "填写提问时间、地点和问题文本后开始起盘。")
             }
         }
     }
 
-    var horaryTabRows: [[(id: String, title: String)]] {
+    var horaryTabs: [(id: String, title: String)] {
         [
-            [("wheel", "星盘图"), ("overview", "问卜总览"), ("planets", "行星状态"), ("points", "点位/Lots"), ("houses", "宫位")],
-            [("aspects", "相位/接纳"), ("judgement", "评分明细"), ("ai", "AI 分析")],
+            ("wheel", "星盘图"), ("overview", "问卜总览"), ("planets", "行星状态"), ("points", "点位/Lots"), ("houses", "宫位"),
+            ("aspects", "相位/接纳"), ("judgement", "评分明细"), ("ai", "AI 分析"),
         ]
     }
 
@@ -389,7 +392,7 @@ extension ContentView {
     }
 
     var horaryTabTitle: String {
-        switch horarySelectedTab {
+        switch calcVM.horarySelectedTab {
         case "wheel": return "星盘图"
         case "overview": return "问卜总览"
         case "planets": return "行星状态"
@@ -406,7 +409,7 @@ extension ContentView {
 
     @ViewBuilder
     func horarySelectedResultView(_ result: HoraryResult) -> some View {
-        switch horarySelectedTab {
+        switch calcVM.horarySelectedTab {
         case "wheel":
             ChartWheelView(data: ChartWheelData(horaryResult: result))
         case "overview":
@@ -425,10 +428,10 @@ extension ContentView {
             HoraryDiagnosticsView(result: result)
         case "ai":
             AIAnalysisView(
-                analysis: horaryAIAnalysis,
-                reasoning: horaryAIReasoning,
-                isAnalyzing: isAnalyzingAI,
-                canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                analysis: aiVM.horaryAnalysis,
+                reasoning: aiVM.horaryReasoning,
+                isAnalyzing: aiVM.isAnalyzing,
+                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ) {
                 Task { await analyzeHoraryResult() }
             }
@@ -442,46 +445,47 @@ extension ContentView {
     // MARK: - Classical Results Pane
     var classicalResultsPane: some View {
         Group {
-            if isRunning {
+            if calcVM.isRunning {
                 EmptyStateView(
                     title: "古典计算中",
                     systemImage: "hourglass",
-                    description: calculationProgressText.isEmpty ? "正在调用后端计算。" : calculationProgressText
+                    description: calcVM.calculationProgressText.isEmpty ? "正在调用后端计算。" : calcVM.calculationProgressText
                 )
-            } else if let classicalResult {
-                VStack(alignment: .leading, spacing: 10) {
+            } else if calcVM.classicalResult != nil {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                     ResultPaneToolbar(
-                        selection: $classicalSelectedTab,
-                        tabRows: classicalTabRows,
+                        selection: $calcVM.classicalSelectedTab,
+                        tabs: classicalTabs,
                         moreTabs: classicalMoreTabs,
                         currentTabTitle: classicalTabTitle,
-                        markdownProvider: { MarkdownExportBuilder.classical(classicalResult) },
-                        jsonProvider: { TextExportBuilder.json(classicalResult) },
-                        csvProvider: { TextExportBuilder.csv(classicalResult) },
+                        markdownProvider: { MarkdownExportBuilder.classical(calcVM.classicalResult!) },
+                        jsonProvider: { TextExportBuilder.json(calcVM.classicalResult!) },
+                        csvProvider: { TextExportBuilder.csv(calcVM.classicalResult!) },
                         basename: "classical_chart",
                         classicalSectionPicker: { showClassicalExportSheet = true }
                     )
 
-                    HStack(spacing: 8) {
+                    HStack(spacing: TS.Spacing.md) {
                         Label("参考时间", systemImage: "clock")
-                            .font(.caption)
+                            .font(TS.Font.label)
+                            .foregroundStyle(.secondary)
                         DatePicker("", selection: $classicalReferenceDate, displayedComponents: [.date, .hourAndMinute])
                             .labelsHidden()
                             .frame(width: 180)
                         Button("重算全盘") {
                             Task { await runClassicalTiming() }
                         }
-                        .disabled(isRunning)
-                        .font(.caption)
+                        .disabled(calcVM.isRunning)
+                        .font(TS.Font.label)
                         .buttonStyle(.borderedProminent)
                         .controlSize(.small)
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, TS.Spacing.sm)
 
-                    classicalSelectedResultView(classicalResult)
+                    classicalSelectedResultView(calcVM.classicalResult!)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .padding(14)
+                .padding(TS.Padding.resultContent)
                 .sheet(isPresented: $showClassicalExportSheet) {
                     classicalExportSheet
                 }
@@ -493,9 +497,9 @@ extension ContentView {
 
     @ViewBuilder
     private var classicalExportSheet: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             Text("选择导出内容")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
                 .padding(.top, 8)
 
             let sections = MarkdownExportBuilder.ExportSection.classicalSectionIDs
@@ -506,7 +510,7 @@ extension ContentView {
             let diagSections = sections.filter(diagnosticIDs.contains).sorted { $0.label < $1.label }
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
                     sectionToggleGroup(
                         title: "本命",
                         sections: natalSections,
@@ -534,7 +538,7 @@ extension ContentView {
                 Button("全选") { classicalExportSections = Set(sections) }
                 Button("全不选") { classicalExportSections = [] }
                 Button("导出 Markdown") {
-                    let md = MarkdownExportBuilder.classical(classicalResult!, sections: classicalExportSections)
+                    let md = MarkdownExportBuilder.classical(calcVM.classicalResult!, sections: classicalExportSections)
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(md, forType: .string)
                     showClassicalExportSheet = false
@@ -556,50 +560,51 @@ extension ContentView {
         let allSelected = allSections.isSubset(of: selection.wrappedValue)
         let noneSelected = selection.wrappedValue.intersection(allSections).isEmpty
 
-        return GroupBox {
-            VStack(alignment: .leading, spacing: 6) {
-                Toggle(isOn: Binding(
-                    get: { allSelected },
-                    set: { newValue in
-                        if newValue {
-                            selection.wrappedValue.formUnion(allSections)
-                        } else {
-                            selection.wrappedValue.subtract(allSections)
-                        }
-                    }
-                )) {
-                    HStack(spacing: 4) {
-                        Text(title)
-                            .font(.subheadline.weight(.medium))
-                        if noneSelected {
-                            Text("（全不选）")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
+        return VStack(alignment: .leading, spacing: TS.Spacing.md) {
+            Toggle(isOn: Binding(
+                get: { allSelected },
+                set: { newValue in
+                    if newValue {
+                        selection.wrappedValue.formUnion(allSections)
+                    } else {
+                        selection.wrappedValue.subtract(allSections)
                     }
                 }
-                .toggleStyle(.checkbox)
-
-                Divider()
-
-                ForEach(sections) { section in
-                    Toggle(isOn: Binding(
-                        get: { selection.wrappedValue.contains(section) },
-                        set: { if $0 { selection.wrappedValue.insert(section) } else { selection.wrappedValue.remove(section) } }
-                    )) {
-                        Text(section.label).font(.caption)
+            )) {
+                HStack(spacing: TS.Spacing.sm) {
+                    Text(title)
+                        .font(TS.Font.sectionTitle)
+                    if noneSelected {
+                        Text("（全不选）")
+                            .font(TS.Font.detail)
+                            .foregroundStyle(.secondary)
                     }
-                    .toggleStyle(.checkbox)
-                    .padding(.leading, 20)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .toggleStyle(.checkbox)
+
+            Divider()
+
+            ForEach(sections) { section in
+                Toggle(isOn: Binding(
+                    get: { selection.wrappedValue.contains(section) },
+                    set: { if $0 { selection.wrappedValue.insert(section) } else { selection.wrappedValue.remove(section) } }
+                )) {
+                    Text(section.label).font(TS.Font.label)
+                }
+                .toggleStyle(.checkbox)
+                .padding(.leading, 20)
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(TS.Padding.cardInner)
+        .background(TS.SemanticColor.cardBackground.opacity(0.5))
+        .clipShape(RoundedRectangle(cornerRadius: TS.Radius.card))
     }
 
-    var classicalTabRows: [[(id: String, title: String)]] {
-        guard let result = classicalResult else { return [] }
-        let row1: [(String, String)] = [
+    var classicalTabs: [(id: String, title: String)] {
+        guard let result = calcVM.classicalResult else { return [] }
+        var tabs: [(String, String)] = [
             ("wheel", "星盘图"),
             ("planets", "行星状态"),
             ("points", "点位/Lots"),
@@ -607,19 +612,18 @@ extension ContentView {
             ("aspects", "相位/接纳"),
             ("judgement", "评分明细"),
         ]
-        var row2: [(String, String)] = []
         if result.antiscia?.isEmpty == false {
-            row2.append(("antiscia", "映点"))
+            tabs.append(("antiscia", "映点"))
         }
         if result.primaryDirections?.isEmpty == false {
-            row2.append(("primary", "主限法"))
+            tabs.append(("primary", "主限法"))
         }
         if result.circumambulations?.isEmpty == false {
-            row2.append(("circumambulations", "沿界推进"))
+            tabs.append(("circumambulations", "沿界推进"))
         }
-        row2.append(("timing", "时间技法"))
-        row2.append(("ai", "AI 分析"))
-        return [row1, row2]
+        tabs.append(("timing", "时间技法"))
+        tabs.append(("ai", "AI 分析"))
+        return tabs
     }
 
     var classicalMoreTabs: [(id: String, title: String)] {
@@ -627,7 +631,7 @@ extension ContentView {
     }
 
     var classicalTabTitle: String {
-        switch classicalSelectedTab {
+        switch calcVM.classicalSelectedTab {
         case "wheel": return "星盘图"
         case "planets": return "行星状态"
         case "points": return "点位/Lots"
@@ -646,76 +650,76 @@ extension ContentView {
     }
 
     @ViewBuilder
-    func classicalSelectedResultView(_ classicalResult: ClassicalResult) -> some View {
-        switch classicalSelectedTab {
+    func classicalSelectedResultView(_ result: ClassicalResult) -> some View {
+        switch calcVM.classicalSelectedTab {
         case "wheel":
-            ChartWheelView(data: ChartWheelData(classicalResult: classicalResult))
+            ChartWheelView(data: ChartWheelData(classicalResult: result))
         case "points":
-            ClassicalPointsView(angles: classicalResult.angles, lots: classicalResult.lots, experimentalLots: classicalResult.experimentalLots)
+            ClassicalPointsView(angles: result.angles, lots: result.lots, experimentalLots: result.experimentalLots)
         case "houses":
-            ClassicalHouseTableView(houses: classicalResult.houses)
+            ClassicalHouseTableView(houses: result.houses)
         case "aspects":
-            ClassicalAspectReceptionView(aspects: classicalResult.aspects, receptions: classicalResult.receptions)
+            ClassicalAspectReceptionView(aspects: result.aspects, receptions: result.receptions)
         case "judgement":
-            ClassicalJudgementView(planets: classicalResult.planets)
+            ClassicalJudgementView(planets: result.planets)
         case "antiscia":
-            if let antiscia = classicalResult.antiscia, !antiscia.isEmpty {
+            if let antiscia = result.antiscia, !antiscia.isEmpty {
                 AntisciaView(antiscia: antiscia)
             } else {
-                ClassicalPlanetTableView(planets: classicalResult.planets)
+                ClassicalPlanetTableView(planets: result.planets)
             }
         case "primary":
-            if let pd = classicalResult.primaryDirections, !pd.isEmpty {
+            if let pd = result.primaryDirections, !pd.isEmpty {
                 PrimaryDirectionsView(directions: pd)
             } else {
-                ClassicalPlanetTableView(planets: classicalResult.planets)
+                ClassicalPlanetTableView(planets: result.planets)
             }
         case "circumambulations":
-            if let circ = classicalResult.circumambulations, !circ.isEmpty {
+            if let circ = result.circumambulations, !circ.isEmpty {
                 CircumambulationsView(circumambulations: circ)
             } else {
-                ClassicalPlanetTableView(planets: classicalResult.planets)
+                ClassicalPlanetTableView(planets: result.planets)
             }
         case "timing":
             ClassicalTimingView(
-                timing: classicalResult.timing,
-                planetaryReturns: classicalResult.planetaryReturns,
-                circumambulations: classicalResult.circumambulations
+                timing: result.timing,
+                planetaryReturns: result.planetaryReturns,
+                circumambulations: result.circumambulations,
+                birthdayTransition: result.birthdayTransition,
+                activatedLordFocus: result.activatedLordFocus
             )
         case "diagnostics":
-            ClassicalDiagnosticsView(result: classicalResult)
+            ClassicalDiagnosticsView(result: result)
         case "ai":
             AIAnalysisView(
-                analysis: classicalAIAnalysis,
-                reasoning: classicalAIReasoning,
-                isAnalyzing: isAnalyzingAI,
-                canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                analysis: aiVM.classicalAnalysis,
+                reasoning: aiVM.classicalReasoning,
+                isAnalyzing: aiVM.isAnalyzing,
+                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ) {
                 Task { await analyzeClassicalResult() }
             }
         case "json":
-            RawJSONView(value: classicalResult)
+            RawJSONView(value: result)
         default:
-            ClassicalPlanetTableView(planets: classicalResult.planets)
+            ClassicalPlanetTableView(planets: result.planets)
         }
     }
 
     var header: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
+        HStack(spacing: TS.Spacing.lg) {
+            VStack(alignment: .leading, spacing: TS.Spacing.xs) {
                 Text(isShowingAppSettingsPage ? "程序设置" : mode.title)
-                    .font(.title2.weight(.semibold))
-                Text(isShowingAppSettingsPage ? "本地设置 / AI / 星历" : "\(practiceMode.title)占星 / pyswisseph backend / SwiftUI macOS")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(TS.Font.pageTitle)
+                Text(isShowingAppSettingsPage ? "本地设置 · AI · 星历" : "\(practiceMode.title)占星")
+                    .font(TS.Font.label)
+                    .foregroundStyle(.tertiary)
             }
 
             Spacer()
-
-            // removed: ProgressView() here triggers 60fps full-view layout
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
+        .padding(.horizontal, TS.Spacing.xxl)
+        .padding(.vertical, TS.Spacing.lg)
     }
 
     func toggleBinding(for id: String, in selection: Binding<Set<String>>) -> Binding<Bool> {
@@ -751,14 +755,14 @@ extension ContentView {
 
     var synastryResultsPane: some View {
         Group {
-            if let result = modernResultData, case .synastry(let r) = result {
+            if let result = calcVM.modernResultData, case .synastry(let r) = result {
                 SynastryResultPane(
                     result: r,
-                    selectedTab: $modernSelectedTab,
-                    analysis: modernAIAnalysisByMode["synastry", default: ""],
-                    reasoning: modernAIReasoningByMode["synastry", default: ""],
-                    isAnalyzing: isAnalyzingAI,
-                    canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    selectedTab: $calcVM.modernSelectedTab,
+                    analysis: aiVM.modernAnalysisByMode["synastry", default: ""],
+                    reasoning: aiVM.modernReasoningByMode["synastry", default: ""],
+                    isAnalyzing: aiVM.isAnalyzing,
+                    canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 ) {
                     Task { await analyzeModernResult(modeKey: "synastry", title: "Synastry 关系分析", markdown: MarkdownModernExportBuilder.synastry(r)) }
                 }
@@ -770,15 +774,15 @@ extension ContentView {
 
     var compositeResultsPane: some View {
         Group {
-            if let result = modernResultData, case .composite(let r) = result {
+            if let result = calcVM.modernResultData, case .composite(let r) = result {
                 CompositeDavisonResultPane(
                     title: "Composite",
                     result: r,
-                    selectedTab: $modernSelectedTab,
-                    analysis: modernAIAnalysisByMode["composite", default: ""],
-                    reasoning: modernAIReasoningByMode["composite", default: ""],
-                    isAnalyzing: isAnalyzingAI,
-                    canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    selectedTab: $calcVM.modernSelectedTab,
+                    analysis: aiVM.modernAnalysisByMode["composite", default: ""],
+                    reasoning: aiVM.modernReasoningByMode["composite", default: ""],
+                    isAnalyzing: aiVM.isAnalyzing,
+                    canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 ) {
                     Task { await analyzeModernResult(modeKey: "composite", title: "Composite 关系盘分析", markdown: MarkdownModernExportBuilder.compositeOrDavison(title: "Composite", result: r)) }
                 }
@@ -790,15 +794,15 @@ extension ContentView {
 
     var davisonResultsPane: some View {
         Group {
-            if let result = modernResultData, case .davison(let r) = result {
+            if let result = calcVM.modernResultData, case .davison(let r) = result {
                 CompositeDavisonResultPane(
                     title: "Davison",
                     result: r,
-                    selectedTab: $modernSelectedTab,
-                    analysis: modernAIAnalysisByMode["davison", default: ""],
-                    reasoning: modernAIReasoningByMode["davison", default: ""],
-                    isAnalyzing: isAnalyzingAI,
-                    canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    selectedTab: $calcVM.modernSelectedTab,
+                    analysis: aiVM.modernAnalysisByMode["davison", default: ""],
+                    reasoning: aiVM.modernReasoningByMode["davison", default: ""],
+                    isAnalyzing: aiVM.isAnalyzing,
+                    canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 ) {
                     Task { await analyzeModernResult(modeKey: "davison", title: "Davison 关系盘分析", markdown: MarkdownModernExportBuilder.compositeOrDavison(title: "Davison", result: r)) }
                 }
@@ -810,14 +814,14 @@ extension ContentView {
 
     var progressionResultsPane: some View {
         Group {
-            if let result = modernResultData, case .progression(let r) = result {
+            if let result = calcVM.modernResultData, case .progression(let r) = result {
                 ProgressionResultPane(
                     result: r,
-                    selectedTab: $modernSelectedTab,
-                    analysis: modernAIAnalysisByMode["progression", default: ""],
-                    reasoning: modernAIReasoningByMode["progression", default: ""],
-                    isAnalyzing: isAnalyzingAI,
-                    canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    selectedTab: $calcVM.modernSelectedTab,
+                    analysis: aiVM.modernAnalysisByMode["progression", default: ""],
+                    reasoning: aiVM.modernReasoningByMode["progression", default: ""],
+                    isAnalyzing: aiVM.isAnalyzing,
+                    canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 ) {
                     Task { await analyzeModernResult(modeKey: "progression", title: "次限推进盘分析", markdown: MarkdownModernExportBuilder.progression(r)) }
                 }
@@ -829,14 +833,14 @@ extension ContentView {
 
     var solarArcResultsPane: some View {
         Group {
-            if let result = modernResultData, case .solarArc(let r) = result {
+            if let result = calcVM.modernResultData, case .solarArc(let r) = result {
                 SolarArcResultPane(
                     result: r,
-                    selectedTab: $modernSelectedTab,
-                    analysis: modernAIAnalysisByMode["solar_arc", default: ""],
-                    reasoning: modernAIReasoningByMode["solar_arc", default: ""],
-                    isAnalyzing: isAnalyzingAI,
-                    canAnalyze: !llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    selectedTab: $calcVM.modernSelectedTab,
+                    analysis: aiVM.modernAnalysisByMode["solar_arc", default: ""],
+                    reasoning: aiVM.modernReasoningByMode["solar_arc", default: ""],
+                    isAnalyzing: aiVM.isAnalyzing,
+                    canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 ) {
                     Task { await analyzeModernResult(modeKey: "solar_arc", title: "Solar Arc 盘分析", markdown: MarkdownModernExportBuilder.solarArc(r)) }
                 }
@@ -848,8 +852,8 @@ extension ContentView {
 
     var harmonicResultsPane: some View {
         Group {
-            if let result = modernResultData, case .harmonic(let r) = result {
-                HarmonicResultPane(result: r, selectedTab: $modernSelectedTab)
+            if let result = calcVM.modernResultData, case .harmonic(let r) = result {
+                HarmonicResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
                 EmptyStateView(title: "等待 Harmonic 计算", systemImage: "music.note.list", description: "选择调和阶数后开始计算。")
             }
@@ -860,31 +864,31 @@ extension ContentView {
 
     var rectifyResultsPane: some View {
         VStack {
-            if isRunning {
+            if calcVM.isRunning {
                 EmptyStateView(
                     title: "生时矫正计算中",
                     systemImage: "hourglass",
-                    description: calculationProgressText.isEmpty ? "正在调用后端计算 61 个候选点。" : calculationProgressText
+                    description: calcVM.calculationProgressText.isEmpty ? "正在调用后端计算 61 个候选点。" : calcVM.calculationProgressText
                 )
-            } else if let response = rectifyResponse {
+            } else if let response = calcVM.rectifyResponse {
                 PrimaryDirectionRectifierView(
                     response: response,
                     centerDate: natalDate,
                     timeZone: selectedTimeZone,
-                    level2Response: $rectifyLevel2Response,
-                    level3Response: $rectifyLevel3Response,
-                    s1Index: $rectifyS1Index,
-                    s2Index: $rectifyS2Index,
-                    activeLevel: $rectifyActiveLevel,
-                    level3ResponseID: $rectifyLevel3ResponseID,
+                    level2Response: $calcVM.rectifyLevel2Response,
+                    level3Response: $calcVM.rectifyLevel3Response,
+                    s1Index: $calcVM.rectifyS1Index,
+                    s2Index: $calcVM.rectifyS2Index,
+                    activeLevel: $calcVM.rectifyActiveLevel,
+                    level3ResponseID: $calcVM.rectifyLevel3ResponseID,
                     onComputeLevel2: { offsetSec in
                         // Invalidate in-flight immediately, before debounce fires
-                        rectifyLevel2Gen += 1
-                        rectifyLevel3Gen += 1
+                        calcVM.rectifyLevel2Gen += 1
+                        calcVM.rectifyLevel3Gen += 1
                         Task { await runRectifyLevel2(offsetSeconds: offsetSec) }
                     },
                     onComputeLevel3: { offsetSec in
-                        rectifyLevel3Gen += 1
+                        calcVM.rectifyLevel3Gen += 1
                         Task { await runRectifyLevel3(offsetSeconds: offsetSec) }
                     }
                 )
@@ -902,18 +906,37 @@ extension ContentView {
 
     var vedicResultsPane: some View {
         Group {
-            if isRunning {
+            if calcVM.isRunning {
                 EmptyStateView(
                     title: "吠陀计算中",
                     systemImage: "hourglass",
-                    description: calculationProgressText.isEmpty ? "正在调用后端计算。" : calculationProgressText
+                    description: calcVM.calculationProgressText.isEmpty ? "正在调用后端计算。" : calcVM.calculationProgressText
                 )
-            } else if let result = vedicResult {
-                VStack(alignment: .leading, spacing: 6) {
+            } else if let result = calcVM.vedicResult {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
                     ResultPaneToolbar(
-                        selection: $vedicSelectedTab,
-                        tabRows: [[(id: "overview", title: "综览"), (id: "dasa", title: "Daśā"), (id: "shadbala", title: "Ṣaḍbala"), (id: "yoga", title: "Yōga"), (id: "navamsa", title: "Navāṃśa")]],
-                        moreTabs: [],
+                        selection: $calcVM.vedicSelectedTab,
+                        tabs: [
+                            (id: "overview", title: "综览"),
+                            (id: "panchanga", title: "Pañcāṅga"),
+                            (id: "dasa", title: "Daśā"),
+                            (id: "shadbala", title: "Ṣaḍbala"),
+                            (id: "yoga", title: "Yōga"),
+                            (id: "navamsa", title: "Navāṃśa"),
+                            (id: "varga", title: "Varga"),
+                            (id: "jaimini", title: "Jaimini"),
+                            (id: "ashtakavarga", title: "Aṣṭakavarga"),
+                            (id: "relationships", title: "关系"),
+                        ],
+                        moreTabs: [
+                            (id: "moon_chart", title: "Moon Chart"),
+                            (id: "bhava", title: "Bhava"),
+                            (id: "upagrahas", title: "副行星"),
+                            (id: "special_lagnas", title: "特殊 Lagna"),
+                            (id: "ai", title: "AI 分析"),
+                            (id: "diagnostics", title: "诊断"),
+                            (id: "json", title: "JSON"),
+                        ],
                         currentTabTitle: vedicTabTitle,
                         markdownProvider: { MarkdownExportBuilder.vedic(result, sections: vedicExportSections) },
                         jsonProvider: { TextExportBuilder.json(result) },
@@ -921,44 +944,97 @@ extension ContentView {
                         basename: "vedic_chart",
                         classicalSectionPicker: { showVedicExportSheet = true }
                     )
-                    .padding(.horizontal, 14)
+                    .padding(.horizontal, TS.Padding.resultContent)
 
                     Group {
-                        switch vedicSelectedTab {
+                        switch calcVM.vedicSelectedTab {
                         case "overview":
                             VedicOverviewView(result: result)
-                        case "dasa":
-                            if let dasa = result.vimshottari {
-                                VedicDasaTimelineView(dasa: dasa)
+                        case "panchanga":
+                            if let panchanga = result.panchanga {
+                                VedicPanchangaView(panchanga: panchanga, solarDay: result.solarDay)
                             } else {
-                                Text("无 Daśā 数据").foregroundStyle(.secondary)
+                                EmptyStateView(title: "无 Pañcāṅga 数据", systemImage: "calendar")
                             }
+                        case "dasa":
+                            VedicDasaContainerView(
+                                vimshottari: result.vimshottari,
+                                yogini: result.yoginiDasa,
+                                ashtottari: result.ashtottariDasa
+                            )
                         case "shadbala":
                             if let shadbala = result.shadbala {
                                 VedicShadbalaView(shadbala: shadbala)
                             } else {
-                                Text("开启完整计算以获得 Ṣaḍbala 评分").foregroundStyle(.secondary)
+                                EmptyStateView(title: "无 Ṣaḍbala 数据", systemImage: "chart.bar")
                             }
                         case "yoga":
                             if let yogas = result.yogas, !yogas.isEmpty {
                                 VedicYogaListView(yogas: yogas)
                             } else {
-                                Text("未检测到 Yōga").foregroundStyle(.secondary)
+                                EmptyStateView(title: "未检测到 Yōga", systemImage: "sparkles")
                             }
                         case "navamsa":
                             if let navamsa = result.navamsa {
                                 VedicNavamsaView(navamsa: navamsa)
                             } else {
-                                Text("开启完整计算以获得 Navāṃśa 数据").foregroundStyle(.secondary)
+                                EmptyStateView(title: "无 Navāṃśa 数据", systemImage: "square.grid.3x3")
+                            }
+                        case "varga":
+                            if let charts = result.divisionalCharts, !charts.isEmpty {
+                                VedicDivisionalChartView(charts: charts)
+                            } else {
+                                EmptyStateView(title: "无 Varga 数据", systemImage: "square.grid.3x3")
+                            }
+                        case "jaimini":
+                            VedicJaiminiView(
+                                karakas: result.jaiminiKarakas,
+                                arudha: result.arudha
+                            )
+                        case "ashtakavarga":
+                            if let ashtakavarga = result.ashtakavarga {
+                                VedicAshtakavargaView(data: ashtakavarga)
+                            } else {
+                                EmptyStateView(title: "无 Aṣṭakavarga 数据", systemImage: "tablecells")
+                            }
+                        case "relationships":
+                            if let relationships = result.planetRelationships {
+                                VedicRelationshipsView(relationships: relationships)
+                            } else {
+                                EmptyStateView(title: "无行星关系数据", systemImage: "link")
+                            }
+                        case "moon_chart":
+                            if let moonChart = result.moonChart {
+                                VedicDerivedChartView(title: "Moon Chart", chart: moonChart)
+                            } else {
+                                EmptyStateView(title: "无 Moon Chart 数据", systemImage: "moon")
+                            }
+                        case "bhava":
+                            if let bhavaChart = result.bhavaChart {
+                                VedicDerivedChartView(title: "Bhava Chart", chart: bhavaChart)
+                            } else {
+                                EmptyStateView(title: "无 Bhava Chart 数据", systemImage: "building.columns")
+                            }
+                        case "upagrahas":
+                            if let upagrahas = result.upagrahas, !upagrahas.isEmpty {
+                                VedicUpagrahaView(upagrahas: upagrahas)
+                            } else {
+                                EmptyStateView(title: "无副行星数据", systemImage: "smallcircle.filled.circle")
+                            }
+                        case "special_lagnas":
+                            if let lagnas = result.specialLagnas, !lagnas.isEmpty {
+                                VedicSpecialLagnaView(lagnas: lagnas)
+                            } else {
+                                EmptyStateView(title: "无特殊 Lagna 数据", systemImage: "scope")
                             }
                         default:
                             VedicOverviewView(result: result)
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(.horizontal, 14)
+                    .padding(.horizontal, TS.Padding.resultContent)
                 }
-                .padding(.vertical, 8)
+                .padding(.vertical, TS.Spacing.md)
                 .sheet(isPresented: $showVedicExportSheet) {
                     vedicExportSheet
                 }
@@ -973,27 +1049,36 @@ extension ContentView {
     }
 
     var vedicTabTitle: String {
-        switch vedicSelectedTab {
+        switch calcVM.vedicSelectedTab {
         case "overview": return "综览"
+        case "panchanga": return "Pañcāṅga"
         case "dasa": return "Daśā"
         case "shadbala": return "Ṣaḍbala"
         case "yoga": return "Yōga"
         case "navamsa": return "Navāṃśa"
+        case "varga": return "分割图"
+        case "jaimini": return "Jaimini"
+        case "ashtakavarga": return "Aṣṭakavarga"
+        case "relationships": return "行星关系"
+        case "moon_chart": return "Moon Chart"
+        case "bhava": return "Bhava Chart"
+        case "upagrahas": return "副行星"
+        case "special_lagnas": return "特殊 Lagna"
         default: return ""
         }
     }
 
     @ViewBuilder
     private var vedicExportSheet: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             Text("选择导出内容")
-                .font(.headline)
+                .font(TS.Font.sectionTitle)
                 .padding(.top, 8)
 
             let vedicSections = MarkdownExportBuilder.ExportSection.vedicSectionIDs
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
                     sectionToggleGroup(
                         title: "吠陀",
                         sections: Array(vedicSections).sorted { $0.label < $1.label },
@@ -1009,7 +1094,7 @@ extension ContentView {
                 Button("全选") { vedicExportSections = vedicSections }
                 Button("全不选") { vedicExportSections = [] }
                 Button("导出 Markdown") {
-                    let md = MarkdownExportBuilder.vedic(vedicResult!, sections: vedicExportSections)
+                    let md = MarkdownExportBuilder.vedic(calcVM.vedicResult!, sections: vedicExportSections)
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(md, forType: .string)
                     showVedicExportSheet = false

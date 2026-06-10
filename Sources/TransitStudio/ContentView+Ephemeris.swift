@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ContentView {
 var normalizedEphemerisPath: String? {
-        let trimmed = ephemerisPath.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = appState.ephemerisPath.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmed.isEmpty {
             return trimmed
         }
@@ -27,32 +27,32 @@ var normalizedEphemerisPath: String? {
 
     @MainActor
     func prepareAsteroidsIfNeeded(_ asteroidIDs: [Int]) async throws -> String? {
-        guard !asteroidIDs.isEmpty, !noAsteroids, autoDownloadAsteroids else {
+        guard !asteroidIDs.isEmpty, !appState.noAsteroids, appState.autoDownloadAsteroids else {
             return normalizedEphemerisPath
         }
 
-        asteroidPreparationMessage = "检查小行星星历..."
+        calcVM.asteroidPreparationMessage = "检查小行星星历..."
         let result = try await AsteroidEphemerisManager.ensureAsteroids(
             ids: asteroidIDs,
-            configuredEphemerisPath: ephemerisPath,
+            configuredEphemerisPath: appState.ephemerisPath,
             bundledEphemerisPath: bundledEphemerisPath,
-            requireEphemeris: requireEphemeris
+            requireEphemeris: appState.requireEphemeris
         ) { message in
             await MainActor.run {
-                asteroidPreparationMessage = message
+                calcVM.asteroidPreparationMessage = message
             }
         }
 
-        if ephemerisPath.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+        if appState.ephemerisPath.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
            let effectivePath = result.effectiveEphemerisPath,
            !effectivePath.isEmpty {
-            ephemerisPath = effectivePath
+            appState.ephemerisPath = effectivePath
         }
 
         if result.log.isEmpty {
-            asteroidPreparationMessage = "小行星星历已就绪。"
+            calcVM.asteroidPreparationMessage = "小行星星历已就绪。"
         } else {
-            asteroidPreparationMessage = result.log
+            calcVM.asteroidPreparationMessage = result.log
         }
 
     return result.effectiveEphemerisPath

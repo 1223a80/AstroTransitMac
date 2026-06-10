@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ContentView {
 var natalProfiles: [NatalProfile] {
-        guard let data = natalProfilesJSON.data(using: .utf8),
+        guard let data = appState.natalProfilesJSON.data(using: .utf8),
               let profiles = try? JSONDecoder().decode([NatalProfile].self, from: data)
         else {
             return []
@@ -18,13 +18,13 @@ var natalProfiles: [NatalProfile] {
         else {
             return
         }
-        natalProfilesJSON = text
+        appState.natalProfilesJSON = text
     }
 
     func saveNatalProfile() {
         let name = natalProfileName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else {
-            errorMessage = "资料名称不能为空。"
+            calcVM.errorMessage = "资料名称不能为空。"
             return
         }
 
@@ -50,7 +50,7 @@ var natalProfiles: [NatalProfile] {
         }
         saveNatalProfiles(profiles.sorted { $0.name.localizedCompare($1.name) == .orderedAscending })
         selectedNatalProfileID = profile.id.uuidString
-        errorMessage = nil
+        calcVM.errorMessage = nil
     }
 
     func loadSelectedNatalProfile() {

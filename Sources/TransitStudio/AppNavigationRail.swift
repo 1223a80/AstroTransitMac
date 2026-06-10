@@ -8,7 +8,7 @@ struct AppNavigationRail: View {
     @Binding var modernSubMode: ModernSubMode
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             titleBlock
             practiceModePicker
             collapseButton
@@ -17,44 +17,45 @@ struct AppNavigationRail: View {
             Spacer()
             settingsButton
         }
+        .padding(.vertical, TS.Spacing.sm)
     }
 
     private var titleBlock: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: TS.Spacing.md) {
             Image(systemName: "sparkles.rectangle.stack")
-                .font(.title3)
-                .foregroundStyle(Color.accentColor)
-                .frame(width: 28, height: 28)
+                .font(TS.Font.pageTitle)
+                .foregroundStyle(TS.SemanticColor.accent)
+                .frame(width: 30, height: 30)
             if !isCollapsed {
-                VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: TS.Spacing.xs) {
                     Text("Transit")
-                        .font(.headline)
+                        .font(TS.Font.sectionTitle)
                     Text("Studio")
-                        .font(.caption)
+                        .font(TS.Font.detail)
                         .foregroundStyle(.secondary)
                 }
             }
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 10)
-        .padding(.top, 12)
+        .padding(.horizontal, TS.Padding.chipHorizontal)
+        .padding(.top, TS.Spacing.md)
     }
 
     private var practiceModePicker: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             if !isCollapsed {
                 Text("模式")
-                    .font(.caption)
+                    .font(TS.Font.label)
                     .foregroundStyle(.secondary)
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, TS.Padding.chipHorizontal)
             }
 
-            VStack(spacing: 2) {
+            VStack(spacing: TS.Spacing.xs) {
                 practiceModeButton(for: .modern, icon: "sparkles")
                 practiceModeButton(for: .classical, icon: "scroll")
                 practiceModeButton(for: .vedic, icon: "sun.max")
             }
-            .padding(.horizontal, 8)
+            .padding(.horizontal, TS.Spacing.md)
         }
     }
 
@@ -62,22 +63,23 @@ struct AppNavigationRail: View {
         Button {
             isCollapsed.toggle()
         } label: {
-            HStack(spacing: 10) {
+            HStack(spacing: TS.Spacing.lg) {
                 Image(systemName: isCollapsed ? "sidebar.left" : "sidebar.leading")
                     .frame(width: 28, height: 28)
                 if !isCollapsed {
                     Text("收起")
+                        .font(TS.Font.body)
                     Spacer(minLength: 0)
                 }
             }
             .frame(maxWidth: .infinity, alignment: isCollapsed ? .center : .leading)
         }
         .buttonStyle(.borderless)
-        .padding(.horizontal, 10)
+        .padding(.horizontal, TS.Padding.chipHorizontal)
     }
 
     private var modeButtons: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
             if selectedPracticeMode == .modern {
                 modernSubModeButtons
             } else if selectedPracticeMode == .classical {
@@ -88,11 +90,11 @@ struct AppNavigationRail: View {
             navigationButton(title: "时间点", icon: "clock", mode: .moment)
             navigationButton(title: "窗口扫描", icon: "calendar.badge.clock", mode: .scan)
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, TS.Spacing.md)
     }
 
     private var classicalModeButtons: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: TS.Spacing.sm) {
             navigationButton(title: "本命设置", icon: "person.crop.circle", mode: .settings)
             navigationButton(title: "Horary", icon: "questionmark.bubble", mode: .horary)
             navigationButton(title: "生时矫正", icon: "clock.arrow.circlepath", mode: .rectify)
@@ -100,13 +102,13 @@ struct AppNavigationRail: View {
     }
 
     private var vedicModeButtons: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: TS.Spacing.sm) {
             navigationButton(title: "吠陀排盘", icon: "sun.max.circle", mode: .settings)
         }
     }
 
     private var modernSubModeButtons: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: TS.Spacing.sm) {
             ForEach(ModernSubMode.allCases) { subMode in
                 modernNavButton(
                     title: subMode.title,
@@ -121,8 +123,8 @@ struct AppNavigationRail: View {
         navigationButton(title: "程序设置", icon: "gearshape", isSelected: isShowingSettingsPage) {
             isShowingSettingsPage = true
         }
-        .padding(.horizontal, 8)
-        .padding(.bottom, 14)
+        .padding(.horizontal, TS.Spacing.md)
+        .padding(.bottom, TS.Padding.resultContent)
     }
 
     private func navigationButton(title: String, icon: String, mode: CalculationMode) -> some View {
@@ -139,23 +141,23 @@ struct AppNavigationRail: View {
             selectedMode = .settings
             modernSubMode = subMode
         } label: {
-            HStack(spacing: 10) {
+            HStack(spacing: TS.Spacing.lg) {
                 Image(systemName: icon)
                     .font(.system(size: 14, weight: .semibold))
                     .frame(width: 28, height: 28)
                 if !isCollapsed {
                     Text(subMode.title)
-                        .font(.callout.weight(isSelected ? .semibold : .regular))
+                        .font(TS.Font.body.weight(isSelected ? .semibold : .regular))
                     Spacer(minLength: 0)
                 }
             }
             .frame(maxWidth: .infinity, alignment: isCollapsed ? .center : .leading)
-            .padding(.horizontal, isCollapsed ? 4 : 10)
-            .padding(.vertical, 6)
-            .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+            .padding(.horizontal, isCollapsed ? TS.Spacing.sm : TS.Padding.chipHorizontal)
+            .padding(.vertical, TS.Spacing.md)
+            .foregroundStyle(isSelected ? TS.SemanticColor.accent : Color.primary)
             .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isSelected ? Color.accentColor.opacity(0.14) : Color.clear)
+                RoundedRectangle(cornerRadius: TS.Radius.card)
+                    .fill(isSelected ? TS.SemanticColor.accentSubtle : Color.clear)
             )
         }
         .buttonStyle(.plain)
@@ -164,23 +166,23 @@ struct AppNavigationRail: View {
 
     private func navigationButton(title: String, icon: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: 10) {
+            HStack(spacing: TS.Spacing.lg) {
                 Image(systemName: icon)
                     .font(.system(size: 16, weight: .semibold))
                     .frame(width: 28, height: 28)
                 if !isCollapsed {
                     Text(title)
-                        .font(.callout.weight(isSelected ? .semibold : .regular))
+                        .font(TS.Font.body.weight(isSelected ? .semibold : .regular))
                     Spacer(minLength: 0)
                 }
             }
             .frame(maxWidth: .infinity, alignment: isCollapsed ? .center : .leading)
-            .padding(.horizontal, isCollapsed ? 4 : 10)
-            .padding(.vertical, 7)
-            .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+            .padding(.horizontal, isCollapsed ? TS.Spacing.sm : TS.Padding.chipHorizontal)
+            .padding(.vertical, TS.Spacing.md)
+            .foregroundStyle(isSelected ? TS.SemanticColor.accent : Color.primary)
             .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isSelected ? Color.accentColor.opacity(0.14) : Color.clear)
+                RoundedRectangle(cornerRadius: TS.Radius.card)
+                    .fill(isSelected ? TS.SemanticColor.accentSubtle : Color.clear)
             )
         }
         .buttonStyle(.plain)
@@ -194,21 +196,21 @@ struct AppNavigationRail: View {
             isShowingSettingsPage = false
             selectedPracticeMode = mode
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: TS.Spacing.md) {
                 Image(systemName: icon)
                     .font(.system(size: 14, weight: .semibold))
                 if !isCollapsed {
                     Text(mode.title)
-                        .font(.callout.weight(isSelected ? .semibold : .regular))
+                        .font(TS.Font.body.weight(isSelected ? .semibold : .regular))
                 }
             }
             .frame(maxWidth: .infinity, alignment: isCollapsed ? .center : .leading)
-            .padding(.horizontal, isCollapsed ? 4 : 10)
-            .padding(.vertical, 8)
-            .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+            .padding(.horizontal, isCollapsed ? TS.Spacing.sm : TS.Padding.chipHorizontal)
+            .padding(.vertical, TS.Spacing.md)
+            .foregroundStyle(isSelected ? TS.SemanticColor.accent : Color.primary)
             .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isSelected ? Color.accentColor.opacity(0.14) : Color.clear)
+                RoundedRectangle(cornerRadius: TS.Radius.card)
+                    .fill(isSelected ? TS.SemanticColor.accentSubtle : Color.clear)
             )
         }
         .buttonStyle(.plain)

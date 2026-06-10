@@ -3,71 +3,71 @@ import SwiftUI
 extension ContentView {
     @MainActor
     func analyzeMomentResult() async {
-        guard let momentResult else {
-            errorMessage = "请先完成时间点计算。"
+        guard let momentResult = calcVM.momentResult else {
+            calcVM.errorMessage = "请先完成时间点计算。"
             return
         }
         await analyze(
             title: "时间点行运对本命相位",
             markdown: MarkdownExportBuilder.moment(momentResult),
-            assignText: { momentAIAnalysis = $0 },
-            assignReasoning: { momentAIReasoning = $0 }
+            assignText: { aiVM.momentAnalysis = $0 },
+            assignReasoning: { aiVM.momentReasoning = $0 }
         )
     }
 
     @MainActor
     func analyzeNatalResult() async {
-        guard let momentResult else {
-            errorMessage = "请先完成本命盘排盘。"
+        guard let momentResult = calcVM.momentResult else {
+            calcVM.errorMessage = "请先完成本命盘排盘。"
             return
         }
         await analyze(
             title: "本命盘分析",
             markdown: MarkdownExportBuilder.natal(momentResult),
-            assignText: { momentAIAnalysis = $0 },
-            assignReasoning: { momentAIReasoning = $0 }
+            assignText: { aiVM.momentAnalysis = $0 },
+            assignReasoning: { aiVM.momentReasoning = $0 }
         )
     }
 
     @MainActor
     func analyzeScanResult() async {
-        guard let scanResult else {
-            errorMessage = "请先完成窗口扫描。"
+        guard let scanResult = calcVM.scanResult else {
+            calcVM.errorMessage = "请先完成窗口扫描。"
             return
         }
         await analyze(
             title: "窗口扫描命中分析",
             markdown: MarkdownExportBuilder.scan(scanResult),
-            assignText: { scanAIAnalysis = $0 },
-            assignReasoning: { scanAIReasoning = $0 }
+            assignText: { aiVM.scanAnalysis = $0 },
+            assignReasoning: { aiVM.scanReasoning = $0 }
         )
     }
 
     @MainActor
     func analyzeClassicalResult() async {
-        guard let classicalResult else {
-            errorMessage = "请先完成本命盘排盘。"
+        guard let classicalResult = calcVM.classicalResult else {
+            calcVM.errorMessage = "请先完成本命盘排盘。"
             return
         }
         await analyze(
             title: "本命盘 / 古典分析",
             markdown: MarkdownExportBuilder.classical(classicalResult),
-            assignText: { classicalAIAnalysis = $0 },
-            assignReasoning: { classicalAIReasoning = $0 }
+            assignText: { aiVM.classicalAnalysis = $0 },
+            assignReasoning: { aiVM.classicalReasoning = $0 }
         )
     }
 
     @MainActor
     func analyzeHoraryResult() async {
-        guard let horaryResult else {
-            errorMessage = "请先完成 Horary 起盘。"
+        guard let horaryResult = calcVM.horaryResult else {
+            calcVM.errorMessage = "请先完成 Horary 起盘。"
             return
         }
         await analyze(
             title: "Horary 问题分析",
             markdown: MarkdownExportBuilder.horary(horaryResult),
-            assignText: { horaryAIAnalysis = $0 },
-            assignReasoning: { horaryAIReasoning = $0 }
+            assignText: { aiVM.horaryAnalysis = $0 },
+            assignReasoning: { aiVM.horaryReasoning = $0 }
         )
     }
 
@@ -76,8 +76,8 @@ extension ContentView {
         await analyze(
             title: title,
             markdown: markdown,
-            assignText: { modernAIAnalysisByMode[modeKey] = $0 },
-            assignReasoning: { modernAIReasoningByMode[modeKey] = $0 }
+            assignText: { aiVM.modernAnalysisByMode[modeKey] = $0 },
+            assignReasoning: { aiVM.modernReasoningByMode[modeKey] = $0 }
         )
     }
 
@@ -91,24 +91,24 @@ extension ContentView {
         assignText: @escaping (String) -> Void,
         assignReasoning: @escaping (String) -> Void
     ) async {
-        isAnalyzingAI = true
+        aiVM.isAnalyzing = true
         // Reset both fields
         assignText("")
         assignReasoning("")
-        defer { isAnalyzingAI = false }
+        defer { aiVM.isAnalyzing = false }
 
         let config = LLMAnalysisClient.Configuration(
-            baseURL: llmBaseURL,
-            model: llmModel,
-            apiKey: llmAPIKey,
-            reasoningEffort: aiReasoningEffort
+            baseURL: appState.llmBaseURL,
+            model: appState.llmModel,
+            apiKey: appState.llmAPIKey,
+            reasoningEffort: appState.aiReasoningEffort
         )
 
         let stream = LLMAnalysisClient().analyzeStreaming(
             title: title,
             structuredMarkdown: markdown,
-            note: aiNote,
-            promptStyle: aiPromptStyle,
+            note: appState.aiNote,
+            promptStyle: appState.aiPromptStyle,
             customSystemPrompt: selectedAIPromptText,
             configuration: config
         )
@@ -129,27 +129,27 @@ extension ContentView {
             }
             // If no content arrived via stream (e.g. empty response), mark error
             if accumulatedText.isEmpty {
-                errorMessage = "AI 分析返回了空内容。"
+                calcVM.errorMessage = "AI 分析返回了空内容。"
             }
         } catch {
-            errorMessage = error.localizedDescription
+            calcVM.errorMessage = error.localizedDescription
         }
     }
 
     var selectedAIPromptText: String {
-        switch aiPromptStyle {
+        switch appState.aiPromptStyle {
         case "natal":
-            return aiPromptNatal
+            return appState.aiPromptNatal
         case "transit":
-            return aiPromptTransit
+            return appState.aiPromptTransit
         case "scan":
-            return aiPromptScan
+            return appState.aiPromptScan
         case "classical":
-            return aiPromptClassical
+            return appState.aiPromptClassical
         case "horary":
-            return aiPromptHorary
+            return appState.aiPromptHorary
         default:
-            return aiPromptGeneral
+            return appState.aiPromptGeneral
         }
     }
 }

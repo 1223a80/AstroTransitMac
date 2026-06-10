@@ -10,11 +10,11 @@ extension ContentView {
     var middleSidebarColumn: some View {
         sidebar
             .frame(width: clampedMiddleSidebarWidth)
-            .background(Color(nsColor: .controlBackgroundColor))
+            .background(.thinMaterial)
             .overlay(alignment: .topTrailing) {
                 middleSidebarCollapseButton
-                    .padding(.top, 10)
-                    .padding(.trailing, 8)
+                    .padding(.top, TS.Spacing.md)
+                    .padding(.trailing, TS.Spacing.md)
             }
             .overlay(alignment: .trailing) {
                 middleSidebarResizeHandle
@@ -27,7 +27,7 @@ extension ContentView {
                 expandMiddleSidebar()
             } label: {
                 Image(systemName: "sidebar.right")
-                    .font(.caption.weight(.semibold))
+                    .font(TS.Font.label.weight(.semibold))
                     .frame(width: 18, height: 28)
                     .contentShape(Rectangle())
             }
@@ -37,7 +37,7 @@ extension ContentView {
             Spacer(minLength: 0)
         }
         .frame(width: Self.collapsedMiddleSidebarHandleWidth)
-        .background(Color(nsColor: .controlBackgroundColor).opacity(0.7))
+        .background(.thinMaterial)
     }
 
     var middleSidebarCollapseButton: some View {
@@ -45,9 +45,9 @@ extension ContentView {
             collapseMiddleSidebar()
         } label: {
             Image(systemName: "sidebar.left")
-                .font(.caption.weight(.semibold))
+                .font(TS.Font.label.weight(.semibold))
                 .frame(width: 24, height: 24)
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 6))
+                .background(TS.SemanticColor.cardBackground, in: RoundedRectangle(cornerRadius: TS.Radius.chip))
         }
         .buttonStyle(.plain)
         .help("收起侧边栏")

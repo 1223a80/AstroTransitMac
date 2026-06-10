@@ -3,12 +3,12 @@ import SwiftUI
 extension ContentView {
 var targetPlanetOptions: [TargetPositionOption] {
         if practiceMode == .classical {
-            return classicalResult?.planets.map {
+            return calcVM.classicalResult?.planets.map {
                 TargetPositionOption(id: $0.id, name: $0.name, longitude: $0.longitude)
             } ?? []
         }
 
-        return fullNatalResult?.natalPositions
+        return calcVM.fullNatalResult?.natalPositions
             .filter { bodyGroup(for: $0.bodyID) == .planets }
             .map { TargetPositionOption(id: $0.bodyID, name: $0.name, longitude: $0.longitude) } ?? []
     }
@@ -18,7 +18,7 @@ var targetPlanetOptions: [TargetPositionOption] {
             return []
         }
 
-        return fullNatalResult?.natalPositions
+        return calcVM.fullNatalResult?.natalPositions
             .filter { row in
                 row.bodyID.hasPrefix("AST:") || bodyGroup(for: row.bodyID) == .minorBodies
             }
@@ -27,15 +27,15 @@ var targetPlanetOptions: [TargetPositionOption] {
 
     var targetVirtualAndAngleOptions: [TargetPositionOption] {
         if practiceMode == .classical {
-            return classicalResult?.angles.map {
+            return calcVM.classicalResult?.angles.map {
                 TargetPositionOption(id: $0.id, name: $0.name, longitude: $0.longitude)
             } ?? []
         }
 
-        let virtualRows = fullNatalResult?.natalPositions
+        let virtualRows = calcVM.fullNatalResult?.natalPositions
             .filter { bodyGroup(for: $0.bodyID) == .virtualPoints }
             .map { TargetPositionOption(id: $0.bodyID, name: $0.name, longitude: $0.longitude) } ?? []
-        let angleRows = fullNatalResult?.angles?.map {
+        let angleRows = calcVM.fullNatalResult?.angles?.map {
             TargetPositionOption(id: $0.id, name: $0.name, longitude: $0.longitude)
         } ?? []
         return virtualRows + angleRows.filter { angle in !virtualRows.contains(where: { $0.id == angle.id }) }
@@ -43,10 +43,10 @@ var targetPlanetOptions: [TargetPositionOption] {
 
     var targetHouseOptions: [HouseRow] {
         if practiceMode == .classical {
-            return classicalResult?.houses ?? []
+            return calcVM.classicalResult?.houses ?? []
         }
 
-        if let houses = fullNatalResult?.houses, !houses.isEmpty {
+        if let houses = calcVM.fullNatalResult?.houses, !houses.isEmpty {
             return houses
         }
         return []
@@ -54,12 +54,12 @@ var targetPlanetOptions: [TargetPositionOption] {
 
     var targetLotOptions: [TargetPositionOption] {
         if practiceMode == .classical {
-            return classicalResult?.lots.map {
+            return calcVM.classicalResult?.lots.map {
                 TargetPositionOption(id: $0.id, name: $0.name, longitude: $0.longitude)
             } ?? []
         }
 
-        return fullNatalResult?.lots?.map {
+        return calcVM.fullNatalResult?.lots?.map {
             TargetPositionOption(id: $0.id, name: $0.name, longitude: $0.longitude)
         } ?? []
     }
@@ -71,11 +71,11 @@ var targetPlanetOptions: [TargetPositionOption] {
     var hasNatalSourceForCurrentMode: Bool {
         switch practiceMode {
         case .modern:
-            return fullNatalResult != nil
+            return calcVM.fullNatalResult != nil
         case .classical:
-            return classicalResult != nil
+            return calcVM.classicalResult != nil
         case .vedic:
-            return vedicResult != nil
+            return calcVM.vedicResult != nil
         }
     }
 
