@@ -29,21 +29,21 @@ struct TabChip: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.caption)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
-                .background(isSelected ? Color.accentColor : Color(nsColor: .controlBackgroundColor))
-                .foregroundColor(isSelected ? .white : .primary)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .font(TS.Font.label)
+                .padding(.horizontal, TS.Padding.chipHorizontal)
+                .padding(.vertical, TS.Padding.chipVertical)
+                .background(isSelected ? TS.SemanticColor.chipSelectedBackground : TS.SemanticColor.chipBackground)
+                .foregroundStyle(isSelected ? TS.SemanticColor.chipSelectedForeground : .primary)
+                .clipShape(RoundedRectangle(cornerRadius: TS.Radius.chip))
         }
         .buttonStyle(.plain)
     }
 }
 
-// MARK: - Result Pane Toolbar (rows of HStacks + export row)
+// MARK: - Result Pane Toolbar (single-line scrollable tabs + export row)
 struct ResultPaneToolbar: View {
     @Binding var selection: String
-    let tabRows: [[(id: String, title: String)]]
+    let tabs: [(id: String, title: String)]
     let moreTabs: [(id: String, title: String)]
     let currentTabTitle: String
     let markdownProvider: () -> String
@@ -53,48 +53,32 @@ struct ResultPaneToolbar: View {
     var classicalSectionPicker: (() -> Void)? = nil
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            ForEach(Array(tabRows.enumerated()), id: \.offset) { _, row in
-                HStack(spacing: 6) {
-                    ForEach(row, id: \.id) { tab in
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+            // Single-line scrollable tab bar
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: TS.Spacing.sm) {
+                    ForEach(tabs, id: \.id) { tab in
                         TabChip(
                             title: tab.title,
                             isSelected: selection == tab.id,
                             action: { selection = tab.id }
                         )
                     }
-                }
-            }
 
-            if !moreTabs.isEmpty {
-                HStack(spacing: 6) {
-                    Menu {
-                        ForEach(moreTabs, id: \.id) { tab in
-                            Button(tab.title) {
-                                selection = tab.id
-                            }
-                        }
-                    } label: {
-                        Text("更多")
-                            .font(.caption)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(Color(nsColor: .controlBackgroundColor))
-                            .foregroundColor(.primary)
-                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                    if !moreTabs.isEmpty {
+                        moreMenu
                     }
-                    .menuStyle(.borderlessButton)
-                    .fixedSize()
                 }
             }
 
+            // Title + export row
             HStack {
                 Text(currentTabTitle)
-                    .font(.subheadline.weight(.medium))
+                    .font(TS.Font.pageTitle)
                 Spacer()
                 if let classicalSectionPicker {
                     Button("导出 Markdown...") { classicalSectionPicker() }
-                        .font(.caption)
+                        .font(TS.Font.label)
                         .buttonStyle(.borderedProminent)
                         .controlSize(.small)
                 } else {
@@ -108,5 +92,23 @@ struct ResultPaneToolbar: View {
                 )
             }
         }
+    }
+
+    private var moreMenu: some View {
+        Menu {
+            ForEach(moreTabs, id: \.id) { tab in
+                Button(tab.title) { selection = tab.id }
+            }
+        } label: {
+            Text("更多")
+                .font(TS.Font.label)
+                .padding(.horizontal, TS.Padding.chipHorizontal)
+                .padding(.vertical, TS.Padding.chipVertical)
+                .background(TS.SemanticColor.chipBackground)
+                .foregroundStyle(.primary)
+                .clipShape(RoundedRectangle(cornerRadius: TS.Radius.chip))
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize()
     }
 }
