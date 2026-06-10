@@ -1,5 +1,11 @@
 # Validation
 
+## One-Shot Local Gate
+
+`bash check_vibe_changes.sh` runs the whole local gate in one command: pytest, swift build, swift test, and backend smokes (classical / scan / horary / vedic / rectify). Use it before declaring any change done.
+
+GitHub Actions (`.github/workflows/ci.yml`) runs the same checks automatically on every push; a red ❌ on the repo page means the pushed change broke something.
+
 ## Environment
 
 Install Python dependencies once:
@@ -45,6 +51,8 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-ingress-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-station-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-horary-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-vedic-ai-request.json
 ```
 
 ### Per-Module Guidance
@@ -94,12 +102,24 @@ swift test
 Run individual test suites (faster when iterating):
 
 ```bash
-swift test --filter ClassicalResultTests  # classical model JSON decoding
-swift test --filter HoraryResultTests     # horary model JSON decoding
-swift test --filter TransitResultTests    # transit/moment model JSON decoding
-swift test --filter RectifyResultTests    # rectify model JSON decoding + request encoding
-swift test --filter MarkdownExportTests   # markdown export for classical and transit
+swift test --filter ClassicalResultTests   # classical model JSON decoding
+swift test --filter HoraryResultTests      # horary model JSON decoding
+swift test --filter TransitResultTests     # transit/moment model JSON decoding
+swift test --filter RectifyResultTests     # rectify model JSON decoding + request encoding
+swift test --filter MarkdownExportTests    # markdown export for classical and transit
+swift test --filter BackendContractTests   # vedic/synastry/composite/davison/progression/solar-arc/horary decoding against real backend output fixtures
 ```
+
+### Backend Contract Fixtures
+
+`BackendContractTests` decode the captured real backend outputs in `SwiftTests/Fixtures/`. If a fixture test fails after a backend change, the Swift models and backend schema have drifted — either fix the unintended backend change or update the Swift model. Only after an **intentional** schema change, regenerate the fixture:
+
+```bash
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py \
+    < Examples/sample-<mode>-request.json > SwiftTests/Fixtures/<mode>-result.json
+```
+
+Never edit fixture files by hand.
 
 In a sandboxed agent environment, `swift test` can fail if SwiftPM cannot write to the user module cache. If `swift build` passes but `swift test` fails with a cache permission error under `~/.cache/clang/ModuleCache`, rerun with the appropriate sandbox approval rather than changing project files.
 
@@ -121,7 +141,8 @@ Package the app with:
 - Horary logic changed: run `python3 -m pytest python_tests/test_horary.py -v`.
 - Scan engine changed: run `python3 -m pytest python_tests/test_scan.py -v`.
 - Contract / integration: run `python3 -m pytest python_tests/test_contracts.py -v`.
-- Backend JSON shape changed: update the corresponding Swift model file (`ClassicalResultModels.swift`, `HoraryResultModels.swift`, `TransitResultModels.swift`, `RectifyModels.swift`) and run `swift test` with the relevant filter.
+- Backend JSON shape changed: update the corresponding Swift model file (`ClassicalResultModels.swift`, `HoraryResultModels.swift`, `TransitResultModels.swift`, `RectifyModels.swift`, `VedicResultModels.swift`, `ModernResultModels.swift`), regenerate the affected `SwiftTests/Fixtures/` file, and run `swift test` with the relevant filter.
+- Result-pane tab added: add the id to the pane's tab list **and** a matching `case` in its `selectedResultView` switch — a missing case silently falls through to the default view. Titles come from the list via `resultTabTitle()`; do not add a separate title switch.
 - Result UI changed: run `swift build` and manually inspect the relevant Swift view when possible.
 - Export changed: check both `MarkdownExportBuilder.swift` and `TextExportBuilder.swift`.
 - Ephemeris behavior changed: include a deterministic Swiss Ephemeris regression case where possible.

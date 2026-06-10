@@ -16,9 +16,10 @@
 - SwiftUI app source: `Sources/TransitStudio/`
 - Python backend source: `Sources/TransitStudio/Resources/backend/`
 - Bundled ephemeris files: `Sources/TransitStudio/Resources/ephemeris/`
-- Swift tests: `SwiftTests/`
+- Swift tests: `SwiftTests/` (incl. `BackendContractTests` + real-output fixtures in `SwiftTests/Fixtures/`)
 - Python tests: `python_tests/`
-- Sample backend requests: `Examples/`
+- Sample backend requests: `Examples/` (one per mode; horary/vedic included)
+- CI: `.github/workflows/ci.yml` runs swift build/test + pytest + backend smokes on every push
 
 ### Rectifier-specific files
 
@@ -58,6 +59,14 @@ Key files:
 
 Python modules import each other by file name from the backend directory. When adding tests, use the existing `python_tests/conftest.py` path setup instead of inventing another import path.
 
+### AI Streaming Contract
+
+LLM analysis streams SSE through `LLMAnalysisClient` (`bytes.lines`). The consume loop in `ContentView+AI.swift analyze()` throttles UI publishes to ~100ms into `aiVM.streamBuffer` (`AIStreamBuffer`, observed only by `AIAnalysisView`); per-mode `@Published` storage is written once at stream end. `AIAnalysisView` renders plain `Text` while streaming and parses markdown blocks once after completion (cached in `@State`). **Do not publish per-token into aiVM per-mode storage and do not parse markdown inside `body`** — that was the O(n²) stall fixed on 2026-06-10. New AI surfaces need a unique `streamKey`.
+
+### Result-Pane Tab Contract
+
+Each result pane defines its tabs as `(id, title)` lists; toolbar titles derive from those lists via `resultTabTitle()` — never add a separate title switch. When adding a tab id, add the matching `case` in the pane's `selectedResultView` switch; a missing case silently shows the default view (this bug shipped once on the vedic pane).
+
 ## Current Classical Contract
 
 Classical mode returns `planetary_returns`, not a standalone `solar_return` field. Each return row for Sun, Moon, Mercury, Venus, Mars, Jupiter, and Saturn must keep the same schema:
@@ -74,6 +83,12 @@ Classical mode returns `planetary_returns`, not a standalone `solar_return` fiel
 
 ## Required Validation
 
+One-shot local gate (preferred before declaring any change done):
+
+```bash
+bash check_vibe_changes.sh
+```
+
 For backend/classical changes:
 
 ```bash
@@ -87,6 +102,8 @@ swift build
 swift test
 ```
 
+If the backend JSON shape changed intentionally, also regenerate the affected contract fixture (see `docs/validation.md` → Backend Contract Fixtures); a failing `BackendContractTests` otherwise means an unintended schema drift.
+
 `swift test` may need normal user cache access outside a sandbox because SwiftPM writes module cache files under the user cache directory.
 
 For end-to-end backend smoke tests:
@@ -95,6 +112,8 @@ For end-to-end backend smoke tests:
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-scan-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-horary-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-vedic-ai-request.json
 ```
 
 For rectify mode smoke test:

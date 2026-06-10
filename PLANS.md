@@ -1,55 +1,10 @@
-# 前端重构 — 已完成
+# PLANS
 
-## 分支
-`refactor/frontend-tokens-views-vm`
-
-## 完成模块
-
-| 模块 | 状态 | 说明 |
-|------|------|------|
-| 01 Design Tokens | ✅ | `DesignTokens.swift` 创建，swift build 通过 |
-| 02 CollapsibleSection | ✅ | GroupBox → VStack + Divider + TS token |
-| 03 Tab Bar | ✅ | 一维水平滚动 Tab，全部 11 个调用者迁移 |
-| 04 Export Controls | ✅ | 删除 `ExportControls.swift`（无调用者） |
-| 05-P1 AppState | ✅ | 21 个 @AppStorage 属性提取 |
-| 05-P2 CalculationVM | ✅ | ~30 个 @State 属性提取 |
-| 05-P3 AIVM | ✅ | ~12 个 AI @State 属性提取 |
-| 06 Vedic Views | ✅ | 7 个新 View 文件 + Dasa 增强 |
-| 07 Classical Fields | ✅ | BirthdayTransition + ActivatedLordFocus 卡片 |
-| 08 AI Analysis | ✅ | 设置折叠到 DisclosureGroup |
-
-## 验证结果
-
-```bash
-swift build    # ✅ 通过
-swift test     # ✅ 全部 10 个测试通过
-```
-
-## 文件变更
-
-- **新增 8 个**: DesignTokens, AppState, CalculationViewModel, AIAnalysisViewModel, 5 Vedic Views
-- **删除 1 个**: ExportControls
-- **修改 18 个**: 现有 SwiftUI 文件
+按 `AGENTS.md` 约定：开始任务前在此写计划，执行中更新状态；已完结的历史任务批次归档到 `docs/archive/`（如 `plans-frontend-refactor-2026-06.md`）。
 
 ---
 
-# 前端重构 Review — 已完成
-
-## 分支
-`refactor/frontend-tokens-views-vm`
-
-## Review 计划
-
-| 项目 | 状态 | 说明 |
-|------|------|------|
-| 01 工作树与任务边界确认 | ✅ | 已确认 review 基于当前前端重构分支与未提交 diff |
-| 02 关键前端 diff 阅读 | ✅ | 已核对状态提取、Tab/结果 pane、AI 设置、Vedic 拆分 |
-| 03 回归风险核对 | ✅ | 已确认 2 个真实回归风险：Navāṃśa 空白、AppStorage 响应式退化 |
-| 04 验证与结论整理 | ✅ | `swift build` 通过；`swift test` 提权后 10/10 通过；review findings 已整理 |
-
----
-
-# 前端重构修复 + 视觉调整 — 已完成
+# AI 流式输出性能修复 — 已完成（2026-06-10）
 
 ## 分支
 `refactor/frontend-tokens-views-vm`
@@ -58,14 +13,16 @@ swift test     # ✅ 全部 10 个测试通过
 
 | 项目 | 状态 | 说明 |
 |------|------|------|
-| 01 文档读取 | ✅ | 已阅读 `09-visual-design-spec.md`、`01-design-tokens.md` 并按规范落地 |
-| 02 Bug 修复 | ✅ | 已修复 `VedicNavamsaView` 空白与 `AppState` 响应式问题 |
-| 03 视觉调整 | ✅ | 已按 09 规范收敛 toolbar / Classical 卡片 / AI 面板 / Vedic 子页样式 |
-| 04 验证与记录 | ✅ | `swift build` 通过；`swift test` 提权后 10/10 通过；已补 `CHANGELOG.md` |
+| 01 定位根因 | ✅ | 每 token 全量重发布 + 全文 markdown 重解析，O(n²) 压死主线程 |
+| 02 消费端节流 | ✅ | `analyze()` 100ms 合并发布，结束时一次性落盘最终文本 |
+| 03 失效范围隔离 | ✅ | 新增 `AIStreamBuffer`，流式热文本只触发 `AIAnalysisView` 重渲染 |
+| 04 渲染降级与缓存 | ✅ | 流式期间纯 Text；结束后一次性分块解析并缓存于 `@State` |
+| 05 SSE 解析提速 | ✅ | 逐字节迭代改 `bytes.lines` |
+| 06 验证与记录 | ✅ | swift build/test 通过；CHANGELOG 已更新；提交 `2a7ec9a` |
 
 ---
 
-# 前端重构打包覆盖 — 已完成
+# 全项目体检与防腐加固 — 已完成（2026-06-10）
 
 ## 分支
 `refactor/frontend-tokens-views-vm`
@@ -74,21 +31,32 @@ swift test     # ✅ 全部 10 个测试通过
 
 | 项目 | 状态 | 说明 |
 |------|------|------|
-| 01 版本号调整 | ✅ | 已更新为 `1.1.2 (21)` |
-| 02 打包覆盖安装 | ✅ | 已运行 `./package_app.sh`，覆盖 `/Applications/TransitStudio.app` |
-| 03 安装结果核对 | ✅ | 已确认 `dist/` 与 `/Applications` 内均为 `1.1.2 (21)` |
+| 01 全项目扫描 | ✅ | 危险写法/重复/超长文件/依赖/仓库卫生全量排查，报告见会话记录 |
+| 02 分支与备份 | ✅ | 删除废弃分支（bug-sweep 留 archive tag）；重构分支推送 GitHub |
+| 03 小行星下载校验 | ✅ | 下载内容校验 SWISSEPH 文件头，HTML 错误页不再污染星历目录 |
+| 04 后端契约测试 | ✅ | `BackendContractTests` 7 个，fixture 为后端真实输出；Swift 测试 10 → 17 |
+| 05 计算样板去重 | ✅ | `performRun` 收口 14 处 isRunning/错误/进度样板 |
+| 06 大文件拆分 | ✅ | ClassicalResultViews / ContentView+ResultsPanes 按页面边界拆为 7 个文件 |
+| 07 吠陀死 tab 修复 | ✅ | AI 分析/诊断/JSON 三个 tab 接通（含完整流式 AI 管线） |
+| 08 tab 标题查表化 | ✅ | 11 个结果页 `resultTabTitle()` 查表，治愈 5 处标题漂移并消灭该 bug 类 |
+| 09 CI | ✅ | GitHub Actions：push 即跑 swift build/test + pytest + 5 个 smoke |
+| 10 仓库卫生 | ✅ | 计划文档归档、horary 样例补齐、check_vibe 升级、git gc |
+| 11 打包覆盖 | ✅ | `1.1.3 (22)` 已覆盖安装 /Applications |
+
+## 跳过项（用户决定）
+
+- 本命档案导出/备份（建议后续单独做：当前档案只存 UserDefaults，无迁移机制）
+- LLM API key 迁 Keychain；后端 60 秒硬超时调整
 
 ---
 
-# 前端重构交接文档 — 已完成
-
-## 分支
-`refactor/frontend-tokens-views-vm`
+# 文档同步 — 已完成（2026-06-10）
 
 ## 执行计划
 
 | 项目 | 状态 | 说明 |
 |------|------|------|
-| 01 读取现有模块文档 | ✅ | 已核对 `00-overview`、`HANDOFF_PROMPT` 与模块清单 |
-| 02 编写交接文档 | ✅ | 已按 00-09 列出完成情况、文件范围、剩余缺口 |
-| 03 记录更新 | ✅ | 已更新 `CHANGELOG.md`，说明新增交接文档 |
+| 01 PLANS.md 归档与补记 | ✅ | 旧批次移入 docs/archive，本轮任务补记 |
+| 02 project-structure.md | ✅ | 同步拆分后的文件结构、状态对象、Fixtures、CI |
+| 03 validation.md | ✅ | 补 BackendContractTests、fixture 再生成、CI、check_vibe |
+| 04 AGENTS.md | ✅ | 验证清单与 Source of Truth 更新，新增 AI 流式与 tab 约定 |

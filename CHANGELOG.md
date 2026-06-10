@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-06-10 — 文档同步
+
+- **`AGENTS.md`** — 验证清单加入 `check_vibe_changes.sh` 一键门禁与契约 fixture 再生成说明；smoke 列表补 horary/vedic；新增"AI 流式契约"与"结果页 Tab 契约"两节防回归约定；Source of Truth 补 Fixtures 与 CI
+- **`docs/project-structure.md`** — 同步拆分后的视图文件结构、状态对象（AppState / CalculationVM / AIVM / AIStreamBuffer）、DesignTokens、Fixtures、CI、check_vibe 脚本
+- **`docs/validation.md`** — 新增一键门禁与 CI 说明、`BackendContractTests` 过滤器、契约 fixture 再生成流程、"新增 tab 必须补 case"检查项
+- **`PLANS.md`** — 已完结的前端重构批次归档至 `docs/archive/plans-frontend-refactor-2026-06.md`，补记本日三个任务（流式修复 / 体检加固 / 文档同步）
+
 ## 2026-06-10 — 全项目体检：tab 修复 + 防腐加固
 
 - **修复吠陀页 3 个失灵 tab** — "AI 分析" / "诊断" / "JSON" 之前点击只显示综览（switch 缺 case）。AI 分析现已接入完整流式管线（`aiVM.vedicAnalysis` + `analyzeVedicResult`，streamKey "vedic"）；诊断显示后端 warnings；JSON 显示原始结果

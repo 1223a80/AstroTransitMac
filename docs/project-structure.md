@@ -5,8 +5,12 @@
 - `Package.swift` - Swift Package manifest. Product is the macOS executable `TransitStudio`.
 - `README.md` - user-facing overview and basic run instructions.
 - `AGENTS.md` - project-specific instructions for coding agents.
+- `PLANS.md` / `CHANGELOG.md` - task plans and human-readable change log (see AGENTS.md change discipline).
 - `requirements.txt` - Python dependency list. Currently requires `pyswisseph`.
-- `package_app.sh` - local app packaging script.
+- `package_app.sh` - local app packaging script (bumps version, installs to /Applications by default).
+- `check_vibe_changes.sh` - one-shot local validation gate (pytest + swift build/test + backend smokes).
+- `.github/workflows/ci.yml` - GitHub Actions: swift build/test + pytest + backend smokes on every push.
+- `docs/archive/` - completed planning documents kept for history.
 
 ## Source
 
@@ -17,10 +21,19 @@
 Important Swift files:
 
 - `BackendClient.swift` - launches Python backend and decodes JSON.
-- `ClassicalResultModels.swift` - Codable models for classical backend output.
-- `ClassicalResultViews.swift` - classical result UI.
+- `AppState.swift` - shared `@MainActor` ObservableObject owning all persisted settings (UserDefaults-backed), injected via environmentObject.
+- `CalculationViewModel.swift` / `AIAnalysisViewModel.swift` - run state, results, tab selections, and per-mode AI analysis storage. `AIStreamBuffer` (in AIAnalysisViewModel.swift) carries hot streaming text observed only by `AIAnalysisView`.
+- `DesignTokens.swift` - `TS.*` spacing/font/color/radius token system used across views.
+- Result-pane view files split along page boundaries:
+  - `ContentView+ResultsPanes.swift` - run section + modern natal / moment / scan / horary panes.
+  - `ContentView+ClassicalPane.swift`, `ContentView+ModernPanes.swift`, `ContentView+VedicRectifyPanes.swift` - the remaining panes.
+  - `ClassicalResultViews.swift` (tables) + `ClassicalTimingViews.swift` + `ClassicalOverviewViews.swift` - classical result UI.
+  - `Vedic*.swift` - one file per vedic data page.
+- `ResultToolbarViews.swift` - tab bar + export toolbar; `resultTabTitle()` derives toolbar titles from the same tab lists that feed the toolbar (do not reintroduce per-pane title switches).
+- `LLMAnalysisClient.swift` / `AIAnalysisView.swift` / `ContentView+AI.swift` - streaming AI analysis (SSE via `bytes.lines`, ~100ms publish throttling).
 - `MarkdownExportBuilder.swift` and `TextExportBuilder.swift` - export surfaces that must stay in sync with backend schema.
-- `ContentView+RunActions.swift` and `ContentView+RequestHelpers.swift` - request construction and execution.
+- `ContentView+RunActions.swift` and `ContentView+RequestHelpers.swift` - request construction and execution; `performRun` owns the shared isRunning/error/progress lifecycle.
+- `AsteroidEphemerisManager.swift` - asteroid .se1 download with SWISSEPH header validation.
 
 Important backend files:
 
@@ -40,8 +53,10 @@ Important backend files:
 ## Tests And Examples
 
 - `python_tests/` - pytest coverage for backend math and classical contracts.
-- `SwiftTests/` - Swift Codable/model tests.
-- `Examples/` - sample JSON requests for backend smoke tests.
+- `SwiftTests/` - Swift Codable/model tests, including `BackendContractTests` which decode real backend outputs.
+- `SwiftTests/Fixtures/` - captured backend outputs used by `BackendContractTests`. Regenerate after an intentional schema change with:
+  `python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-<mode>-request.json > SwiftTests/Fixtures/<mode>-result.json`
+- `Examples/` - sample JSON requests for backend smoke tests (one per mode, including horary and vedic).
 
 ## Generated Or Local-Only Folders
 
@@ -51,6 +66,6 @@ These folders are not source-of-truth:
 - `.pytest_cache/` and `__pycache__/` - Python test/import caches.
 - `dist/` - packaged app output.
 - `backups/` - historical snapshots.
-- `Sources/TransitStudio.zip` - local archive copy.
+- `maitreya8-reference/` - offline reference repo for cross-checking calculations.
 
 They are listed in `.gitignore`. Do not edit them to fix behavior; update the real source files instead.

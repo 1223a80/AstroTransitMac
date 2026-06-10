@@ -8,6 +8,7 @@ Use these files before changing the project:
 - `backend-contracts.md` - JSON contracts and calculation-specific invariants.
 - `validation.md` - local setup, test commands, and smoke checks.
 - `opencode-next-step-requirements.md` - scoped product requirement for config preset management.
-- `archive/classical-techniques-roadmap.md` - older roadmap notes for classical techniques (archived).
+- `frontend-refactor/` - 2026-06 frontend refactor module specs and handoff notes (completed, kept for reference).
+- `archive/` - completed planning documents (vedic AI port plan, classical roadmap, finished PLANS batches).
 
 The root `README.md` is the user-facing overview. Keep detailed agent handoff notes in `AGENTS.md` or this `docs/` folder rather than expanding the README indefinitely.
