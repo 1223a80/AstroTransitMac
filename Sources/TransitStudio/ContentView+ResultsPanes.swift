@@ -204,6 +204,7 @@ extension ContentView {
             DiagnosticsView(result: result)
         case "ai":
             AIAnalysisView(
+                streamKey: "moment",
                 analysis: aiVM.momentAnalysis,
                 reasoning: aiVM.momentReasoning,
                 isAnalyzing: aiVM.isAnalyzing,
@@ -278,6 +279,7 @@ extension ContentView {
             DiagnosticsView(result: result)
         case "ai":
             AIAnalysisView(
+                streamKey: "moment",
                 analysis: aiVM.momentAnalysis,
                 reasoning: aiVM.momentReasoning,
                 isAnalyzing: aiVM.isAnalyzing,
@@ -343,6 +345,7 @@ extension ContentView {
             ScanDiagnosticsView(result: result)
         case "ai":
             AIAnalysisView(
+                streamKey: "scan",
                 analysis: aiVM.scanAnalysis,
                 reasoning: aiVM.scanReasoning,
                 isAnalyzing: aiVM.isAnalyzing,
@@ -428,6 +431,7 @@ extension ContentView {
             HoraryDiagnosticsView(result: result)
         case "ai":
             AIAnalysisView(
+                streamKey: "horary",
                 analysis: aiVM.horaryAnalysis,
                 reasoning: aiVM.horaryReasoning,
                 isAnalyzing: aiVM.isAnalyzing,
@@ -692,6 +696,7 @@ extension ContentView {
             ClassicalDiagnosticsView(result: result)
         case "ai":
             AIAnalysisView(
+                streamKey: "classical",
                 analysis: aiVM.classicalAnalysis,
                 reasoning: aiVM.classicalReasoning,
                 isAnalyzing: aiVM.isAnalyzing,
@@ -759,6 +764,7 @@ extension ContentView {
                 SynastryResultPane(
                     result: r,
                     selectedTab: $calcVM.modernSelectedTab,
+                    streamKey: "synastry",
                     analysis: aiVM.modernAnalysisByMode["synastry", default: ""],
                     reasoning: aiVM.modernReasoningByMode["synastry", default: ""],
                     isAnalyzing: aiVM.isAnalyzing,
@@ -779,6 +785,7 @@ extension ContentView {
                     title: "Composite",
                     result: r,
                     selectedTab: $calcVM.modernSelectedTab,
+                    streamKey: "composite",
                     analysis: aiVM.modernAnalysisByMode["composite", default: ""],
                     reasoning: aiVM.modernReasoningByMode["composite", default: ""],
                     isAnalyzing: aiVM.isAnalyzing,
@@ -799,6 +806,7 @@ extension ContentView {
                     title: "Davison",
                     result: r,
                     selectedTab: $calcVM.modernSelectedTab,
+                    streamKey: "davison",
                     analysis: aiVM.modernAnalysisByMode["davison", default: ""],
                     reasoning: aiVM.modernReasoningByMode["davison", default: ""],
                     isAnalyzing: aiVM.isAnalyzing,
@@ -818,6 +826,7 @@ extension ContentView {
                 ProgressionResultPane(
                     result: r,
                     selectedTab: $calcVM.modernSelectedTab,
+                    streamKey: "progression",
                     analysis: aiVM.modernAnalysisByMode["progression", default: ""],
                     reasoning: aiVM.modernReasoningByMode["progression", default: ""],
                     isAnalyzing: aiVM.isAnalyzing,
@@ -837,6 +846,7 @@ extension ContentView {
                 SolarArcResultPane(
                     result: r,
                     selectedTab: $calcVM.modernSelectedTab,
+                    streamKey: "solar_arc",
                     analysis: aiVM.modernAnalysisByMode["solar_arc", default: ""],
                     reasoning: aiVM.modernReasoningByMode["solar_arc", default: ""],
                     isAnalyzing: aiVM.isAnalyzing,

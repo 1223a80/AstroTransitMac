@@ -1,8 +1,20 @@
 import SwiftUI
 
+/// Hot streaming text, observed only by `AIAnalysisView`. Kept outside the
+/// per-mode @Published storage so per-token updates don't invalidate the
+/// whole ContentView tree.
+@MainActor
+final class AIStreamBuffer: ObservableObject {
+    /// Stream key of the analysis currently receiving tokens; nil when idle.
+    @Published var activeKey: String?
+    @Published var text = ""
+    @Published var reasoning = ""
+}
+
 @MainActor
 final class AIAnalysisViewModel: ObservableObject {
     @Published var isAnalyzing = false
+    let streamBuffer = AIStreamBuffer()
 
     // MARK: - Analysis results by mode
     @Published var momentAnalysis = ""

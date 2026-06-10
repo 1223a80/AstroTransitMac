@@ -210,34 +210,23 @@ struct LLMAnalysisClient {
             throw LLMAnalysisError.serviceError(fallback?.isEmpty == false ? fallback! : "API 请求失败（HTTP \(httpResponse.statusCode)）。")
         }
 
-        // SSE parsing. Accumulate raw bytes so multibyte UTF-8 tokens are preserved.
-        var currentLine = Data()
-        for try await byte in bytes {
-            if byte == 0x0A {
-                if currentLine.last == 0x0D {
-                    currentLine.removeLast()
-                }
-                let line = String(data: currentLine, encoding: .utf8) ?? ""
-                currentLine.removeAll(keepingCapacity: true)
-                if line.hasPrefix("data: ") {
-                    let data = String(line.dropFirst(6))
-                    if data == "[DONE]" {
-                        break
-                    }
-                    guard let jsonData = data.data(using: .utf8) else { continue }
-                    if let chunk = try? JSONDecoder().decode(StreamChunkResponse.self, from: jsonData) {
-                        if let delta = chunk.choices?.first?.delta {
-                            let content = delta.content ?? ""
-                            let reasoning = delta.reasoningContent ?? ""
-                            if !content.isEmpty || !reasoning.isEmpty {
-                                continuation.yield(StreamChunk(content: content, reasoning: reasoning))
-                            }
-                        }
-                    }
-                }
-                // Ignore empty lines and event: lines
-            } else {
-                currentLine.append(byte)
+        // SSE parsing, line by line. `bytes.lines` handles UTF-8 decoding and
+        // CR/LF termination; per-byte async iteration is needlessly slow.
+        let decoder = JSONDecoder()
+        for try await line in bytes.lines {
+            // Ignore empty lines, comments and event: lines
+            guard line.hasPrefix("data: ") else { continue }
+            let payload = String(line.dropFirst(6))
+            if payload == "[DONE]" {
+                break
+            }
+            guard let jsonData = payload.data(using: .utf8),
+                  let chunk = try? decoder.decode(StreamChunkResponse.self, from: jsonData),
+                  let delta = chunk.choices?.first?.delta else { continue }
+            let content = delta.content ?? ""
+            let reasoning = delta.reasoningContent ?? ""
+            if !content.isEmpty || !reasoning.isEmpty {
+                continuation.yield(StreamChunk(content: content, reasoning: reasoning))
             }
         }
 

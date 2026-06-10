@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-06-10 — 修复 AI 流式输出越来越慢直至卡死
+
+- **根因**：每个 SSE token 都全量重发布 + 全量重渲染，单 token 成本随累积文本线性增长（O(n²)），主线程饱和后消费循环被压死
+- **`ContentView+AI.swift`** — 流式消费循环按 ~100ms 节流发布；累积文本流式期间只写入 `AIStreamBuffer`，结束时一次性写入每模式持久存储（出错也保留已收到的部分文本）
+- **`AIAnalysisViewModel.swift`** — 新增 `AIStreamBuffer`（独立 ObservableObject），流式热路径只让 `AIAnalysisView` 重渲染，不再每 token 失效整个 ContentView 树
+- **`AIAnalysisView.swift`** — 流式期间用纯 `Text` 渲染增量文本；markdown 分块解析推迟到流结束后一次完成，且解析结果缓存在 `@State`（`onAppear`/`onChange` 时才重算），不再每次渲染逐行重跑 `AttributedString(markdown:)`
+- **`LLMAnalysisClient.swift`** — SSE 解析从逐字节 async 迭代改为 `bytes.lines`
+- **`AIAnalysisView` 增加 `streamKey`** — 各结果页（moment/scan/classical/horary/modern 各子模式）声明自己的流标识，避免流式文本串台到其他面板
+- 验证：`swift build` ✅；`swift test` ✅（10 tests）
+
 ## 2026-06-10 — ViewModel 并发收口
 
 - **`CalculationViewModel.swift` / `AIAnalysisViewModel.swift`** — 补上 `@MainActor` 标注，与 `AppState` 一致，由类型系统保证 `@Published` 属性只在主线程更新

@@ -12,7 +12,9 @@ enum StreamingPhase: Equatable {
 
 struct AIAnalysisView: View {
     @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var streamBuffer: AIStreamBuffer
 
+    let streamKey: String
     let analysis: String
     let reasoning: String
     let isAnalyzing: Bool
@@ -22,12 +24,26 @@ struct AIAnalysisView: View {
     @State private var reasoningExpanded = true
     @State private var settingsExpanded = false
 
+    /// Whether this pane is the one currently receiving streamed tokens.
+    private var isStreamingHere: Bool {
+        isAnalyzing && streamBuffer.activeKey == streamKey
+    }
+
+    /// While streaming, show the live buffer; otherwise the persisted text.
+    private var displayedAnalysis: String {
+        isStreamingHere ? streamBuffer.text : analysis
+    }
+
+    private var displayedReasoning: String {
+        isStreamingHere ? streamBuffer.reasoning : reasoning
+    }
+
     private var streamingPhase: StreamingPhase {
         guard isAnalyzing else { return .done }
-        if !analysis.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if !displayedAnalysis.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return .generating
         }
-        if !reasoning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if !displayedReasoning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return .thinking
         }
         return .thinking
@@ -58,7 +74,7 @@ struct AIAnalysisView: View {
                 Text("分析操作")
                     .font(TS.Font.sectionTitle)
                 Spacer()
-                CopyMarkdownButton(markdown: analysis)
+                CopyMarkdownButton(markdown: displayedAnalysis)
                 Button {
                     analyze()
                 } label: {
@@ -103,7 +119,7 @@ struct AIAnalysisView: View {
             .font(TS.Font.label)
 
             // Reasoning (thinking) section — collapsible
-            if !reasoning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            if !displayedReasoning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 VStack(alignment: .leading, spacing: TS.Spacing.md) {
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -128,7 +144,7 @@ struct AIAnalysisView: View {
 
                     if reasoningExpanded {
                         ScrollView {
-                            Text(reasoning)
+                            Text(displayedReasoning)
                                 .font(TS.Font.body)
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -143,12 +159,23 @@ struct AIAnalysisView: View {
             }
 
             // Main analysis text
-            if analysis.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            if displayedAnalysis.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 EmptyStateView(
                     title: canAnalyze ? "尚未生成 AI 分析" : "请先在设置页填写 API Key",
                     systemImage: "sparkles",
                     description: canAnalyze ? "排盘后可生成结构化解读。" : "API Key 会保存到本地设置。"
                 )
+            } else if isStreamingHere {
+                // Streaming: plain text only. Full markdown parsing is deferred
+                // until the stream finishes — re-parsing the whole document on
+                // every tick is O(n²) and stalls the main thread.
+                ScrollView {
+                    Text(displayedAnalysis)
+                        .font(TS.Font.body)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .textSelection(.enabled)
+                        .padding(TS.Padding.resultContent)
+                }
             } else {
                 ScrollView {
                     MarkdownBlocksView(markdown: normalizedMarkdown)
@@ -177,44 +204,84 @@ struct AIAnalysisView: View {
 private struct MarkdownBlocksView: View {
     let markdown: String
 
+    private struct Block: Identifiable {
+        enum Kind {
+            case heading1(String)
+            case heading2(String)
+            case heading3(String)
+            case gap
+            case paragraph(AttributedString)
+        }
+
+        let id: Int
+        let kind: Kind
+    }
+
+    // Parsed once per markdown change, not on every render — AttributedString
+    // markdown parsing is too expensive to repeat inside `body`.
+    @State private var blocks: [Block] = []
+
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.md) {
-            ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in
+            ForEach(blocks) { block in
                 blockView(block)
             }
         }
         .textSelection(.enabled)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(TS.Padding.resultContent)
-    }
-
-    private var blocks: [String] {
-        markdown
-            .split(separator: "\n", omittingEmptySubsequences: false)
-            .map(String.init)
+        .onAppear {
+            blocks = Self.parse(markdown)
+        }
+        .onChange(of: markdown) { newValue in
+            blocks = Self.parse(newValue)
+        }
     }
 
     @ViewBuilder
-    private func blockView(_ line: String) -> some View {
-        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmed.hasPrefix("### ") {
-            Text(String(trimmed.dropFirst(4)))
+    private func blockView(_ block: Block) -> some View {
+        switch block.kind {
+        case .heading3(let text):
+            Text(text)
                 .font(TS.Font.sectionTitle)
                 .padding(.top, TS.Spacing.lg)
-        } else if trimmed.hasPrefix("## ") {
-            Text(String(trimmed.dropFirst(3)))
+        case .heading2(let text):
+            Text(text)
                 .font(TS.Font.pageTitle)
                 .padding(.top, TS.Spacing.xl)
-        } else if trimmed.hasPrefix("# ") {
-            Text(String(trimmed.dropFirst(2)))
+        case .heading1(let text):
+            Text(text)
                 .font(.title2.weight(.semibold))
                 .padding(.top, TS.Spacing.xl)
-        } else if trimmed.isEmpty {
+        case .gap:
             Spacer()
                 .frame(height: TS.Spacing.sm)
-        } else {
-            Text((try? AttributedString(markdown: line)) ?? AttributedString(line))
+        case .paragraph(let attributed):
+            Text(attributed)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+
+    private static func parse(_ markdown: String) -> [Block] {
+        markdown
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .enumerated()
+            .map { offset, lineSub in
+                let line = String(lineSub)
+                let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+                let kind: Block.Kind
+                if trimmed.hasPrefix("### ") {
+                    kind = .heading3(String(trimmed.dropFirst(4)))
+                } else if trimmed.hasPrefix("## ") {
+                    kind = .heading2(String(trimmed.dropFirst(3)))
+                } else if trimmed.hasPrefix("# ") {
+                    kind = .heading1(String(trimmed.dropFirst(2)))
+                } else if trimmed.isEmpty {
+                    kind = .gap
+                } else {
+                    kind = .paragraph((try? AttributedString(markdown: line)) ?? AttributedString(line))
+                }
+                return Block(id: offset, kind: kind)
+            }
     }
 }

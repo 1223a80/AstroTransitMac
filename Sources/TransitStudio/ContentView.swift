@@ -201,6 +201,7 @@ struct ContentView: View {
         .tint(.accentColor)
         .environmentObject(calcVM)
         .environmentObject(aiVM)
+        .environmentObject(aiVM.streamBuffer)
     }
 
     var practiceMode: PracticeMode {

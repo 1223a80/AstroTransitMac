@@ -10,6 +10,7 @@ extension ContentView {
         await analyze(
             title: "时间点行运对本命相位",
             markdown: MarkdownExportBuilder.moment(momentResult),
+            streamKey: "moment",
             assignText: { aiVM.momentAnalysis = $0 },
             assignReasoning: { aiVM.momentReasoning = $0 }
         )
@@ -24,6 +25,7 @@ extension ContentView {
         await analyze(
             title: "本命盘分析",
             markdown: MarkdownExportBuilder.natal(momentResult),
+            streamKey: "moment",
             assignText: { aiVM.momentAnalysis = $0 },
             assignReasoning: { aiVM.momentReasoning = $0 }
         )
@@ -38,6 +40,7 @@ extension ContentView {
         await analyze(
             title: "窗口扫描命中分析",
             markdown: MarkdownExportBuilder.scan(scanResult),
+            streamKey: "scan",
             assignText: { aiVM.scanAnalysis = $0 },
             assignReasoning: { aiVM.scanReasoning = $0 }
         )
@@ -52,6 +55,7 @@ extension ContentView {
         await analyze(
             title: "本命盘 / 古典分析",
             markdown: MarkdownExportBuilder.classical(classicalResult),
+            streamKey: "classical",
             assignText: { aiVM.classicalAnalysis = $0 },
             assignReasoning: { aiVM.classicalReasoning = $0 }
         )
@@ -66,6 +70,7 @@ extension ContentView {
         await analyze(
             title: "Horary 问题分析",
             markdown: MarkdownExportBuilder.horary(horaryResult),
+            streamKey: "horary",
             assignText: { aiVM.horaryAnalysis = $0 },
             assignReasoning: { aiVM.horaryReasoning = $0 }
         )
@@ -76,26 +81,38 @@ extension ContentView {
         await analyze(
             title: title,
             markdown: markdown,
+            streamKey: modeKey,
             assignText: { aiVM.modernAnalysisByMode[modeKey] = $0 },
             assignReasoning: { aiVM.modernReasoningByMode[modeKey] = $0 }
         )
     }
 
     /// Streaming AI analysis. Both closures run on MainActor.
-    /// `assignText` receives the full accumulated visible text on each chunk;
-    /// `assignReasoning` receives the full accumulated reasoning text.
+    ///
+    /// While streaming, accumulated text is published into `aiVM.streamBuffer`
+    /// (throttled to ~10 Hz) so only `AIAnalysisView` re-renders per tick.
+    /// `assignText` / `assignReasoning` receive the final text once, at the end,
+    /// for per-mode persistent storage.
     @MainActor
     func analyze(
         title: String,
         markdown: String,
+        streamKey: String,
         assignText: @escaping (String) -> Void,
         assignReasoning: @escaping (String) -> Void
     ) async {
+        let buffer = aiVM.streamBuffer
         aiVM.isAnalyzing = true
         // Reset both fields
         assignText("")
         assignReasoning("")
-        defer { aiVM.isAnalyzing = false }
+        buffer.text = ""
+        buffer.reasoning = ""
+        buffer.activeKey = streamKey
+        defer {
+            aiVM.isAnalyzing = false
+            buffer.activeKey = nil
+        }
 
         let config = LLMAnalysisClient.Configuration(
             baseURL: appState.llmBaseURL,
@@ -115,16 +132,17 @@ extension ContentView {
 
         var accumulatedText = ""
         var accumulatedReasoning = ""
+        var lastFlush = ContinuousClock.now
 
         do {
             for try await chunk in stream {
-                if !chunk.content.isEmpty {
-                    accumulatedText += chunk.content
-                    assignText(accumulatedText)
-                }
-                if !chunk.reasoning.isEmpty {
-                    accumulatedReasoning += chunk.reasoning
-                    assignReasoning(accumulatedReasoning)
+                accumulatedText += chunk.content
+                accumulatedReasoning += chunk.reasoning
+                let now = ContinuousClock.now
+                if now - lastFlush >= .milliseconds(100) {
+                    buffer.text = accumulatedText
+                    buffer.reasoning = accumulatedReasoning
+                    lastFlush = now
                 }
             }
             // If no content arrived via stream (e.g. empty response), mark error
@@ -134,6 +152,10 @@ extension ContentView {
         } catch {
             calcVM.errorMessage = error.localizedDescription
         }
+
+        // Persist whatever arrived (full text, or partial text on error).
+        assignText(accumulatedText)
+        assignReasoning(accumulatedReasoning)
     }
 
     var selectedAIPromptText: String {

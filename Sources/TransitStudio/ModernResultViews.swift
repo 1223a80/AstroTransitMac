@@ -5,15 +5,17 @@ import SwiftUI
 struct SynastryResultPane: View {
     let result: SynastryResult
     @Binding var selectedTab: String
+    let streamKey: String
     let analysis: String
     let reasoning: String
     let isAnalyzing: Bool
     let canAnalyze: Bool
     let onAnalyze: () -> Void
 
-    init(result: SynastryResult, selectedTab: Binding<String>, analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
+    init(result: SynastryResult, selectedTab: Binding<String>, streamKey: String = "", analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
         self.result = result
         self._selectedTab = selectedTab
+        self.streamKey = streamKey
         self.analysis = analysis
         self.reasoning = reasoning
         self.isAnalyzing = isAnalyzing
@@ -88,6 +90,7 @@ struct SynastryResultPane: View {
             RawJSONView(value: result)
         case "ai":
             AIAnalysisView(
+                streamKey: streamKey,
                 analysis: analysis,
                 reasoning: reasoning,
                 isAnalyzing: isAnalyzing,
@@ -130,16 +133,18 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
     let title: String
     let result: T
     @Binding var selectedTab: String
+    let streamKey: String
     let analysis: String
     let reasoning: String
     let isAnalyzing: Bool
     let canAnalyze: Bool
     let onAnalyze: () -> Void
 
-    init(title: String, result: T, selectedTab: Binding<String>, analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
+    init(title: String, result: T, selectedTab: Binding<String>, streamKey: String = "", analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
         self.title = title
         self.result = result
         self._selectedTab = selectedTab
+        self.streamKey = streamKey
         self.analysis = analysis
         self.reasoning = reasoning
         self.isAnalyzing = isAnalyzing
@@ -207,6 +212,7 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
             RawJSONView(value: result)
         case "ai":
             AIAnalysisView(
+                streamKey: streamKey,
                 analysis: analysis,
                 reasoning: reasoning,
                 isAnalyzing: isAnalyzing,
@@ -229,15 +235,17 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
 struct ProgressionResultPane: View {
     let result: ProgressionResult
     @Binding var selectedTab: String
+    let streamKey: String
     let analysis: String
     let reasoning: String
     let isAnalyzing: Bool
     let canAnalyze: Bool
     let onAnalyze: () -> Void
 
-    init(result: ProgressionResult, selectedTab: Binding<String>, analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
+    init(result: ProgressionResult, selectedTab: Binding<String>, streamKey: String = "", analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
         self.result = result
         self._selectedTab = selectedTab
+        self.streamKey = streamKey
         self.analysis = analysis
         self.reasoning = reasoning
         self.isAnalyzing = isAnalyzing
@@ -319,6 +327,7 @@ struct ProgressionResultPane: View {
             RawJSONView(value: result)
         case "ai":
             AIAnalysisView(
+                streamKey: streamKey,
                 analysis: analysis,
                 reasoning: reasoning,
                 isAnalyzing: isAnalyzing,
@@ -372,15 +381,17 @@ struct ProgressedLunationView: View {
 struct SolarArcResultPane: View {
     let result: SolarArcResult
     @Binding var selectedTab: String
+    let streamKey: String
     let analysis: String
     let reasoning: String
     let isAnalyzing: Bool
     let canAnalyze: Bool
     let onAnalyze: () -> Void
 
-    init(result: SolarArcResult, selectedTab: Binding<String>, analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
+    init(result: SolarArcResult, selectedTab: Binding<String>, streamKey: String = "", analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
         self.result = result
         self._selectedTab = selectedTab
+        self.streamKey = streamKey
         self.analysis = analysis
         self.reasoning = reasoning
         self.isAnalyzing = isAnalyzing
@@ -457,6 +468,7 @@ struct SolarArcResultPane: View {
             RawJSONView(value: result)
         case "ai":
             AIAnalysisView(
+                streamKey: streamKey,
                 analysis: analysis,
                 reasoning: reasoning,
                 isAnalyzing: isAnalyzing,
