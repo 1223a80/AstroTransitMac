@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-06-10 — ViewModel 并发收口
+
+- **`CalculationViewModel.swift` / `AIAnalysisViewModel.swift`** — 补上 `@MainActor` 标注，与 `AppState` 一致，由类型系统保证 `@Published` 属性只在主线程更新
+- **`CalculationViewModel.progressTask`** — 去掉 `@Published`（Task 句柄不是 UI 状态，发布只会触发多余的视图刷新）
+- 验证：`swift build` ✅；`swift test` ✅（10 tests）；`pytest python_tests/` ✅（393 passed）；后端 classical smoke ✅
+
+## 2026-06-10 — Tier 3 视觉总审：全量 token 化 + GroupBox 清除
+
+- **彻底移除 GroupBox** — 全代码库不再有任何 `GroupBox`。导出区 section 卡片、`ShadbalaRowView`、`ContentView+TargetControls` 的目标/小行星/相位段等最后残余的 GroupBox 全部改为轻量卡片（VStack + `cardBackground.opacity(0.5)` + `RoundedRectangle(TS.Radius.card)`）或纯 VStack
+- **Header 精简** — 结果页头部去掉冗余副标题与卡片底色，主标题用 `TS.Font.pageTitle`，副标题 `.tertiary`
+- **全量 token 化** — 清除所有裸 `.font(.headline/.caption/.caption2/.subheadline)`、裸 `spacing:`/`.padding(N)`/`cornerRadius: N` 数字字面量，统一到 `TS.Font` / `TS.Spacing` / `TS.Padding` / `TS.Radius`。涉及 `AppNavigationRail`、`ContentView+ResultsPanes`、`ContentView+SidebarSections`、`ContentView+TargetControls`、`AppSettingsView`、`AIAnalysisView`、`PrimaryDirectionRectifierView`、`DateTimeInput`、`VedicResultViews`、`ClassicalResultViews`、`HoraryResultViews`、`TransitResultViews`、`ModernResultViews`、`ChartWheelView` 等
+- **新增轻量卡片组件** — `HorarySectionCard`（14 处 Horary GroupBox 替换）、`TimingSectionBox` 重写为卡片样式
+- **刻意保留** — `WheelTooltip` 使用固定像素 `.system(size:)`（chart 画布叠加层，需精确像素而非 Dynamic Type）；设置页 `TextEditor` 用 `.body`（编辑舒适度）
+- 验证：`swift build` ✅；`swift test` ✅（10 tests passed）；后端 smoke（classical / modern）✅；release 打包 ✅
+
+## 2026-06-09 — 前端重构修复与视觉规范收口
+
+- **`AppState.swift` / `TransitStudioApp.swift` / `ContentView.swift` / `AppSettingsView.swift` / `AIAnalysisView.swift`** — 将前端设置状态改为共享 `ObservableObject`，修复 `@AppStorage` 被抽离后产生的响应式失效；AI 面板、设置页与运行请求现在读取同一份实时状态
+- **`VedicResultViews.swift`** — 恢复 `VedicNavamsaView` 的实际内容展示，不再出现空白 Navāṃśa tab；同时收口 Dasa 时间轴与概要卡片样式到 TS token
+- **`VedicPanchangaView.swift` / `VedicDivisionalChartView.swift` / `VedicJaiminiView.swift` / `VedicAshtakavargaView.swift` / `VedicRelationshipsView.swift` / `VedicMiscDataViews.swift`** — 按 `docs/frontend-refactor/09-visual-design-spec.md` 改为模板化布局（Grid / Table / segmented-or-menu / EmptyStateView），统一字体、间距、等宽数值与空状态表现
+- **`ResultToolbarViews.swift` / `ResultUtilityViews.swift` / `ContentView+ResultsPanes.swift` / `ClassicalResultViews.swift`** — 调整结果页标题层级、空状态、告警区与古典 timing 卡片，使结果区风格与 09 规范一致
+- **`package_app.sh`** — 打包版本更新为 `1.1.2 (21)`，用于本轮前端重构与修复后的覆盖安装
+- **`docs/frontend-refactor/10-handoff-status-2026-06-09.md`**（新）— 新增 00-09 前端重构交接文档，逐模块记录已完成内容、落地文件、剩余缺口与验证结论，便于下一位 agent 或人类维护者继续接手
+- 验证：`swift build` ✅；`swift test` ✅（10 tests passed）
+
+## 2026-06-xx — 前端重构：Design Tokens + 组件 + ViewModel 提取 + 数据视图补全
+
+- **`DesignTokens.swift`** (新增) — 建立 `TS` 全局设计 token 体系（Spacing / Padding / Font / Radius / Color / Opacity / Layout）
+- **`CollapsibleSection.swift`** — 去掉 GroupBox 包装，改用 VStack + Divider + TS token
+- **`ResultToolbarViews.swift`** — Tab 栏从二维网格改为一维水平滚动（TabChip + ScrollView），提供兼容过渡 init；迁移全部 11 个调用者
+- **`AppState.swift`** (新增) — 从 ContentView 提取 21 个 `@AppStorage` 属性到独立类
+- **`CalculationViewModel.swift`** (新增) — 从 ContentView 提取结果 / 运行状态 / Rectify 状态 / Tab 选择（共 ~30 个 `@State`）
+- **`AIAnalysisViewModel.swift`** (新增) — 提取 AI 分析相关 `@State`（~12 个属性）
+- **`ExportControls.swift`** (删除) — 确认无调用者后移除
+- **吠陀 View 补全**: 新建 `VedicPanchangaView` / `VedicDivisionalChartView` / `VedicJaiminiView` / `VedicAshtakavargaView` / `VedicRelationshipsView` / `VedicMiscDataViews` + Dasa Container 增强（Vimshottari / Yogini / Ashtottari 切换）
+- **`ClassicalResultViews.swift`** — ClassicalTimingView 顶部插入 BirthdayTransition + ActivatedLordFocus 卡片
+- **`AIAnalysisView.swift`** — 模型/提示词/备注移入 DisclosureGroup 折叠区，标题行精简
+- **`package_app.sh`** — build 号升至 20
+
 ## 2026-06-06 — 用户样例 ACG 个人计算（跟踪记录）
 
 - **`PLANS.md`** — 追加用户样例 ACG 计算任务，记录已确认出生资料与本次采用的标准 `in mundo astrocartography` 口径
