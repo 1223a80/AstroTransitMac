@@ -40,6 +40,17 @@ struct TabChip: View {
     }
 }
 
+/// Resolves the toolbar title for the selected tab from the same tab lists
+/// that feed the toolbar, so the title can never drift from the definitions.
+func resultTabTitle(_ selection: String, in groups: [(id: String, title: String)]...) -> String {
+    for group in groups {
+        if let match = group.first(where: { $0.id == selection }) {
+            return match.title
+        }
+    }
+    return ""
+}
+
 // MARK: - Result Pane Toolbar (single-line scrollable tabs + export row)
 struct ResultPaneToolbar: View {
     @Binding var selection: String

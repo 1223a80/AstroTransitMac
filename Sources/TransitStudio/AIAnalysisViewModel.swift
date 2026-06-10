@@ -25,6 +25,8 @@ final class AIAnalysisViewModel: ObservableObject {
     @Published var classicalReasoning = ""
     @Published var horaryAnalysis = ""
     @Published var horaryReasoning = ""
+    @Published var vedicAnalysis = ""
+    @Published var vedicReasoning = ""
 
     // MARK: - Modern sub-mode analysis
     @Published var modernAnalysisByMode: [String: String] = [:]

@@ -176,14 +176,7 @@ extension ContentView {
     }
 
     var modernNatalTabTitle: String {
-        switch calcVM.modernNatalSelectedTab {
-        case "wheel": return "星盘图"
-        case "natal_positions": return "本命位置"
-        case "natal_aspects": return "本命相位"
-        case "ai": return "AI 分析"
-        case "diagnostics": return "诊断"
-        default: return ""
-        }
+        resultTabTitle(calcVM.modernNatalSelectedTab, in: modernNatalTabs, modernNatalMoreTabs)
     }
 
     @ViewBuilder
@@ -253,15 +246,7 @@ extension ContentView {
     }
 
     var momentTabTitle: String {
-        switch calcVM.momentSelectedTab {
-        case "wheel": return "星盘图"
-        case "aspects": return "相位"
-        case "transit_positions": return "行运位置"
-        case "natal_positions": return "本命位置"
-        case "ai": return "AI 分析"
-        case "diagnostics": return "诊断"
-        default: return ""
-        }
+        resultTabTitle(calcVM.momentSelectedTab, in: momentTabs, momentMoreTabs)
     }
 
     @ViewBuilder
@@ -328,12 +313,7 @@ extension ContentView {
     }
 
     var scanTabTitle: String {
-        switch calcVM.scanSelectedTab {
-        case "hits": return "命中"
-        case "ai": return "AI 分析"
-        case "diagnostics": return "诊断"
-        default: return ""
-        }
+        resultTabTitle(calcVM.scanSelectedTab, in: scanTabs, scanMoreTabs)
     }
 
     @ViewBuilder
@@ -395,19 +375,7 @@ extension ContentView {
     }
 
     var horaryTabTitle: String {
-        switch calcVM.horarySelectedTab {
-        case "wheel": return "星盘图"
-        case "overview": return "问卜总览"
-        case "planets": return "行星状态"
-        case "points": return "点位/Lots"
-        case "houses": return "宫位"
-        case "aspects": return "相位/接纳"
-        case "judgement": return "评分明细"
-        case "ai": return "AI 分析"
-        case "diagnostics": return "诊断"
-        case "json": return "JSON"
-        default: return ""
-        }
+        resultTabTitle(calcVM.horarySelectedTab, in: horaryTabs, horaryMoreTabs)
     }
 
     @ViewBuilder

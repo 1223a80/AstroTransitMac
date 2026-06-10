@@ -77,6 +77,21 @@ extension ContentView {
     }
 
     @MainActor
+    func analyzeVedicResult() async {
+        guard let vedicResult = calcVM.vedicResult else {
+            calcVM.errorMessage = "请先完成吠陀排盘。"
+            return
+        }
+        await analyze(
+            title: "吠陀本命盘分析",
+            markdown: MarkdownExportBuilder.vedic(vedicResult, sections: Set(MarkdownExportBuilder.ExportSection.vedicSectionIDs)),
+            streamKey: "vedic",
+            assignText: { aiVM.vedicAnalysis = $0 },
+            assignReasoning: { aiVM.vedicReasoning = $0 }
+        )
+    }
+
+    @MainActor
     func analyzeModernResult(modeKey: String, title: String, markdown: String) async {
         await analyze(
             title: title,

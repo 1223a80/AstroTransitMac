@@ -53,17 +53,7 @@ struct SynastryResultPane: View {
     }
 
     var tabTitle: String {
-        switch selectedTab {
-        case "cross_aspects": return "跨盘相位"
-        case "a_in_b_houses": return "A落入B宫"
-        case "b_in_a_houses": return "B落入A宫"
-        case "person_a_planets": return "A本命位置"
-        case "person_b_planets": return "B本命位置"
-        case "diagnostics": return "诊断"
-        case "json": return "JSON"
-        case "ai": return "AI分析"
-        default: return ""
-        }
+        resultTabTitle(selectedTab, in: tabs, moreTabs)
     }
 
     @ViewBuilder
@@ -182,17 +172,7 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
     }
 
     var tabTitle: String {
-        switch selectedTab {
-        case "planets": return "行星位置"
-        case "angles": return "角点"
-        case "houses": return "宫位"
-        case "aspects": return "相位"
-        case "patterns": return "图形"
-        case "diagnostics": return "诊断"
-        case "json": return "JSON"
-        case "ai": return "AI分析"
-        default: return ""
-        }
+        resultTabTitle(selectedTab, in: tabs, moreTabs)
     }
 
     @ViewBuilder
@@ -283,17 +263,7 @@ struct ProgressionResultPane: View {
     }
 
     var tabTitle: String {
-        switch selectedTab {
-        case "progressed_planets": return "次限推进盘"
-        case "natal_planets": return "本命盘"
-        case "prog_to_natal": return "推进→本命相位"
-        case "prog_to_prog": return "推进盘相位"
-        case "lunation": return "推进月相"
-        case "diagnostics": return "诊断"
-        case "json": return "JSON"
-        case "ai": return "AI分析"
-        default: return ""
-        }
+        resultTabTitle(selectedTab, in: tabs, moreTabs)
     }
 
     @ViewBuilder
@@ -429,16 +399,7 @@ struct SolarArcResultPane: View {
     }
 
     var tabTitle: String {
-        switch selectedTab {
-        case "sa_planets": return "Solar Arc 盘"
-        case "natal_planets": return "本命盘"
-        case "sa_to_natal": return "SA→本命相位"
-        case "patterns": return "图形"
-        case "diagnostics": return "诊断"
-        case "json": return "JSON"
-        case "ai": return "AI分析"
-        default: return ""
-        }
+        resultTabTitle(selectedTab, in: tabs, moreTabs)
     }
 
     @ViewBuilder
@@ -523,12 +484,7 @@ struct HarmonicResultPane: View {
     }
 
     var tabTitle: String {
-        switch selectedTab {
-        case "planets": return "调和行星"
-        case "aspects": return "调和相位"
-        case "json": return "JSON"
-        default: return ""
-        }
+        resultTabTitle(selectedTab, in: tabs, moreTabs)
     }
 
     @ViewBuilder

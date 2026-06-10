@@ -57,27 +57,8 @@ extension ContentView {
                 VStack(alignment: .leading, spacing: TS.Spacing.md) {
                     ResultPaneToolbar(
                         selection: $calcVM.vedicSelectedTab,
-                        tabs: [
-                            (id: "overview", title: "综览"),
-                            (id: "panchanga", title: "Pañcāṅga"),
-                            (id: "dasa", title: "Daśā"),
-                            (id: "shadbala", title: "Ṣaḍbala"),
-                            (id: "yoga", title: "Yōga"),
-                            (id: "navamsa", title: "Navāṃśa"),
-                            (id: "varga", title: "Varga"),
-                            (id: "jaimini", title: "Jaimini"),
-                            (id: "ashtakavarga", title: "Aṣṭakavarga"),
-                            (id: "relationships", title: "关系"),
-                        ],
-                        moreTabs: [
-                            (id: "moon_chart", title: "Moon Chart"),
-                            (id: "bhava", title: "Bhava"),
-                            (id: "upagrahas", title: "副行星"),
-                            (id: "special_lagnas", title: "特殊 Lagna"),
-                            (id: "ai", title: "AI 分析"),
-                            (id: "diagnostics", title: "诊断"),
-                            (id: "json", title: "JSON"),
-                        ],
+                        tabs: vedicTabs,
+                        moreTabs: vedicMoreTabs,
                         currentTabTitle: vedicTabTitle,
                         markdownProvider: { MarkdownExportBuilder.vedic(result, sections: vedicExportSections) },
                         jsonProvider: { TextExportBuilder.json(result) },
@@ -168,6 +149,33 @@ extension ContentView {
                             } else {
                                 EmptyStateView(title: "无特殊 Lagna 数据", systemImage: "scope")
                             }
+                        case "ai":
+                            AIAnalysisView(
+                                streamKey: "vedic",
+                                analysis: aiVM.vedicAnalysis,
+                                reasoning: aiVM.vedicReasoning,
+                                isAnalyzing: aiVM.isAnalyzing,
+                                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            ) {
+                                Task { await analyzeVedicResult() }
+                            }
+                        case "diagnostics":
+                            if let warnings = result.warnings, !warnings.isEmpty {
+                                ScrollView {
+                                    VStack(alignment: .leading, spacing: TS.Spacing.sm) {
+                                        ForEach(warnings, id: \.self) { warning in
+                                            Label(warning, systemImage: "exclamationmark.triangle")
+                                                .font(TS.Font.body)
+                                        }
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(TS.Padding.resultContent)
+                                }
+                            } else {
+                                EmptyStateView(title: "无诊断警告", systemImage: "checkmark.circle")
+                            }
+                        case "json":
+                            RawJSONView(value: result)
                         default:
                             VedicOverviewView(result: result)
                         }
@@ -189,24 +197,35 @@ extension ContentView {
         }
     }
 
+    var vedicTabs: [(id: String, title: String)] {
+        [
+            ("overview", "综览"),
+            ("panchanga", "Pañcāṅga"),
+            ("dasa", "Daśā"),
+            ("shadbala", "Ṣaḍbala"),
+            ("yoga", "Yōga"),
+            ("navamsa", "Navāṃśa"),
+            ("varga", "Varga"),
+            ("jaimini", "Jaimini"),
+            ("ashtakavarga", "Aṣṭakavarga"),
+            ("relationships", "关系"),
+        ]
+    }
+
+    var vedicMoreTabs: [(id: String, title: String)] {
+        [
+            ("moon_chart", "Moon Chart"),
+            ("bhava", "Bhava"),
+            ("upagrahas", "副行星"),
+            ("special_lagnas", "特殊 Lagna"),
+            ("ai", "AI 分析"),
+            ("diagnostics", "诊断"),
+            ("json", "JSON"),
+        ]
+    }
+
     var vedicTabTitle: String {
-        switch calcVM.vedicSelectedTab {
-        case "overview": return "综览"
-        case "panchanga": return "Pañcāṅga"
-        case "dasa": return "Daśā"
-        case "shadbala": return "Ṣaḍbala"
-        case "yoga": return "Yōga"
-        case "navamsa": return "Navāṃśa"
-        case "varga": return "分割图"
-        case "jaimini": return "Jaimini"
-        case "ashtakavarga": return "Aṣṭakavarga"
-        case "relationships": return "行星关系"
-        case "moon_chart": return "Moon Chart"
-        case "bhava": return "Bhava Chart"
-        case "upagrahas": return "副行星"
-        case "special_lagnas": return "特殊 Lagna"
-        default: return ""
-        }
+        resultTabTitle(calcVM.vedicSelectedTab, in: vedicTabs, vedicMoreTabs)
     }
 
     @ViewBuilder

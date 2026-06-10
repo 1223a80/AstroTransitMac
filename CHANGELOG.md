@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-06-10 — 全项目体检：tab 修复 + 防腐加固
+
+- **修复吠陀页 3 个失灵 tab** — "AI 分析" / "诊断" / "JSON" 之前点击只显示综览（switch 缺 case）。AI 分析现已接入完整流式管线（`aiVM.vedicAnalysis` + `analyzeVedicResult`，streamKey "vedic"）；诊断显示后端 warnings；JSON 显示原始结果
+- **tab 标题查表化** — 全部 11 个结果页的 `xxxTabTitle` switch 改为 `resultTabTitle()` 从 tab 列表查表，消灭"标题与列表漂移"问题类（vedic 的 varga/relationships/ai、synastry 的 A入B宫 等 5 处既有漂移一并治愈）；classical 引入 `classicalAllTabs` 单一定义源
+- **小行星下载校验** — 下载内容校验 `SWISSEPH` 文件头，Dropbox 限流返回的 HTML 页不再污染星历目录（应用内 + 手动 curl 脚本两处）
+- **后端契约测试** — 新增 `BackendContractTests`（7 个），用后端真实输出 fixture 解码 Vedic / Synastry / Composite / Davison / Progression / SolarArc / Horary，后端改字段名会测试报错而不是页面空白；Swift 测试 10 → 17 个
+- **计算动作去重** — `performRun` 统一 14 处 isRunning/错误处理/进度样板；新增 `requireCoordinates` / `makeBirthSettings` / `makePersonPair` / rectify 请求构建助手
+- **大文件拆分** — `ClassicalResultViews`（1464 行）拆为表格 + `ClassicalTimingViews` + `ClassicalOverviewViews`；`ContentView+ResultsPanes`（1119 行）拆为基础页 + `ClassicalPane` + `ModernPanes` + `VedicRectifyPanes`
+- **CI** — 新增 GitHub Actions：每次 push 自动跑 swift build/test + pytest + 5 个后端 smoke
+- **仓库卫生** — 已完成的计划文档归档到 `docs/archive/`；补 `Examples/sample-horary-request.json`；`check_vibe_changes.sh` 加入 swift test 与 horary/vedic smoke；删除废弃分支（`fix/bug-sweep-may2026` 留有 `archive/` tag 可找回）；重构分支已推送 GitHub
+- 验证：`swift build` ✅；`swift test` ✅（17 tests）；pytest ✅（393）；horary/vedic smoke ✅
+
 ## 2026-06-10 — 修复 AI 流式输出越来越慢直至卡死
 
 - **根因**：每个 SSE token 都全量重发布 + 全量重渲染，单 token 成本随累积文本线性增长（O(n²)），主线程饱和后消费循环被压死

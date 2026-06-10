@@ -161,28 +161,34 @@ extension ContentView {
         .clipShape(RoundedRectangle(cornerRadius: TS.Radius.card))
     }
 
-    var classicalTabs: [(id: String, title: String)] {
-        guard let result = calcVM.classicalResult else { return [] }
-        var tabs: [(String, String)] = [
+    /// Single source of truth for classical tab ids and titles; the visible
+    /// list filters out sections the current result doesn't contain.
+    var classicalAllTabs: [(id: String, title: String)] {
+        [
             ("wheel", "星盘图"),
             ("planets", "行星状态"),
             ("points", "点位/Lots"),
             ("houses", "宫位"),
             ("aspects", "相位/接纳"),
             ("judgement", "评分明细"),
+            ("antiscia", "映点"),
+            ("primary", "主限法"),
+            ("circumambulations", "沿界推进"),
+            ("timing", "时间技法"),
+            ("ai", "AI 分析"),
         ]
-        if result.antiscia?.isEmpty == false {
-            tabs.append(("antiscia", "映点"))
+    }
+
+    var classicalTabs: [(id: String, title: String)] {
+        guard let result = calcVM.classicalResult else { return [] }
+        return classicalAllTabs.filter { tab in
+            switch tab.id {
+            case "antiscia": return result.antiscia?.isEmpty == false
+            case "primary": return result.primaryDirections?.isEmpty == false
+            case "circumambulations": return result.circumambulations?.isEmpty == false
+            default: return true
+            }
         }
-        if result.primaryDirections?.isEmpty == false {
-            tabs.append(("primary", "主限法"))
-        }
-        if result.circumambulations?.isEmpty == false {
-            tabs.append(("circumambulations", "沿界推进"))
-        }
-        tabs.append(("timing", "时间技法"))
-        tabs.append(("ai", "AI 分析"))
-        return tabs
     }
 
     var classicalMoreTabs: [(id: String, title: String)] {
@@ -190,22 +196,7 @@ extension ContentView {
     }
 
     var classicalTabTitle: String {
-        switch calcVM.classicalSelectedTab {
-        case "wheel": return "星盘图"
-        case "planets": return "行星状态"
-        case "points": return "点位/Lots"
-        case "houses": return "宫位"
-        case "aspects": return "相位/接纳"
-        case "judgement": return "评分明细"
-        case "antiscia": return "映点"
-        case "primary": return "主限法"
-        case "circumambulations": return "沿界推进"
-        case "timing": return "时间技法"
-        case "diagnostics": return "诊断"
-        case "ai": return "AI 分析"
-        case "json": return "JSON"
-        default: return ""
-        }
+        resultTabTitle(calcVM.classicalSelectedTab, in: classicalAllTabs, classicalMoreTabs)
     }
 
     @ViewBuilder
