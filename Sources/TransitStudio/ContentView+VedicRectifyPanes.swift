@@ -1,0 +1,250 @@
+import SwiftUI
+
+extension ContentView {
+    // MARK: - Rectify Results Pane
+
+    var rectifyResultsPane: some View {
+        VStack {
+            if calcVM.isRunning {
+                EmptyStateView(
+                    title: "生时矫正计算中",
+                    systemImage: "hourglass",
+                    description: calcVM.calculationProgressText.isEmpty ? "正在调用后端计算 61 个候选点。" : calcVM.calculationProgressText
+                )
+            } else if let response = calcVM.rectifyResponse {
+                PrimaryDirectionRectifierView(
+                    response: response,
+                    centerDate: natalDate,
+                    timeZone: selectedTimeZone,
+                    level2Response: $calcVM.rectifyLevel2Response,
+                    level3Response: $calcVM.rectifyLevel3Response,
+                    s1Index: $calcVM.rectifyS1Index,
+                    s2Index: $calcVM.rectifyS2Index,
+                    activeLevel: $calcVM.rectifyActiveLevel,
+                    level3ResponseID: $calcVM.rectifyLevel3ResponseID,
+                    onComputeLevel2: { offsetSec in
+                        // Invalidate in-flight immediately, before debounce fires
+                        calcVM.rectifyLevel2Gen += 1
+                        calcVM.rectifyLevel3Gen += 1
+                        Task { await runRectifyLevel2(offsetSeconds: offsetSec) }
+                    },
+                    onComputeLevel3: { offsetSec in
+                        calcVM.rectifyLevel3Gen += 1
+                        Task { await runRectifyLevel3(offsetSeconds: offsetSec) }
+                    }
+                )
+            } else {
+                EmptyStateView(
+                    title: "等待计算",
+                    systemImage: "clock.arrow.circlepath",
+                    description: "点击左侧「计算生时矫正」按钮开始计算。"
+                )
+            }
+        }
+    }
+
+    // MARK: - Vedic Results Pane
+
+    var vedicResultsPane: some View {
+        Group {
+            if calcVM.isRunning {
+                EmptyStateView(
+                    title: "吠陀计算中",
+                    systemImage: "hourglass",
+                    description: calcVM.calculationProgressText.isEmpty ? "正在调用后端计算。" : calcVM.calculationProgressText
+                )
+            } else if let result = calcVM.vedicResult {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                    ResultPaneToolbar(
+                        selection: $calcVM.vedicSelectedTab,
+                        tabs: [
+                            (id: "overview", title: "综览"),
+                            (id: "panchanga", title: "Pañcāṅga"),
+                            (id: "dasa", title: "Daśā"),
+                            (id: "shadbala", title: "Ṣaḍbala"),
+                            (id: "yoga", title: "Yōga"),
+                            (id: "navamsa", title: "Navāṃśa"),
+                            (id: "varga", title: "Varga"),
+                            (id: "jaimini", title: "Jaimini"),
+                            (id: "ashtakavarga", title: "Aṣṭakavarga"),
+                            (id: "relationships", title: "关系"),
+                        ],
+                        moreTabs: [
+                            (id: "moon_chart", title: "Moon Chart"),
+                            (id: "bhava", title: "Bhava"),
+                            (id: "upagrahas", title: "副行星"),
+                            (id: "special_lagnas", title: "特殊 Lagna"),
+                            (id: "ai", title: "AI 分析"),
+                            (id: "diagnostics", title: "诊断"),
+                            (id: "json", title: "JSON"),
+                        ],
+                        currentTabTitle: vedicTabTitle,
+                        markdownProvider: { MarkdownExportBuilder.vedic(result, sections: vedicExportSections) },
+                        jsonProvider: { TextExportBuilder.json(result) },
+                        csvProvider: { TextExportBuilder.csv(result) },
+                        basename: "vedic_chart",
+                        classicalSectionPicker: { showVedicExportSheet = true }
+                    )
+                    .padding(.horizontal, TS.Padding.resultContent)
+
+                    Group {
+                        switch calcVM.vedicSelectedTab {
+                        case "overview":
+                            VedicOverviewView(result: result)
+                        case "panchanga":
+                            if let panchanga = result.panchanga {
+                                VedicPanchangaView(panchanga: panchanga, solarDay: result.solarDay)
+                            } else {
+                                EmptyStateView(title: "无 Pañcāṅga 数据", systemImage: "calendar")
+                            }
+                        case "dasa":
+                            VedicDasaContainerView(
+                                vimshottari: result.vimshottari,
+                                yogini: result.yoginiDasa,
+                                ashtottari: result.ashtottariDasa
+                            )
+                        case "shadbala":
+                            if let shadbala = result.shadbala {
+                                VedicShadbalaView(shadbala: shadbala)
+                            } else {
+                                EmptyStateView(title: "无 Ṣaḍbala 数据", systemImage: "chart.bar")
+                            }
+                        case "yoga":
+                            if let yogas = result.yogas, !yogas.isEmpty {
+                                VedicYogaListView(yogas: yogas)
+                            } else {
+                                EmptyStateView(title: "未检测到 Yōga", systemImage: "sparkles")
+                            }
+                        case "navamsa":
+                            if let navamsa = result.navamsa {
+                                VedicNavamsaView(navamsa: navamsa)
+                            } else {
+                                EmptyStateView(title: "无 Navāṃśa 数据", systemImage: "square.grid.3x3")
+                            }
+                        case "varga":
+                            if let charts = result.divisionalCharts, !charts.isEmpty {
+                                VedicDivisionalChartView(charts: charts)
+                            } else {
+                                EmptyStateView(title: "无 Varga 数据", systemImage: "square.grid.3x3")
+                            }
+                        case "jaimini":
+                            VedicJaiminiView(
+                                karakas: result.jaiminiKarakas,
+                                arudha: result.arudha
+                            )
+                        case "ashtakavarga":
+                            if let ashtakavarga = result.ashtakavarga {
+                                VedicAshtakavargaView(data: ashtakavarga)
+                            } else {
+                                EmptyStateView(title: "无 Aṣṭakavarga 数据", systemImage: "tablecells")
+                            }
+                        case "relationships":
+                            if let relationships = result.planetRelationships {
+                                VedicRelationshipsView(relationships: relationships)
+                            } else {
+                                EmptyStateView(title: "无行星关系数据", systemImage: "link")
+                            }
+                        case "moon_chart":
+                            if let moonChart = result.moonChart {
+                                VedicDerivedChartView(title: "Moon Chart", chart: moonChart)
+                            } else {
+                                EmptyStateView(title: "无 Moon Chart 数据", systemImage: "moon")
+                            }
+                        case "bhava":
+                            if let bhavaChart = result.bhavaChart {
+                                VedicDerivedChartView(title: "Bhava Chart", chart: bhavaChart)
+                            } else {
+                                EmptyStateView(title: "无 Bhava Chart 数据", systemImage: "building.columns")
+                            }
+                        case "upagrahas":
+                            if let upagrahas = result.upagrahas, !upagrahas.isEmpty {
+                                VedicUpagrahaView(upagrahas: upagrahas)
+                            } else {
+                                EmptyStateView(title: "无副行星数据", systemImage: "smallcircle.filled.circle")
+                            }
+                        case "special_lagnas":
+                            if let lagnas = result.specialLagnas, !lagnas.isEmpty {
+                                VedicSpecialLagnaView(lagnas: lagnas)
+                            } else {
+                                EmptyStateView(title: "无特殊 Lagna 数据", systemImage: "scope")
+                            }
+                        default:
+                            VedicOverviewView(result: result)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.horizontal, TS.Padding.resultContent)
+                }
+                .padding(.vertical, TS.Spacing.md)
+                .sheet(isPresented: $showVedicExportSheet) {
+                    vedicExportSheet
+                }
+            } else {
+                EmptyStateView(
+                    title: "等待吠陀排盘",
+                    systemImage: "sun.max.circle",
+                    description: "填写出生设置后开始排盘。"
+                )
+            }
+        }
+    }
+
+    var vedicTabTitle: String {
+        switch calcVM.vedicSelectedTab {
+        case "overview": return "综览"
+        case "panchanga": return "Pañcāṅga"
+        case "dasa": return "Daśā"
+        case "shadbala": return "Ṣaḍbala"
+        case "yoga": return "Yōga"
+        case "navamsa": return "Navāṃśa"
+        case "varga": return "分割图"
+        case "jaimini": return "Jaimini"
+        case "ashtakavarga": return "Aṣṭakavarga"
+        case "relationships": return "行星关系"
+        case "moon_chart": return "Moon Chart"
+        case "bhava": return "Bhava Chart"
+        case "upagrahas": return "副行星"
+        case "special_lagnas": return "特殊 Lagna"
+        default: return ""
+        }
+    }
+
+    @ViewBuilder
+    private var vedicExportSheet: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Text("选择导出内容")
+                .font(TS.Font.sectionTitle)
+                .padding(.top, 8)
+
+            let vedicSections = MarkdownExportBuilder.ExportSection.vedicSectionIDs
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                    sectionToggleGroup(
+                        title: "吠陀",
+                        sections: Array(vedicSections).sorted { $0.label < $1.label },
+                        allSections: vedicSections,
+                        selection: $vedicExportSections
+                    )
+                }
+            }
+
+            HStack {
+                Button("取消") { showVedicExportSheet = false }
+                Spacer()
+                Button("全选") { vedicExportSections = vedicSections }
+                Button("全不选") { vedicExportSections = [] }
+                Button("导出 Markdown") {
+                    let md = MarkdownExportBuilder.vedic(calcVM.vedicResult!, sections: vedicExportSections)
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(md, forType: .string)
+                    showVedicExportSheet = false
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(vedicExportSections.isEmpty)
+            }
+        }
+        .padding()
+        .frame(width: 380, height: 360)
+    }
+}
