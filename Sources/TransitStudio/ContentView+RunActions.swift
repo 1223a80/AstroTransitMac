@@ -31,14 +31,78 @@ extension ContentView {
         }
     }
 
+    // MARK: - Shared Run Helpers
+
+    /// Shared run-state bracket for every calculation action: resets error and
+    /// asteroid status, flips `isRunning`, optionally drives the estimated
+    /// progress bar, and reports thrown errors into `calcVM.errorMessage`.
     @MainActor
-    func runModernNatal() async {
+    func performRun(
+        progressWork: Int? = nil,
+        progressLabel: String = "",
+        _ operation: () async throws -> Void
+    ) async {
         calcVM.isRunning = true
         calcVM.errorMessage = nil
         calcVM.asteroidPreparationMessage = ""
-        defer { calcVM.isRunning = false }
-
+        if let progressWork {
+            startEstimatedProgress(totalWork: progressWork, label: progressLabel)
+        }
+        defer {
+            calcVM.isRunning = false
+            if progressWork != nil {
+                finishProgress()
+            }
+        }
         do {
+            try await operation()
+        } catch {
+            calcVM.errorMessage = error.localizedDescription
+        }
+    }
+
+    /// Parses a latitude/longitude text pair, reporting a user-facing error
+    /// and returning nil when either is not numeric.
+    @MainActor
+    func requireCoordinates(
+        _ latitudeText: String,
+        _ longitudeText: String,
+        errorText: String = "经纬度需要是数字。"
+    ) -> (latitude: Double, longitude: Double)? {
+        guard let latitude = parseDouble(latitudeText), let longitude = parseDouble(longitudeText) else {
+            calcVM.errorMessage = errorText
+            return nil
+        }
+        return (latitude, longitude)
+    }
+
+    func makeBirthSettings(latitude: Double, longitude: Double, zodiac: String? = nil) -> BirthSettings {
+        BirthSettings(
+            moment: makeMoment(from: natalDate),
+            latitude: latitude,
+            longitude: longitude,
+            houseSystem: selectedHouseSystem,
+            zodiac: zodiac ?? selectedZodiac,
+            boundsSystem: selectedBoundsSystem,
+            triplicitySystem: selectedTriplicitySystem
+        )
+    }
+
+    func makePersonPair(
+        latitudeA: Double, longitudeA: Double,
+        latitudeB: Double, longitudeB: Double
+    ) -> (personA: PersonSettings, personB: PersonSettings) {
+        (
+            PersonSettings(name: "Person A", moment: makeMoment(from: natalDate), latitude: latitudeA, longitude: longitudeA),
+            PersonSettings(name: "Person B", moment: makeMoment(from: modernPersonBDate), latitude: latitudeB, longitude: longitudeB)
+        )
+    }
+
+    // MARK: - Modern Run Actions
+
+    @MainActor
+    func runModernNatal() async {
+        await performRun {
             let asteroidIDs = parseAsteroids(customAsteroids)
             let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
             let request = TransitRequest(
@@ -58,152 +122,118 @@ extension ContentView {
             calcVM.fullNatalResult = result
             calcVM.momentResult = filteredModernNatalResult(from: result, asteroidIDs: asteroidIDs)
             syncScanTargetsFromNatalChart()
-        } catch {
-            calcVM.errorMessage = error.localizedDescription
         }
     }
 
-    // MARK: - Modern Sub-Mode Run Actions
-
     @MainActor
     func runSynastry() async {
-        guard let latA = parseDouble(birthLatitude), let lonA = parseDouble(birthLongitude),
-              let latB = parseDouble(modernPersonBLatitude), let lonB = parseDouble(modernPersonBLongitude) else {
-            calcVM.errorMessage = "经纬度需要是数字。"; return
-        }
-        calcVM.isRunning = true; calcVM.errorMessage = nil; defer { calcVM.isRunning = false }
-        do {
+        guard let a = requireCoordinates(birthLatitude, birthLongitude),
+              let b = requireCoordinates(modernPersonBLatitude, modernPersonBLongitude) else { return }
+        await performRun {
+            let pair = makePersonPair(latitudeA: a.latitude, longitudeA: a.longitude, latitudeB: b.latitude, longitudeB: b.longitude)
             let request = SynastryRequest(
                 mode: "synastry",
-                personA: PersonSettings(name: "Person A", moment: makeMoment(from: natalDate), latitude: latA, longitude: lonA),
-                personB: PersonSettings(name: "Person B", moment: makeMoment(from: modernPersonBDate), latitude: latB, longitude: lonB),
+                personA: pair.personA,
+                personB: pair.personB,
                 houseSystem: selectedHouseSystem, zodiac: selectedZodiac, nodeMode: modernNodeMode,
                 aspects: selectedAspectRequests(orb: globalOrb), ephemerisPath: normalizedEphemerisPath,
                 noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.synastry(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .synastry(result)
-        } catch { calcVM.errorMessage = error.localizedDescription }
+        }
     }
 
     @MainActor
     func runComposite() async {
-        guard let latA = parseDouble(birthLatitude), let lonA = parseDouble(birthLongitude),
-              let latB = parseDouble(modernPersonBLatitude), let lonB = parseDouble(modernPersonBLongitude) else {
-            calcVM.errorMessage = "经纬度需要是数字。"; return
-        }
-        calcVM.isRunning = true; calcVM.errorMessage = nil; defer { calcVM.isRunning = false }
-        do {
+        guard let a = requireCoordinates(birthLatitude, birthLongitude),
+              let b = requireCoordinates(modernPersonBLatitude, modernPersonBLongitude) else { return }
+        await performRun {
+            let pair = makePersonPair(latitudeA: a.latitude, longitudeA: a.longitude, latitudeB: b.latitude, longitudeB: b.longitude)
             let request = CompositeRequest(
                 mode: "composite",
-                personA: PersonSettings(name: "Person A", moment: makeMoment(from: natalDate), latitude: latA, longitude: lonA),
-                personB: PersonSettings(name: "Person B", moment: makeMoment(from: modernPersonBDate), latitude: latB, longitude: lonB),
+                personA: pair.personA,
+                personB: pair.personB,
                 houseSystem: selectedHouseSystem, zodiac: selectedZodiac, nodeMode: modernNodeMode,
                 aspects: selectedAspectRequests(orb: globalOrb), ephemerisPath: normalizedEphemerisPath,
                 noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.composite(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .composite(result)
-        } catch { calcVM.errorMessage = error.localizedDescription }
+        }
     }
 
     @MainActor
     func runDavison() async {
-        guard let latA = parseDouble(birthLatitude), let lonA = parseDouble(birthLongitude),
-              let latB = parseDouble(modernPersonBLatitude), let lonB = parseDouble(modernPersonBLongitude) else {
-            calcVM.errorMessage = "经纬度需要是数字。"; return
-        }
-        calcVM.isRunning = true; calcVM.errorMessage = nil; defer { calcVM.isRunning = false }
-        do {
+        guard let a = requireCoordinates(birthLatitude, birthLongitude),
+              let b = requireCoordinates(modernPersonBLatitude, modernPersonBLongitude) else { return }
+        await performRun {
+            let pair = makePersonPair(latitudeA: a.latitude, longitudeA: a.longitude, latitudeB: b.latitude, longitudeB: b.longitude)
             let request = DavisonRequest(
                 mode: "davison",
-                personA: PersonSettings(name: "Person A", moment: makeMoment(from: natalDate), latitude: latA, longitude: lonA),
-                personB: PersonSettings(name: "Person B", moment: makeMoment(from: modernPersonBDate), latitude: latB, longitude: lonB),
+                personA: pair.personA,
+                personB: pair.personB,
                 houseSystem: selectedHouseSystem, zodiac: selectedZodiac, nodeMode: modernNodeMode,
                 aspects: selectedAspectRequests(orb: globalOrb), ephemerisPath: normalizedEphemerisPath,
                 noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.davison(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .davison(result)
-        } catch { calcVM.errorMessage = error.localizedDescription }
+        }
     }
 
     @MainActor
     func runProgressions() async {
-        guard let lat = parseDouble(birthLatitude), let lon = parseDouble(birthLongitude) else {
-            calcVM.errorMessage = "经纬度需要是数字。"; return
-        }
-        calcVM.isRunning = true; calcVM.errorMessage = nil; defer { calcVM.isRunning = false }
-        do {
-            let birth = BirthSettings(
-                moment: makeMoment(from: natalDate), latitude: lat, longitude: lon,
-                houseSystem: selectedHouseSystem, zodiac: selectedZodiac,
-                boundsSystem: selectedBoundsSystem, triplicitySystem: selectedTriplicitySystem
-            )
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        await performRun {
             let request = ProgressionRequest(
-                mode: "progression", birth: birth, reference: makeMoment(from: classicalReferenceDate),
+                mode: "progression",
+                birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
+                reference: makeMoment(from: classicalReferenceDate),
                 nodeMode: modernNodeMode, aspects: selectedAspectRequests(orb: globalOrb),
                 ephemerisPath: normalizedEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.progression(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .progression(result)
-        } catch { calcVM.errorMessage = error.localizedDescription }
+        }
     }
 
     @MainActor
     func runSolarArc() async {
-        guard let lat = parseDouble(birthLatitude), let lon = parseDouble(birthLongitude) else {
-            calcVM.errorMessage = "经纬度需要是数字。"; return
-        }
-        calcVM.isRunning = true; calcVM.errorMessage = nil; defer { calcVM.isRunning = false }
-        do {
-            let birth = BirthSettings(
-                moment: makeMoment(from: natalDate), latitude: lat, longitude: lon,
-                houseSystem: selectedHouseSystem, zodiac: selectedZodiac,
-                boundsSystem: selectedBoundsSystem, triplicitySystem: selectedTriplicitySystem
-            )
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        await performRun {
             let request = SolarArcRequest(
-                mode: "solar_arc", birth: birth, reference: makeMoment(from: classicalReferenceDate),
+                mode: "solar_arc",
+                birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
+                reference: makeMoment(from: classicalReferenceDate),
                 nodeMode: modernNodeMode, aspects: selectedAspectRequests(orb: globalOrb),
                 patternsEnabled: false,
                 ephemerisPath: normalizedEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.solarArc(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .solarArc(result)
-        } catch { calcVM.errorMessage = error.localizedDescription }
+        }
     }
 
     @MainActor
     func runHarmonic() async {
-        guard let lat = parseDouble(birthLatitude), let lon = parseDouble(birthLongitude) else {
-            calcVM.errorMessage = "经纬度需要是数字。"; return
-        }
-        calcVM.isRunning = true; calcVM.errorMessage = nil; defer { calcVM.isRunning = false }
-        do {
-            let birth = BirthSettings(
-                moment: makeMoment(from: natalDate), latitude: lat, longitude: lon,
-                houseSystem: selectedHouseSystem, zodiac: selectedZodiac,
-                boundsSystem: selectedBoundsSystem, triplicitySystem: selectedTriplicitySystem
-            )
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        await performRun {
             let request = HarmonicRequest(
-                mode: "harmonic", birth: birth,
+                mode: "harmonic",
+                birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
                 harmonicOrder: modernHarmonicOrder, nodeMode: modernNodeMode,
                 aspects: selectedAspectRequests(orb: globalOrb),
                 ephemerisPath: normalizedEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.harmonic(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .harmonic(result)
-        } catch { calcVM.errorMessage = error.localizedDescription }
+        }
     }
 
     @MainActor
     func runCalculation() async {
-        calcVM.isRunning = true
-        calcVM.errorMessage = nil
-        calcVM.asteroidPreparationMessage = ""
-        defer { calcVM.isRunning = false }
-
-        do {
+        await performRun {
             let asteroidIDs = parseAsteroids(customAsteroids)
             let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
             let request = TransitRequest(
@@ -220,8 +250,6 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             calcVM.momentResult = try await BackendClient.calculate(request: request, pythonPath: appState.pythonPath)
-        } catch {
-            calcVM.errorMessage = error.localizedDescription
         }
     }
 
@@ -232,16 +260,7 @@ extension ContentView {
             return
         }
 
-        calcVM.isRunning = true
-        calcVM.errorMessage = nil
-        calcVM.asteroidPreparationMessage = ""
-        startEstimatedProgress(totalWork: estimatedScanWork(), label: "扫描窗口")
-        defer {
-            calcVM.isRunning = false
-            finishProgress()
-        }
-
-        do {
+        await performRun(progressWork: estimatedScanWork(), progressLabel: "扫描窗口") {
             let label = scanWindowLabel.trimmingCharacters(in: .whitespacesAndNewlines)
             let transitBodies = scanTransitBodyIDs()
             let targetText = resolvedScanTargetText()
@@ -263,122 +282,61 @@ extension ContentView {
                 moonFilter: scanMoonFilter
             )
             calcVM.scanResult = try await BackendClient.scan(request: request, pythonPath: appState.pythonPath)
-        } catch {
-            calcVM.errorMessage = error.localizedDescription
         }
+    }
+
+    // MARK: - Classical
+
+    private func makeClassicalRequest(latitude: Double, longitude: Double) -> ClassicalRequest {
+        ClassicalRequest(
+            mode: "classical",
+            birth: makeBirthSettings(latitude: latitude, longitude: longitude),
+            reference: makeMoment(from: classicalReferenceDate),
+            aspectOrb: classicalAspectOrb,
+            returnMode: nil,
+            ephemerisPath: normalizedEphemerisPath,
+            noAsteroids: appState.noAsteroids,
+            requireEphemeris: appState.requireEphemeris
+        )
     }
 
     @MainActor
     func runClassical() async {
-        guard let latitude = parseDouble(birthLatitude), let longitude = parseDouble(birthLongitude) else {
-            calcVM.errorMessage = "经纬度需要是数字。"
-            return
-        }
-
-        calcVM.isRunning = true
-        calcVM.errorMessage = nil
-        calcVM.asteroidPreparationMessage = ""
-        startEstimatedProgress(totalWork: 10, label: "古典计算")
-        defer {
-            calcVM.isRunning = false
-            finishProgress()
-        }
-
-        do {
-            let birth = BirthSettings(
-                moment: makeMoment(from: natalDate),
-                latitude: latitude,
-                longitude: longitude,
-                houseSystem: selectedHouseSystem,
-                zodiac: selectedZodiac,
-                boundsSystem: selectedBoundsSystem,
-                triplicitySystem: selectedTriplicitySystem
-            )
-            let request = ClassicalRequest(
-                mode: "classical",
-                birth: birth,
-                reference: makeMoment(from: classicalReferenceDate),
-                aspectOrb: classicalAspectOrb,
-                returnMode: nil,
-                ephemerisPath: normalizedEphemerisPath,
-                noAsteroids: appState.noAsteroids,
-                requireEphemeris: appState.requireEphemeris
-            )
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        await performRun(progressWork: 10, progressLabel: "古典计算") {
+            let request = makeClassicalRequest(latitude: coords.latitude, longitude: coords.longitude)
             let result = try await BackendClient.classical(request: request, pythonPath: appState.pythonPath)
             calcVM.classicalResult = result
             syncScanTargetsFromNatalChart()
-        } catch {
-            calcVM.errorMessage = error.localizedDescription
         }
     }
 
     @MainActor
     func runClassicalTiming() async {
-        guard let latitude = parseDouble(birthLatitude), let longitude = parseDouble(birthLongitude) else {
-            calcVM.errorMessage = "经纬度需要是数字。"
-            return
-        }
-
-        calcVM.isRunning = true
-        calcVM.errorMessage = nil
-        calcVM.asteroidPreparationMessage = ""
-        startEstimatedProgress(totalWork: 4, label: "更新技法")
-        defer {
-            calcVM.isRunning = false
-            finishProgress()
-        }
-
-        do {
-            let birth = BirthSettings(
-                moment: makeMoment(from: natalDate),
-                latitude: latitude,
-                longitude: longitude,
-                houseSystem: selectedHouseSystem,
-                zodiac: selectedZodiac,
-                boundsSystem: selectedBoundsSystem,
-                triplicitySystem: selectedTriplicitySystem
-            )
-            let request = ClassicalRequest(
-                mode: "classical",
-                birth: birth,
-                reference: makeMoment(from: classicalReferenceDate),
-                aspectOrb: classicalAspectOrb,
-                returnMode: nil,
-                ephemerisPath: normalizedEphemerisPath,
-                noAsteroids: appState.noAsteroids,
-                requireEphemeris: appState.requireEphemeris
-            )
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        await performRun(progressWork: 4, progressLabel: "更新技法") {
+            let request = makeClassicalRequest(latitude: coords.latitude, longitude: coords.longitude)
             let result = try await BackendClient.classical(request: request, pythonPath: appState.pythonPath)
             calcVM.classicalResult = result
-        } catch {
-            calcVM.errorMessage = error.localizedDescription
         }
     }
 
     @MainActor
     func runHorary() async {
-        guard let latitude = parseDouble(horaryLatitude), let longitude = parseDouble(horaryLongitude) else {
-            calcVM.errorMessage = "Horary 经纬度需要是数字。"
-            return
-        }
+        guard let coords = requireCoordinates(horaryLatitude, horaryLongitude, errorText: "Horary 经纬度需要是数字。") else { return }
         let question = horaryQuestionText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !question.isEmpty else {
             calcVM.errorMessage = "请输入 Horary 问题文本。"
             return
         }
 
-        calcVM.isRunning = true
-        calcVM.errorMessage = nil
-        calcVM.asteroidPreparationMessage = ""
-        defer { calcVM.isRunning = false }
-
-        do {
+        await performRun {
             let request = HoraryRequest(
                 mode: "horary",
                 chart: HoraryChartSettings(
                     moment: makeMoment(from: horaryDate),
-                    latitude: latitude,
-                    longitude: longitude,
+                    latitude: coords.latitude,
+                    longitude: coords.longitude,
                     houseSystem: selectedHouseSystem,
                     zodiac: selectedZodiac,
                     boundsSystem: selectedBoundsSystem,
@@ -392,45 +350,61 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             calcVM.horaryResult = try await BackendClient.horary(request: request, pythonPath: appState.pythonPath)
-        } catch {
-            calcVM.errorMessage = error.localizedDescription
         }
     }
 
     // MARK: - Rectify
 
+    /// Birth date and time strings in the rectify backend's expected formats.
+    private func rectifyBirthStrings() -> (date: String, time: String) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.timeZone = selectedTimeZone
+
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm"
+        timeFormatter.timeZone = selectedTimeZone
+
+        return (dateFormatter.string(from: natalDate), timeFormatter.string(from: natalDate))
+    }
+
+    private func makeRectifyLevelRequest(
+        offsetSeconds: Int,
+        windowSeconds: Int,
+        stepSeconds: Int,
+        latitude: Double,
+        longitude: Double
+    ) -> RectifyLevel2Request {
+        let birth = rectifyBirthStrings()
+        return RectifyLevel2Request(
+            birthDate: birth.date,
+            centerTime: birth.time,
+            timezone: timezoneLabel,
+            latitude: latitude,
+            longitude: longitude,
+            houseSystem: selectedHouseSystem,
+            zodiac: selectedZodiac,
+            boundsSystem: selectedBoundsSystem,
+            triplicitySystem: selectedTriplicitySystem,
+            maxAge: 90,
+            centerOffsetSeconds: offsetSeconds,
+            windowSeconds: windowSeconds,
+            stepSeconds: stepSeconds
+        )
+    }
+
     @MainActor
     func runRectify() async {
-        guard let lat = parseDouble(birthLatitude), let lng = parseDouble(birthLongitude) else {
-            calcVM.errorMessage = "经纬度需要是数字。"
-            return
-        }
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
 
-        calcVM.isRunning = true
-        calcVM.errorMessage = nil
-        startEstimatedProgress(totalWork: 61, label: "生时矫正")
-        defer {
-            calcVM.isRunning = false
-            finishProgress()
-        }
-
-        do {
-            let f = DateFormatter()
-            f.dateFormat = "yyyy-MM-dd"
-            f.timeZone = selectedTimeZone
-            let dateStr = f.string(from: natalDate)
-
-            let t = DateFormatter()
-            t.dateFormat = "HH:mm"
-            t.timeZone = selectedTimeZone
-            let timeStr = t.string(from: natalDate)
-
+        await performRun(progressWork: 61, progressLabel: "生时矫正") {
+            let birth = rectifyBirthStrings()
             let request = RectifyRequest(
-                birthDate: dateStr,
-                centerTime: timeStr,
+                birthDate: birth.date,
+                centerTime: birth.time,
                 timezone: timezoneLabel,
-                latitude: lat,
-                longitude: lng,
+                latitude: coords.latitude,
+                longitude: coords.longitude,
                 houseSystem: selectedHouseSystem,
                 zodiac: selectedZodiac,
                 boundsSystem: selectedBoundsSystem,
@@ -458,8 +432,6 @@ extension ContentView {
             calcVM.rectifyS2Index = 0
             calcVM.rectifyLevel2Response = nil
             calcVM.rectifyLevel3Response = nil
-        } catch {
-            calcVM.errorMessage = error.localizedDescription
         }
     }
 
@@ -470,32 +442,10 @@ extension ContentView {
         let gen = calcVM.rectifyLevel2Gen  // already incremented by the closure
 
         do {
-            let f = DateFormatter()
-            f.dateFormat = "yyyy-MM-dd"
-            f.timeZone = selectedTimeZone
-            let dateStr = f.string(from: natalDate)
-
-            let t = DateFormatter()
-            t.dateFormat = "HH:mm"
-            t.timeZone = selectedTimeZone
-            let timeStr = t.string(from: natalDate)
-
-            let request = RectifyLevel2Request(
-                birthDate: dateStr,
-                centerTime: timeStr,
-                timezone: timezoneLabel,
-                latitude: lat,
-                longitude: lng,
-                houseSystem: selectedHouseSystem,
-                zodiac: selectedZodiac,
-                boundsSystem: selectedBoundsSystem,
-                triplicitySystem: selectedTriplicitySystem,
-                maxAge: 90,
-                centerOffsetSeconds: offsetSeconds,
-                windowSeconds: 30,
-                stepSeconds: 5
+            let request = makeRectifyLevelRequest(
+                offsetSeconds: offsetSeconds, windowSeconds: 30, stepSeconds: 5,
+                latitude: lat, longitude: lng
             )
-
             let response = try await RectifyClient.fetch(request: request, pythonPath: appState.pythonPath)
             guard gen == calcVM.rectifyLevel2Gen else { return } // stale response
             calcVM.rectifyLevel2Response = response
@@ -513,32 +463,10 @@ extension ContentView {
         let gen = calcVM.rectifyLevel3Gen  // already incremented by the closure
 
         do {
-            let f = DateFormatter()
-            f.dateFormat = "yyyy-MM-dd"
-            f.timeZone = selectedTimeZone
-            let dateStr = f.string(from: natalDate)
-
-            let t = DateFormatter()
-            t.dateFormat = "HH:mm"
-            t.timeZone = selectedTimeZone
-            let timeStr = t.string(from: natalDate)
-
-            let request = RectifyLevel2Request(
-                birthDate: dateStr,
-                centerTime: timeStr,
-                timezone: timezoneLabel,
-                latitude: lat,
-                longitude: lng,
-                houseSystem: selectedHouseSystem,
-                zodiac: selectedZodiac,
-                boundsSystem: selectedBoundsSystem,
-                triplicitySystem: selectedTriplicitySystem,
-                maxAge: 90,
-                centerOffsetSeconds: offsetSeconds,
-                windowSeconds: 5,
-                stepSeconds: 1
+            let request = makeRectifyLevelRequest(
+                offsetSeconds: offsetSeconds, windowSeconds: 5, stepSeconds: 1,
+                latitude: lat, longitude: lng
             )
-
             let response = try await RectifyClient.fetch(request: request, pythonPath: appState.pythonPath)
             guard gen == calcVM.rectifyLevel3Gen else { return } // stale response
             calcVM.rectifyLevel3Response = response
@@ -553,28 +481,15 @@ extension ContentView {
 
     @MainActor
     func runVedic() async {
-        guard let latitude = parseDouble(birthLatitude), let longitude = parseDouble(birthLongitude) else {
-            calcVM.errorMessage = "经纬度需要是数字。"
-            return
-        }
-
-        calcVM.isRunning = true
-        calcVM.errorMessage = nil
-        defer { calcVM.isRunning = false }
-
-        do {
-            let birth = BirthSettings(
-                moment: makeMoment(from: natalDate),
-                latitude: latitude,
-                longitude: longitude,
-                houseSystem: selectedHouseSystem,
-                zodiac: "sidereal_\(vedicAyanamsha)",
-                boundsSystem: selectedBoundsSystem,
-                triplicitySystem: selectedTriplicitySystem
-            )
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        await performRun {
             let request = VedicRequest(
                 mode: "vedic",
-                birth: birth,
+                birth: makeBirthSettings(
+                    latitude: coords.latitude,
+                    longitude: coords.longitude,
+                    zodiac: "sidereal_\(vedicAyanamsha)"
+                ),
                 reference: makeMoment(from: classicalReferenceDate),
                 full: vedicFullMode,
                 ephemerisPath: normalizedEphemerisPath,
@@ -583,8 +498,6 @@ extension ContentView {
             )
             let result = try await BackendClient.vedic(request: request, pythonPath: appState.pythonPath)
             calcVM.vedicResult = result
-        } catch {
-            calcVM.errorMessage = error.localizedDescription
         }
     }
 }
