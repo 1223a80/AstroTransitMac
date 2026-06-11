@@ -5,6 +5,7 @@ enum LLMAnalysisError: LocalizedError {
     case invalidResponse
     case serviceError(String)
     case emptyResponse
+    case truncated(String)
 
     var errorDescription: String? {
         switch self {
@@ -16,6 +17,8 @@ enum LLMAnalysisError: LocalizedError {
             return message
         case .emptyResponse:
             return "API 返回了空内容。"
+        case .truncated(let reason):
+            return "AI 输出被截断：\(reason)"
         }
     }
 }
@@ -222,7 +225,11 @@ struct LLMAnalysisClient {
             }
             guard let jsonData = payload.data(using: .utf8),
                   let chunk = try? decoder.decode(StreamChunkResponse.self, from: jsonData),
-                  let delta = chunk.choices?.first?.delta else { continue }
+                  let choice = chunk.choices?.first else { continue }
+            if let finishReason = choice.finishReason, finishReason != "stop" {
+                throw LLMAnalysisError.truncated(finishReason)
+            }
+            guard let delta = choice.delta else { continue }
             let content = delta.content ?? ""
             let reasoning = delta.reasoningContent ?? ""
             if !content.isEmpty || !reasoning.isEmpty {
@@ -264,10 +271,36 @@ struct LLMAnalysisClient {
                 .init(role: "user", content: userPrompt)
             ],
             temperature: 0.2,
-            maxTokens: 4096,
+            maxTokens: Self.resolvedMaxTokens(for: configuration),
             stream: stream,
-            reasoningEffort: configuration.reasoningEffort.isEmpty ? nil : configuration.reasoningEffort
+            reasoningEffort: configuration.reasoningEffort.isEmpty ? nil : configuration.reasoningEffort,
+            thinking: Self.thinkingMode(for: configuration)
         ))
+    }
+
+    static func resolvedMaxTokens(for configuration: Configuration) -> Int {
+        let base = configuration.baseURL.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let model = configuration.model.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if base.contains("api.deepseek.com") || model.hasPrefix("deepseek-v4") {
+            return 384_000
+        }
+        return 4096
+    }
+
+    static func resolvedThinkingType(for configuration: Configuration) -> String? {
+        let base = configuration.baseURL.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let model = configuration.model.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard base.contains("api.deepseek.com") || model.hasPrefix("deepseek-v4") else {
+            return nil
+        }
+        return configuration.reasoningEffort.isEmpty ? "disabled" : "enabled"
+    }
+
+    private static func thinkingMode(for configuration: Configuration) -> ThinkingMode? {
+        guard let type = Self.resolvedThinkingType(for: configuration) else {
+            return nil
+        }
+        return ThinkingMode(type: type)
     }
 }
 
@@ -285,6 +318,7 @@ private struct ChatRequest: Encodable {
     let maxTokens: Int
     let stream: Bool
     let reasoningEffort: String?
+    let thinking: ThinkingMode?
 
     enum CodingKeys: String, CodingKey {
         case model
@@ -293,7 +327,12 @@ private struct ChatRequest: Encodable {
         case maxTokens = "max_tokens"
         case stream
         case reasoningEffort = "reasoning_effort"
+        case thinking
     }
+}
+
+private struct ThinkingMode: Encodable {
+    let type: String
 }
 
 private struct ChatResponse: Decodable {
@@ -321,7 +360,13 @@ private struct StreamChunkResponse: Decodable {
             }
         }
 
-        let delta: Delta
+        let delta: Delta?
+        let finishReason: String?
+
+        enum CodingKeys: String, CodingKey {
+            case delta
+            case finishReason = "finish_reason"
+        }
     }
 
     let choices: [Choice]?

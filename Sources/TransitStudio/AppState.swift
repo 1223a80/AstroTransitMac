@@ -65,10 +65,10 @@ final class AppState: ObservableObject {
         requireEphemeris = defaults.string(forKey: Key.requireEphemeris) ?? "warn"
         autoDownloadAsteroids = defaults.object(forKey: Key.autoDownloadAsteroids) as? Bool ?? true
 
-        llmBaseURL = defaults.string(forKey: Key.llmBaseURL) ?? "https://open.bigmodel.cn/api/paas/v4"
-        llmModel = defaults.string(forKey: Key.llmModel) ?? "glm-4.7-flash"
+        llmBaseURL = defaults.string(forKey: Key.llmBaseURL) ?? "https://api.deepseek.com"
+        llmModel = defaults.string(forKey: Key.llmModel) ?? "deepseek-v4-flash"
         llmAPIKey = defaults.string(forKey: Key.llmAPIKey) ?? ""
-        savedLLMModels = defaults.string(forKey: Key.savedLLMModels) ?? "glm-4.7-flash"
+        savedLLMModels = defaults.string(forKey: Key.savedLLMModels) ?? "deepseek-v4-flash\ndeepseek-v4-pro"
         aiPromptStyle = defaults.string(forKey: Key.aiPromptStyle) ?? "general"
         aiPromptGeneral = defaults.string(forKey: Key.aiPromptGeneral) ?? AIPromptDefaults.text(for: "general")
         aiPromptNatal = defaults.string(forKey: Key.aiPromptNatal) ?? AIPromptDefaults.text(for: "natal")

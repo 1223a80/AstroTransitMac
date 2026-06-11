@@ -29,24 +29,23 @@ struct AIAnalysisView: View {
         isAnalyzing && streamBuffer.activeKey == streamKey
     }
 
-    /// While streaming, show the live buffer; otherwise the persisted text.
-    private var displayedAnalysis: String {
-        isStreamingHere ? streamBuffer.text : analysis
+    private var hasAnalysisContent: Bool {
+        isStreamingHere ? streamBuffer.hasText : !analysis.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    private var displayedReasoning: String {
-        isStreamingHere ? streamBuffer.reasoning : reasoning
+    private var hasReasoningContent: Bool {
+        isStreamingHere ? streamBuffer.hasReasoning : !reasoning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private var streamingPhase: StreamingPhase {
         guard isAnalyzing else { return .done }
-        if !displayedAnalysis.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            return .generating
-        }
-        if !displayedReasoning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if isStreamingHere {
+            if streamBuffer.hasText {
+                return .generating
+            }
             return .thinking
         }
-        return .thinking
+        return hasAnalysisContent ? .generating : .thinking
     }
 
     private var actionButtonLabel: String {
@@ -74,7 +73,9 @@ struct AIAnalysisView: View {
                 Text("分析操作")
                     .font(TS.Font.sectionTitle)
                 Spacer()
-                CopyMarkdownButton(markdown: displayedAnalysis)
+                CopyMarkdownButton(textProvider: {
+                    isStreamingHere ? streamBuffer.currentText() : analysis
+                })
                 Button {
                     analyze()
                 } label: {
@@ -119,7 +120,7 @@ struct AIAnalysisView: View {
             .font(TS.Font.label)
 
             // Reasoning (thinking) section — collapsible
-            if !displayedReasoning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            if hasReasoningContent {
                 VStack(alignment: .leading, spacing: TS.Spacing.md) {
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -144,11 +145,15 @@ struct AIAnalysisView: View {
 
                     if reasoningExpanded {
                         ScrollView {
-                            Text(displayedReasoning)
-                                .font(TS.Font.body)
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .textSelection(.enabled)
+                            if isStreamingHere {
+                                StreamingTextSegmentsView(segments: streamBuffer.reasoningSegments, isSecondary: true)
+                            } else {
+                                Text(reasoning)
+                                    .font(TS.Font.body)
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .textSelection(.enabled)
+                            }
                         }
                         .frame(maxHeight: 200)
                         .padding(TS.Padding.cardInner)
@@ -159,7 +164,7 @@ struct AIAnalysisView: View {
             }
 
             // Main analysis text
-            if displayedAnalysis.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            if !hasAnalysisContent {
                 EmptyStateView(
                     title: canAnalyze ? "尚未生成 AI 分析" : "请先在设置页填写 API Key",
                     systemImage: "sparkles",
@@ -170,10 +175,7 @@ struct AIAnalysisView: View {
                 // until the stream finishes — re-parsing the whole document on
                 // every tick is O(n²) and stalls the main thread.
                 ScrollView {
-                    Text(displayedAnalysis)
-                        .font(TS.Font.body)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .textSelection(.enabled)
+                    StreamingTextSegmentsView(segments: streamBuffer.textSegments)
                         .padding(TS.Padding.resultContent)
                 }
             } else {
@@ -198,6 +200,37 @@ struct AIAnalysisView: View {
             .replacingOccurrences(of: "\n### ", with: "\n\n### ")
             .replacingOccurrences(of: "\n## ", with: "\n\n## ")
             .replacingOccurrences(of: "\n# ", with: "\n\n# ")
+    }
+}
+
+private struct StreamingTextSegmentsView: View {
+    let segments: [AIStreamBuffer.Segment]
+    var isSecondary = false
+
+    var body: some View {
+        LazyVStack(alignment: .leading, spacing: 0) {
+            ForEach(segments) { segment in
+                segmentText(segment.text)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private func segmentText(_ text: String) -> some View {
+        if text.isEmpty {
+            Spacer()
+                .frame(height: TS.Spacing.md)
+        } else {
+            let view = Text(text)
+                .font(TS.Font.body)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if isSecondary {
+                view.foregroundStyle(.secondary)
+            } else {
+                view
+            }
+        }
     }
 }
 

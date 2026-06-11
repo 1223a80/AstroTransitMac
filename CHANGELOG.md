@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-06-10 — AI 流式输出二次卡顿修复
+
+- **`ContentView+AI.swift`** — 流式消费 helper 显式 `nonisolated`，token 累积与节流判断不再跑在 MainActor；只有每 ~100ms 的 delta flush 回主线程更新 UI
+- **`LLMAnalysisClient.swift`** — DeepSeek V4 请求的 `max_tokens` 提升到官方最大输出 `384000`；DeepSeek 请求显式发送 `thinking.enabled/disabled`；流式解析开始读取 `finish_reason`，`length` / `content_filter` / 资源不足等非正常结束会保留已收到文本并提示截断原因
+- **`AppState.swift`** — 新安装默认 AI Base URL / 模型改为 `https://api.deepseek.com` + `deepseek-v4-flash`，模型列表默认包含 `deepseek-v4-pro`
+- **`AIAnalysisViewModel.swift`** — `AIStreamBuffer` 从发布 growing full string 改为追加 streaming segment，并只发布轻量 `revision`，避免 flush 后继续写入字符串触发 COW 全文拷贝
+- **`AIAnalysisView.swift`** — 流式阶段用分段 `LazyVStack` 渲染增量文本，不再每 tick 对 `Text(完整长文)` 全文重排；复制按钮改为点击时读取当前流文本，流式阶段不启用长文本 selection
+- **`SwiftTests/AIStreamBufferTests.swift` / `LLMAnalysisClientTests.swift` / `AppStateTests.swift`** — 新增 buffer delta 追加、真实换行保留、DeepSeek 最大输出预算、thinking 开关与默认 LLM 设置测试
+- **`package_app.sh`** — 打包版本更新为 `1.1.5 (24)`，用于本轮 DeepSeek V4 输出预算修复后覆盖安装
+- 验证：`swift build` ✅；`swift test` ✅（24 tests）；`bash check_vibe_changes.sh` ✅；单独 rectify smoke ✅；覆盖安装待执行
+
 ## 2026-06-10 — 文档同步
 
 - **`AGENTS.md`** — 验证清单加入 `check_vibe_changes.sh` 一键门禁与契约 fixture 再生成说明；smoke 列表补 horary/vedic；新增"AI 流式契约"与"结果页 Tab 契约"两节防回归约定；Source of Truth 补 Fixtures 与 CI

@@ -1,5 +1,22 @@
 import SwiftUI
 
+private struct AnalysisStreamResult {
+    let text: String
+    let reasoning: String
+}
+
+private struct AnalysisStreamFailure: LocalizedError {
+    let underlying: Error
+    let partialResult: AnalysisStreamResult
+
+    var errorDescription: String? {
+        if let localized = underlying as? LocalizedError, let description = localized.errorDescription {
+            return description
+        }
+        return underlying.localizedDescription
+    }
+}
+
 extension ContentView {
     @MainActor
     func analyzeMomentResult() async {
@@ -102,10 +119,11 @@ extension ContentView {
         )
     }
 
-    /// Streaming AI analysis. Both closures run on MainActor.
+    /// Streaming AI analysis. Both persistence closures run on MainActor.
     ///
-    /// While streaming, accumulated text is published into `aiVM.streamBuffer`
-    /// (throttled to ~10 Hz) so only `AIAnalysisView` re-renders per tick.
+    /// While streaming, only fresh deltas are published into `aiVM.streamBuffer`
+    /// (throttled to ~10 Hz). The network consume loop stays off MainActor, so
+    /// high-token-rate streams do not queue one UI actor hop per token.
     /// `assignText` / `assignReasoning` receive the final text once, at the end,
     /// for per-mode persistent storage.
     @MainActor
@@ -118,15 +136,12 @@ extension ContentView {
     ) async {
         let buffer = aiVM.streamBuffer
         aiVM.isAnalyzing = true
-        // Reset both fields
         assignText("")
         assignReasoning("")
-        buffer.text = ""
-        buffer.reasoning = ""
-        buffer.activeKey = streamKey
+        buffer.begin(key: streamKey)
         defer {
             aiVM.isAnalyzing = false
-            buffer.activeKey = nil
+            buffer.finish()
         }
 
         let config = LLMAnalysisClient.Configuration(
@@ -145,32 +160,83 @@ extension ContentView {
             configuration: config
         )
 
-        var accumulatedText = ""
-        var accumulatedReasoning = ""
-        var lastFlush = ContinuousClock.now
+        var finalText = ""
+        var finalReasoning = ""
 
         do {
-            for try await chunk in stream {
-                accumulatedText += chunk.content
-                accumulatedReasoning += chunk.reasoning
-                let now = ContinuousClock.now
-                if now - lastFlush >= .milliseconds(100) {
-                    buffer.text = accumulatedText
-                    buffer.reasoning = accumulatedReasoning
-                    lastFlush = now
-                }
+            let result = try await Self.consumeAnalysisStream(stream) { textDelta, reasoningDelta in
+                buffer.append(textDelta: textDelta, reasoningDelta: reasoningDelta)
             }
-            // If no content arrived via stream (e.g. empty response), mark error
-            if accumulatedText.isEmpty {
+            finalText = result.text
+            finalReasoning = result.reasoning
+
+            if finalText.isEmpty {
                 calcVM.errorMessage = "AI 分析返回了空内容。"
             }
+        } catch let failure as AnalysisStreamFailure {
+            finalText = failure.partialResult.text
+            finalReasoning = failure.partialResult.reasoning
+            calcVM.errorMessage = failure.localizedDescription
         } catch {
             calcVM.errorMessage = error.localizedDescription
         }
 
         // Persist whatever arrived (full text, or partial text on error).
-        assignText(accumulatedText)
-        assignReasoning(accumulatedReasoning)
+        assignText(finalText)
+        assignReasoning(finalReasoning)
+    }
+
+    nonisolated private static func consumeAnalysisStream(
+        _ stream: AsyncThrowingStream<StreamChunk, Error>,
+        publishDelta: @escaping @MainActor @Sendable (_ textDelta: String, _ reasoningDelta: String) -> Void
+    ) async throws -> AnalysisStreamResult {
+        var textParts: [String] = []
+        var reasoningParts: [String] = []
+        textParts.reserveCapacity(512)
+        reasoningParts.reserveCapacity(512)
+
+        var pendingText = ""
+        var pendingReasoning = ""
+        pendingText.reserveCapacity(4096)
+        pendingReasoning.reserveCapacity(4096)
+
+        var lastFlush = ContinuousClock.now
+
+        func flushPending() async {
+            guard !pendingText.isEmpty || !pendingReasoning.isEmpty else {
+                return
+            }
+            let textDelta = pendingText
+            let reasoningDelta = pendingReasoning
+            pendingText.removeAll(keepingCapacity: true)
+            pendingReasoning.removeAll(keepingCapacity: true)
+            await publishDelta(textDelta, reasoningDelta)
+        }
+
+        do {
+            for try await chunk in stream {
+                if !chunk.content.isEmpty {
+                    textParts.append(chunk.content)
+                    pendingText += chunk.content
+                }
+                if !chunk.reasoning.isEmpty {
+                    reasoningParts.append(chunk.reasoning)
+                    pendingReasoning += chunk.reasoning
+                }
+
+                let now = ContinuousClock.now
+                if now - lastFlush >= .milliseconds(100) {
+                    await flushPending()
+                    lastFlush = now
+                }
+            }
+            await flushPending()
+            return AnalysisStreamResult(text: textParts.joined(), reasoning: reasoningParts.joined())
+        } catch {
+            await flushPending()
+            let partial = AnalysisStreamResult(text: textParts.joined(), reasoning: reasoningParts.joined())
+            throw AnalysisStreamFailure(underlying: error, partialResult: partial)
+        }
     }
 
     var selectedAIPromptText: String {
