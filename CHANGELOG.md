@@ -9,7 +9,7 @@
 - **`AIAnalysisView.swift`** — 流式阶段用分段 `LazyVStack` 渲染增量文本，不再每 tick 对 `Text(完整长文)` 全文重排；复制按钮改为点击时读取当前流文本，流式阶段不启用长文本 selection
 - **`SwiftTests/AIStreamBufferTests.swift` / `LLMAnalysisClientTests.swift` / `AppStateTests.swift`** — 新增 buffer delta 追加、真实换行保留、DeepSeek 最大输出预算、thinking 开关与默认 LLM 设置测试
 - **`package_app.sh`** — 打包版本更新为 `1.1.5 (24)`，用于本轮 DeepSeek V4 输出预算修复后覆盖安装
-- 验证：`swift build` ✅；`swift test` ✅（24 tests）；`bash check_vibe_changes.sh` ✅；单独 rectify smoke ✅；覆盖安装待执行
+- 验证：`swift build` ✅；`swift test` ✅（24 tests）；`bash check_vibe_changes.sh` ✅；单独 rectify smoke ✅；`./package_app.sh` 覆盖 `/Applications/TransitStudio.app` ✅；安装包版本 `1.1.5 (24)` 与 codesign verify ✅
 
 ## 2026-06-10 — 文档同步
 

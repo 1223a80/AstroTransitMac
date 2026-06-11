@@ -4,7 +4,7 @@
 
 ---
 
-# AI 修复合并推送打包 — 进行中（2026-06-11）
+# AI 修复合并推送打包 — 已完成（2026-06-11）
 
 ## 分支
 `codex/ai-streaming-stutter-followup`
@@ -15,9 +15,9 @@
 |------|------|------|
 | 01 收口当前改动 | ✅ | 已复核 diff，当前分支包含 AI 流式性能修复、DeepSeek V4 输出预算修复与默认模型切换 |
 | 02 完成验证 | ✅ | `swift test`（24 tests）、`bash check_vibe_changes.sh`、单独 rectify smoke 已通过 |
-| 03 提交并合并到 `main` | ⏳ | 提交当前分支改动，切回 `main` 做 fast-forward 合并 |
-| 04 推送远端 | ⏳ | 推送 `main` 到 `origin/main` 并核对不再 ahead |
-| 05 打包覆盖 | ⏳ | 运行 `./package_app.sh`，确认 `/Applications/TransitStudio.app` 为 `1.1.5 (24)` |
+| 03 提交并合并到 `main` | ✅ | 已提交 `2ec3def fix: harden ai streaming for deepseek v4`，并 fast-forward 合并到 `main` |
+| 04 推送远端 | ✅ | `main` 已推送到 `origin/main`，当前分支不再 ahead |
+| 05 打包覆盖 | ✅ | `./package_app.sh` 已完成覆盖安装，`/Applications/TransitStudio.app` 为 `1.1.5 (24)` 且 codesign verify 通过 |
 
 ---
 
