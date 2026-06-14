@@ -301,6 +301,7 @@ def scan_ingresses(
             if sign_prev != sign_next and distance < 20:
                 direction = 1 if signed_orb(lon_next, lon_prev) > 0 else -1
                 boundary_sign = sign_next if direction > 0 else sign_prev
+                target_sign_index = sign_next
                 exact_lon = boundary_sign * 30.0
                 exact_t = refine_crossing(t_prev, t_next, spec, exact_lon, warnings, warning_keys)
                 exact_result = body_longitude_at(exact_t, spec, warnings, warning_keys)
@@ -308,7 +309,7 @@ def scan_ingresses(
                     exact_body_lon, ephemeris_name = exact_result
                     ephemerides.add(ephemeris_name)
                     _, position_text = format_longitude(exact_body_lon)
-                    target_sign = SIGNS[boundary_sign % 12]
+                    target_sign = SIGNS[target_sign_index % 12]
                     motion = "顺行进入" if direction > 0 else "逆行退回"
                     rows.append(
                         {

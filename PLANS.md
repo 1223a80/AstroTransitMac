@@ -4,6 +4,89 @@
 
 ---
 
+# Horary 数据包增强方案评估 — 已完成（2026-06-12）
+
+## 分支
+`codex/fix-horary-perfection-timing`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 盘点当前实现 | ✅ | 已核对 horary 后端、Swift 模型、Markdown 导出、fixture 与现有脏工作区状态 |
+| 02 映射 A 中建议 | ✅ | 已按“已有底层数据 / 仅缺导出 / 需要新增计算 / 牵动契约”分类 |
+| 03 评估难度与路线 | ✅ | 已完成按当前实现的分级难度、推荐迭代顺序、关键风险与测试边界评估 |
+
+---
+
+# Horary 慢行星成相窗口与高级判定补修 — 已完成（2026-06-12）
+
+## 分支
+`codex/fix-horary-perfection-timing`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 确认问题 | ✅ | 已确认 exact 搜索窗口仍固定 30 天、Frustration 恒 not detected、`before_sign_exit_aspects` 截断会影响 key link 计算 |
+| 02 修复慢行星成相窗口 | ✅ | 按双方最早换座时间动态决定搜索窗口，不再用 30 天硬上限 |
+| 03 修复月亮列表截断 | ✅ | `before_sign_exit_aspects` 返回完整计算列表，显示截断留给前端；key link 不再吃截断数据 |
+| 04 实现 Frustration | ✅ | 增加真实“主相位前较慢方先与第三方成相”检测与回归 |
+| 05 回归、验证与打包 | ✅ | 已加真实木星-土星慢相位回归、列表截断回归、Frustration 回归；fixture 已刷新，门禁通过并已打包覆盖 `1.1.7 (26)` |
+
+---
+
+# Horary 月亮故事线边界修复与打包 — 已完成（2026-06-11）
+
+## 分支
+`codex/fix-horary-perfection-timing`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 确认问题 | ✅ | 已确认月亮 VOC 过滤未检查对方先换座、分钟字符串排序丢秒、月亮特例 orb 被写成 0.0 |
+| 02 修复 moon_storyline | ✅ | 改为内部 datetime 排序/过滤，并在 before-sign-exit 过滤里排除目标行星先换座的相位 |
+| 03 修复月亮特例 orb | ✅ | `key_significator_links` 使用当前度数 orb，不再把未来 exact 显示为当前 0.0 |
+| 04 回归与 fixture | ✅ | 新增目标先换座、同分钟先后顺序、月亮特例 orb 回归；已刷新 horary fixture |
+| 05 验证与打包 | ✅ | Python/Swift/一键门禁均通过；版本已升至 1.1.6 (25) 并覆盖 `/Applications`，codesign verify 通过 |
+
+---
+
+# Horary xhigh 复查补修 — 已完成（2026-06-11）
+
+## 分支
+`codex/fix-horary-perfection-timing`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 xhigh 复查 | ✅ | 复核 horary 计算链后追加确认：同星角色会产生 self-aspect 假成相，高级判定需排除同星主相位，逆行 ingress 标签用错目标星座，驻留阈值仍是一刀切 |
+| 02 修复同星假成相 | ✅ | `key_significator_links` / `exact_datetime_for_signature` / 高级判定统一排除同一行星自相位 |
+| 03 修复辅助计算口径 | ✅ | horary 驻留改行星独立阈值；scan 逆行换座目标星座显示改为实际进入的星座 |
+| 04 补回归与 fixture | ✅ | 已增加同星角色、高级判定、驻留阈值、逆行 ingress 回归；已刷新 horary fixture |
+| 05 验证与 diff 复核 | ✅ | horary/scan/classical pytest、horary smoke、Swift build/test、一键门禁与 diff 边界检查均通过 |
+
+---
+
+# Horary 成相时间与入离相修复 — 已完成（2026-06-11）
+
+## 分支
+`codex/fix-horary-perfection-timing`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 复核现状 | ✅ | 已复现月日合相/冲相 30 天内找不到、月亮近精确拱相误判离相、degree key aspects 为空 |
+| 02 修正计算链 | ✅ | 已改有符号相位分支扫描、瞬时入离相、精算换座与 before sign exit 判断 |
+| 03 修正高级判定 | ✅ | Translation / Collection / Prohibition / Frustration 已按时间顺序和古典定义收口 |
+| 04 补回归测试 | ✅ | 已覆盖合冲精确时间、degree geometry、月亮入相、换座前成相、高级判定误报 |
+| 05 Fixture 与验证 | ✅ | 已刷新 horary fixture；pytest、swift build/test、check_vibe_changes.sh 均通过 |
+
+---
+
 # AI 修复合并推送打包 — 已完成（2026-06-11）
 
 ## 分支

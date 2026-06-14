@@ -17,6 +17,7 @@ from astro_backend_core import (
     norm360,
     planet_name,
     sign_degree,
+    signed_orb,
     zodiac_sign_index,
 )
 from astro_backend_ephemeris import (
@@ -237,11 +238,33 @@ def aspect_name_for_sign_delta(delta: int) -> str | None:
     return {0: "合相", 2: "六合", 3: "刑相", 4: "拱相", 6: "冲相", 8: "拱相", 9: "刑相", 10: "六合"}.get(delta % 12)
 
 
+def aspect_offsets_for_angle(angle: float) -> list[float]:
+    normalized = angle % 360.0
+    if abs(normalized) < 1e-9:
+        return [0.0]
+    if abs(normalized - 180.0) < 1e-9:
+        return [180.0]
+    return [normalized, -normalized]
+
+
+def signed_aspect_orb(a_longitude: float, b_longitude: float, angle: float) -> float:
+    return min(
+        (
+            signed_orb(a_longitude, (b_longitude + offset) % 360.0)
+            for offset in aspect_offsets_for_angle(angle)
+        ),
+        key=abs,
+    )
+
+
 def applying_label(a: dict[str, Any], b: dict[str, Any], angle: float) -> str:
-    now = abs(angular_separation(a["longitude"], b["longitude"]) - angle)
-    next_sep = angular_separation(a["longitude"] + a["speed"], b["longitude"] + b["speed"])
-    later = abs(next_sep - angle)
-    return "入相" if later < now else "离相"
+    orb = signed_aspect_orb(a["longitude"], b["longitude"], angle)
+    if abs(orb) < 1e-9:
+        return "入相"
+    relative_speed = float(a.get("speed", 0.0)) - float(b.get("speed", 0.0))
+    if abs(relative_speed) < 1e-9:
+        return "离相"
+    return "入相" if orb * relative_speed < 0 else "离相"
 
 
 def classical_aspect_signature(

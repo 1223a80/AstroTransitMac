@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-06-12 — Horary 慢行星成相窗口与高级判定补修
+
+- **慢行星成相窗口** — `exact_datetime_for_signature()` 改为按双方最早换座时间动态决定搜索窗口，修复木星/土星等慢行星超过 30 天才成相却被误报不成相的问题
+- **高级判定与月亮列表** — `before_sign_exit_aspects` 不再截断到 8 条，避免 Moon-Matter 链接漏掉第 9 条之后的成相；`_detect_frustration()` 补上真实受挫检测
+- **`python_tests/test_horary.py`** — 新增 2016-11-06 木星六合土星慢相位真实星历回归、月亮换座前列表完整性回归与 Frustration detected 回归；刷新 `SwiftTests/Fixtures/horary-result.json`
+- **`package_app.sh`** — 打包版本更新为 `1.1.7 (26)`，用于本轮 Horary 修复后覆盖安装
+- 验证：`python3 -m pytest python_tests/test_horary.py` ✅（56 passed）；`python3 -m pytest python_tests/test_scan.py` ✅（31 passed）；`python3 -m pytest python_tests/test_classical.py` ✅（72 passed）；horary smoke ✅；`swift build` ✅；`swift test` ✅（24 tests）；`bash check_vibe_changes.sh` ✅（416 Python tests + Swift + smokes）；`./package_app.sh` 覆盖 `/Applications/TransitStudio.app` ✅，安装版本 `1.1.7 (26)` 且 codesign verify ✅
+
+## 2026-06-11 — Horary 成相时间与入离相修复
+
+- **`astro_backend_horary.py`** — 精确相位扫描改为有符号相位分支，合相/冲相不再因无符号角距而漏算；月亮换座时间改用星历扫描 + 二分精算，`perfects_before_sign_exit` 会检查双方是否先换座
+- **`astro_backend_classical.py`** — `applying_label()` 改为基于当前有符号 orb 与相对速度的瞬时判定，修复月亮几小时后成相却被标成“离相”的问题
+- **Horary 关键链路** — 内部相位 geometry 统一比较 `"degree"` / `"sign"` / `"co_presence"`，关键相位使用请求 `aspectOrb`，月亮特例也输出中文“入相”
+- **高级判定** — Translation / Collection / Prohibition 改按离相/入相和精确时间顺序判定；Frustration 不再把任意离相直接报成 detected
+- **Horary xhigh 补修** — 同一颗行星同时担任多个角色时不再产生 self-aspect 假成相；Translation / Collection / Prohibition / Frustration 统一排除同星主相位；负接纳相位阈值接入请求 `aspectOrb`
+- **驻留与换座标签** — Horary 驻留判定从固定 `0.05°/day` 改为按行星平均速度比例；scan 逆行换座的 `target_name` 改为实际退入的星座
+- **Moon storyline 收尾修复** — `before_sign_exit_aspects` 会排除目标行星在 exact 前先换座的相位；月亮故事线内部改用真实 `datetime` 排序/过滤，不再依赖分钟字符串；月亮特例关键链接显示当前 orb，不再把未来 exact 写成 `0.0`
+- **`python_tests/test_horary.py`** — 新增合相/冲相真实星历、月亮入相、degree geometry、换座前成相过滤与高级判定误报回归；刷新 `SwiftTests/Fixtures/horary-result.json`
+- **`package_app.sh`** — 打包版本更新为 `1.1.6 (25)`，用于本轮 Horary 修复后覆盖安装
+- 验证：`python3 -m pytest python_tests/test_horary.py` ✅（53 passed）；`python3 -m pytest python_tests/test_scan.py` ✅（31 passed）；`python3 -m pytest python_tests/test_classical.py` ✅（72 passed）；horary smoke ✅；`swift build` ✅；`swift test` ✅（24 tests）；`bash check_vibe_changes.sh` ✅（413 Python tests + Swift + smokes）；`./package_app.sh` 覆盖 `/Applications/TransitStudio.app` ✅，安装版本 `1.1.6 (25)` 且 codesign verify ✅
+
 ## 2026-06-10 — AI 流式输出二次卡顿修复
 
 - **`ContentView+AI.swift`** — 流式消费 helper 显式 `nonisolated`，token 累积与节流判断不再跑在 MainActor；只有每 ~100ms 的 delta flush 回主线程更新 UI
