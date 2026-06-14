@@ -221,6 +221,42 @@ class TestEstimateSteps:
         assert steps == 1
 
 
+class TestIngressScan:
+    def test_retrograde_ingress_target_is_entered_sign(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        import astro_backend_scan as scan
+        from astro_backend_core import BodySpec
+
+        start = datetime(2026, 1, 1, 0, 0)
+        end = start + timedelta(hours=1)
+
+        def fake_longitude(
+            dt: datetime,
+            _spec: BodySpec,
+            _warnings: list[str],
+            _warning_keys: set[str],
+        ) -> tuple[float, str]:
+            if dt == start:
+                return 0.5, "test"
+            if dt == end:
+                return 359.5, "test"
+            return 0.0, "test"
+
+        monkeypatch.setattr(scan, "body_longitude_at", fake_longitude)
+        monkeypatch.setattr(scan, "step_for_body", lambda _spec: timedelta(hours=1))
+        monkeypatch.setattr(
+            scan,
+            "refine_crossing",
+            lambda _start, _end, _spec, _exact_lon, _warnings, _warning_keys: start + timedelta(minutes=30),
+        )
+
+        result = scan.scan_ingresses(start, end, [BodySpec("MERCURY", "水星", 2)], "test", [])
+        hit = result["hits"][0]
+
+        assert hit["aspect_name"] == "逆行退回"
+        assert hit["target_name"] == "双鱼"
+        assert hit["exact_longitude"] == 0.0
+
+
 class TestScanResponse:
     def test_structure(self) -> None:
         from astro_backend_scan import scan_response
