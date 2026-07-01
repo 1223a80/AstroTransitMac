@@ -44,6 +44,11 @@ from astro_backend_ephemeris import (
 )
 from astro_backend_scan import find_aspects, scan_window
 from astro_backend_fixed_stars import compute_star_positions, find_star_conjunctions
+from astro_backend_classical_medieval import (
+    sect_light_triplicity_rulers,
+    determine_kurios,
+    profection_solar_return_synthesis,
+)
 
 
 def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
@@ -274,6 +279,35 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
         warnings.append(f"Hyleg/Alcocoden 计算失败：{exc}")
         section_errors["hyleg_alcocoden"] = str(exc)
 
+    # Medieval deep-dive computations
+    medieval: dict[str, Any] = {}
+    try:
+        # Triplicity rulers of the sect light
+        light_trip = sect_light_triplicity_rulers(
+            planet_positions.get("SUN", {}).get("longitude", 0.0),
+            planet_positions.get("MOON", {}).get("longitude", 0.0),
+            is_day, natal_asc_lon, planet_rows,
+            triplicity_system=triplicity_system,
+        )
+        medieval["sect_light_triplicity"] = light_trip
+
+        # Kurios determination
+        medieval["kurios"] = determine_kurios(
+            natal_asc_lon, is_day, light_trip, almuten,
+            profection.get("lordId"), planet_rows,
+        )
+
+        # Profection + Solar Return synthesis
+        # For now without a real SR snapshot (requires full return chart)
+        # We work with what's available
+        if profection:
+            medieval["profection_sr_synthesis"] = profection_solar_return_synthesis(
+                profection, snapshot, natal_asc_lon, planet_rows, is_day,
+            )
+    except Exception as exc:
+        warnings.append(f"中世纪技法计算失败：{exc}")
+        section_errors["medieval"] = str(exc)
+
     timing = {
         "profection": profection,
         "firdaria": firdaria,
@@ -424,6 +458,7 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
         "activated_lord_focus": activated_lord_focus,
         "declination_aspects": declination_aspects,
         "natal_star_conjunctions": natal_star_conj,
+        "medieval": medieval,
         "planetary_returns": returns,
         "prenatal_syzygy": prenatal_syzygy,
         "almuten_figuris": almuten,
