@@ -125,7 +125,9 @@ var targetPlanetOptions: [TargetPositionOption] {
             houses: result.houses,
             lots: result.lots,
             aspects: filteredAspects,
-            declinationAspects: result.declinationAspects,
+            declinationAspects: result.declinationAspects?.filter {
+                visibleBodyIDs.contains($0.body1) && visibleBodyIDs.contains($0.body2)
+            },
             natalStarConjunctions: result.natalStarConjunctions?.filter { visibleBodyIDs.contains($0.planet) },
             transitStarConjunctions: result.transitStarConjunctions?.filter { visibleBodyIDs.contains($0.planet) },
             warnings: result.warnings
