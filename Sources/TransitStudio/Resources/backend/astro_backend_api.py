@@ -43,6 +43,7 @@ from astro_backend_ephemeris import (
     resolve_bodies,
 )
 from astro_backend_scan import find_aspects, scan_window
+from astro_backend_fixed_stars import compute_star_positions, find_star_conjunctions
 
 
 def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
@@ -92,6 +93,11 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
     all_positions = natal_positions + transit_positions
     declination_aspects = find_declination_aspects(all_positions)
 
+    # 恒星合相
+    star_positions = compute_star_positions(natal_jd)
+    natal_star_conj = find_star_conjunctions(natal_positions, star_positions)
+    transit_star_conj = find_star_conjunctions(transit_positions, star_positions)
+
     return {
         "meta": {
             "natal_utc": natal_utc,
@@ -101,6 +107,8 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
         "natal_positions": [public_position(row) for row in natal_positions],
         "transit_positions": [public_position(row) for row in transit_positions],
         "declination_aspects": declination_aspects,
+        "natal_star_conjunctions": natal_star_conj,
+        "transit_star_conjunctions": transit_star_conj,
         "angles": angles,
         "houses": houses,
         "lots": lots,
@@ -376,6 +384,11 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
                 "strength": "approaching" if pd_entry.get("age_from_abs_arc", 0) > ref_age else "past",
             })
     declination_aspects = find_declination_aspects(planet_rows, id_key="id")
+    star_positions = compute_star_positions(birth_jd)
+    natal_star_conj = find_star_conjunctions(
+        [{"body_id": r["id"], "longitude": r["longitude"]} for r in planet_rows],
+        star_positions,
+    )
     return {
         "meta": {
             "birth_utc": birth_utc,
@@ -409,6 +422,7 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
         "birthday_transition": birthday_transition,
         "activated_lord_focus": activated_lord_focus,
         "declination_aspects": declination_aspects,
+        "natal_star_conjunctions": natal_star_conj,
         "planetary_returns": returns,
         "prenatal_syzygy": prenatal_syzygy,
         "almuten_figuris": almuten,

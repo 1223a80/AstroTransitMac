@@ -9,6 +9,8 @@ struct TransitResult: Codable {
     let lots: [ClassicalPoint]?
     let aspects: [AspectHit]
     let declinationAspects: [DeclinationAspect]?
+    let natalStarConjunctions: [FixedStarConjunction]?
+    let transitStarConjunctions: [FixedStarConjunction]?
     let warnings: [String]
 
     enum CodingKeys: String, CodingKey {
@@ -20,6 +22,8 @@ struct TransitResult: Codable {
         case lots
         case aspects
         case declinationAspects = "declination_aspects"
+        case natalStarConjunctions = "natal_star_conjunctions"
+        case transitStarConjunctions = "transit_star_conjunctions"
         case warnings
     }
 }
@@ -105,6 +109,24 @@ struct DeclinationAspect: Codable {
         case diff
         case declination1
         case declination2
+    }
+}
+
+struct FixedStarConjunction: Codable {
+    let planet: String
+    let star: String
+    let starMag: Double
+    let starNature: String
+    let starKeyword: String
+    let orb: Double
+
+    enum CodingKeys: String, CodingKey {
+        case planet
+        case star
+        case starMag = "star_mag"
+        case starNature = "star_nature"
+        case starKeyword = "star_keyword"
+        case orb
     }
 }
 
