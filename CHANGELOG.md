@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-01 — Expansion 002 规划文档
+
+- 创建 `docs/expansion-002/` 目录，包含 5 份规划文档：
+  - `README.md` — 扩展总览、执行顺序、影响范围
+  - `fixed-stars-declinations.md` — 恒星与赤纬技术规格（赤纬管线、出界/平行/反平行相位、恒星合相检测）
+  - `star-catalog.md` — 30 颗恒星目录（王星/一等/二等，含星等、行星性质、orb 规则）
+  - `medieval-deepening.md` — 中世纪技法深化（年主+日返融合、50+阿拉伯点、三分主星、Kurios 判定）
+  - `arabic-parts-expanded.md` — 53 个阿拉伯点完整公式表及日夜反转规则
+- 更新 `PLANS.md` 记录两阶段扩展计划
+- 修正计算规范：赤纬/OOB 改为 `FLG_EQUATORIAL` 或完整 `(λ, β, ε)` 转换；固定星改用 `fixstar2_ut` + `sefstars.txt` + 带逗号 nomenclature fallback；恒星合相入相改为角距缩小判定；补充 Kurios 与阿拉伯点实现边界。
+
 ## 2026-07-01 — 审计确认问题修复
 
 - 修复吠陀行星关系枚举映射、Bhava 角点、Primary Directions 纬度接入、T-square 多体识别、Ashtottari 28 宿起运、月小限跨年、Arudha 对宫例外、Jaimini Rahu 逆算、后端超时文案、当前位置新鲜度/精度过滤、非法 stdin JSON 干净报错。
