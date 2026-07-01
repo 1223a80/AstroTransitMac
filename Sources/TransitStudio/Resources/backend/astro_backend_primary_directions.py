@@ -77,9 +77,14 @@ def semi_arc(lon: float, obliq: float, latitude: float, is_diurnal: bool) -> flo
     return 180.0 + ad
 
 
+def latitude_adjusted_arc_position(lon: float, obliq: float, latitude: float, is_diurnal: bool) -> float:
+    ra = right_ascension(lon, obliq)
+    return ra + (semi_arc(lon, obliq, latitude, is_diurnal) - 180.0)
+
+
 def platiclon_to_arc(promissor_lon: float, significator_lon: float, obliq: float, latitude: float, is_diurnal: bool) -> float:
-    ra_prom = right_ascension(promissor_lon, obliq)
-    ra_sig = right_ascension(significator_lon, obliq)
+    ra_prom = latitude_adjusted_arc_position(promissor_lon, obliq, latitude, is_diurnal)
+    ra_sig = latitude_adjusted_arc_position(significator_lon, obliq, latitude, is_diurnal)
     arc = norm360(ra_sig - ra_prom)
     if arc > 180:
         arc = arc - 360

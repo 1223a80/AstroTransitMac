@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import calendar
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -43,32 +44,26 @@ DECENNIALS_SEQUENCE_NIGHT = [("MOON", 9), ("SATURN", 11), ("JUPITER", 12), ("MAR
 _ZR_TOTAL_YEARS = sum(ZR_PERIOD_YEARS.values())
 
 
+def _add_months_same_day(base: datetime, month_offset: int) -> datetime:
+    total_month = base.year * 12 + (base.month - 1) + month_offset
+    year = total_month // 12
+    month = total_month % 12 + 1
+    day = min(base.day, calendar.monthrange(year, month)[1])
+    return base.replace(year=year, month=month, day=day)
+
+
 def monthly_profection(birth_dt: datetime, reference_dt: datetime, year_sign_idx: int) -> dict[str, Any]:
-    month_delta = (reference_dt.year - birth_dt.year) * 12 + (reference_dt.month - birth_dt.month)
-    if reference_dt.day < birth_dt.day:
+    age = completed_age(birth_dt, reference_dt)
+    year_start = same_month_day(birth_dt.year + age, birth_dt)
+    month_delta = (reference_dt.year - year_start.year) * 12 + (reference_dt.month - year_start.month)
+    if reference_dt.day < year_start.day:
         month_delta -= 1
-    month_delta = max(month_delta, 0)
+    month_delta = min(max(month_delta, 0), 11)
     month_in_year = month_delta % 12
     sign_idx = (year_sign_idx + month_in_year) % 12
     lord_id = SIGN_RULERS[sign_idx]
-    month_start = same_month_day(birth_dt.year, birth_dt)
-    for _ in range(month_delta):
-        month_start = same_month_day(month_start.year, birth_dt)
-        next_month_start = same_month_day(month_start.year + 1, birth_dt) if month_start.month == 12 else same_month_day(month_start.year, birth_dt.replace(month=((birth_dt.month + 1) - 1) % 12 + 1))
-        month_start = next_month_start if next_month_start != month_start else add_years_approx(month_start, 1)
-    month_end = same_month_day(month_start.year, month_start)
-    try:
-        month_end = month_start.replace(month=(month_start.month % 12) + 1)
-    except ValueError:
-        month_end = month_start + timedelta(days=30)
-    month_end = month_end.replace(day=min(month_end.day, 28)) + timedelta(days=1) - timedelta(seconds=1)
-    month_start_calc = same_month_day(reference_dt.year, birth_dt)
-    for _ in range(month_delta):
-        try:
-            month_start_calc = month_start_calc.replace(month=(month_start_calc.month % 12) + 1)
-        except ValueError:
-            month_start_calc = month_start_calc + timedelta(days=30)
-    month_end_calc = month_start_calc + timedelta(days=27)
+    month_start = _add_months_same_day(year_start, month_delta)
+    month_end = _add_months_same_day(year_start, month_delta + 1) - timedelta(seconds=1)
     house = month_in_year + 1
     return {
         "month": month_in_year + 1,
@@ -76,8 +71,8 @@ def monthly_profection(birth_dt: datetime, reference_dt: datetime, year_sign_idx
         "sign": SIGNS[sign_idx],
         "lord": planet_name(lord_id),
         "lord_id": lord_id,
-        "start_local": format_local(month_start_calc),
-        "end_local": format_local(month_end_calc),
+        "start_local": format_local(month_start),
+        "end_local": format_local(month_end),
     }
 
 

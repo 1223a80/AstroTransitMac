@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import subprocess
+import sys
 from datetime import datetime, timedelta
+from pathlib import Path
 
 from astro_backend_api import calculate_classical
 from astro_backend_classical import (
@@ -521,6 +524,19 @@ class TestPrimaryDirections:
         assert meridian_distance(100.0, 50.0) == 50.0
         assert meridian_distance(10.0, 350.0) == 20.0
 
+    def test_primary_direction_arc_uses_latitude(self) -> None:
+        from astro_backend_primary_directions import platiclon_to_arc
+        equator_arc = platiclon_to_arc(10.0, 120.0, 23.439291, 0.0, True)
+        london_arc = platiclon_to_arc(10.0, 120.0, 23.439291, 51.5, True)
+        assert abs(equator_arc - london_arc) > 0.01
+
+    def test_primary_direction_arc_keeps_equator_ra_difference(self) -> None:
+        from astro_backend_primary_directions import platiclon_to_arc, right_ascension
+        obliq = 23.439291
+        arc = platiclon_to_arc(10.0, 120.0, obliq, 0.0, True)
+        expected = right_ascension(120.0, obliq) - right_ascension(10.0, obliq)
+        assert abs(arc - expected) < 1e-9
+
 
 class TestTimingEdges:
     def test_timing_timeline_empty(self) -> None:
@@ -576,6 +592,15 @@ class TestProfection:
         result = profection_summary(birth, ref, 280.0, [])
         assert result["age"] == 0
         assert result["house"] == 1
+
+    def test_monthly_profection_cross_year_stays_in_current_cycle(self) -> None:
+        from astro_backend_classical_timing import monthly_profection
+        from datetime import datetime
+        birth = datetime(1990, 12, 15, 12, 0)
+        ref = datetime(2026, 1, 10, 12, 0)
+        result = monthly_profection(birth, ref, 0)
+        assert result["start_local"] == "2025-12-15 12:00"
+        assert result["end_local"] == "2026-01-15 11:59"
 
 
 class TestPlanetNotes:
@@ -654,3 +679,18 @@ class TestClassicalOutputAuditFixes:
         warnings: list[str] = []
         result = calculate_classical(request, warnings)
         assert len(result["planetary_returns"]) == 7
+
+
+class TestBackendApiRobustness:
+    def test_invalid_stdin_json_returns_clean_error(self) -> None:
+        transit_calc = Path(__file__).resolve().parents[1] / "Sources" / "TransitStudio" / "Resources" / "backend" / "transit_calc.py"
+        result = subprocess.run(
+            [sys.executable, str(transit_calc)],
+            input="{bad json",
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        assert result.returncode != 0
+        assert "Traceback" not in result.stderr
+        assert "计算失败" in result.stderr

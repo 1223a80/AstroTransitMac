@@ -40,7 +40,10 @@ def _get_rasi_longitude(planet_positions: dict[str, dict[str, Any]], pid: str) -
     """Get the longitude within the planet's own sign (0-30)."""
     if pid not in planet_positions:
         return 0.0
-    return planet_positions[pid]["longitude"] % 30.0
+    rasi_longitude = planet_positions[pid]["longitude"] % 30.0
+    if pid in {"RAHU", "KETU"}:
+        return 30.0 - rasi_longitude
+    return rasi_longitude
 
 
 # ─── Compute Chara Karakas ────────────────────────────────────────────

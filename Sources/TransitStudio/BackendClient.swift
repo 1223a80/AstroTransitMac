@@ -259,7 +259,7 @@ struct BackendClient {
             }
 
             if state.terminatedByTimeout {
-                throw BackendClientError.processFailed("Python 后端执行超时（超过 60 秒）。")
+                throw BackendClientError.processFailed("Python 后端执行超时（超过 300 秒）。")
             }
 
             let outputData = state.terminationData ?? Data()

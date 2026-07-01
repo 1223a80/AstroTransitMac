@@ -87,21 +87,42 @@ struct VedicRelationshipsView: View {
     }
 
     private func relationshipLabel(_ value: Int) -> String {
+        if selectedSection == "compound" {
+            switch value {
+            case 0: return "大友"
+            case 1: return "友"
+            case 2: return "中性"
+            case 3: return "敌"
+            case 4: return "大敌"
+            default: return "未知"
+            }
+        }
+
         switch value {
-        case let value where value > 0:
-            return "友"
-        case let value where value < 0:
-            return "敌"
-        default:
-            return "中性"
+        case -1: return "自身"
+        case 0: return "友"
+        case 1: return "中性"
+        case 2: return "敌"
+        default: return "未知"
         }
     }
 
     private func relationshipColor(_ value: Int) -> Color {
+        if selectedSection == "compound" {
+            switch value {
+            case 0, 1:
+                return TS.SemanticColor.success
+            case 3, 4:
+                return TS.SemanticColor.error
+            default:
+                return .secondary
+            }
+        }
+
         switch value {
-        case let value where value > 0:
+        case 0:
             return TS.SemanticColor.success
-        case let value where value < 0:
+        case 2:
             return TS.SemanticColor.error
         default:
             return .secondary

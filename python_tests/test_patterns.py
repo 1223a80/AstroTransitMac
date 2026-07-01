@@ -73,6 +73,18 @@ class TestPatternDetection:
         patterns = self._run(lons)
         assert "t_square" in self._types(patterns)
 
+    def test_t_square_with_extra_body_uses_actual_apex(self) -> None:
+        lons = {
+            "A": _deg(0),
+            "B": _deg(180),
+            "C": _deg(90),
+            "D": _deg(10),
+        }
+        patterns = self._run(lons)
+        t_squares = [p for p in patterns if p["type"] == "t_square"]
+        assert any(p["members"] == ["A", "B", "C"] for p in t_squares)
+        assert all(len(set(p["members"])) == 3 for p in t_squares)
+
     def test_t_square_needs_3(self) -> None:
         lons = {
             "A": _deg(0),

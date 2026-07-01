@@ -364,6 +364,15 @@ class TestBhavaChart:
             if pid == "ASC":
                 assert planet["house"] == 1
 
+    def test_bhava_angles_are_quadrants_from_asc(self):
+        from astro_backend_jyotish_divisional import build_bhava_chart
+        chart = build_bhava_chart({}, 15.0)
+        angles = {row["id"]: row["longitude"] for row in chart["angles"]}
+        assert angles["ASC"] == 15.0
+        assert angles["MC"] == 105.0
+        assert angles["DSC"] == 195.0
+        assert angles["IC"] == 285.0
+
 
 # ─── 6. Planet Relationships ────────────────────────────────────────
 
@@ -448,6 +457,11 @@ class TestArudha:
         assert "house" in al
         assert 1 <= al["house"] <= 12
 
+    def test_arudha_opposite_exception_shifts_ten_signs(self):
+        from astro_backend_jyotish_arudha import calc_arudha_pada
+        positions = {"MARS": {"longitude": 90.0}}
+        assert calc_arudha_pada(0, 0, positions) == 4
+
 
 # ─── 8. Jaimini Karakas ─────────────────────────────────────────────
 
@@ -477,6 +491,36 @@ class TestJaiminiKarakas:
         jk = positions_with_reference["jaimini_karakas"]
         assert jk["chara_karakas"][0]["planet"] in ("SUN", "MOON", "MARS", "MERCURY",
                                                       "JUPITER", "VENUS", "SATURN", "RAHU")
+
+    def test_rahu_longitude_is_ranked_retrograde(self):
+        from astro_backend_jyotish_jaimini import compute_chara_karakas
+        positions = {
+            "SUN": {"longitude": 5.0},
+            "MOON": {"longitude": 10.0},
+            "MARS": {"longitude": 15.0},
+            "MERCURY": {"longitude": 20.0},
+            "JUPITER": {"longitude": 25.0},
+            "VENUS": {"longitude": 1.0},
+            "SATURN": {"longitude": 2.0},
+            "RAHU": {"longitude": 3.0},
+        }
+        result = compute_chara_karakas(positions)
+        assert result["chara_karakas"][0]["planet"] == "RAHU"
+        assert result["chara_karakas"][0]["effective_longitude"] == 27.0
+
+
+class TestAshtottariDasaFocused:
+    def test_ashtottari_uses_28_nakshatra_shifted_start(self):
+        from astro_backend_jyotish import _ashtottari_start_index_and_portion
+        start_idx, portion = _ashtottari_start_index_and_portion(66.6666666667)
+        assert start_idx == 0
+        assert 0.0 <= portion <= 1.0
+
+    def test_ashtottari_abhijit_region_maps_into_saturn_group(self):
+        from astro_backend_jyotish import _ashtottari_start_index_and_portion
+        start_idx, portion = _ashtottari_start_index_and_portion(278.0)
+        assert start_idx == 4
+        assert 0.0 <= portion <= 1.0
 
 
 # ─── 9. Ashtakavarga ────────────────────────────────────────────────

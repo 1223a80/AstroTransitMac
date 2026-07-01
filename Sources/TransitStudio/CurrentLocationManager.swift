@@ -1,6 +1,9 @@
 import CoreLocation
 import Foundation
 
+private let currentLocationMaximumAge: TimeInterval = 60
+private let currentLocationMaximumHorizontalAccuracy: CLLocationAccuracy = 1000
+
 @MainActor
 final class CurrentLocationManager: NSObject, ObservableObject {
     @Published var statusText = "未定位"
@@ -71,11 +74,23 @@ extension CurrentLocationManager: CLLocationManagerDelegate {
     }
 
     nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.first else {
+        let now = Date()
+        let location = locations
+            .filter { $0.horizontalAccuracy >= 0 }
+            .filter { now.timeIntervalSince($0.timestamp) <= currentLocationMaximumAge }
+            .filter { $0.horizontalAccuracy <= currentLocationMaximumHorizontalAccuracy }
+            .min { lhs, rhs in
+                if lhs.horizontalAccuracy == rhs.horizontalAccuracy {
+                    return lhs.timestamp > rhs.timestamp
+                }
+                return lhs.horizontalAccuracy < rhs.horizontalAccuracy
+            }
+
+        guard let location else {
             Task { @MainActor in
                 let completion = self.completion
                 self.completion = nil
-                self.statusText = "未获取到位置"
+                self.statusText = "未获取到可用的新鲜位置"
                 self.isLocating = false
                 completion?(.failure(LocationError.noLocation))
             }

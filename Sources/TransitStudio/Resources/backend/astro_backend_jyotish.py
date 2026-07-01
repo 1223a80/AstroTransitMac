@@ -492,28 +492,67 @@ def _calc_yogini_dasa(
     return {"yogini_dasas": dasas, "current_yogini": current}
 
 
+_USHADHA_BEGIN = 266.6666666667
+_ABHIJIT_BEGIN = 276.6666666667
+_SRAVANA_BEGIN = 280.8888888889
+_DHANISHTA_BEGIN = 293.6666666667
+_USHADHA_LEN = 10.0
+_ABHIJIT_LEN = 4.2222222222
+
+
+def _corrected_nakshatra28_length(longitude: float) -> float:
+    lon = longitude % 360.0
+    if lon <= _USHADHA_BEGIN:
+        return lon
+    if lon <= _ABHIJIT_BEGIN:
+        return 20 * NAKSHATRA_LEN + NAKSHATRA_LEN / _USHADHA_LEN * (lon - _USHADHA_BEGIN)
+    if lon <= _SRAVANA_BEGIN:
+        return 21 * NAKSHATRA_LEN + NAKSHATRA_LEN / _ABHIJIT_LEN * (lon - _ABHIJIT_BEGIN)
+    if lon <= _DHANISHTA_BEGIN:
+        return 22 * NAKSHATRA_LEN + 1.071428571 * (lon - _SRAVANA_BEGIN)
+    return lon + NAKSHATRA_LEN
+
+
+def _ashtottari_start_index_and_portion(moon_longitude: float) -> tuple[int, float]:
+    corrected = _corrected_nakshatra28_length(moon_longitude)
+    nak28_idx = min(int(corrected // NAKSHATRA_LEN), 27)
+    nak_portion = (corrected % NAKSHATRA_LEN) / NAKSHATRA_LEN
+    startn = (nak28_idx - 5) % 28
+
+    groups = [
+        (0, 4, 0),    # Ardra through Ashlesha -> Sun
+        (4, 7, 1),    # Magha through Uttara Phalguni -> Moon
+        (7, 11, 2),   # Hasta through Vishakha -> Mars
+        (11, 14, 3),  # Anuradha through Mula -> Mercury
+        (14, 18, 4),  # Purva Ashadha through Shravana -> Saturn
+        (18, 21, 5),  # Dhanishtha through Purva Bhadrapada -> Jupiter
+        (21, 25, 6),  # Uttara Bhadrapada through Bharani -> Rahu
+        (25, 28, 7),  # Krittika through Mrigashira -> Venus
+    ]
+    for start, end, lord_index in groups:
+        if start <= startn < end:
+            return lord_index, (startn - start + nak_portion) / (end - start)
+
+    return 0, 0.0
+
+
 def _calc_ashtottari_dasa(
     moon_longitude: float,
     birth_dt: datetime,
     reference_dt: datetime,
 ) -> dict[str, Any]:
-    """Calculate Ashtottari Dasa (108-year cycle, different lord order from Vimsottari)."""
-
-    nak_idx = nakshatra_index_for_longitude(moon_longitude)
+    """Calculate Ashtottari Dasa using the 28-nakshatra grouping."""
 
     # Ashtottari Dasa: 8 lords with total 108 years
     # Order: Sun, Moon, Mars, Mercury, Saturn, Jupiter, Rahu, Venus
     ashtottari_lords = ["SUN", "MOON", "MARS", "MERCURY", "SATURN", "JUPITER", "RAHU", "VENUS"]
     ashtottari_dur = [6, 15, 8, 17, 10, 19, 12, 21]  # total 108
 
-    # Starting index based on nakshatra index
-    start_idx = nak_idx % 8
+    start_idx, elapsed_portion = _ashtottari_start_index_and_portion(moon_longitude)
     lord_seq = ashtottari_lords[start_idx:] + ashtottari_lords[:start_idx]
     dur_seq = ashtottari_dur[start_idx:] + ashtottari_dur[:start_idx]
 
-    nak = nakshatra_for_longitude(moon_longitude)
-    nak_progress = ((moon_longitude - nak["start_longitude"]) % 360.0) / NAKSHATRA_LEN
-    elapsed = dur_seq[0] * nak_progress
+    elapsed = dur_seq[0] * elapsed_portion
 
     current_date = birth_dt - timedelta(days=elapsed * 365.2425)
     dasas = []

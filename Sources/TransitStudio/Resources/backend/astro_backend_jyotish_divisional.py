@@ -292,7 +292,7 @@ def build_bhava_chart(
         ("DSC", "Dsc", 180),
         ("IC", "IC", 270),
     ]:
-        angle_lon = (asc_longitude + offset * 30.0) % 360.0
+        angle_lon = (asc_longitude + offset) % 360.0
         sign_idx = zodiac_sign_index(angle_lon)
         _, deg_text = format_longitude(angle_lon)
         angles.append({

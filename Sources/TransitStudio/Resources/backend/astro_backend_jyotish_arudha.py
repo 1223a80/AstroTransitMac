@@ -97,9 +97,8 @@ def calc_arudha_pada(
     # Normalize
     pada = pada % 12
 
-    # Exception: If pada falls in the same rasi as the house, add 10 (mod 12)
-    # Some texts say add 9 (no 10th house pada), but standard is add 10
-    if pada == house_rasi:
+    # Exception: if pada falls in the same or opposite rasi, shift ten signs.
+    if pada == house_rasi or pada == (house_rasi + 6) % 12:
         pada = (pada + 10) % 12
         # If still same, add another sign // shouldn't happen
         if pada == house_rasi:

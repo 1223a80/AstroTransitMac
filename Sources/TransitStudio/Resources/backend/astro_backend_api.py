@@ -506,6 +506,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
 
 
 def main() -> None:
+    request: dict[str, Any] = {}
     try:
         request = json.load(sys.stdin)
         validation_error = validate_required_fields(request)
@@ -561,7 +562,7 @@ def main() -> None:
 
         print(json.dumps(response, ensure_ascii=False, indent=2, allow_nan=False))
     except Exception as exc:
-        mode_val = str(request.get("mode", "N/A")) if isinstance(request.get("mode"), str) else "NOT_A_STRING"
+        mode_val = str(request.get("mode", "N/A")) if isinstance(request, dict) and isinstance(request.get("mode"), str) else "NOT_A_STRING"
         fail(f"计算失败(mode={mode_val})：{exc}")
     finally:
         swe.close()

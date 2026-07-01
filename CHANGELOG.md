@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-01 — 审计确认问题修复
+
+- 修复吠陀行星关系枚举映射、Bhava 角点、Primary Directions 纬度接入、T-square 多体识别、Ashtottari 28 宿起运、月小限跨年、Arudha 对宫例外、Jaimini Rahu 逆算、后端超时文案、当前位置新鲜度/精度过滤、非法 stdin JSON 干净报错。
+- 新增 focused 回归覆盖上述后端计算与异常路径。
+- 验证：`/usr/local/bin/python3 -m pytest python_tests/test_patterns.py -q` ✅（26 passed）；`/usr/local/bin/python3 -m pytest python_tests/test_classical.py -q` ✅（76 passed）；`/usr/local/bin/python3 -m pytest python_tests/test_jyotish_focused.py -q` ✅（88 passed）；`swift build` ✅；`swift test` ✅（24 tests）；`PATH=/usr/local/bin:$PATH bash check_vibe_changes.sh` ✅（426 Python tests + Swift build/test + classical/scan/horary/vedic smokes）；单独 rectify smoke ✅。
+
 ## 2026-06-16 — UI 重设计：星历年鉴风格
 
 - **设计系统重写（`DesignTokens.swift`）** — 改为固定的暖米色羊皮纸色板 + 单一金色点缀 + 衬线标题字（`.serif`），不再跟随系统浅/深色（App 全局 `.preferredColorScheme(.light)`）；新增 `AstroPalette` 帮助器，按星座（白羊/金牛…）映射四元素色、按相位 ID 映射刑冲/吉相/合相语义色

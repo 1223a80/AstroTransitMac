@@ -142,8 +142,8 @@ def find_patterns(
                     continue
                 sep_ac = angular_separation(body_lons[a], body_lons[c])
                 sep_bc = angular_separation(body_lons[b], body_lons[c])
-            sq = sum(1 for s in (sep_ac, sep_bc) if abs(s - 90.0) <= PATTERN_ASPECT_ORB + 1e-9)
-            if sq >= 2:
+                sq = sum(1 for s in (sep_ac, sep_bc) if abs(s - 90.0) <= PATTERN_ASPECT_ORB + 1e-9)
+                if sq >= 2:
                     members = sorted([a, b, c])
                     orbs = _all_orbs(members)
                     _register({
