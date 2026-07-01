@@ -160,8 +160,18 @@ def calculate_body(
     sign, degree_text = format_longitude(longitude)
 
     # 赤纬与出界计算
+    # For the Moon, use equatorial coordinates for accurate declination
+    # (ecliptic latitude up to ±5.3° causes ~1° error in simplified math)
     obliq = obliquity(jd_ut)
-    dec = round(declination_from_lon(longitude, obliq), 4)
+    body_id = spec.body_id
+    if body_id == "MOON":
+        try:
+            eq_values, _ = swe.calc_ut(jd_ut, spec.code, swe.FLG_SWIEPH | swe.FLG_EQUATORIAL)
+            dec = round(eq_values[1], 4)
+        except swe.Error:
+            dec = round(declination_from_lon(longitude, obliq), 4)
+    else:
+        dec = round(declination_from_lon(longitude, obliq), 4)
     oob = abs(dec) > obliq
 
     return {

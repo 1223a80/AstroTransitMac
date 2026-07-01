@@ -62,16 +62,21 @@ _STAR_LOOKUP: dict[str, dict[str, Any]] = {s["swe_name"]: s for s in STAR_CATALO
 def compute_star_positions(
     jd_ut: float,
     stars: list[dict[str, Any]] | None = None,
+    warnings: list[str] | None = None,
 ) -> list[dict[str, Any]]:
     """Compute ecliptic longitudes for all (or given) fixed stars.
 
     Uses ``swe.fixstar_ut()`` with Swiss Ephemeris.
+    Requires ``sefstars.txt`` in the Swiss Ephemeris path.
     Returns list of dicts with ``name``, ``longitude``, ``latitude``,
     ``declination``, ``mag``, ``nature`` (from catalog) and ``orb``.
     """
     if stars is None:
         stars = STAR_CATALOG
+    if warnings is None:
+        warnings = []
     results: list[dict[str, Any]] = []
+    starfile_warning_emitted = False
     for star in stars:
         try:
             values, name_str, _ = swe.fixstar_ut(star["swe_name"], jd_ut, swe.FLG_SWIEPH | swe.FLG_SPEED)
@@ -81,7 +86,9 @@ def compute_star_positions(
             eq_vals, _, _ = swe.fixstar_ut(star["swe_name"], jd_ut, swe.FLG_SWIEPH | swe.FLG_EQUATORIAL)
             dec = eq_vals[1]
         except Exception:
-            # Skip stars that fail (shouldn't happen with FK5 catalog)
+            if not starfile_warning_emitted:
+                warnings.append("固定星计算失败：未找到 sefstars.txt（需放置于 Swiss Ephemeris 路径下或由 ephemerisPath 指定）")
+                starfile_warning_emitted = True
             continue
         results.append({
             "name": star["name"],

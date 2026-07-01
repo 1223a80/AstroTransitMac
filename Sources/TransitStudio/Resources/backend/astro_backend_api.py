@@ -100,9 +100,10 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
     declination_aspects = find_declination_aspects(all_positions)
 
     # 恒星合相
-    star_positions = compute_star_positions(natal_jd)
-    natal_star_conj = find_star_conjunctions(natal_positions, star_positions)
-    transit_star_conj = find_star_conjunctions(transit_positions, star_positions)
+    natal_star_positions = compute_star_positions(natal_jd, warnings=warnings)
+    natal_star_conj = find_star_conjunctions(natal_positions, natal_star_positions)
+    transit_star_positions = compute_star_positions(transit_jd, warnings=warnings)
+    transit_star_conj = find_star_conjunctions(transit_positions, transit_star_positions)
 
     return {
         "meta": {
@@ -419,7 +420,7 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
                 "strength": "approaching" if pd_entry.get("age_from_abs_arc", 0) > ref_age else "past",
             })
     declination_aspects = find_declination_aspects(planet_rows, id_key="id")
-    star_positions = compute_star_positions(birth_jd)
+    star_positions = compute_star_positions(birth_jd, warnings=warnings)
     natal_star_conj = find_star_conjunctions(
         [{"body_id": r["id"], "longitude": r["longitude"]} for r in planet_rows],
         star_positions,
