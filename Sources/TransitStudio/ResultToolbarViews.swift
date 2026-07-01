@@ -20,7 +20,7 @@ struct ExportMenu: View {
     }
 }
 
-// MARK: - Tab chip
+// MARK: - Underline tab
 struct TabChip: View {
     let title: String
     let isSelected: Bool
@@ -28,13 +28,16 @@ struct TabChip: View {
 
     var body: some View {
         Button(action: action) {
-            Text(title)
-                .font(TS.Font.label)
-                .padding(.horizontal, TS.Padding.chipHorizontal)
-                .padding(.vertical, TS.Padding.chipVertical)
-                .background(isSelected ? TS.SemanticColor.chipSelectedBackground : TS.SemanticColor.chipBackground)
-                .foregroundStyle(isSelected ? TS.SemanticColor.chipSelectedForeground : .primary)
-                .clipShape(RoundedRectangle(cornerRadius: TS.Radius.chip))
+            VStack(spacing: 5) {
+                Text(title)
+                    .font(TS.Font.serifTab.weight(isSelected ? .semibold : .regular))
+                    .foregroundStyle(isSelected ? TS.SemanticColor.ink : TS.SemanticColor.inkFaint)
+                Rectangle()
+                    .fill(isSelected ? TS.SemanticColor.gold : Color.clear)
+                    .frame(height: 2)
+            }
+            .padding(.horizontal, TS.Spacing.md)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
@@ -64,10 +67,10 @@ struct ResultPaneToolbar: View {
     var classicalSectionPicker: (() -> Void)? = nil
 
     var body: some View {
-        VStack(alignment: .leading, spacing: TS.Spacing.md) {
-            // Single-line scrollable tab bar
+        HStack(alignment: .center, spacing: TS.Spacing.md) {
+            // Single-line scrollable underline tab bar
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: TS.Spacing.sm) {
+                HStack(spacing: 0) {
                     ForEach(tabs, id: \.id) { tab in
                         TabChip(
                             title: tab.title,
@@ -82,26 +85,30 @@ struct ResultPaneToolbar: View {
                 }
             }
 
-            // Title + export row
-            HStack {
-                Text(currentTabTitle)
-                    .font(TS.Font.pageTitle)
-                Spacer()
-                if let classicalSectionPicker {
-                    Button("导出 Markdown...") { classicalSectionPicker() }
-                        .font(TS.Font.label)
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.small)
-                } else {
-                    CopyMarkdownButton(title: "复制 Markdown", textProvider: markdownProvider)
-                }
-                ExportMenu(
-                    markdownProvider: markdownProvider,
-                    jsonProvider: jsonProvider,
-                    csvProvider: csvProvider,
-                    basename: basename
-                )
+            Spacer(minLength: TS.Spacing.md)
+
+            // Export actions
+            if let classicalSectionPicker {
+                Button("导出 Markdown…") { classicalSectionPicker() }
+                    .font(TS.Font.label)
+                    .buttonStyle(.borderedProminent)
+                    .tint(TS.SemanticColor.gold)
+                    .controlSize(.small)
+            } else {
+                CopyMarkdownButton(title: "复制 Markdown", textProvider: markdownProvider)
             }
+            ExportMenu(
+                markdownProvider: markdownProvider,
+                jsonProvider: jsonProvider,
+                csvProvider: csvProvider,
+                basename: basename
+            )
+        }
+        .padding(.bottom, TS.Spacing.sm)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(TS.SemanticColor.line)
+                .frame(height: 1)
         }
     }
 
@@ -111,13 +118,14 @@ struct ResultPaneToolbar: View {
                 Button(tab.title) { selection = tab.id }
             }
         } label: {
-            Text("更多")
-                .font(TS.Font.label)
-                .padding(.horizontal, TS.Padding.chipHorizontal)
-                .padding(.vertical, TS.Padding.chipVertical)
-                .background(TS.SemanticColor.chipBackground)
-                .foregroundStyle(.primary)
-                .clipShape(RoundedRectangle(cornerRadius: TS.Radius.chip))
+            HStack(spacing: 3) {
+                Text("更多")
+                    .font(TS.Font.serifTab)
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 8, weight: .semibold))
+            }
+            .foregroundStyle(TS.SemanticColor.inkFaint)
+            .padding(.horizontal, TS.Spacing.md)
         }
         .menuStyle(.borderlessButton)
         .fixedSize()

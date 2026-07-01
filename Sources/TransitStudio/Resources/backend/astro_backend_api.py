@@ -510,7 +510,7 @@ def main() -> None:
         request = json.load(sys.stdin)
         validation_error = validate_required_fields(request)
         if validation_error:
-            print(json.dumps(validation_error, ensure_ascii=False, indent=2))
+            print(json.dumps(validation_error, ensure_ascii=False, indent=2, allow_nan=False))
             return
 
         warnings: list[str] = []
@@ -559,7 +559,7 @@ def main() -> None:
         else:
             response = calculate_moment(request, warnings)
 
-        print(json.dumps(response, ensure_ascii=False, indent=2))
+        print(json.dumps(response, ensure_ascii=False, indent=2, allow_nan=False))
     except Exception as exc:
         mode_val = str(request.get("mode", "N/A")) if isinstance(request.get("mode"), str) else "NOT_A_STRING"
         fail(f"计算失败(mode={mode_val})：{exc}")

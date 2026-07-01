@@ -249,7 +249,7 @@ def build_houses(
         raw_cusps, ascmc = call_houses_ex(jd_ut, latitude, longitude, house_code, sidereal)
     except Exception as exc:
         warnings.append(f"宫位计算失败，改用 Whole Sign：{exc}")
-        raw_cusps, ascmc = call_houses_ex(jd_ut, latitude, longitude, "P", sidereal)
+        raw_cusps, ascmc = call_houses_ex(jd_ut, latitude, longitude, "W", sidereal)
         house_system = "whole_sign"
         system_label = "Whole Sign"
 

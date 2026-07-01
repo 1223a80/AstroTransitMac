@@ -23,3 +23,7 @@ backups/
 
 # Local offline reference repos
 maitreya8-reference/
+
+# Reasonix agent
+reasonix.toml
+.reasonix/

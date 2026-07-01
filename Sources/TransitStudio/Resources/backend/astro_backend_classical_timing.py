@@ -150,6 +150,8 @@ def firdaria_sub_periods(main_ruler: str, main_start: datetime, main_years: floa
     sub_start = main_start
     rows: list[dict[str, Any]] = []
     for sub_ruler, sub_years in sub_sequence:
+        if total_sub <= 0:
+            continue
         fraction = sub_years / total_sub
         sub_duration_days = main_years * 365.2425 * fraction
         sub_end = sub_start + timedelta(days=sub_duration_days)
@@ -219,6 +221,8 @@ def decennials_sub_periods(main_ruler: str, main_start: datetime, main_years: fl
     sub_start = main_start
     rows: list[dict[str, Any]] = []
     for sub_ruler, sub_years in sub_sequence:
+        if total_sub <= 0:
+            continue
         fraction = sub_years / total_sub
         sub_duration_days = main_years * 365.2425 * fraction
         sub_end = sub_start + timedelta(days=sub_duration_days)

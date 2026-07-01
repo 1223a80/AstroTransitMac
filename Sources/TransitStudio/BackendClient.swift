@@ -247,7 +247,7 @@ struct BackendClient {
                 }
 
                 Task {
-                    try await Task.sleep(nanoseconds: 60_000_000_000)
+                    try await Task.sleep(nanoseconds: 300_000_000_000)
                     if state.finishTimeout() {
                         process.terminate()
                         try? stdout.close()

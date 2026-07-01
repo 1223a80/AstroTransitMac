@@ -71,7 +71,17 @@ struct ChartWheelCanvas: View {
         )
         context.fill(Path(ellipseIn: diskRect), with: .color(innerDiskGray))
 
-        context.stroke(Path(ellipseIn: haloRect), with: .color(outerAuraGray.opacity(0.75)), lineWidth: 1.5)
+        // Outer rim — engraved gold edge
+        context.stroke(Path(ellipseIn: haloRect), with: .color(goldLine.opacity(0.55)), lineWidth: 1)
+        let outerRingInnerRect = CGRect(
+            x: geometry.center.x - geometry.outerRingInner,
+            y: geometry.center.y - geometry.outerRingInner,
+            width: geometry.outerRingInner * 2,
+            height: geometry.outerRingInner * 2
+        )
+        context.stroke(Path(ellipseIn: outerRingInnerRect), with: .color(goldLine.opacity(0.85)), lineWidth: 1.2)
+
+        // Zodiac/house band divider and inner disk edge
         context.stroke(
             Path(ellipseIn: CGRect(
                 x: geometry.center.x - geometry.zodiacBandInner,
@@ -82,7 +92,7 @@ struct ChartWheelCanvas: View {
             with: .color(lineGray.opacity(0.9)),
             lineWidth: 1
         )
-        context.stroke(Path(ellipseIn: diskRect), with: .color(lineGray.opacity(0.65)), lineWidth: 1)
+        context.stroke(Path(ellipseIn: diskRect), with: .color(goldLine.opacity(0.45)), lineWidth: 1)
     }
 
     private func drawZodiacBand(in context: inout GraphicsContext) {

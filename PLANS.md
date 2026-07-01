@@ -4,6 +4,35 @@
 
 ---
 
+# Vedic 恋爱窗口推算 — 已完成（2026-06-28）
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 确认数据来源 | ✅ | 已读取整理好的本命、Dasha、Chara、Mudda、过运、年返/月返资料；未使用既有恋爱报告作为依据 |
+| 02 复核计算接口 | ✅ | 已确认 `/usr/local/bin/python3` 的 `pyswisseph 2.10.03` 可用，并查询项目 Vedic 后端结构 |
+| 03 独立计算窗口 | ✅ | 已以 2026-06-28 至 2027-06-28 为未来一年，重算 Whole Sign 过运、精确合相/相位与日评分 |
+| 04 输出结论 | ✅ | 已整理按机会强弱排序的恋爱窗口、关键日期、依据和谨慎段 |
+
+---
+
+# 审计确认 bug 修复 — 已完成（2026-06-16）
+
+## 分支
+`codex/fix-audit-confirmed-bugs`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 确认工作区与目标位置 | ✅ | 已确认工作区仅有未跟踪 reasonix 本地配置，目标代码位置与审计描述一致 |
+| 02 修复后端边界问题 | ✅ | 已修复 Horary 月亮异常速度 fallback、Whole Sign fallback、JSON NaN 输出、composite 吞异常、classical timing 零除保护 |
+| 03 修复 Swift 超时与 ignore | ✅ | BackendClient 超时已改 300s，`.gitignore` 已加入 reasonix 本地配置 |
+| 04 验证与 diff 复核 | ✅ | `bash check_vibe_changes.sh` 已通过；已检查 `git diff --stat` 与完整 diff |
+
+---
+
 # Horary 数据包增强方案评估 — 已完成（2026-06-12）
 
 ## 分支

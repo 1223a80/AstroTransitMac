@@ -421,8 +421,13 @@ def moon_storyline(
 
     sign_exit_dt = next_sign_exit_for_body(chart_dt, "MOON", warnings, warning_keys, max_days=4, step_hours=1, sidereal=sidereal)
     if sign_exit_dt is None:
-        sign_exit_hours = max((30.0 - sign_degree(moon["longitude"])) / max(moon["speed"], 0.0001) * 24.0, 0.0)
-        sign_exit_dt = chart_dt + timedelta(hours=sign_exit_hours)
+        moon_speed = moon.get("speed", 0.0)
+        if moon_speed < 0.05:
+            warnings.append("月亮速度数据异常，换座时间估算不可靠，改用 2.5 天默认值")
+            sign_exit_dt = chart_dt + timedelta(hours=60.0)
+        else:
+            sign_exit_hours = (30.0 - sign_degree(moon["longitude"])) / moon_speed * 24.0
+            sign_exit_dt = chart_dt + timedelta(hours=max(sign_exit_hours, 0.0))
     current_sign_index = zodiac_sign_index(moon["longitude"])
     next_sign = SIGNS[(current_sign_index + 1) % 12]
 

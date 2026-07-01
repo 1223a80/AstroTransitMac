@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// A sidebar section with a clickable header that toggles collapse/expand.
-/// Lightweight VStack + Divider layout, no GroupBox.
+/// Almanac style: a thin top rule, a small uppercase eyebrow label, and a
+/// disclosure chevron. No heavy GroupBox chrome.
 struct CollapsibleSection<Content: View>: View {
     let title: String
     @Binding var isExpanded: Bool
@@ -9,7 +10,9 @@ struct CollapsibleSection<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Divider()
+            Rectangle()
+                .fill(TS.SemanticColor.lineSoft)
+                .frame(height: 1)
                 .padding(.bottom, TS.Spacing.md)
 
             Button {
@@ -18,12 +21,14 @@ struct CollapsibleSection<Content: View>: View {
                 }
             } label: {
                 HStack(spacing: TS.Spacing.md) {
-                    Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                        .font(TS.Font.detail)
-                        .foregroundStyle(.secondary)
-                    Text(title)
-                        .font(TS.Font.sectionTitle)
-                        .foregroundStyle(.primary)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundStyle(TS.SemanticColor.inkFaint)
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                    Text(title.uppercased())
+                        .font(TS.Font.eyebrow)
+                        .tracking(1.2)
+                        .foregroundStyle(TS.SemanticColor.inkSoft)
                     Spacer()
                 }
                 .contentShape(Rectangle())

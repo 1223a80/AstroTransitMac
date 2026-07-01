@@ -10,7 +10,7 @@ extension ContentView {
     var middleSidebarColumn: some View {
         sidebar
             .frame(width: clampedMiddleSidebarWidth)
-            .background(.thinMaterial)
+            .background(TS.SemanticColor.card)
             .overlay(alignment: .topTrailing) {
                 middleSidebarCollapseButton
                     .padding(.top, TS.Spacing.md)

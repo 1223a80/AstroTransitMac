@@ -173,23 +173,24 @@ struct ContentView: View {
                 isShowingSettingsPage: $isShowingAppSettingsPage,
                 modernSubMode: $modernSubMode
             )
-                .frame(width: isNavigationCollapsed ? 72 : 178)
-                .background(.regularMaterial)
+                .frame(width: isNavigationCollapsed ? TS.Layout.navigationRailCollapsed : TS.Layout.navigationRailExpanded)
+                .background(TS.SemanticColor.paperRaised)
 
-            Divider()
+            divider
 
             if !isShowingAppSettingsPage {
                 if isMiddleSidebarCollapsed {
                     collapsedMiddleSidebarToggle
                 } else {
                     middleSidebarColumn
-                    Divider()
+                    divider
                 }
             }
 
             resultsPane
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .background(TS.SemanticColor.paper)
         .task(id: appState.pythonPath) {
             swissephStatus = await BackendClient.swissephStatus(pythonPath: appState.pythonPath)
         }
@@ -198,10 +199,18 @@ struct ContentView: View {
                 selectedNatalProfileID = first.id.uuidString
             }
         }
-        .tint(.accentColor)
+        .preferredColorScheme(.light)
+        .tint(TS.SemanticColor.gold)
         .environmentObject(calcVM)
         .environmentObject(aiVM)
         .environmentObject(aiVM.streamBuffer)
+    }
+
+    var divider: some View {
+        Rectangle()
+            .fill(TS.SemanticColor.line)
+            .frame(width: 1)
+            .frame(maxHeight: .infinity)
     }
 
     var practiceMode: PracticeMode {

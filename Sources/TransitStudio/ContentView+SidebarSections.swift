@@ -5,8 +5,15 @@ extension ContentView {
         ScrollView(.vertical) {
             VStack(alignment: .leading, spacing: TS.Spacing.xl) {
                 HStack(alignment: .firstTextBaseline, spacing: TS.Spacing.md) {
-                    Text(sidebarTitle)
-                        .font(TS.Font.pageTitle)
+                    VStack(alignment: .leading, spacing: TS.Spacing.xs) {
+                        Text("设置".uppercased())
+                            .font(TS.Font.eyebrow)
+                            .tracking(1.4)
+                            .foregroundStyle(TS.SemanticColor.gold)
+                        Text(sidebarTitle)
+                            .font(TS.Font.pageTitle)
+                            .foregroundStyle(TS.SemanticColor.ink)
+                    }
                     Spacer(minLength: 0)
                     if mode == .scan {
                         Button {

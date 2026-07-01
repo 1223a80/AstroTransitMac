@@ -1,37 +1,46 @@
 import SwiftUI
 
 // MARK: - Palette
+//
+// "Celestial Almanac" wheel — warm parchment surfaces with gold rules and a
+// muted element palette, matched to the DesignTokens theme. Element and aspect
+// colors mirror AstroPalette so the wheel reads as the same artifact as the
+// result tables.
 
-let pageBackground = Color(red: 0.987, green: 0.989, blue: 0.992)
-let mainWhite = Color.white
-let outerAuraGray = Color(red: 0.925, green: 0.928, blue: 0.929)
-let zodiacRingGray = Color(red: 0.918, green: 0.920, blue: 0.922)
-let signBandWhite = Color(red: 0.995, green: 0.996, blue: 0.997)
-let innerDiskGray = Color(red: 0.955, green: 0.958, blue: 0.960)
-let lineGray = Color(red: 0.804, green: 0.808, blue: 0.812)
-let strongLineGray = Color(red: 0.580, green: 0.584, blue: 0.588)
-let accentCyan = Color(red: 0.271, green: 0.796, blue: 0.918)
-let primaryText = Color(red: 0.196, green: 0.204, blue: 0.216)
-let secondaryText = Color(red: 0.478, green: 0.486, blue: 0.494)
+let pageBackground = Color(red: 0.961, green: 0.937, blue: 0.890)   // paper #F5EFE3
+let mainWhite = Color(red: 0.996, green: 0.988, blue: 0.969)        // warm parchment white (dot fills, ticks)
+let outerAuraGray = Color(red: 0.925, green: 0.890, blue: 0.816)    // outer halo beige
+let zodiacRingGray = Color(red: 0.937, green: 0.902, blue: 0.827)   // zodiac band beige
+let signBandWhite = Color(red: 0.984, green: 0.973, blue: 0.945)    // house band cream #FBF8F1
+let innerDiskGray = Color(red: 0.953, green: 0.918, blue: 0.847)    // inner disk
+let lineGray = Color(red: 0.839, green: 0.784, blue: 0.675)         // warm tan rule
+let strongLineGray = Color(red: 0.420, green: 0.388, blue: 0.341)   // axis (ASC/MC) ink-brown
+let accentCyan = Color(red: 0.710, green: 0.525, blue: 0.184)       // gold accent #B5862F
+let primaryText = Color(red: 0.169, green: 0.149, blue: 0.125)      // ink #2B2620
+let secondaryText = Color(red: 0.420, green: 0.388, blue: 0.341)    // ink-soft #6B6357
 
-let fireColor = Color(red: 1.000, green: 0.353, blue: 0.322)
-let earthColor = Color(red: 0.847, green: 0.545, blue: 0.204)
-let airColor = Color(red: 0.200, green: 0.824, blue: 0.631)
-let waterColor = Color(red: 0.122, green: 0.561, blue: 1.000)
-let lotTextGray = Color(red: 0.500, green: 0.504, blue: 0.510)
+let fireColor = Color(red: 0.757, green: 0.294, blue: 0.227)        // #C14B3A
+let earthColor = Color(red: 0.604, green: 0.463, blue: 0.212)       // #9A7636
+let airColor = Color(red: 0.247, green: 0.541, blue: 0.471)         // #3F8A78
+let waterColor = Color(red: 0.239, green: 0.435, blue: 0.682)       // #3D6FAE
+let lotTextGray = Color(red: 0.612, green: 0.576, blue: 0.522)      // ink-faint #9C9385
+
+let goldLine = Color(red: 0.710, green: 0.525, blue: 0.184)         // #B5862F
+let hardAspectColor = Color(red: 0.690, green: 0.322, blue: 0.290)  // #B0524A
+let softAspectColor = Color(red: 0.290, green: 0.490, blue: 0.431)  // #4A7D6E
 
 let elementColors: [WheelElement: Color] = [
     .fire: fireColor, .earth: earthColor, .air: airColor, .water: waterColor
 ]
 
 let aspectLineColors: [String: Color] = [
-    "合相": Color(red: 0.462, green: 0.383, blue: 0.930),
-    "冲相": fireColor,
-    "刑相": fireColor.opacity(0.88),
-    "拱相": waterColor,
-    "六合": airColor,
+    "合相": goldLine,
+    "冲相": hardAspectColor,
+    "刑相": hardAspectColor.opacity(0.9),
+    "拱相": softAspectColor,
+    "六合": softAspectColor.opacity(0.78),
     "半刑": earthColor.opacity(0.85),
-    "补十二分相": earthColor.opacity(0.65),
+    "补十二分相": earthColor.opacity(0.6),
 ]
 
 // MARK: - Geometry

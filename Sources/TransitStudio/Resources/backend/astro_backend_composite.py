@@ -108,8 +108,8 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
         try:
             from astro_backend_core import format_longitude
             sign, degree_text = format_longitude(lon)
-        except Exception:
-            pass
+        except Exception as exc:
+            warnings.append(f"composite 计算局部失败: {exc}")
         h = house_for_longitude(lon, comp_cusps)
         a_src = a_positions.get(body_id, {})
         b_src = b_positions.get(body_id, {})
@@ -157,8 +157,8 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
         mid_jd = (a_jd + b_jd) / 2.0
         from astro_backend_core import swe
         meta_utc = swe.revjul(mid_jd - 0.5)
-    except Exception:
-        pass
+    except Exception as exc:
+        warnings.append(f"composite 计算局部失败: {exc}")
 
     return {
         "meta": {
