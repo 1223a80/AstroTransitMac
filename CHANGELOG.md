@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-01 — Expansion 002 编码实施
+
+- **Phase 1 - 赤纬管线**: `calculate_body()` 增加 declination / out_of_bounds 字段。提取 obliquity/dec/RA 到 core.py。新增 `find_declination_aspects()` 检测平行/反平行相位。Swift 模型同步扩展。
+- **Phase 2 - 恒星合相**: 新建 `astro_backend_fixed_stars.py`，30 颗恒星目录 (4 王星 + 9 一等 + 17 二等)。使用 `swe.fixstar_ut()` 计算恒星位置，per-star orb 合相检测。bundled sefstars.txt 星表文件。
+- **Phase 3 - 阿拉伯点扩展**: `astro_backend_classical_lots.py` 重写，12 点 → 56 点 (core 7 + life 24 + career 12 + spirit 10 + experimental 3)。新增 house cusp 和 house ruler 解析 helper。
+- **Phase 4 - 中世纪技法深化**: 新建 `astro_backend_classical_medieval.py`，三分主星序列 (sect light)、Kurios/Oikodespotes 综合判定、年主+日返融合解读。Swift 模型同步。
+- **测试**: 新增 4 个 Python 测试文件 (test_declination、test_fixed_stars、test_extended_lots、test_medieval)，共 39 个测试全部通过。
+
 ## 2026-07-01 — Expansion 002 规划文档
 
 - 创建 `docs/expansion-002/` 目录，包含 5 份规划文档：

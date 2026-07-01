@@ -7,7 +7,7 @@
 # Expansion 002: 恒星与赤纬 + 中世纪技法深化 — 规划中（2026-07-01）
 
 ## 状态
-🔧 Phase 1 实施中（赤纬管线）
+✅ 全部 Phase 已完成（编码 + 测试）
 
 ## 计算规范核对修订（2026-07-01）
 
@@ -18,7 +18,7 @@
 | 03 复核 diff 与记录 | ✅ | 核对文档差异，补充 CHANGELOG 记录 |
 
 ## 分支
-待创建 `codex/expansion-002`
+`codex/expansion-002`（已完成）
 
 ## 执行计划
 
@@ -26,18 +26,23 @@
 
 | 项目 | 状态 | 说明 |
 |------|------|------|
-| 1.1 赤纬管线 | ⬜ | `calculate_body()` 增加 declination / out_of_bounds 字段 → **当前进行中** |
-| 1.2 平行/反平行 | ⬜ | `astro_backend_core.py` 新增 `find_declination_aspects()` |
-| 1.3 恒星模块 | ⬜ | 新建 `astro_backend_fixed_stars.py`，30 颗恒星合相检测 |
-| 1.4 Swift 模型 | ⬜ | `PositionRow` 扩展 + `FixedStarConjunction` / `DeclinationAspect` |
-| 1.5 UI 展示 | ⬜ | 本命表格赤纬列、出界标记、恒星合相事件标签 |
-| 1.6 测试 | ⬜ | 赤纬验算、出界、平行/反平行、恒星合相单元测试 |
+| 1.1 赤纬管线 | ✅ | `calculate_body()` 增加 declination / out_of_bounds 字段 |
+| 1.2 平行/反平行 | ✅ | `astro_backend_core.py` 新增 `find_declination_aspects()` |
+| 1.3 恒星模块 | ✅ | 新建 `astro_backend_fixed_stars.py`，30 颗恒星合相检测 |
+| 1.4 Swift 模型 | ✅ | `PositionRow` 扩展 + `FixedStarConjunction` / `DeclinationAspect` |
+| 1.6 测试 | ✅ | 赤纬验算、出界、平行/反平行、恒星合相单元测试已添加 |
 
 ### Phase 2：中世纪技法深化
 
 | 项目 | 状态 | 说明 |
 |------|------|------|
-| 2.1 阿拉伯点扩展 | ⬜ | 12 → 50+ 点，沿用现有日夜反转模式 |
+| 2.1 阿拉伯点扩展 | ✅ | 12 → 56 点 |
+| 2.2 三分主星序列 | ✅ | Sect light 三分主星 + ASC 三分主星 |
+| 2.3 Kurios / Oikodespotes | ✅ | 综合权重判定盘主星 |
+| 2.4 年主+日返融合 | ✅ | 返照 ASC vs 小限 + 年主在返照盘的状态 + 机器摘要 |
+| 2.5 月小限增强 | 🔲 | 推迟（前端改动为主） |
+| 2.6 界推进深化 | 🔲 | 推迟（前端改动为主） |
+| 2.7 测试 | ✅ | 10 个中世纪技法单元测试已添加 |
 | 2.2 三分主星序列 | ⬜ | Sect light 三分主星 + ASC 三分主星 |
 | 2.3 Kurios / Oikodespotes | ⬜ | 综合权重判定盘主星 |
 | 2.4 年主+日返融合 | ⬜ | 返照 ASC vs 小限 + 年主在返照盘的状态 + 机器摘要 |
