@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-06-16 — UI 重设计：星历年鉴风格
+
+- **设计系统重写（`DesignTokens.swift`）** — 改为固定的暖米色羊皮纸色板 + 单一金色点缀 + 衬线标题字（`.serif`），不再跟随系统浅/深色（App 全局 `.preferredColorScheme(.light)`）；新增 `AstroPalette` 帮助器，按星座（白羊/金牛…）映射四元素色、按相位 ID 映射刑冲/吉相/合相语义色
+- **导航轨道（`AppNavigationRail.swift`）** — 古典/现代/吠陀改为衬线 segmented 控件（选中填墨黑），导航项分组为「星图 / 行运」并改金色软底选中态；折叠态降级为图标 segmented
+- **结果区工具栏（`ResultToolbarViews.swift`）** — 填充式 TabChip 改为衬线下划线 tab，标题行与导出行合并为单行（tab 即标题），底部金/线分隔
+- **表格（`TransitResultViews.swift`）** — `PositionTableView` / `AspectTableView` 由原生 `Table` 改为自定义羊皮纸表格：金色表头细线、元素色星座标签、逆行红色标记、相位强度色条；`ScanTableView` 保留原生（需排序）
+- **折叠区 / 空状态 / 标题** — `CollapsibleSection` 改全大写小标签；`EmptyStateView` 加书卷花饰 `❧`；结果区与侧栏标题加金色 eyebrow + 衬线标题
+- 验证：`swift build` ✅；`swift test` ✅（24 tests，解码契约 + 导出 + AI 流未受影响）；仅改 SwiftUI 视图层，Python 后端与导出逻辑未触碰
+
+## 2026-06-16 — 审计确认 bug 修复
+
+- **后端边界修复** — Horary 月亮换座 fallback 遇异常速度时改用 2.5 天默认值并写 warning；宫位失败回退改为 Whole Sign；JSON 输出禁用 NaN/Inf；Composite 局部异常不再静默吞掉；Classical timing 子周期除法补零值保护
+- **Swift 与仓库卫生** — BackendClient Python 子进程超时从 60s 提升到 300s；`.gitignore` 加入 `reasonix.toml` 与 `.reasonix/`
+- 验证：`bash check_vibe_changes.sh` ✅（416 Python tests + Swift build + 24 Swift tests + smokes）
+
 ## 2026-06-12 — Horary 慢行星成相窗口与高级判定补修
 
 - **慢行星成相窗口** — `exact_datetime_for_signature()` 改为按双方最早换座时间动态决定搜索窗口，修复木星/土星等慢行星超过 30 天才成相却被误报不成相的问题
