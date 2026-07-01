@@ -308,11 +308,16 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
         )
 
         # Profection + Solar Return synthesis
-        # For now without a real SR snapshot (requires full return chart)
-        # We work with what's available
-        if profection:
+        # Use the Sun's actual solar return chart (current_cycle_return)
+        # to analyze the Lord of the Year in the return chart context.
+        sr_snapshot = None
+        for ret in returns:
+            if ret.get("body_id") == "SUN":
+                sr_snapshot = ret.get("current_cycle_return")
+                break
+        if profection and sr_snapshot:
             medieval["profection_sr_synthesis"] = profection_solar_return_synthesis(
-                profection, snapshot, natal_asc_lon, planet_rows, is_day,
+                profection, sr_snapshot, natal_asc_lon, planet_rows, is_day,
             )
     except Exception as exc:
         warnings.append(f"中世纪技法计算失败：{exc}")
