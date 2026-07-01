@@ -166,7 +166,13 @@ def calculate_body(
     try:
         eq_values, _ = swe.calc_ut(jd_ut, spec.code, swe.FLG_SWIEPH | swe.FLG_EQUATORIAL)
         dec = round(eq_values[1], 4)
+        # South Node reuses North Node's swe code with longitude_offset=180.
+        # The equatorial call still returns North Node's declination; we must
+        # negate it (opposite point on the ecliptic → opposite declination).
+        if spec.body_id in ("SOUTH_MEAN_NODE", "SOUTH_TRUE_NODE"):
+            dec = round(-dec, 4)
     except swe.Error:
+        warnings.append(f"{spec.name}({spec.body_id}) 赤纬计算降级：EQUATORIAL 失败，使用黄经近似")
         dec = round(declination_from_lon(longitude, obliq), 4)
     oob = abs(dec) > obliq
 

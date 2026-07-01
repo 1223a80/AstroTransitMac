@@ -213,7 +213,7 @@ reg("praise",     "赞誉点",   "Praise",      "ASC + Venus - Jupiter",   "ASC 
 reg("piety",      "虔诚点",   "Piety",       "ASC + Jupiter - Mercury", "ASC + Mercury - Jupiter","spirit","AbuMa'shar","planet:JUPITER","planet:MERCURY")
 
 # ----- Legacy experimental lots (adapted from previous code) -----
-reg("exaltation_old","擢升度点","Exaltation","ASC + Sun - exalt:ASC","ASC + Moon - exalt:ASC","experimental","Hybrid","exalt:ASC","exalt:ASC")
+reg("exaltation_old","擢升度点","Exaltation","ASC + Sun - exalt:ASC","ASC + Moon - exalt:ASC","experimental","Hybrid","planet:SUN","exalt:ASC","planet:MOON","exalt:ASC")
 reg("acquisition_old","获取点","Acquisition","ASC + Spirit - Fortune","ASC + Fortune - Spirit","experimental","Paulus","spirit","fortune")
 reg("children_old","子女点(旧)","Children(Old)","ASC + Jupiter - Saturn","ASC + Saturn - Jupiter","experimental","Paulus","planet:JUPITER","planet:SATURN")
 
@@ -290,8 +290,10 @@ def calculate_lots(
 
         # Special handling for magistery (MC-based)
         if lid == "magistery":
-            a = mc_lon
-            b = _resolve_lot_ref(p2, computed, positions, asc)
+            # Day: ASC + MC - Sun  → a=MC, b=Sun
+            # Night: ASC + Sun - MC → a=Sun, b=MC
+            a = mc_lon if is_day else _resolve_lot_ref(p1, computed, positions, asc)
+            b = _resolve_lot_ref(p2, computed, positions, asc) if is_day else mc_lon
             lon = lot_value(asc, a, b)
         else:
             a = _resolve_lot_ref(p1, computed, positions, asc)

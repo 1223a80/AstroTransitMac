@@ -96,8 +96,17 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
         lots = calculate_lots(angle_values, lot_positions_by_id, cusps, is_day, mc=mc_lon)
 
     # 赤纬相位（平行/反平行）
-    all_positions = natal_positions + transit_positions
-    declination_aspects = find_declination_aspects(all_positions)
+    # Compute separately for natal-natal, transit-transit, and cross-aspects
+    # to avoid ambiguous "SUN parallel SUN" entries.
+    nn_aspects = find_declination_aspects(natal_positions)
+    tt_aspects = find_declination_aspects(transit_positions)
+    # Cross-aspects: tag with natal_/transit_ prefix to disambiguate
+    combined_for_cross = (
+        [{**r, "body_id": "natal_" + r["body_id"]} for r in natal_positions]
+        + [{**r, "body_id": "transit_" + r["body_id"]} for r in transit_positions]
+    )
+    nt_aspects = find_declination_aspects(combined_for_cross)
+    declination_aspects = nn_aspects + tt_aspects + nt_aspects
 
     # 恒星合相
     natal_star_positions = compute_star_positions(natal_jd, warnings=warnings)

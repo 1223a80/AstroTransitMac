@@ -14,6 +14,7 @@ from typing import Any
 
 from astro_backend_core import (
     BODY_REGISTRY,
+    SIGNS,
     SIGN_RULERS,
     format_longitude,
     norm360,
@@ -61,7 +62,7 @@ def sect_light_triplicity_rulers(
     light_name = "Sun" if is_day else "Moon"
     light_id = "SUN" if is_day else "MOON"
     sign_idx = zodiac_sign_index(light_lon)
-    sign_name = ["白羊","金牛","双子","巨蟹","狮子","处女","天秤","天蝎","射手","摩羯","水瓶","双鱼"][sign_idx]
+    sign_name = SIGNS[sign_idx]
 
     # Get triplicity ruler IDs for that sign
     system = triplicity_system if triplicity_system in TRIPLICITY_RULERS else "dorothean"
@@ -141,8 +142,8 @@ def determine_kurios(
             candidates.append((r["planet"], f"{r['label'].capitalize()} Triplicity Ruler", w))
 
     # 3. Almuten Figuris
-    if almuten and almuten.get("winner"):
-        winner_id = almuten["winner"]
+    if almuten and almuten.get("winner_id"):
+        winner_id = almuten["winner_id"]
         if winner_id in BODY_REGISTRY:
             candidates.append((winner_id, "Almuten Figuris", 3))
 
@@ -249,8 +250,8 @@ def profection_solar_return_synthesis(
     - Generated summary text
     """
     # Profection data
-    prof_asc_idx = zodiac_sign_index(profection.get("profected_asc_lon", asc_lon))
-    prof_asc_sign = ["白羊","金牛","双子","巨蟹","狮子","处女","天秤","天蝎","射手","摩羯","水瓶","双鱼"][prof_asc_idx]
+    prof_asc_idx = zodiac_sign_index(profection.get("profected_asc_longitude", asc_lon))
+    prof_asc_sign = SIGNS[prof_asc_idx]
     lord_id = profection.get("lordId", "")
     lord_name = profection.get("lord", "")
 
@@ -261,7 +262,7 @@ def profection_solar_return_synthesis(
         if angle.get("id") == "ASC":
             sr_asc_lon = angle["longitude"]
     sr_asc_idx = zodiac_sign_index(sr_asc_lon)
-    sr_asc_sign = ["白羊","金牛","双子","巨蟹","狮子","处女","天秤","天蝎","射手","摩羯","水瓶","双鱼"][sr_asc_idx]
+    sr_asc_sign = SIGNS[sr_asc_idx]
     sr_planet_rows = solar_return_snapshot.get("planets", [])
 
     asc_matches = (prof_asc_idx == sr_asc_idx)

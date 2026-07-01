@@ -73,7 +73,7 @@ class TestKurios:
         assert len(result["candidates"]) > 0
 
     def test_kurios_with_almuten(self):
-        almuten = {"winner": "SATURN"}
+        almuten = {"winner_id": "SATURN"}
         result = determine_kurios(80.0, True, None, almuten, None, self.SAMPLE_PLANETS)
         roles = [c["role"] for c in result["candidates"]]
         assert "Almuten Figuris" in roles
