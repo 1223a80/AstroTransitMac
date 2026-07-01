@@ -26,6 +26,7 @@ struct ClassicalResult: Codable {
     let topSignatures: [TopSignature]?
     let birthdayTransition: BirthdayTransition?
     let activatedLordFocus: ActivatedLordFocus?
+    let medieval: MedievalData?
 
     enum CodingKeys: String, CodingKey {
         case meta
@@ -53,6 +54,7 @@ struct ClassicalResult: Codable {
         case topSignatures = "top_signatures"
         case birthdayTransition = "birthday_transition"
         case activatedLordFocus = "activated_lord_focus"
+        case medieval
     }
 }
 
@@ -176,5 +178,169 @@ struct ClassicalAmbiguity: Codable {
         case techniqueRulers = "technique_rulers"
         case conflictingSignals = "conflicting_signals"
         case confidence
+    }
+}
+
+// MARK: - Medieval deep-dive models
+
+struct MedievalData: Codable {
+    let sectLightTriplicity: SectLightTriplicity?
+    let kurios: KuriosResult?
+    let profectionSRSynthesis: ProfectionSRSynthesis?
+
+    enum CodingKeys: String, CodingKey {
+        case sectLightTriplicity = "sect_light_triplicity"
+        case kurios
+        case profectionSRSynthesis = "profection_sr_synthesis"
+    }
+}
+
+struct SectLightTriplicity: Codable {
+    let sectLight: String
+    let sectLightName: String
+    let lightSign: String
+    let lightSignIndex: Int
+    let lightLongitude: Double
+    let triplicitySystem: String
+    let rulers: [TriplicityRulerEntry]
+
+    enum CodingKeys: String, CodingKey {
+        case sectLight = "sect_light"
+        case sectLightName = "sect_light_name"
+        case lightSign = "light_sign"
+        case lightSignIndex = "light_sign_index"
+        case lightLongitude = "light_longitude"
+        case triplicitySystem = "triplicity_system"
+        case rulers
+    }
+}
+
+struct TriplicityRulerEntry: Codable {
+    let planet: String
+    let planetName: String
+    let rank: Int
+    let label: String
+    let house: Int
+    let score: Int
+    let scoreLabel: String
+    let angular: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case planet
+        case planetName = "planet_name"
+        case rank
+        case label
+        case house
+        case score
+        case scoreLabel = "score_label"
+        case angular
+    }
+}
+
+struct KuriosResult: Codable {
+    let method: String
+    let primary: KuriosPrimary?
+    let candidates: [KuriosCandidate]
+}
+
+struct KuriosPrimary: Codable {
+    let planet: String
+    let planetName: String
+    let score: Int
+    let role: String
+    let natalHouse: Int
+    let natalScoreLabel: String
+
+    enum CodingKeys: String, CodingKey {
+        case planet
+        case planetName = "planet_name"
+        case score
+        case role
+        case natalHouse = "natal_house"
+        case natalScoreLabel = "natal_score_label"
+    }
+}
+
+struct KuriosCandidate: Codable {
+    let planet: String
+    let planetName: String
+    let role: String
+    let baseWeight: Int
+    let modifier: Int
+    let score: Int
+    let modifiers: [String]
+    let natalHouse: Int
+    let natalScoreLabel: String
+
+    enum CodingKeys: String, CodingKey {
+        case planet
+        case planetName = "planet_name"
+        case role
+        case baseWeight = "base_weight"
+        case modifier
+        case score
+        case modifiers
+        case natalHouse = "natal_house"
+        case natalScoreLabel = "natal_score_label"
+    }
+}
+
+struct ProfectionSRSynthesis: Codable {
+    let profectionAscSign: String
+    let solarReturnAscSign: String
+    let ascSignsMatch: Bool
+    let lordOfYearInSR: LordInReturnChart
+    let srHighlights: SRHighlights
+    let summaryText: String
+
+    enum CodingKeys: String, CodingKey {
+        case profectionAscSign = "profection_asc_sign"
+        case solarReturnAscSign = "solar_return_asc_sign"
+        case ascSignsMatch = "asc_signs_match"
+        case lordOfYearInSR = "lord_of_year_in_sr"
+        case srHighlights = "sr_highlights"
+        case summaryText = "summary_text"
+    }
+}
+
+struct LordInReturnChart: Codable {
+    let present: Bool
+    let planet: String?
+    let planetName: String?
+    let house: Int?
+    let houseLabel: String?
+    let sign: String?
+    let score: Int?
+    let scoreLabel: String?
+    let retrograde: Bool?
+    let angular: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case present
+        case planet
+        case planetName = "planet_name"
+        case house
+        case houseLabel = "house_label"
+        case sign
+        case score
+        case scoreLabel = "score_label"
+        case retrograde
+        case angular
+    }
+}
+
+struct SRHighlights: Codable {
+    let ascRuler: String
+    let ascRulerHouse: Int
+    let mcRuler: String
+    let mcRulerHouse: Int
+    let stelliumSign: String?
+
+    enum CodingKeys: String, CodingKey {
+        case ascRuler = "asc_ruler"
+        case ascRulerHouse = "asc_ruler_house"
+        case mcRuler = "mc_ruler"
+        case mcRulerHouse = "mc_ruler_house"
+        case stelliumSign = "stellium_sign"
     }
 }
