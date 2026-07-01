@@ -25,6 +25,7 @@ from astro_backend_core import (
     BODY_REGISTRY,
     CLASSICAL_BODY_IDS,
     fail,
+    find_declination_aspects,
     format_local,
     moment_to_jd,
     moment_to_local_datetime,
@@ -87,6 +88,10 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
 
         lots = calculate_lots(angle_values, lot_positions_by_id, cusps, is_day)
 
+    # 赤纬相位（平行/反平行）
+    all_positions = natal_positions + transit_positions
+    declination_aspects = find_declination_aspects(all_positions)
+
     return {
         "meta": {
             "natal_utc": natal_utc,
@@ -95,6 +100,7 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
         },
         "natal_positions": [public_position(row) for row in natal_positions],
         "transit_positions": [public_position(row) for row in transit_positions],
+        "declination_aspects": declination_aspects,
         "angles": angles,
         "houses": houses,
         "lots": lots,
@@ -369,6 +375,7 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
                 "orb": None,
                 "strength": "approaching" if pd_entry.get("age_from_abs_arc", 0) > ref_age else "past",
             })
+    declination_aspects = find_declination_aspects(planet_rows, id_key="id")
     return {
         "meta": {
             "birth_utc": birth_utc,
@@ -401,6 +408,7 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
         "top_signatures": top_signatures[:10],
         "birthday_transition": birthday_transition,
         "activated_lord_focus": activated_lord_focus,
+        "declination_aspects": declination_aspects,
         "planetary_returns": returns,
         "prenatal_syzygy": prenatal_syzygy,
         "almuten_figuris": almuten,

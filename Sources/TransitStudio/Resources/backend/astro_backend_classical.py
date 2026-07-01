@@ -199,6 +199,8 @@ def calculate_classical_planets(
                 "id": body_id,
                 "name": row["name"],
                 "longitude": row["longitude"],
+                "declination": row.get("declination"),
+                "out_of_bounds": row.get("out_of_bounds", False),
                 "sign": row["sign"],
                 "degree_text": row["degree_text"],
                 "house": house,

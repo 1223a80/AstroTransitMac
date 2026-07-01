@@ -8,6 +8,7 @@ struct TransitResult: Codable {
     let houses: [HouseRow]?
     let lots: [ClassicalPoint]?
     let aspects: [AspectHit]
+    let declinationAspects: [DeclinationAspect]?
     let warnings: [String]
 
     enum CodingKeys: String, CodingKey {
@@ -18,6 +19,7 @@ struct TransitResult: Codable {
         case houses
         case lots
         case aspects
+        case declinationAspects = "declination_aspects"
         case warnings
     }
 }
@@ -39,6 +41,8 @@ struct PositionRow: Codable, Identifiable {
     let name: String
     let longitude: Double
     let latitude: Double
+    let declination: Double?
+    let outOfBounds: Bool?
     let speed: Double
     let sign: String
     let degreeText: String
@@ -51,6 +55,8 @@ struct PositionRow: Codable, Identifiable {
         case name
         case longitude
         case latitude
+        case declination
+        case outOfBounds = "out_of_bounds"
         case speed
         case sign
         case degreeText = "degree_text"
@@ -81,6 +87,24 @@ struct AspectHit: Codable, Identifiable {
         case angle
         case separation
         case orb
+    }
+}
+
+struct DeclinationAspect: Codable {
+    let body1: String
+    let body2: String
+    let type: String        // "parallel" or "contraparallel"
+    let diff: Double
+    let declination1: Double?
+    let declination2: Double?
+
+    enum CodingKeys: String, CodingKey {
+        case body1
+        case body2
+        case type
+        case diff
+        case declination1
+        case declination2
     }
 }
 

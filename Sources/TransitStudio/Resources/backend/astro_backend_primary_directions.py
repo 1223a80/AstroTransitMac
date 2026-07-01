@@ -9,10 +9,13 @@ from astro_backend_core import (
     CLASSICAL_BODY_IDS,
     SIGNS,
     completed_age,
+    declination_from_lon,
     format_longitude,
     jd_from_datetime,
     norm360,
+    obliquity,
     planet_name,
+    right_ascension_from_lon,
     sign_degree,
     zodiac_sign_index,
 )
@@ -37,22 +40,12 @@ ASPECT_NAMES = {
 NAIBOD_RATE = 0.9856
 
 
-def obliquity(jd: float) -> float:
-    t = (jd - 2451545.0) / 36525.0
-    return 23.439291 - 0.0130042 * t - 1.64e-7 * t * t + 5.04e-7 * t * t * t
-
-
 def right_ascension(lon: float, obliq: float) -> float:
-    lon_rad = math.radians(lon)
-    obliq_rad = math.radians(obliq)
-    ra = math.atan2(math.sin(lon_rad) * math.cos(obliq_rad), math.cos(lon_rad))
-    return math.degrees(ra) % 360.0
+    return right_ascension_from_lon(lon, obliq)
 
 
 def declination(lon: float, obliq: float) -> float:
-    lon_rad = math.radians(lon)
-    obliq_rad = math.radians(obliq)
-    return math.degrees(math.asin(math.sin(lon_rad) * math.sin(obliq_rad)))
+    return declination_from_lon(lon, obliq)
 
 
 def meridian_distance(ra: float, mc_ra: float) -> float:

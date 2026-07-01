@@ -10,6 +10,7 @@ struct ClassicalResult: Codable {
     let aspects: [ClassicalAspectRow]
     let receptions: [ReceptionRow]
     let antiscia: [AntisciaRow]?
+    let declinationAspects: [DeclinationAspect]?
     let primaryDirections: [PrimaryDirection]?
     let circumambulations: [Circumambulation]?
     let timing: TimingSummary
@@ -35,6 +36,7 @@ struct ClassicalResult: Codable {
         case aspects
         case receptions
         case antiscia
+        case declinationAspects = "declination_aspects"
         case primaryDirections = "primary_directions"
         case circumambulations
         case timing

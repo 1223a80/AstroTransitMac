@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import math
 import operator
 import re
 import sys
@@ -252,6 +253,67 @@ def format_longitude(longitude: float) -> tuple[str, str]:
 def angular_separation(a: float, b: float) -> float:
     diff = abs((a - b) % 360.0)
     return min(diff, 360.0 - diff)
+
+
+def obliquity(jd: float) -> float:
+    """Mean obliquity of the ecliptic for a given Julian Day (simplified IAU)."""
+    t = (jd - 2451545.0) / 36525.0
+    return 23.439291 - 0.0130042 * t - 1.64e-7 * t * t + 5.04e-7 * t * t * t
+
+
+def declination_from_lon(lon: float, obliq: float) -> float:
+    """Compute declination from ecliptic longitude (ignoring ecliptic latitude).
+
+    Reasonable for planets (error < 0.5° for most, ~1° max for Moon).
+    For accurate Moon/star declination use swe.calc_ut with FLG_EQUATORIAL.
+    """
+    lon_rad = math.radians(lon)
+    obliq_rad = math.radians(obliq)
+    return math.degrees(math.asin(math.sin(lon_rad) * math.sin(obliq_rad)))
+
+
+def right_ascension_from_lon(lon: float, obliq: float) -> float:
+    """Compute right ascension from ecliptic longitude (ignoring ecliptic latitude)."""
+    lon_rad = math.radians(lon)
+    obliq_rad = math.radians(obliq)
+    ra = math.atan2(math.sin(lon_rad) * math.cos(obliq_rad), math.cos(lon_rad))
+    return math.degrees(ra) % 360.0
+
+
+def find_declination_aspects(
+    bodies: list[dict[str, Any]],
+    orb: float = 1.0,
+    id_key: str = "body_id",
+) -> list[dict[str, Any]]:
+    """Detect parallel (same-side) and contraparallel (opposite-side) aspects.
+
+    Each body dict needs at least *id_key* (default ``body_id``) and ``declination``.
+    Returns a list of aspect dicts sorted by declination difference.
+    """
+    aspects: list[dict[str, Any]] = []
+    indexed = [(row.get(id_key, row.get("id", "?")), row.get("declination")) for row in bodies]
+    for i, (id_a, dec_a) in enumerate(indexed):
+        if dec_a is None:
+            continue
+        for j, (id_b, dec_b) in enumerate(indexed):
+            if j <= i:
+                continue
+            if dec_b is None:
+                continue
+            diff = abs(abs(dec_a) - abs(dec_b))
+            if diff > orb:
+                continue
+            same_side = (dec_a * dec_b) > 0 or (dec_a == 0.0 and dec_b == 0.0)
+            aspects.append({
+                "body1": id_a,
+                "body2": id_b,
+                "type": "parallel" if same_side else "contraparallel",
+                "diff": round(diff, 4),
+                "declination1": round(dec_a, 4),
+                "declination2": round(dec_b, 4),
+            })
+    aspects.sort(key=lambda a: a["diff"])
+    return aspects
 
 
 def aspect_orb(transit_lon: float, target_lon: float, aspect_angle: float) -> float:

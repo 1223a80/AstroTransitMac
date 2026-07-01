@@ -60,6 +60,8 @@ struct ClassicalPlanetRow: Codable, Identifiable {
     let id: String
     let name: String
     let longitude: Double
+    let declination: Double?
+    let outOfBounds: Bool?
     let sign: String
     let degreeText: String
     let house: Int
@@ -94,6 +96,8 @@ struct ClassicalPlanetRow: Codable, Identifiable {
         case id
         case name
         case longitude
+        case declination
+        case outOfBounds = "out_of_bounds"
         case sign
         case degreeText = "degree_text"
         case house

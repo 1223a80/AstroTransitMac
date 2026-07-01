@@ -7,7 +7,7 @@
 # Expansion 002: 恒星与赤纬 + 中世纪技法深化 — 规划中（2026-07-01）
 
 ## 状态
-📋 文档编写阶段（尚未开始编码）
+🔧 Phase 1 实施中（赤纬管线）
 
 ## 计算规范核对修订（2026-07-01）
 
@@ -26,7 +26,7 @@
 
 | 项目 | 状态 | 说明 |
 |------|------|------|
-| 1.1 赤纬管线 | ⬜ | `calculate_body()` 增加 declination / out_of_bounds 字段 |
+| 1.1 赤纬管线 | ⬜ | `calculate_body()` 增加 declination / out_of_bounds 字段 → **当前进行中** |
 | 1.2 平行/反平行 | ⬜ | `astro_backend_core.py` 新增 `find_declination_aspects()` |
 | 1.3 恒星模块 | ⬜ | 新建 `astro_backend_fixed_stars.py`，30 颗恒星合相检测 |
 | 1.4 Swift 模型 | ⬜ | `PositionRow` 扩展 + `FixedStarConjunction` / `DeclinationAspect` |

@@ -10,9 +10,11 @@ from astro_backend_core import (
     BODY_REGISTRY,
     BodySpec,
     SIGN_RULERS,
+    declination_from_lon,
     format_longitude,
     jd_from_datetime,
     norm360,
+    obliquity,
     planet_name,
     sign_degree,
     swe,
@@ -156,11 +158,19 @@ def calculate_body(
     latitude = values[1]
     speed = values[3]
     sign, degree_text = format_longitude(longitude)
+
+    # 赤纬与出界计算
+    obliq = obliquity(jd_ut)
+    dec = round(declination_from_lon(longitude, obliq), 4)
+    oob = abs(dec) > obliq
+
     return {
         "body_id": spec.body_id,
         "name": spec.name,
         "longitude": longitude,
         "latitude": latitude,
+        "declination": dec,
+        "out_of_bounds": oob,
         "speed": speed,
         "sign": sign,
         "degree_text": degree_text,
