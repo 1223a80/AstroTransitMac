@@ -260,17 +260,20 @@ extension ContentView {
     var header: some View {
         HStack(spacing: TS.Spacing.lg) {
             VStack(alignment: .leading, spacing: TS.Spacing.xs) {
+                Text((isShowingAppSettingsPage ? "本地设置 · AI · 星历" : "\(practiceMode.title)占星").uppercased())
+                    .font(TS.Font.eyebrow)
+                    .tracking(1.4)
+                    .foregroundStyle(TS.SemanticColor.gold)
                 Text(isShowingAppSettingsPage ? "程序设置" : mode.title)
                     .font(TS.Font.pageTitle)
-                Text(isShowingAppSettingsPage ? "本地设置 · AI · 星历" : "\(practiceMode.title)占星")
-                    .font(TS.Font.label)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(TS.SemanticColor.ink)
             }
 
             Spacer()
         }
         .padding(.horizontal, TS.Spacing.xxl)
         .padding(.vertical, TS.Spacing.lg)
+        .background(TS.SemanticColor.paper)
     }
 
     func toggleBinding(for id: String, in selection: Binding<Set<String>>) -> Binding<Bool> {

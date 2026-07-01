@@ -42,18 +42,31 @@ struct EmptyStateView: View {
     var description: String?
 
     var body: some View {
-        VStack(spacing: TS.Spacing.md) {
-            Image(systemName: systemImage)
-                .font(.system(size: 34, weight: .regular))
-                .foregroundStyle(.secondary)
+        VStack(spacing: TS.Spacing.lg) {
+            Text("❧")
+                .font(.system(size: 22, design: .serif))
+                .foregroundStyle(TS.SemanticColor.line)
+            ZStack {
+                Circle()
+                    .strokeBorder(TS.SemanticColor.line, lineWidth: 1)
+                    .frame(width: 64, height: 64)
+                Image(systemName: systemImage)
+                    .font(.system(size: 26, weight: .regular))
+                    .foregroundStyle(TS.SemanticColor.gold.opacity(0.7))
+            }
             Text(title)
                 .font(TS.Font.sectionTitle)
+                .foregroundStyle(TS.SemanticColor.ink)
             if let description {
                 Text(description)
                     .font(TS.Font.body)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(TS.SemanticColor.inkFaint)
                     .multilineTextAlignment(.center)
             }
+            Text("❧")
+                .font(.system(size: 22, design: .serif))
+                .foregroundStyle(TS.SemanticColor.line)
+                .rotationEffect(.degrees(180))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(TS.Spacing.xxl)

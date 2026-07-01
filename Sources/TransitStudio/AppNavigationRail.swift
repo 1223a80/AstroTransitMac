@@ -9,77 +9,145 @@ struct AppNavigationRail: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
-            titleBlock
-            practiceModePicker
+            brandBlock
+            practiceSegmented
             collapseButton
-            Divider()
             modeButtons
-            Spacer()
+            Spacer(minLength: TS.Spacing.lg)
             settingsButton
         }
-        .padding(.vertical, TS.Spacing.sm)
+        .padding(.vertical, TS.Spacing.lg)
     }
 
-    private var titleBlock: some View {
+    // MARK: Brand
+
+    private var brandBlock: some View {
         HStack(spacing: TS.Spacing.md) {
-            Image(systemName: "sparkles.rectangle.stack")
-                .font(TS.Font.pageTitle)
-                .foregroundStyle(TS.SemanticColor.accent)
-                .frame(width: 30, height: 30)
+            ZStack {
+                Circle()
+                    .fill(TS.SemanticColor.goldSoft)
+                Circle()
+                    .strokeBorder(TS.SemanticColor.gold, lineWidth: 1.5)
+                Image(systemName: "sun.max")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(TS.SemanticColor.goldDeep)
+            }
+            .frame(width: 30, height: 30)
+
             if !isCollapsed {
-                VStack(alignment: .leading, spacing: TS.Spacing.xs) {
+                VStack(alignment: .leading, spacing: 1) {
                     Text("Transit")
-                        .font(TS.Font.sectionTitle)
-                    Text("Studio")
-                        .font(TS.Font.detail)
-                        .foregroundStyle(.secondary)
+                        .font(.system(.callout, design: .serif).weight(.semibold))
+                        .foregroundStyle(TS.SemanticColor.ink)
+                    Text("STUDIO")
+                        .font(.system(size: 9, weight: .semibold))
+                        .tracking(2)
+                        .foregroundStyle(TS.SemanticColor.inkFaint)
                 }
             }
             Spacer(minLength: 0)
         }
         .padding(.horizontal, TS.Padding.chipHorizontal)
-        .padding(.top, TS.Spacing.md)
+        .padding(.top, TS.Spacing.sm)
     }
 
-    private var practiceModePicker: some View {
-        VStack(alignment: .leading, spacing: TS.Spacing.md) {
-            if !isCollapsed {
-                Text("模式")
-                    .font(TS.Font.label)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, TS.Padding.chipHorizontal)
-            }
+    // MARK: Practice mode segmented control
 
-            VStack(spacing: TS.Spacing.xs) {
-                practiceModeButton(for: .modern, icon: "sparkles")
-                practiceModeButton(for: .classical, icon: "scroll")
-                practiceModeButton(for: .vedic, icon: "sun.max")
+    private var practiceSegmented: some View {
+        Group {
+            if isCollapsed {
+                VStack(spacing: TS.Spacing.xs) {
+                    practiceIcon(.classical, icon: "scroll")
+                    practiceIcon(.modern, icon: "sparkles")
+                    practiceIcon(.vedic, icon: "sun.max")
+                }
+                .padding(.horizontal, TS.Spacing.md)
+            } else {
+                HStack(spacing: 2) {
+                    practiceSegment(.classical)
+                    practiceSegment(.modern)
+                    practiceSegment(.vedic)
+                }
+                .padding(3)
+                .background(
+                    RoundedRectangle(cornerRadius: TS.Radius.card)
+                        .fill(TS.SemanticColor.paper)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: TS.Radius.card)
+                                .strokeBorder(TS.SemanticColor.line, lineWidth: 1)
+                        )
+                )
+                .padding(.horizontal, TS.Spacing.md)
             }
-            .padding(.horizontal, TS.Spacing.md)
         }
     }
+
+    private func practiceSegment(_ mode: PracticeMode) -> some View {
+        let isSelected = selectedPracticeMode == mode
+        return Button {
+            isShowingSettingsPage = false
+            selectedPracticeMode = mode
+        } label: {
+            Text(mode.title)
+                .font(.system(.caption, design: .serif).weight(isSelected ? .semibold : .regular))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 5)
+                .foregroundStyle(isSelected ? TS.SemanticColor.paper : TS.SemanticColor.inkSoft)
+                .background(
+                    RoundedRectangle(cornerRadius: TS.Radius.chip)
+                        .fill(isSelected ? TS.SemanticColor.ink : Color.clear)
+                )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func practiceIcon(_ mode: PracticeMode, icon: String) -> some View {
+        let isSelected = selectedPracticeMode == mode
+        return Button {
+            isShowingSettingsPage = false
+            selectedPracticeMode = mode
+        } label: {
+            Image(systemName: icon)
+                .font(.system(size: 14, weight: .semibold))
+                .frame(width: 36, height: 30)
+                .foregroundStyle(isSelected ? TS.SemanticColor.paper : TS.SemanticColor.inkSoft)
+                .background(
+                    RoundedRectangle(cornerRadius: TS.Radius.chip)
+                        .fill(isSelected ? TS.SemanticColor.ink : Color.clear)
+                )
+        }
+        .buttonStyle(.plain)
+        .help(mode.title)
+    }
+
+    // MARK: Collapse
 
     private var collapseButton: some View {
         Button {
             isCollapsed.toggle()
         } label: {
-            HStack(spacing: TS.Spacing.lg) {
-                Image(systemName: isCollapsed ? "sidebar.left" : "sidebar.leading")
-                    .frame(width: 28, height: 28)
+            HStack(spacing: TS.Spacing.md) {
+                Image(systemName: isCollapsed ? "chevron.right.2" : "chevron.left.2")
+                    .font(.system(size: 11, weight: .semibold))
+                    .frame(width: 22, height: 22)
                 if !isCollapsed {
                     Text("收起")
-                        .font(TS.Font.body)
+                        .font(TS.Font.label)
                     Spacer(minLength: 0)
                 }
             }
+            .foregroundStyle(TS.SemanticColor.inkFaint)
             .frame(maxWidth: .infinity, alignment: isCollapsed ? .center : .leading)
         }
-        .buttonStyle(.borderless)
-        .padding(.horizontal, TS.Padding.chipHorizontal)
+        .buttonStyle(.plain)
+        .padding(.horizontal, TS.Padding.chipHorizontal + 4)
     }
 
+    // MARK: Mode buttons
+
     private var modeButtons: some View {
-        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+        VStack(alignment: .leading, spacing: TS.Spacing.sm) {
+            groupLabel("星图")
             if selectedPracticeMode == .modern {
                 modernSubModeButtons
             } else if selectedPracticeMode == .classical {
@@ -87,10 +155,33 @@ struct AppNavigationRail: View {
             } else {
                 vedicModeButtons
             }
+
+            groupLabel("行运")
+                .padding(.top, TS.Spacing.sm)
             navigationButton(title: "时间点", icon: "clock", mode: .moment)
             navigationButton(title: "窗口扫描", icon: "calendar.badge.clock", mode: .scan)
         }
         .padding(.horizontal, TS.Spacing.md)
+    }
+
+    private func groupLabel(_ text: String) -> some View {
+        Group {
+            if isCollapsed {
+                Rectangle()
+                    .fill(TS.SemanticColor.line)
+                    .frame(height: 1)
+                    .padding(.horizontal, TS.Spacing.sm)
+                    .padding(.vertical, TS.Spacing.sm)
+            } else {
+                Text(text.uppercased())
+                    .font(.system(size: 9, weight: .semibold))
+                    .tracking(1.4)
+                    .foregroundStyle(TS.SemanticColor.inkFaint)
+                    .padding(.horizontal, TS.Padding.chipHorizontal)
+                    .padding(.top, TS.Spacing.sm)
+                    .padding(.bottom, TS.Spacing.xs)
+            }
+        }
     }
 
     private var classicalModeButtons: some View {
@@ -110,11 +201,7 @@ struct AppNavigationRail: View {
     private var modernSubModeButtons: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.sm) {
             ForEach(ModernSubMode.allCases) { subMode in
-                modernNavButton(
-                    title: subMode.title,
-                    icon: subMode.icon,
-                    subMode: subMode
-                )
+                modernNavButton(title: subMode.title, icon: subMode.icon, subMode: subMode)
             }
         }
     }
@@ -124,8 +211,10 @@ struct AppNavigationRail: View {
             isShowingSettingsPage = true
         }
         .padding(.horizontal, TS.Spacing.md)
-        .padding(.bottom, TS.Padding.resultContent)
+        .padding(.bottom, TS.Spacing.xs)
     }
+
+    // MARK: Nav button primitives
 
     private func navigationButton(title: String, icon: String, mode: CalculationMode) -> some View {
         navigationButton(title: title, icon: icon, isSelected: !isShowingSettingsPage && selectedMode == mode) {
@@ -136,84 +225,39 @@ struct AppNavigationRail: View {
 
     private func modernNavButton(title: String, icon: String, subMode: ModernSubMode) -> some View {
         let isSelected = !isShowingSettingsPage && selectedMode == .settings && modernSubMode == subMode
-        return Button {
+        return navButtonLabel(title: title, icon: icon, isSelected: isSelected) {
             isShowingSettingsPage = false
             selectedMode = .settings
             modernSubMode = subMode
-        } label: {
-            HStack(spacing: TS.Spacing.lg) {
-                Image(systemName: icon)
-                    .font(.system(size: 14, weight: .semibold))
-                    .frame(width: 28, height: 28)
-                if !isCollapsed {
-                    Text(subMode.title)
-                        .font(TS.Font.body.weight(isSelected ? .semibold : .regular))
-                    Spacer(minLength: 0)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: isCollapsed ? .center : .leading)
-            .padding(.horizontal, isCollapsed ? TS.Spacing.sm : TS.Padding.chipHorizontal)
-            .padding(.vertical, TS.Spacing.md)
-            .foregroundStyle(isSelected ? TS.SemanticColor.accent : Color.primary)
-            .background(
-                RoundedRectangle(cornerRadius: TS.Radius.card)
-                    .fill(isSelected ? TS.SemanticColor.accentSubtle : Color.clear)
-            )
         }
-        .buttonStyle(.plain)
-        .help(subMode.title)
     }
 
     private func navigationButton(title: String, icon: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        navButtonLabel(title: title, icon: icon, isSelected: isSelected, action: action)
+    }
+
+    private func navButtonLabel(title: String, icon: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: TS.Spacing.lg) {
+            HStack(spacing: TS.Spacing.md) {
                 Image(systemName: icon)
-                    .font(.system(size: 16, weight: .semibold))
-                    .frame(width: 28, height: 28)
+                    .font(.system(size: 13, weight: .medium))
+                    .frame(width: 20, height: 20)
                 if !isCollapsed {
                     Text(title)
-                        .font(TS.Font.body.weight(isSelected ? .semibold : .regular))
+                        .font(.system(size: 12.5, weight: isSelected ? .semibold : .regular))
                     Spacer(minLength: 0)
                 }
             }
             .frame(maxWidth: .infinity, alignment: isCollapsed ? .center : .leading)
             .padding(.horizontal, isCollapsed ? TS.Spacing.sm : TS.Padding.chipHorizontal)
-            .padding(.vertical, TS.Spacing.md)
-            .foregroundStyle(isSelected ? TS.SemanticColor.accent : Color.primary)
+            .padding(.vertical, 6)
+            .foregroundStyle(isSelected ? TS.SemanticColor.goldDeep : TS.SemanticColor.inkSoft)
             .background(
                 RoundedRectangle(cornerRadius: TS.Radius.card)
-                    .fill(isSelected ? TS.SemanticColor.accentSubtle : Color.clear)
+                    .fill(isSelected ? TS.SemanticColor.goldSoft : Color.clear)
             )
         }
         .buttonStyle(.plain)
         .help(title)
-    }
-
-    private func practiceModeButton(for mode: PracticeMode, icon: String) -> some View {
-        let isSelected = selectedPracticeMode == mode
-
-        return Button {
-            isShowingSettingsPage = false
-            selectedPracticeMode = mode
-        } label: {
-            HStack(spacing: TS.Spacing.md) {
-                Image(systemName: icon)
-                    .font(.system(size: 14, weight: .semibold))
-                if !isCollapsed {
-                    Text(mode.title)
-                        .font(TS.Font.body.weight(isSelected ? .semibold : .regular))
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: isCollapsed ? .center : .leading)
-            .padding(.horizontal, isCollapsed ? TS.Spacing.sm : TS.Padding.chipHorizontal)
-            .padding(.vertical, TS.Spacing.md)
-            .foregroundStyle(isSelected ? TS.SemanticColor.accent : Color.primary)
-            .background(
-                RoundedRectangle(cornerRadius: TS.Radius.card)
-                    .fill(isSelected ? TS.SemanticColor.accentSubtle : Color.clear)
-            )
-        }
-        .buttonStyle(.plain)
-        .help(mode.title)
     }
 }
