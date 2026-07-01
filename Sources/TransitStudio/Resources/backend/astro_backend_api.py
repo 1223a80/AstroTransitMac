@@ -87,7 +87,8 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
         is_day = sun_house >= 7
         from astro_backend_classical import calculate_lots
 
-        lots = calculate_lots(angle_values, lot_positions_by_id, cusps, is_day)
+        mc_lon = angle_values.get("MC", 270.0)  # default MC if not available
+        lots = calculate_lots(angle_values, lot_positions_by_id, cusps, is_day, mc=mc_lon)
 
     # 赤纬相位（平行/反平行）
     all_positions = natal_positions + transit_positions
