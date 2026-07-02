@@ -4,7 +4,7 @@
 
 ---
 
-# 合并 expansion-002 与 Claude 图标优化入 main — 进行中（2026-07-02）
+# 合并 expansion-002 与 Claude 图标优化入 main — 已完成（2026-07-02）
 
 ## 分支
 - 当前分支：`codex/expansion-002`
@@ -17,9 +17,29 @@
 |------|------|------|
 | 01 核对分支与工作区 | ✅ | 当前工作区干净；`main` 在 `4aa7b68`，两个待合并分支均存在 |
 | 02 预判冲突面 | ✅ | 已确认 `CHANGELOG.md`、`PLANS.md`、`package_app.sh` 会在第二次合并时需要重点核对 |
-| 03 合并当前分支到 main | ⬜ | 切换到 `main` 后合并 `codex/expansion-002` |
-| 04 合并 Claude 分支到 main | ⬜ | 合并 `claude/confident-leavitt-08051a`，保留最新版本号并叠加 AppIcon 预生成优化 |
-| 05 验证结果 | ⬜ | 检查 `git status`、分支包含关系、关键 diff；必要时运行轻量验证 |
+| 03 合并当前分支到 main | ✅ | `main` 已快进合并 `codex/expansion-002`，包含本地计划提交 `9ec9d80` |
+| 04 合并 Claude 分支到 main | ✅ | 已保留最新版本号 `1.1.12 (32)`，并叠加 AppIcon 预生成优化 |
+| 05 验证结果 | ✅ | `PATH=/usr/local/bin:$PATH bash check_vibe_changes.sh` 通过：486 Python、Swift build/test、5 个 smoke |
+
+---
+
+# 打包脚本图标预生成 — 已完成（2026-07-02）
+
+## 分支
+
+`claude/confident-leavitt-08051a`（worktree）
+
+## 背景
+
+`package_app.sh` 每次打包都用纯 Python 逐像素重新生成 10 张完全相同的 PNG（最大 1024×1024，纯 CPython 需 1–2 分钟），且依赖 PATH 上的 python3。曾导致外部修复 Agent 在此步骤卡死超时（iconset 目录为空）。
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 一次性生成 AppIcon.icns 并提交到 `assets/` | ✅ | 用现有生成逻辑产出，`iconutil` 打包为 icns |
+| 02 `package_app.sh` 优先拷贝已提交的 icns | ✅ | 仅当 `assets/AppIcon.icns` 缺失时回退到原生成逻辑 |
+| 03 `SKIP_INSTALL=1 ./package_app.sh` 验证产物 | ✅ | 确认 app 内 AppIcon.icns 正常且与提交文件一致 |
 
 ---
 

@@ -10,6 +10,12 @@
 - 新增回归测试：magistery 昼/夜数值与公式文本（F1）、缺行星容错（F2）、宫位标签越界守卫（F3）。
 - `package_app.sh` 打包版本更新为 `1.1.12 (32)`。
 
+## 2026-07-02 — 打包脚本使用预生成 AppIcon.icns
+
+- 新增 `assets/AppIcon.icns`（用原逐像素生成逻辑一次性产出并提交）。
+- `package_app.sh` 改为优先直接拷贝 `assets/AppIcon.icns`；仅当该文件缺失时才回退到原有的纯 Python 逐像素生成 + `iconutil` 流程。消除每次打包 1–2 分钟的重复图标生成及对 PATH 上 python3 的硬依赖（此前曾导致外部 Agent 打包卡死超时）。
+- 验证：`SKIP_INSTALL=1 ./package_app.sh` ✅，产物内 `AppIcon.icns` 与提交文件逐字节一致。
+
 ## 2026-07-01 — Firdaria 主流算法接轨
 
 - 修正 Firdaria 次限算法：七曜主限拆为 7 个等长次限，从主限星自身开始，按 `Sun → Venus → Mercury → Moon → Saturn → Jupiter → Mars` 循环轮转。

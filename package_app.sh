@@ -21,6 +21,7 @@ CONTENTS_DIR="$STAGED_APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
 ICONSET_DIR="/private/tmp/TransitStudio.iconset"
+APP_ICON_ICNS="$ROOT_DIR/assets/AppIcon.icns"
 
 clean_xattrs() {
     local target="${1:?target required}"
@@ -46,7 +47,11 @@ ditto --noextattr --noqtn "$BUILD_DIR/AstroTransitMac_TransitStudio.bundle" "$RE
 find "$STAGED_APP_DIR" -name '*.pyc' -delete
 find "$STAGED_APP_DIR" -name '__pycache__' -type d -empty -delete
 
-python3 - <<'PY'
+if [[ -f "$APP_ICON_ICNS" ]]; then
+    cp "$APP_ICON_ICNS" "$RESOURCES_DIR/AppIcon.icns"
+else
+    # 回退：仓库内没有预生成的 assets/AppIcon.icns 时才逐像素重新生成（纯 CPython 约 1-2 分钟）
+    python3 - <<'PY'
 from pathlib import Path
 import math
 import struct
@@ -124,8 +129,8 @@ def write_png(path, size):
 for name, size in targets.items():
     write_png(root / name, size)
 PY
-
-iconutil -c icns "$ICONSET_DIR" -o "$RESOURCES_DIR/AppIcon.icns"
+    iconutil -c icns "$ICONSET_DIR" -o "$RESOURCES_DIR/AppIcon.icns"
+fi
 
 cat > "$CONTENTS_DIR/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
