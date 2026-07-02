@@ -4,6 +4,25 @@
 
 ---
 
+# 合并 expansion-002 与 Claude 图标优化入 main — 进行中（2026-07-02）
+
+## 分支
+- 当前分支：`codex/expansion-002`
+- 额外合并分支：`claude/confident-leavitt-08051a`
+- 目标分支：`main`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 核对分支与工作区 | ✅ | 当前工作区干净；`main` 在 `4aa7b68`，两个待合并分支均存在 |
+| 02 预判冲突面 | ✅ | 已确认 `CHANGELOG.md`、`PLANS.md`、`package_app.sh` 会在第二次合并时需要重点核对 |
+| 03 合并当前分支到 main | ⬜ | 切换到 `main` 后合并 `codex/expansion-002` |
+| 04 合并 Claude 分支到 main | ⬜ | 合并 `claude/confident-leavitt-08051a`，保留最新版本号并叠加 AppIcon 预生成优化 |
+| 05 验证结果 | ⬜ | 检查 `git status`、分支包含关系、关键 diff；必要时运行轻量验证 |
+
+---
+
 # Expansion 002 代码评审修复（F1-F5）— 已完成（2026-07-02）
 
 ## 分支
