@@ -4,6 +4,21 @@
 
 ---
 
+# main 合并后打包覆盖 /Applications — 已完成（2026-07-02）
+
+## 分支
+`main`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 核对当前状态 | ✅ | 工作区干净；`package_app.sh` 版本为 `1.1.12 (32)` |
+| 02 执行打包覆盖 | ✅ | 已运行 `./package_app.sh`，覆盖 `/Applications/TransitStudio.app` |
+| 03 验证安装产物 | ✅ | 安装版 `1.1.12 (32)`；codesign 通过；无 `.pyc`/`__pycache__`；AppIcon 与仓库文件一致；classical smoke 通过 |
+
+---
+
 # 合并 expansion-002 与 Claude 图标优化入 main — 已完成（2026-07-02）
 
 ## 分支
