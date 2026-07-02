@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-02 — 打包脚本使用预生成 AppIcon.icns
+
+- 新增 `assets/AppIcon.icns`（用原逐像素生成逻辑一次性产出并提交）。
+- `package_app.sh` 改为优先直接拷贝 `assets/AppIcon.icns`；仅当该文件缺失时才回退到原有的纯 Python 逐像素生成 + `iconutil` 流程。消除每次打包 1–2 分钟的重复图标生成及对 PATH 上 python3 的硬依赖（此前曾导致外部 Agent 打包卡死超时）。
+- 验证：`SKIP_INSTALL=1 ./package_app.sh` ✅，产物内 `AppIcon.icns` 与提交文件逐字节一致。
+
 ## 2026-07-01 — Expansion 002 规划文档
 
 - 创建 `docs/expansion-002/` 目录，包含 5 份规划文档：

@@ -4,6 +4,26 @@
 
 ---
 
+# 打包脚本图标预生成 — 已完成（2026-07-02）
+
+## 背景
+
+`package_app.sh` 每次打包都用纯 Python 逐像素重新生成 10 张完全相同的 PNG（最大 1024×1024，纯 CPython 需 1–2 分钟），且依赖 PATH 上的 python3。曾导致外部修复 Agent 在此步骤卡死超时（iconset 目录为空）。
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 一次性生成 AppIcon.icns 并提交到 `assets/` | ✅ | 用现有生成逻辑产出，`iconutil` 打包为 icns |
+| 02 `package_app.sh` 优先拷贝已提交的 icns | ✅ | 仅当 `assets/AppIcon.icns` 缺失时回退到原生成逻辑 |
+| 03 `SKIP_INSTALL=1 ./package_app.sh` 验证产物 | ✅ | 确认 app 内 AppIcon.icns 正常且与提交文件一致 |
+
+## 分支
+
+`claude/confident-leavitt-08051a`（worktree）
+
+---
+
 # Expansion 002: 恒星与赤纬 + 中世纪技法深化 — 规划中（2026-07-01）
 
 ## 状态
