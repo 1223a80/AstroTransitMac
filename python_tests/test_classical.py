@@ -157,11 +157,27 @@ class TestFirdaria:
     def test_sub_periods(self) -> None:
         start = datetime(1990, 1, 1)
         subs = firdaria_sub_periods("SUN", start, 10, True)
-        assert len(subs) == 8
-        assert subs[0]["ruler"] != "SUN"
+        assert len(subs) == 7
+        assert subs[0]["ruler"] == "太阳"
+        assert subs[1]["ruler"] == "金星"
+        assert subs[-1]["ruler"] == "火星"
+        assert all(s["fraction"] == round(1 / 7, 4) for s in subs)
         assert all("start_local" in s for s in subs)
         assert all("end_local" in s for s in subs)
         assert all("fraction" in s for s in subs)
+
+    def test_sub_periods_rotate_from_main_ruler(self) -> None:
+        start = datetime(2022, 8, 10, 1, 1)
+        subs = firdaria_sub_periods("MERCURY", start, 13, True)
+        assert [s["ruler"] for s in subs] == ["水星", "月亮", "土星", "木星", "火星", "太阳", "金星"]
+        assert subs[0]["start_local"] == "2022-08-10 01:01"
+        assert subs[2]["start_local"] == "2026-04-27 15:46"
+        assert subs[2]["end_local"] == "2028-03-05 23:09"
+
+    def test_node_periods_have_no_sub_periods(self) -> None:
+        start = datetime(2060, 1, 1)
+        assert firdaria_sub_periods("NORTH_NODE", start, 3, True) == []
+        assert firdaria_sub_periods("SOUTH_NODE", start, 2, False) == []
 
     def test_firdaria_summary_day(self) -> None:
         birth = datetime(1990, 1, 1)
@@ -170,6 +186,20 @@ class TestFirdaria:
         assert summary["technique"] == "Firdaria"
         assert "ruler" in summary
         assert "sub_periods" in summary
+
+    def test_firdaria_summary_matches_mainstream_current_sub_period(self) -> None:
+        birth = datetime(2004, 8, 9, 8, 16)
+        ref = datetime(2026, 7, 1, 12, 20)
+        summary = firdaria_summary(birth, ref, True)
+        assert summary["ruler"] == "水星"
+        assert summary["start_local"] == "2022-08-09 17:01"
+        assert summary["end_local"] == "2035-08-09 20:41"
+        assert len(summary["sub_periods"]) == 7
+        assert [s["ruler"] for s in summary["sub_periods"]] == ["水星", "月亮", "土星", "木星", "火星", "太阳", "金星"]
+        assert summary["current_sub_period"]["ruler"] == "土星"
+        assert summary["current_sub_period"]["start_local"] == "2026-04-27 07:47"
+        assert summary["current_sub_period"]["end_local"] == "2028-03-05 15:10"
+        assert "7 等分次限，从主限星开始" in summary["notes"]
 
 
 class TestTimeline:

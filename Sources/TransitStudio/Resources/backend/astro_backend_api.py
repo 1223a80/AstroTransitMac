@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import sys
 from datetime import datetime
+from pathlib import Path
 from typing import Any
 
 from backend_runtime import apply_runtime_options
@@ -51,6 +52,44 @@ from astro_backend_classical_medieval import (
 )
 
 
+def _bundled_ephemeris_path(module_file: Path | None = None) -> Path | None:
+    """Return the bundled Swiss Ephemeris path for source and app layouts."""
+    backend_dir = Path(module_file or __file__).resolve().parent
+    candidates = [
+        backend_dir.parent / "ephemeris",  # Source tree: Resources/backend + Resources/ephemeris
+        backend_dir,  # Packaged SwiftPM resource bundle flattens files into the bundle root.
+    ]
+    for candidate in candidates:
+        if (candidate / "sefstars.txt").exists() or (candidate / "seas_18.se1").exists():
+            return candidate
+    return next((candidate for candidate in candidates if candidate.exists()), None)
+
+
+def _cross_declination_aspects(
+    natal_positions: list[dict[str, Any]],
+    transit_positions: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Return only natal-vs-transit declination aspects with prefixed IDs."""
+    aspects: list[dict[str, Any]] = []
+    for natal in natal_positions:
+        natal_id = natal.get("body_id")
+        natal_dec = natal.get("declination")
+        if natal_id is None or natal_dec is None:
+            continue
+        for transit in transit_positions:
+            transit_id = transit.get("body_id")
+            transit_dec = transit.get("declination")
+            if transit_id is None or transit_dec is None:
+                continue
+            pair = [
+                {"body_id": f"natal_{natal_id}", "declination": natal_dec},
+                {"body_id": f"transit_{transit_id}", "declination": transit_dec},
+            ]
+            aspects.extend(find_declination_aspects(pair))
+    aspects.sort(key=lambda row: row["diff"])
+    return aspects
+
+
 def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
     natal_jd, natal_utc = moment_to_jd(request["natal"])
     transit_jd, transit_utc = moment_to_jd(request["transit"])
@@ -93,19 +132,15 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
         from astro_backend_classical import calculate_lots
 
         mc_lon = angle_values.get("MC", 270.0)  # default MC if not available
-        lots = calculate_lots(angle_values, lot_positions_by_id, cusps, is_day, mc=mc_lon)
+        lots = calculate_lots(angle_values, lot_positions_by_id, cusps, is_day, mc=mc_lon, warnings=warnings)
 
     # 赤纬相位（平行/反平行）
     # Compute separately for natal-natal, transit-transit, and cross-aspects
     # to avoid ambiguous "SUN parallel SUN" entries.
     nn_aspects = find_declination_aspects(natal_positions)
     tt_aspects = find_declination_aspects(transit_positions)
-    # Cross-aspects: tag with natal_/transit_ prefix to disambiguate
-    combined_for_cross = (
-        [{**r, "body_id": "natal_" + r["body_id"]} for r in natal_positions]
-        + [{**r, "body_id": "transit_" + r["body_id"]} for r in transit_positions]
-    )
-    nt_aspects = find_declination_aspects(combined_for_cross)
+    # Cross-aspects: tag with natal_/transit_ prefix to disambiguate.
+    nt_aspects = _cross_declination_aspects(natal_positions, transit_positions)
     declination_aspects = nn_aspects + tt_aspects + nt_aspects
 
     # 恒星合相
@@ -598,6 +633,10 @@ def main() -> None:
         ephemeris_path = (request.get("ephemeris_path") or request.get("ephemerisPath") or "").strip()
         if ephemeris_path:
             swe.set_ephe_path(ephemeris_path)
+        else:
+            bundled_ephemeris = _bundled_ephemeris_path()
+            if bundled_ephemeris is not None:
+                swe.set_ephe_path(str(bundled_ephemeris))
 
         mode = request.get("mode", "")
         if mode == "scan":

@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-07-02 — Expansion 002 代码评审修复（F1-F5）
+
+- **F1** 修复 magistery 权威点公式文本：`_resolve_lot_ref()` 新增 `mc` 一等参数说明符，注册行改为 `"mc"`，删除特判分支，通用路径补传 `mc=mc_lon`，`_formula_text()` 新增 `"mc"→"MC"` 渲染。公式文本不再显示 `0°`。
+- **F2** 单颗行星星历失败不再让整个 lots 计算崩溃：`calculate_lots()` 增加 `warnings` 参数，主循环包裹 `try/except KeyError`，失败的 lot 跳过并记录中文 warning。两个调用方补传 `warnings`。
+- **F3** 年主星宫位标签增加边界守卫：引入 `_HOUSE_LABELS` 常量与 `house` 变量，`house_label` 取值加 `0 <= house <= 12` 判断，越界或缺失时安全返回空字符串。
+- **F4** 删除 lots 模块 4 个死函数（`_day_night_simple`、`_resolve`、`_resolve_args`、`_make_calc`）及伴随注释，清理因删除失效的 `BODY_REGISTRY` import。
+- **F5** fixed_stars 复用 core 的 `norm360` 与 `angular_separation`，消除内联重写。
+- 新增回归测试：magistery 昼/夜数值与公式文本（F1）、缺行星容错（F2）、宫位标签越界守卫（F3）。
+- `package_app.sh` 打包版本更新为 `1.1.12 (32)`。
+
+## 2026-07-01 — Firdaria 主流算法接轨
+
+- 修正 Firdaria 次限算法：七曜主限拆为 7 个等长次限，从主限星自身开始，按 `Sun → Venus → Mercury → Moon → Saturn → Jupiter → Mars` 循环轮转。
+- 交点主限（North Node / South Node）不再生成七曜次限，并在 notes 中明确“交点主限不拆次限”。
+- 新增 Firdaria 回归测试，锁定 Mercury 主限内 `Mercury → Moon → Saturn → Jupiter → Mars → Sun → Venus` 次限顺序与当前 Saturn 次限。
+- `package_app.sh` 打包版本更新为 `1.1.11 (31)`，用于本轮算法修正后覆盖安装。
+
+## 2026-07-01 — Expansion 002 Markdown 输出补全
+
+- 古典 Markdown 导出补齐赤纬/OOB、赤纬平行/反平行相位、固定星合相与中世纪深化章节（Sect Light 三分主、Kurios/Oikodespotes、年主+Solar Return 综合）；对应字段存在但无命中时也输出空结果说明。
+- 普通本命/行运 Markdown 位置表补齐赤纬/OOB，并输出本命/行运固定星合相与赤纬相位。
+- 后端默认星历路径同时兼容源码 `Resources/ephemeris` 与打包后的 SwiftPM resource bundle 根目录，避免 `/Applications` 版本找不到 `sefstars.txt`。
+- Swift 启动 Python 后端时设置 `PYTHONDONTWRITEBYTECODE=1`，避免运行后在 app bundle 内生成 `__pycache__` 破坏签名 seal。
+- 新增 Markdown 导出回归测试，确保后端已计算出的 Expansion 002 数据实际出现在导出文本里。
+- `package_app.sh` 打包版本更新为 `1.1.10 (30)`，用于本轮前端导出补齐后覆盖安装。
+
+## 2026-07-01 — Expansion 002 复查修补
+
+- 修正固定星目录中 `Zubenelschemali` 对应的 Swiss Ephemeris 名称为 `Zubeneshamali`，避免 bundled `sefstars.txt` 存在时仍误报星表缺失。
+- 固定星失败 warning 区分星表文件缺失与单颗星名解析失败。
+- 行运/本命赤纬 cross-aspect 改为只生成 natal-vs-transit 组合，避免同盘内相位被重复塞入 cross 分组。
+- Swift 过滤 `declinationAspects` 时兼容 `natal_` / `transit_` 前缀，隐藏天体过滤不再误删有效 cross 赤纬相位。
+- 后端 CLI 在请求未传 `ephemerisPath` 时默认使用 bundled `Resources/ephemeris`，让样例 smoke 也能计算固定星。
+- 新增固定星 catalog 与 cross 赤纬相位 focused 回归测试。
+- `package_app.sh` 打包版本更新为 `1.1.9 (29)`，用于本轮复查修补后覆盖安装。
+
 ## 2026-07-01 — Expansion 002 编码实施
 
 - **Phase 1 - 赤纬管线**: `calculate_body()` 增加 declination / out_of_bounds 字段。提取 obliquity/dec/RA 到 core.py。新增 `find_declination_aspects()` 检测平行/反平行相位。Swift 模型同步扩展。

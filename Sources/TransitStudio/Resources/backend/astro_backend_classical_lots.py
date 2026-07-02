@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 from astro_backend_classical_dignity import EXALTATION_RULERS
-from astro_backend_core import BODY_REGISTRY, SIGN_RULERS, norm360, planet_name, zodiac_sign_index
+from astro_backend_core import SIGN_RULERS, norm360, planet_name, zodiac_sign_index
 from astro_backend_ephemeris import point_row
 
 
@@ -52,62 +52,6 @@ def house_ruler_lon(house: int) -> float:
 
 
 # ---------------------------------------------------------------------------
-# Lot definitions: (lot_id, name, (day_formula_args), (night_formula_args), group, source)
-# Each formula is (is_day, method_func, theme_1, theme_2) or None for direct.
-# For simplicity we use a lambda-style approach at calc time.
-# ---------------------------------------------------------------------------
-
-def _day_night_simple(lot_id: str, name_eng: str, a: str, b: str, group: str, source: str):
-    """Factory for lots using ASC + A - B (day) / ASC + B - A (night)."""
-    def calc(asc, *pos, is_day):
-        p_a = pos[0]
-        p_b = pos[1]
-        return lot_value(asc, p_a, p_b) if is_day else lot_value(asc, p_b, p_a)
-    return (lot_id, name_eng, calc, (a, b), (b, a), group, source)
-
-
-# Pre-computed extended lot definitions
-# Structure: (lot_id, name, calc_fn, day_args, night_args, group, source)
-# calc_fn receives (asc, *resolved_args, is_day=bool) → longitude
-# day_args/night_args are tuples of arg-specifiers: ("planet:SUN", "lon:45.0", "house:8", etc.)
-
-
-def _resolve(arg: str, positions: dict[str, dict[str, Any]], asc: float) -> float:
-    """Resolve a lot argument specifier into a longitude."""
-    if arg.startswith("planet:"):
-        pid = arg.split(":", 1)[1]
-        return positions[pid]["longitude"]
-    if arg.startswith("lon:"):
-        return float(arg.split(":", 1)[1])
-    if arg.startswith("house:"):
-        h = int(arg.split(":", 1)[1])
-        return house_cusp_lon(h)
-    if arg.startswith("exalt:"):
-        return exaltation_lon(asc)
-    if arg.startswith("self:"):
-        return asc
-    return 0.0
-
-
-def _resolve_args(args: tuple, positions, asc) -> tuple[float, ...]:
-    return tuple(_resolve(a, positions, asc) for a in args)
-
-
-def _make_calc(day_a: str, day_b: str, night_a: str | None = None, night_b: str | None = None):
-    """Create a calculator function for ASC + A - B formula."""
-    if night_a is None:
-        night_a = day_b
-    if night_b is None:
-        night_b = day_a
-    def calc(asc, *pos, is_day):
-        if is_day:
-            a = _resolve(day_a, pos[0], asc) if len(pos) == 1 else pos[0]
-            b = _resolve(day_b, pos[1], asc) if len(pos) == 2 else pos[1]
-        else:
-            a = _resolve(night_a, pos[0], asc) if len(pos) == 1 else pos[0]
-            b = _resolve(night_b, pos[1], asc) if len(pos) == 2 else pos[1]
-        return lot_value(asc, a, b)
-    return calc
 
 
 # Build the list of extended lot definitions
@@ -191,7 +135,7 @@ reg("kingship",   "王权点",   "Kingship",    "ASC + Moon - Sun",        "ASC 
 reg("honor",      "荣誉点",   "Honor",       "ASC + lon:19 - Sun",      "ASC + Sun - lon:19",     "career","Lilly", "lon:19", "planet:SUN")
 reg("nobility",   "贵族点",   "Nobility",    "ASC + Jupiter - Moon",    "ASC + Moon - Jupiter",   "career","AbuMa'shar","planet:JUPITER","planet:MOON")
 reg("profession", "职业点",   "Profession",  "ASC + Sun - Mercury",     "ASC + Mercury - Sun",    "career","Bonatti","planet:SUN","planet:MERCURY")
-reg("magistery",  "权威点",   "Magistery",   "ASC + MC - Sun",          "ASC + Sun - MC",         "career","Bonatti","lon:0","planet:SUN")  # MC at 0° of 10th sign in Whole Sign
+reg("magistery",  "权威点",   "Magistery",   "ASC + MC - Sun",          "ASC + Sun - MC",         "career","Bonatti","mc","planet:SUN")
 reg("dignity",    "尊荣点",   "Dignity",     "ASC + Sun - Saturn",      "ASC + Saturn - Sun",     "career","AbuMa'shar","planet:SUN","planet:SATURN")
 reg("fame",       "名声点",   "Fame",        "ASC + Jupiter - Sun",     "ASC + Sun - Jupiter",    "career","Lilly", "planet:JUPITER", "planet:SUN")
 reg("success",    "成功点",   "Success",     "ASC + Jupiter - Fortune", "ASC + Fortune - Jupiter","career","Bonatti","planet:JUPITER","fortune")
@@ -218,10 +162,12 @@ reg("acquisition_old","获取点","Acquisition","ASC + Spirit - Fortune","ASC + 
 reg("children_old","子女点(旧)","Children(Old)","ASC + Jupiter - Saturn","ASC + Saturn - Jupiter","experimental","Paulus","planet:JUPITER","planet:SATURN")
 
 
-def _resolve_lot_ref(ref: str, computed: dict[str, float], positions, asc: float) -> float:
+def _resolve_lot_ref(ref: str, computed: dict[str, float], positions, asc: float, mc: float | None = None) -> float:
     """Resolve a reference that may be another lot's ID or a ``planet:``/``house:``/etc spec."""
     if ref in computed:
         return computed[ref]
+    if ref == "mc":
+        return mc if mc is not None else house_cusp_lon(10)
     if ref.startswith("planet:"):
         pid = ref.split(":", 1)[1]
         return positions[pid]["longitude"]
@@ -241,6 +187,8 @@ def _formula_text(day_p1: str, day_p2: str, night_p1: str, night_p2: str) -> tup
         if spec.startswith("planet:"):
             pid = spec.split(":", 1)[1]
             return planet_name(pid) if planet_name(pid) != pid else pid
+        if spec == "mc":
+            return "MC"
         if spec.startswith("house:"):
             return f"House{spec.split(':',1)[1]}"
         if spec.startswith("lon:"):
@@ -261,6 +209,7 @@ def calculate_lots(
     cusps: list[float],
     is_day: bool,
     mc: float | None = None,
+    warnings: list[str] | None = None,
 ) -> list[dict[str, Any]]:
     """Calculate all 53 Arabic Parts. Returns a list of dicts with point data.
 
@@ -284,23 +233,19 @@ def calculate_lots(
         source = lot_def["source"]
         confidence = lot_def["confidence"]
 
-        # Resolve arguments
-        p1 = lot_def["day_p1"] if is_day else lot_def["night_p1"]
-        p2 = lot_def["day_p2"] if is_day else lot_def["night_p2"]
+        try:
+            p1 = lot_def["day_p1"] if is_day else lot_def["night_p1"]
+            p2 = lot_def["day_p2"] if is_day else lot_def["night_p2"]
 
-        # Special handling for magistery (MC-based)
-        if lid == "magistery":
-            # Day: ASC + MC - Sun  → a=MC, b=Sun
-            # Night: ASC + Sun - MC → a=Sun, b=MC
-            a = mc_lon if is_day else _resolve_lot_ref(p1, computed, positions, asc)
-            b = _resolve_lot_ref(p2, computed, positions, asc) if is_day else mc_lon
-            lon = lot_value(asc, a, b)
-        else:
-            a = _resolve_lot_ref(p1, computed, positions, asc)
-            b = _resolve_lot_ref(p2, computed, positions, asc)
+            a = _resolve_lot_ref(p1, computed, positions, asc, mc=mc_lon)
+            b = _resolve_lot_ref(p2, computed, positions, asc, mc=mc_lon)
             lon = lot_value(asc, a, b)
 
-        computed[lid] = lon
+            computed[lid] = lon
+        except KeyError as exc:
+            if warnings is not None:
+                warnings.append(f"阿拉伯点 {name_cn}({lid}) 计算失败：缺少 {exc.args[0]} 数据，已跳过")
+            continue
 
         day_f, night_f = _formula_text(
             lot_def["day_p1"], lot_def["day_p2"],

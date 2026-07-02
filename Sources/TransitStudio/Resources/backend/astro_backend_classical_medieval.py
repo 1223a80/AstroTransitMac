@@ -36,6 +36,8 @@ from astro_backend_classical import (
     solar_phase,
 )
 
+_HOUSE_LABELS = ["", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"]
+
 # ---------------------------------------------------------------------------
 # 1. Triplicity Rulers of the Sect Light
 # ---------------------------------------------------------------------------
@@ -271,12 +273,13 @@ def profection_solar_return_synthesis(
     lord_in_sr: dict[str, Any] = {"present": False}
     for p in sr_planet_rows:
         if p.get("id") == lord_id or p.get("name") == lord_name:
+            house = p.get("house", 0)
             lord_in_sr = {
                 "present": True,
                 "planet": lord_id,
                 "planet_name": lord_name,
-                "house": p.get("house", 0),
-                "house_label": ["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"][p.get("house", 0)],
+                "house": house,
+                "house_label": _HOUSE_LABELS[house] if 0 <= house <= 12 else "",
                 "sign": p.get("sign", ""),
                 "score": p.get("score", 0),
                 "score_label": p.get("score_label", ""),

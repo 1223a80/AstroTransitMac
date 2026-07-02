@@ -1,6 +1,10 @@
 """Tests for fixed star catalogs and conjunction detection."""
 from __future__ import annotations
 
+from pathlib import Path
+
+from astro_backend_api import _bundled_ephemeris_path
+from astro_backend_core import swe
 from astro_backend_fixed_stars import (
     STAR_CATALOG,
     compute_star_positions,
@@ -34,6 +38,35 @@ class TestStarCatalog:
     def test_all_have_swe_name(self):
         for s in STAR_CATALOG:
             assert s["swe_name"], f"{s['name']} missing swe_name"
+
+    def test_bundled_catalog_names_are_computable(self):
+        ephe_path = Path(__file__).resolve().parents[1] / "Sources" / "TransitStudio" / "Resources" / "ephemeris"
+        swe.set_ephe_path(str(ephe_path))
+        warnings: list[str] = []
+        positions = compute_star_positions(2451545.0, warnings=warnings)
+        assert len(positions) == len(STAR_CATALOG)
+        assert warnings == []
+        assert any(p["name"] == "Zubenelschemali" for p in positions)
+
+    def test_bundled_ephemeris_path_supports_source_layout(self, tmp_path):
+        backend_dir = tmp_path / "Resources" / "backend"
+        ephe_dir = tmp_path / "Resources" / "ephemeris"
+        backend_dir.mkdir(parents=True)
+        ephe_dir.mkdir(parents=True)
+        module_file = backend_dir / "astro_backend_api.py"
+        module_file.write_text("# test\n")
+        (ephe_dir / "sefstars.txt").write_text("# test\n")
+
+        assert _bundled_ephemeris_path(module_file) == ephe_dir
+
+    def test_bundled_ephemeris_path_supports_packaged_bundle_layout(self, tmp_path):
+        bundle_dir = tmp_path / "AstroTransitMac_TransitStudio.bundle"
+        bundle_dir.mkdir()
+        module_file = bundle_dir / "astro_backend_api.py"
+        module_file.write_text("# test\n")
+        (bundle_dir / "sefstars.txt").write_text("# test\n")
+
+        assert _bundled_ephemeris_path(module_file) == bundle_dir
 
 
 class TestStarConjunctions:

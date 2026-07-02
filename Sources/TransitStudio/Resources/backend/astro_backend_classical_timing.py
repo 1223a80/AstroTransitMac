@@ -36,6 +36,7 @@ PLANETARY_YEARS = {
 
 FIRDARIA_SEQUENCE_DAY = [("SUN", 10), ("VENUS", 8), ("MERCURY", 13), ("MOON", 9), ("SATURN", 11), ("JUPITER", 12), ("MARS", 7), ("NORTH_NODE", 3), ("SOUTH_NODE", 2)]
 FIRDARIA_SEQUENCE_NIGHT = [("MOON", 9), ("SATURN", 11), ("JUPITER", 12), ("MARS", 7), ("SUN", 10), ("VENUS", 8), ("MERCURY", 13), ("NORTH_NODE", 3), ("SOUTH_NODE", 2)]
+FIRDARIA_SUB_SEQUENCE = ["SUN", "VENUS", "MERCURY", "MOON", "SATURN", "JUPITER", "MARS"]
 FIRDARIA_NAMES = {"NORTH_NODE": "北交点", "SOUTH_NODE": "南交点"}
 
 DECENNIALS_SEQUENCE_DAY = [("SUN", 10), ("VENUS", 8), ("MERCURY", 13), ("MOON", 9), ("SATURN", 11), ("JUPITER", 12), ("MARS", 7)]
@@ -139,19 +140,21 @@ def profection_summary(
 
 
 def firdaria_sub_periods(main_ruler: str, main_start: datetime, main_years: float, is_day: bool) -> list[dict[str, Any]]:
-    sequence = FIRDARIA_SEQUENCE_DAY if is_day else FIRDARIA_SEQUENCE_NIGHT
-    sub_sequence = [(r, y) for r, y in sequence if r != main_ruler]
-    total_sub = sum(y for _, y in sub_sequence)
+    if main_ruler not in FIRDARIA_SUB_SEQUENCE:
+        return []
+    start_index = FIRDARIA_SUB_SEQUENCE.index(main_ruler)
+    sub_sequence = [
+        FIRDARIA_SUB_SEQUENCE[(start_index + offset) % len(FIRDARIA_SUB_SEQUENCE)]
+        for offset in range(len(FIRDARIA_SUB_SEQUENCE))
+    ]
+    fraction = 1 / len(FIRDARIA_SUB_SEQUENCE)
     sub_start = main_start
     rows: list[dict[str, Any]] = []
-    for sub_ruler, sub_years in sub_sequence:
-        if total_sub <= 0:
-            continue
-        fraction = sub_years / total_sub
+    for idx, sub_ruler in enumerate(sub_sequence):
         sub_duration_days = main_years * 365.2425 * fraction
         sub_end = sub_start + timedelta(days=sub_duration_days)
         rows.append({
-            "id": f"firdaria-sub-{main_ruler}-{sub_ruler}",
+            "id": f"firdaria-sub-{main_ruler}-{idx + 1}-{sub_ruler}",
             "ruler": FIRDARIA_NAMES.get(sub_ruler, planet_name(sub_ruler)),
             "start_local": format_local(sub_start),
             "end_local": format_local(sub_end),
@@ -168,6 +171,10 @@ def firdaria_summary(birth_dt: datetime, reference_dt: datetime, is_day: bool) -
         end = add_years_approx(start, years)
         if start <= reference_dt < end:
             sub_periods = firdaria_sub_periods(ruler, start, years, is_day)
+            if sub_periods:
+                sub_note = "7 等分次限，从主限星开始"
+            else:
+                sub_note = "交点主限不拆次限"
             current_sub: dict[str, Any] | None = None
             for sub in sub_periods:
                 sub_start_dt = datetime.strptime(sub["start_local"], "%Y-%m-%d %H:%M")
@@ -184,11 +191,11 @@ def firdaria_summary(birth_dt: datetime, reference_dt: datetime, is_day: bool) -
                 "start_local": format_local(start),
                 "end_local": format_local(end),
                 "next_transition": format_local(end),
-                "notes": [f"{'昼盘' if is_day else '夜盘'}序列", f"{years} 年主限"],
+                "notes": [f"{'昼盘' if is_day else '夜盘'}序列", f"{years} 年主限", sub_note],
                 "sub_periods": sub_periods,
                 "current_sub_period": current_sub,
                 "planetary_years": PLANETARY_YEARS,
-                "_method": "Firdaria_Persian",
+                "_method": "Firdaria_Persian_Traditional",
                 "_source_tradition": "Persian/Medieval",
             }
         start = end

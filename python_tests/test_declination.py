@@ -115,3 +115,20 @@ class TestDeclinationAspects:
         aspects = find_declination_aspects(bodies, id_key="id")
         assert len(aspects) == 1
         assert aspects[0]["body1"] == "SUN"
+
+    def test_cross_declination_aspects_are_only_cross_chart(self):
+        from astro_backend_api import _cross_declination_aspects
+
+        natal = [
+            {"body_id": "SUN", "declination": 10.0},
+            {"body_id": "MOON", "declination": 10.2},
+        ]
+        transit = [
+            {"body_id": "SUN", "declination": -10.1},
+            {"body_id": "MARS", "declination": 25.0},
+        ]
+        aspects = _cross_declination_aspects(natal, transit)
+        assert aspects
+        assert all(a["body1"].startswith("natal_") for a in aspects)
+        assert all(a["body2"].startswith("transit_") for a in aspects)
+        assert not any(a["body1"] == "natal_SUN" and a["body2"] == "natal_MOON" for a in aspects)

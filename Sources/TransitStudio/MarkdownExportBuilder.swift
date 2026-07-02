@@ -4,10 +4,11 @@ enum MarkdownExportBuilder {
     enum ExportSection: String, CaseIterable, Identifiable {
         case angles, houses, planets, scoreSummary, triplicitySummary
         case lots, aspects, receptions
+        case declinationAspects, fixedStars
         case antiscia, primaryDirections, circumambulations
         case activeOverview, profection, firdaria, decennials, zr
         case returns, timeline
-        case almuten, hyleg, prenatalSyzygy
+        case almuten, hyleg, prenatalSyzygy, medieval
         case warnings
 
         // Vedic export sections
@@ -30,6 +31,8 @@ enum MarkdownExportBuilder {
             case .lots: return "Lots"
             case .aspects: return "相位"
             case .receptions: return "接纳"
+            case .declinationAspects: return "赤纬相位"
+            case .fixedStars: return "固定星"
             case .antiscia: return "映点"
             case .primaryDirections: return "主限法"
             case .circumambulations: return "沿界推进"
@@ -43,6 +46,7 @@ enum MarkdownExportBuilder {
             case .almuten: return "Almuten"
             case .hyleg: return "Hyleg/Alcocoden"
             case .prenatalSyzygy: return "产前朔望"
+            case .medieval: return "中世纪深化"
             case .warnings: return "警告"
             case .vedicRasi: return "Rāśi 盘 (D1)"
             case .vedicNavamsa: return "Navāṃśa (D9)"

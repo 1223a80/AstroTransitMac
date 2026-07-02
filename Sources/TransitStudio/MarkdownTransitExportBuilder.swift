@@ -29,6 +29,14 @@ extension MarkdownExportBuilder {
             }
         }
 
+        let bodyNames = transitBodyNameLookup(result.natalPositions)
+        if let declinationAspects = result.declinationAspects {
+            lines += declinationAspectSection(declinationAspects, names: bodyNames)
+        }
+        if let starConjunctions = result.natalStarConjunctions {
+            lines += fixedStarSection("本命固定星合相", starConjunctions, names: bodyNames)
+        }
+
         lines += warnings(result.warnings)
         return lines.joined(separator: "\n")
     }
@@ -62,6 +70,18 @@ extension MarkdownExportBuilder {
             }
         }
 
+        let bodyNames = transitBodyNameLookup(result.natalPositions)
+            .merging(transitBodyNameLookup(result.transitPositions)) { current, _ in current }
+        if let declinationAspects = result.declinationAspects {
+            lines += declinationAspectSection(declinationAspects, names: bodyNames)
+        }
+        if let starConjunctions = result.natalStarConjunctions {
+            lines += fixedStarSection("本命固定星合相", starConjunctions, names: bodyNames)
+        }
+        if let starConjunctions = result.transitStarConjunctions {
+            lines += fixedStarSection("行运固定星合相", starConjunctions, names: bodyNames)
+        }
+
         lines += warnings(result.warnings)
         return lines.joined(separator: "\n")
     }
@@ -70,11 +90,13 @@ extension MarkdownExportBuilder {
         var lines = [
             "## \(title)",
             "",
-            "| 天体 | 黄经 | 宫 | 黄纬 | 速度 |",
-            "| --- | --- | ---: | ---: | ---: |"
+            "| 天体 | 黄经 | 宫 | 黄纬 | 赤纬 | 出界 | 速度 |",
+            "| --- | --- | ---: | ---: | ---: | --- | ---: |"
         ]
         lines += rows.map {
-            "| \($0.name) | \($0.degreeText) | \($0.house.map(String.init) ?? "") | \(degree($0.latitude, digits: 4)) | \(degree($0.speed, digits: 4))/日 |"
+            let dec = $0.declination.map { degree($0, digits: 4) } ?? ""
+            let oob = $0.outOfBounds == true ? "是" : ""
+            return "| \($0.name) | \($0.degreeText) | \($0.house.map(String.init) ?? "") | \(degree($0.latitude, digits: 4)) | \(dec) | \(oob) | \(degree($0.speed, digits: 4))/日 |"
         }
         lines.append("")
         return lines

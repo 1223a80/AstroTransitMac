@@ -39,6 +39,9 @@ enum RectifyClient {
         process.standardInput = stdin
         process.standardOutput = stdoutHandle
         process.standardError = stderrPipe
+        var environment = ProcessInfo.processInfo.environment
+        environment["PYTHONDONTWRITEBYTECODE"] = "1"
+        process.environment = environment
 
         return try await withCheckedThrowingContinuation { continuation in
             let guardState = ContinuationGuard()

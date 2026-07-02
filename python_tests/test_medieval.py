@@ -130,3 +130,45 @@ class TestProfectionSRSynthesis:
             profection, snapshot, 80.0, [], True
         )
         assert len(result["summary_text"]) > 0
+
+
+class TestProfectionHouseLabelBoundary:
+    """F3: House label index out of bounds does not crash profection_solar_return_synthesis."""
+
+    PROFECTION = {"lordId": "MARS", "lord": "火星", "profected_asc_lon": 80.0}
+
+    def test_house_13_does_not_crash(self):
+        snapshot = {
+            "angles": [{"id": "ASC", "longitude": 120.0}],
+            "planets": [
+                {"id": "MARS", "name": "火星", "house": 13, "sign": "巨蟹", "score": 8, "score_label": "强", "accidental": "角宫", "motion": "顺行"},
+            ],
+        }
+        result = profection_solar_return_synthesis(
+            self.PROFECTION, snapshot, 80.0, [], True
+        )
+        assert result["lord_of_year_in_sr"]["house_label"] == ""
+
+    def test_house_missing_does_not_crash(self):
+        snapshot = {
+            "angles": [{"id": "ASC", "longitude": 120.0}],
+            "planets": [
+                {"id": "MARS", "name": "火星", "sign": "巨蟹", "score": 8, "score_label": "强", "accidental": "角宫", "motion": "顺行"},
+            ],
+        }
+        result = profection_solar_return_synthesis(
+            self.PROFECTION, snapshot, 80.0, [], True
+        )
+        assert result["lord_of_year_in_sr"]["house_label"] == ""
+
+    def test_normal_house_unchanged(self):
+        snapshot = {
+            "angles": [{"id": "ASC", "longitude": 120.0}],
+            "planets": [
+                {"id": "MARS", "name": "火星", "house": 5, "sign": "巨蟹", "score": 8, "score_label": "强", "accidental": "角宫", "motion": "顺行"},
+            ],
+        }
+        result = profection_solar_return_synthesis(
+            self.PROFECTION, snapshot, 80.0, [], True
+        )
+        assert result["lord_of_year_in_sr"]["house_label"] == "5th"

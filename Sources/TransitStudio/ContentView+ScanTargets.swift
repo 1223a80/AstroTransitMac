@@ -116,6 +116,12 @@ var targetPlanetOptions: [TargetPositionOption] {
         let filteredAspects = result.aspects.filter { aspect in
             visibleBodyIDs.contains(aspect.transitBodyID) && visibleBodyIDs.contains(aspect.natalBodyID)
         }
+        func visibleDeclinationBody(_ bodyID: String) -> Bool {
+            let normalized = bodyID
+                .replacingOccurrences(of: "natal_", with: "")
+                .replacingOccurrences(of: "transit_", with: "")
+            return visibleBodyIDs.contains(normalized)
+        }
 
         return TransitResult(
             meta: result.meta,
@@ -126,7 +132,7 @@ var targetPlanetOptions: [TargetPositionOption] {
             lots: result.lots,
             aspects: filteredAspects,
             declinationAspects: result.declinationAspects?.filter {
-                visibleBodyIDs.contains($0.body1) && visibleBodyIDs.contains($0.body2)
+                visibleDeclinationBody($0.body1) && visibleDeclinationBody($0.body2)
             },
             natalStarConjunctions: result.natalStarConjunctions?.filter { visibleBodyIDs.contains($0.planet) },
             transitStarConjunctions: result.transitStarConjunctions?.filter { visibleBodyIDs.contains($0.planet) },

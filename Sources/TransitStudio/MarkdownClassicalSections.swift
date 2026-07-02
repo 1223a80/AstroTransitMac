@@ -31,14 +31,16 @@ extension MarkdownExportBuilder {
         var lines = [
             "## 七政状态",
             "",
-            "| 星体 | 位置 | 宫 | 运动 | Sect | 庙旺 | 三分 | 界 | 面 | 太阳状态 | Hayz/Joy | 行星年 | 评分 | 善待 | 虐待 | 备注 |",
-            "| --- | --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | --- |"
+            "| 星体 | 位置 | 宫 | 赤纬 | 出界 | 运动 | Sect | 庙旺 | 三分 | 界 | 面 | 太阳状态 | Hayz/Joy | 行星年 | 评分 | 善待 | 虐待 | 备注 |",
+            "| --- | --- | ---: | ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | --- |"
         ]
         lines += rows.map {
             let dignity = [$0.domicile, $0.exaltation].filter { !$0.isEmpty }.joined(separator: " ")
             let hayzJoy = [$0.hayz, $0.joy].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: "/")
             let py = $0.planetaryYears.map { "\($0)y" } ?? ""
-            return "| \($0.name) | \($0.degreeText) | \($0.house) | \($0.motion) | \($0.sectStatus) | \(dignity) | \($0.triplicity) | \($0.bound) | \($0.decan) | \($0.solarPhase) | \(hayzJoy) | \(py) | \($0.score) | \($0.bonification.count) | \($0.maltreatment.count) | \(($0.notes ?? []).joined(separator: "、")) |"
+            let dec = $0.declination.map { degree($0, digits: 4) } ?? ""
+            let oob = $0.outOfBounds == true ? "是" : ""
+            return "| \($0.name) | \($0.degreeText) | \($0.house) | \(dec) | \(oob) | \($0.motion) | \($0.sectStatus) | \(dignity) | \($0.triplicity) | \($0.bound) | \($0.decan) | \($0.solarPhase) | \(hayzJoy) | \(py) | \($0.score) | \($0.bonification.count) | \($0.maltreatment.count) | \(($0.notes ?? []).joined(separator: "、")) |"
         }
         lines.append("")
         return lines

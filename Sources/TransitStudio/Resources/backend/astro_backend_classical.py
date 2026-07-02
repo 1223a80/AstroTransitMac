@@ -541,7 +541,7 @@ def classical_snapshot(
     planet_rows, planet_positions, ephemerides = calculate_classical_planets(
         jd_ut, cusps, is_day, sidereal, bounds_system, triplicity_system, warnings
     )
-    lot_rows = calculate_lots(angles, planet_positions, cusps, is_day, mc=angles.get("MC", 270.0))
+    lot_rows = calculate_lots(angles, planet_positions, cusps, is_day, mc=angles.get("MC", 270.0), warnings=warnings)
     aspects, receptions = classical_aspects_and_receptions(
         planet_rows, planet_positions, is_day, bounds_system, triplicity_system, aspect_orb
     )

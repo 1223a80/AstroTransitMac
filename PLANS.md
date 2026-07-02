@@ -4,6 +4,75 @@
 
 ---
 
+# Expansion 002 代码评审修复（F1-F5）— 已完成（2026-07-02）
+
+## 分支
+`codex/expansion-002`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| F1 magistery 公式文本修复 | ✅ | 5 处代码修改 + 2 个回归测试，昼/夜公式文本正确显示 MC |
+| F2 lots 容错（KeyError 守卫） | ✅ | 加 warnings 参数 + try/except KeyError + 2 调用方补传 + 4 个回归测试 |
+| F3 宫位标签边界守卫 | ✅ | 引入 _HOUSE_LABELS + 守卫式取值 + 3 个回归测试 |
+| F4 删除死代码 | ✅ | 删除 4 个函数 + 清理 BODY_REGISTRY import，零回归 |
+| F5 fixed_stars 复用 core 工具 | ✅ | import + 2 处替换，恒星测试全绿 |
+| 门禁验证 | ✅ | 聚焦 45 通过、全量 Python 486 通过、Swift 24 通过、5 个后端 smoke 通过 |
+| 记录与打包 | ✅ | CHANGELOG.md/PLANS.md 已更新，版本号 1.1.12 (32) |
+
+---
+
+# Firdaria 主流算法接轨 — 已完成（2026-07-01）
+
+## 分支
+`codex/expansion-002`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 核对主流口径 | ✅ | 已对照本地 Sira Uysal Firdaria PDF：主限昼/夜序列、七曜次限从主限星开始、七等分，交点不拆次限 |
+| 02 修正后端算法 | ✅ | `firdaria_sub_periods()` 已改为七曜 7 等分、主限星起始、交点不拆次限 |
+| 03 补回归与记录 | ✅ | 已更新 Python 测试、`CHANGELOG.md` 与打包版本 `1.1.11 (31)` |
+| 04 验证与打包 | ✅ | 全量 Python、Swift build/test、后端 smokes 均通过；已覆盖 `/Applications/TransitStudio.app` 为 `1.1.11 (31)` |
+
+---
+
+# Expansion 002 Markdown 数据补全与打包覆盖 — 已完成（2026-07-01）
+
+## 分支
+`codex/expansion-002`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 确认导出缺口 | ✅ | 已确认后端/Codable 有赤纬、固定星与 medieval 数据，但 Markdown 导出未渲染 |
+| 02 补齐 Markdown 渲染 | ✅ | 增加赤纬/OOB、赤纬相位、固定星合相、中世纪深化章节，并修正 packaged ephemeris 默认路径与 pycache 签名污染 |
+| 03 补测试与记录 | ✅ | 增加 Markdown 导出与 packaged ephemeris path 回归测试，更新 `CHANGELOG.md` |
+| 04 运行验证 | ✅ | pycache 签名污染修复后 `swift test` 与 `check_vibe_changes.sh` 均通过 |
+| 05 打包覆盖 `/Applications` | ✅ | 已覆盖 `/Applications/TransitStudio.app`，安装版本 `1.1.10 (30)`；codesign、无 pycache、installed backend smoke 均通过 |
+
+---
+
+# Expansion 002 复查与打包覆盖 — 已完成（2026-07-01）
+
+## 分支
+`codex/expansion-002`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 最新提交与工作区核对 | ✅ | 当前 HEAD 为 `85ac41f` 起继续复查，工作区仅本轮计划/修补改动 |
+| 02 复查新增修复 | ✅ | 已修固定星名称/warning、cross 赤纬生成、Swift 前缀过滤与 backend 默认 ephemeris path |
+| 03 运行本地门禁 | ✅ | focused pytest、全量 pytest、`swift build`、`swift test`、`check_vibe_changes.sh` 均通过 |
+| 04 无阻断问题后打包覆盖 | ✅ | `package_app.sh` 版本递增到 `1.1.9 (29)` 并覆盖 `/Applications/TransitStudio.app` |
+| 05 记录结果 | ✅ | `CHANGELOG.md` 已记录，安装产物 Info.plist 与 codesign 已验证 |
+
+---
+
 # Expansion 002: 恒星与赤纬 + 中世纪技法深化 — 规划中（2026-07-01）
 
 ## 状态

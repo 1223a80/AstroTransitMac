@@ -140,6 +140,9 @@ struct BackendClient {
 
         process.standardOutput = stdout
         process.standardError = stderr
+        var environment = ProcessInfo.processInfo.environment
+        environment["PYTHONDONTWRITEBYTECODE"] = "1"
+        process.environment = environment
 
         do {
             try process.run()
@@ -213,6 +216,9 @@ struct BackendClient {
             process.standardInput = stdin
             process.standardOutput = stdout
             process.standardError = stderr
+            var environment = ProcessInfo.processInfo.environment
+            environment["PYTHONDONTWRITEBYTECODE"] = "1"
+            process.environment = environment
 
             let state = ProcessSharedState()
 

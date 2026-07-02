@@ -20,6 +20,7 @@ extension MarkdownExportBuilder {
             "prenatal_syzygy": "产前朔望",
             "almuten_figuris": "Almuten Figuris",
             "hyleg_alcocoden": "Hyleg/Alcocoden",
+            "medieval": "中世纪深化",
         ]
         var lines: [String] = ["", "## 子模块错误", ""]
         for key in errors.keys.sorted() {

@@ -25,7 +25,14 @@ extension MarkdownExportBuilder {
         lines += triplicitySummarySection(result.planets)
         lines += pointSection("Lots", result.lots)
         lines += classicalAspectSection(result.aspects)
+        let bodyNames = classicalBodyNameLookup(result.planets)
+        if let declinationAspects = result.declinationAspects {
+            lines += declinationAspectSection(declinationAspects, names: bodyNames)
+        }
         lines += receptionSection(result.receptions)
+        if let starConjunctions = result.natalStarConjunctions {
+            lines += fixedStarSection("固定星合相", starConjunctions, names: bodyNames)
+        }
         if let antiscia = result.antiscia, !antiscia.isEmpty {
             lines += antisciaSection(antiscia)
         }
@@ -46,6 +53,9 @@ extension MarkdownExportBuilder {
         }
         if let syzygy = result.prenatalSyzygy {
             lines += prenatalSyzygySection(syzygy)
+        }
+        if let medieval = result.medieval {
+            lines += medievalSection(medieval)
         }
         lines += warnings(result.warnings)
         lines += sectionErrorBlock(result.sectionErrors)
@@ -76,7 +86,14 @@ extension MarkdownExportBuilder {
         if sections.contains(.triplicitySummary) { lines += triplicitySummarySection(result.planets) }
         if sections.contains(.lots) { lines += pointSection("Lots", result.lots) }
         if sections.contains(.aspects) { lines += classicalAspectSection(result.aspects) }
+        let bodyNames = classicalBodyNameLookup(result.planets)
+        if sections.contains(.declinationAspects), let da = result.declinationAspects {
+            lines += declinationAspectSection(da, names: bodyNames)
+        }
         if sections.contains(.receptions) { lines += receptionSection(result.receptions) }
+        if sections.contains(.fixedStars), let stars = result.natalStarConjunctions {
+            lines += fixedStarSection("固定星合相", stars, names: bodyNames)
+        }
         if sections.contains(.antiscia), let a = result.antiscia, !a.isEmpty { lines += antisciaSection(a) }
         if sections.contains(.primaryDirections), let pd = result.primaryDirections, !pd.isEmpty { lines += primaryDirectionSection(pd) }
         if sections.contains(.circumambulations), let circ = result.circumambulations, !circ.isEmpty { lines += circumambulationSection(circ) }
@@ -94,6 +111,7 @@ extension MarkdownExportBuilder {
         if sections.contains(.almuten), let a = result.almutenFiguris { lines += almutenSection(a) }
         if sections.contains(.hyleg), let h = result.hylegAlcocoden { lines += hylegSection(h) }
         if sections.contains(.prenatalSyzygy), let s = result.prenatalSyzygy { lines += prenatalSyzygySection(s) }
+        if sections.contains(.medieval), let medieval = result.medieval { lines += medievalSection(medieval) }
         if sections.contains(.warnings) {
             lines += warnings(result.warnings)
             lines += sectionErrorBlock(result.sectionErrors)

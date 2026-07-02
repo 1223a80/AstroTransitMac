@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from astro_backend_core import swe
+from astro_backend_core import swe, norm360, angular_separation
 
 # ---------------------------------------------------------------------------
 # Star catalog
@@ -45,7 +45,7 @@ STAR_CATALOG: list[dict[str, Any]] = [
     {"name": "Hamal", "swe_name": "Hamal", "mag": 2.01, "nature": "火/土星", "orb": 0.75, "keyword": "独立"},
     {"name": "Ras Alhague", "swe_name": "Rasalhague", "mag": 2.08, "nature": "土/金星", "orb": 0.5, "keyword": "医药"},
     {"name": "Zubenelgenubi", "swe_name": "Zubenelgenubi", "mag": 2.75, "nature": "土/火星", "orb": 0.5, "keyword": "法律, 骗局"},
-    {"name": "Zubenelschemali", "swe_name": "Zubenelschemali", "mag": 2.61, "nature": "木/水星", "orb": 0.5, "keyword": "荣耀"},
+    {"name": "Zubenelschemali", "swe_name": "Zubeneshamali", "mag": 2.61, "nature": "木/水星", "orb": 0.5, "keyword": "荣耀"},
     {"name": "Unukalhai", "swe_name": "Unukalhai", "mag": 2.63, "nature": "土/火星", "orb": 0.5, "keyword": "蛇首"},
     {"name": "Markab", "swe_name": "Markab", "mag": 2.49, "nature": "火/水星", "orb": 0.5, "keyword": "暴力, 荣誉"},
     {"name": "Scheat", "swe_name": "Scheat", "mag": 2.44, "nature": "火/水星", "orb": 0.5, "keyword": "溺水, 凶险"},
@@ -80,15 +80,19 @@ def compute_star_positions(
     for star in stars:
         try:
             values, name_str, _ = swe.fixstar_ut(star["swe_name"], jd_ut, swe.FLG_SWIEPH | swe.FLG_SPEED)
-            lon = values[0] % 360.0
+            lon = norm360(values[0])
             lat = values[1]
             # Declination from equatorial coordinates
             eq_vals, _, _ = swe.fixstar_ut(star["swe_name"], jd_ut, swe.FLG_SWIEPH | swe.FLG_EQUATORIAL)
             dec = eq_vals[1]
-        except Exception:
-            if not starfile_warning_emitted:
-                warnings.append("固定星计算失败：未找到 sefstars.txt（需放置于 Swiss Ephemeris 路径下或由 ephemerisPath 指定）")
-                starfile_warning_emitted = True
+        except Exception as exc:
+            message = str(exc)
+            if "sefstars" in message.lower():
+                if not starfile_warning_emitted:
+                    warnings.append("固定星计算失败：未找到 sefstars.txt（需放置于 Swiss Ephemeris 路径下或由 ephemerisPath 指定）")
+                    starfile_warning_emitted = True
+            else:
+                warnings.append(f"固定星 {star['name']}({star['swe_name']}) 计算失败：{message}")
             continue
         results.append({
             "name": star["name"],
@@ -119,8 +123,7 @@ def find_star_conjunctions(
         p_lon = planet["longitude"]
         p_id = planet.get("body_id", planet.get("id", "?"))
         for star in star_positions:
-            sep = abs((p_lon - star["longitude"]) % 360.0)
-            sep = min(sep, 360.0 - sep)
+            sep = angular_separation(p_lon, star["longitude"])
             if sep <= star["orb"]:
                 events.append({
                     "planet": p_id,
