@@ -31,11 +31,7 @@ enum MarkdownModernExportBuilder {
         return lines.joined(separator: "\n")
     }
 
-    static func compositeOrDavison(title: String, result: CompositeResult) -> String {
-        compositeOrDavisonContent(title: title, meta: result.meta, planets: result.planets, aspects: result.aspects, patterns: result.patterns, warnings: result.warnings)
-    }
-
-    static func compositeOrDavison(title: String, result: DavisonResult) -> String {
+    static func compositeOrDavison(title: String, result: some ChartResultFields) -> String {
         compositeOrDavisonContent(title: title, meta: result.meta, planets: result.planets, aspects: result.aspects, patterns: result.patterns, warnings: result.warnings)
     }
 

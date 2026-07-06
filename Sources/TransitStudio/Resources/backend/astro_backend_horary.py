@@ -1257,7 +1257,7 @@ def calculate_horary(request: dict[str, Any], warnings: list[str]) -> dict[str, 
 
     from astro_backend_core import set_zodiac_mode
 
-    sidereal = set_zodiac_mode(zodiac)
+    sidereal = set_zodiac_mode(zodiac, warnings)
     snapshot = classical_snapshot(
         chart_jd,
         latitude,

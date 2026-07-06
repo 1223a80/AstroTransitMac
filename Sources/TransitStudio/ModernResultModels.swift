@@ -197,6 +197,7 @@ struct CompositeRequest: Codable {
 }
 
 protocol ChartResultFields: Encodable {
+    var meta: ModernMeta { get }
     var angles: [ClassicalPoint] { get }
     var houses: [HouseRow] { get }
     var planets: [PositionRow] { get }

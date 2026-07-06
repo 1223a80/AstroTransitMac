@@ -169,7 +169,7 @@ def moment_to_jd(moment: dict[str, Any]) -> tuple[float, str]:
     return jd_from_datetime(local_dt), local_dt.astimezone(timezone.utc).isoformat()
 
 
-def set_zodiac_mode(zodiac: str) -> bool:
+def set_zodiac_mode(zodiac: str, warnings: list[str] | None = None) -> bool:
     """Configure sidereal mode for Swiss Ephemeris.
 
     Supports:
@@ -178,6 +178,8 @@ def set_zodiac_mode(zodiac: str) -> bool:
         "sidereal_yukteshwar", plus any key from AYANAMSHA_MAP.
       - Plain ayanamsha names ("lahiri", "raman", etc.) also accepted.
     Returns True if any sidereal mode is active, False for tropical.
+    Unrecognized values fall back to tropical; pass *warnings* so the
+    fallback is reported instead of silently changing the zodiac.
     """
     if not zodiac or zodiac == "tropical":
         swe.set_sid_mode(swe.SIDM_FAGAN_BRADLEY)  # reset to default
@@ -201,6 +203,10 @@ def set_zodiac_mode(zodiac: str) -> bool:
         swe.set_sid_mode(swe.SIDM_LAHIRI)
         return True
 
+    if warnings is not None:
+        message = f"未识别的 zodiac 设置 '{zodiac}'，已按回归黄道 (tropical) 计算。"
+        if message not in warnings:
+            warnings.append(message)
     return False
 
 

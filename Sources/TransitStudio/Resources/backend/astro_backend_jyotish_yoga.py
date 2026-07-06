@@ -360,8 +360,13 @@ def yoga_ardha_chandra(planet_positions: dict[str, dict[str, Any]], asc_rasi: in
 def detect_all_yogas(
     planet_positions: dict[str, dict[str, Any]],
     asc_rasi: int = 0,
+    warnings: list[str] | None = None,
 ) -> list[dict[str, Any]]:
-    """Run all yoga detectors and return list of matches."""
+    """Run all yoga detectors and return list of matches.
+
+    A crashing detector is skipped; pass *warnings* so the skip is
+    reported instead of the yoga silently disappearing.
+    """
     yogas = []
 
     detectors = [
@@ -389,7 +394,8 @@ def detect_all_yogas(
                 if result["name"] not in seen_names:
                     yogas.append(result)
                     seen_names.add(result["name"])
-        except Exception:
-            pass
+        except Exception as exc:
+            if warnings is not None:
+                warnings.append(f"Yoga 检测器 {detector.__name__} 失败，该项已跳过：{exc}")
 
     return yogas

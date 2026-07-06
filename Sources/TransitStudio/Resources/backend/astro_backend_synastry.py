@@ -92,7 +92,7 @@ def _cross_house_placements(
 
 
 def calculate_synastry(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
-    sidereal = set_zodiac_mode(request.get("zodiac", "tropical"))
+    sidereal = set_zodiac_mode(request.get("zodiac", "tropical"), warnings)
     house_system = request.get("house_system", "whole_sign")
     node_mode = request.get("node_mode", "true_node")
     aspect_specs = request.get("aspects", [])

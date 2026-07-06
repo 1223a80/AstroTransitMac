@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-06 — 后端静默回落改为显式警告
+
+- `set_zodiac_mode()` 新增可选 `warnings` 参数：传入无法识别的 zodiac（如拼写错误 `sidereal_lahri`）时不再静默按回归黄道计算，而是写入中文警告；11 处调用点（moment/classical/horary/vedic/synastry/composite/davison/progression/solar_arc/harmonic/rectify）全部接入。
+- `build_houses()` 对无法识别的宫位制写入警告后再回落 Whole Sign；「宫位计算失败，改用 Whole Sign」警告增加去重，classical 模式极端纬度下不再重复出现约 20 条相同警告。
+- `find_patterns()` 的星盘形状检测与 `detect_all_yogas()` 的单个 yoga 检测器崩溃时不再整段静默吞掉，改为写入 warnings（诊断页可见），其余结果照常返回。
+- 新增 `python_tests/test_warning_visibility.py` 15 个测试锁定上述行为（492 → 507）。
+- `check_vibe_changes.sh` 优先使用项目 `.venv` 的 Python（系统 Homebrew python3 升级到 3.14 后缺 pytest，门禁第一步会误报失败）。
+
+## 2026-07-06 — 修复现代模式导出：Composite/Davison 空导出与假 CSV
+
+- 修复 Composite / Davison 结果面板「复制 Markdown」「复制/保存 JSON」「复制/保存 CSV」全部输出空字符串的问题：`ChartResultFields` 协议补上 `meta` 要求，`MarkdownModernExportBuilder.compositeOrDavison` 合并为对协议的泛型重载，面板导出直接走真实 builder。
+- 修复 Synastry / Progressions / Solar Arc / Harmonic 的「保存 CSV」把 JSON 内容写进 `.csv` 文件的问题：`TextExportBuilder` 为这五类现代结果（含 Composite/Davison 共用的 `ChartResultFields` 版本）新增真正的逗号分隔 CSV 构建函数，统一表头 `section,name,longitude,degree_text,latitude,speed,aspect_or_house,other,separation,orb`，导出行星位置、相位、宫位落点、图形模式等主表格。
+- 新增 `SwiftTests/ModernExportTests.swift`，用真实后端 fixtures 回归锁定：Composite/Davison Markdown/JSON 非空、五类现代 CSV 表头正确且行数覆盖主表格、CSV 不再是 JSON。
+- 后端 JSON 契约无改动（纯 Swift 导出层修复）。
+
 ## 2026-07-06 — 文档整理与项目审计
 
 - 新增 `docs/project-audit-2026-07-06.md`，集中记录目录边界、文档组织建议、技术债、潜在未发现 bug 清单和下一步发展建议。

@@ -34,7 +34,7 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     birth = request["birth"]
     zodiac = request.get("zodiac") or birth.get("zodiac", "tropical")
     house_system = request.get("house_system") or birth.get("houseSystem", "whole_sign")
-    sidereal = set_zodiac_mode(zodiac)
+    sidereal = set_zodiac_mode(zodiac, warnings)
     node_mode = request.get("node_mode", "true_node")
     aspect_specs = request.get("aspects", [])
 
@@ -149,7 +149,7 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     patterns_enabled = request.get("patterns_enabled", False)
     if patterns_enabled:
         try:
-            patterns = find_patterns(body_lons, aspects_internal, house_map)
+            patterns = find_patterns(body_lons, aspects_internal, house_map, warnings=warnings)
         except Exception as exc:
             warnings.append(f"Solar Arc 图形识别失败：{exc}")
             section_errors["patterns"] = str(exc)

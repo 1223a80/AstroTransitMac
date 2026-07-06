@@ -40,6 +40,11 @@ def configure_runtime(no_asteroids: bool, require_ephemeris: str) -> None:
     REQUIRE_EPHEMERIS = require_ephemeris
 
 
+def _append_unique(warnings: list[str], message: str) -> None:
+    if message not in warnings:
+        warnings.append(message)
+
+
 def is_asteroid_spec(spec: BodySpec) -> bool:
     return spec.body_id in ASTEROID_BODY_IDS or spec.body_id.startswith("AST:")
 
@@ -265,12 +270,15 @@ def build_houses(
     sidereal: bool,
     warnings: list[str],
 ) -> tuple[list[float], dict[str, float], str]:
-    system_label, house_code = HOUSE_SYSTEMS.get(house_system, HOUSE_SYSTEMS["whole_sign"])
+    if house_system not in HOUSE_SYSTEMS:
+        _append_unique(warnings, f"未识别的宫位制 '{house_system}'，已改用 Whole Sign。")
+        house_system = "whole_sign"
+    system_label, house_code = HOUSE_SYSTEMS[house_system]
 
     try:
         raw_cusps, ascmc = call_houses_ex(jd_ut, latitude, longitude, house_code, sidereal)
     except Exception as exc:
-        warnings.append(f"宫位计算失败，改用 Whole Sign：{exc}")
+        _append_unique(warnings, f"宫位计算失败，改用 Whole Sign：{exc}")
         raw_cusps, ascmc = call_houses_ex(jd_ut, latitude, longitude, "W", sidereal)
         house_system = "whole_sign"
         system_label = "Whole Sign"

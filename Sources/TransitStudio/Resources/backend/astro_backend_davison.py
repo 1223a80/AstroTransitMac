@@ -38,7 +38,7 @@ def _julian_day_to_datetime(jd: float) -> Any:
 def calculate_davison(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
     from astro_backend_patterns import find_patterns
 
-    sidereal = set_zodiac_mode(request.get("zodiac", "tropical"))
+    sidereal = set_zodiac_mode(request.get("zodiac", "tropical"), warnings)
     house_system = request.get("house_system", "whole_sign")
     node_mode = request.get("node_mode", "true_node")
     aspect_specs = request.get("aspects", [])
@@ -102,7 +102,7 @@ def calculate_davison(request: dict[str, Any], warnings: list[str]) -> dict[str,
     house_map = {row["body_id"]: row.get("house", 1) for row in positioned}
     patterns: list[dict[str, Any]] = []
     try:
-        patterns = find_patterns(body_lons, aspects, house_map)
+        patterns = find_patterns(body_lons, aspects, house_map, warnings=warnings)
     except Exception as exc:
         warnings.append(f"Davison 图形识别失败：{exc}")
         section_errors["patterns"] = str(exc)

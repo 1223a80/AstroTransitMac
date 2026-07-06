@@ -29,7 +29,7 @@ def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str
     birth = request["birth"]
     zodiac = request.get("zodiac") or birth.get("zodiac", "tropical")
     house_system = request.get("house_system") or birth.get("houseSystem", "whole_sign")
-    sidereal = set_zodiac_mode(zodiac)
+    sidereal = set_zodiac_mode(zodiac, warnings)
     node_mode = request.get("node_mode", "true_node")
     aspect_specs = request.get("aspects", [])
     harmonic_order = int(request.get("harmonic_order", 4))

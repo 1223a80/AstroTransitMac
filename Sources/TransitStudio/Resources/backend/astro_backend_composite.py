@@ -34,7 +34,7 @@ def _positions_for(jd: float, specs: list[dict[str, Any]], sidereal: bool, warni
 def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
     from astro_backend_patterns import find_patterns
 
-    sidereal = set_zodiac_mode(request.get("zodiac", "tropical"))
+    sidereal = set_zodiac_mode(request.get("zodiac", "tropical"), warnings)
     house_system = request.get("house_system", "whole_sign")
     node_mode = request.get("node_mode", "true_node")
     aspect_specs = request.get("aspects", [])
@@ -147,7 +147,7 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
     house_map_for_patterns = {row["body_id"]: row["house"] for row in comp_planet_rows if "house" in row}
     patterns: list[dict[str, Any]] = []
     try:
-        patterns = find_patterns(body_lons_for_patterns, aspects, house_map_for_patterns)
+        patterns = find_patterns(body_lons_for_patterns, aspects, house_map_for_patterns, warnings=warnings)
     except Exception as exc:
         warnings.append(f"Composite 图形识别失败：{exc}")
         section_errors["patterns"] = str(exc)

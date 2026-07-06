@@ -111,7 +111,7 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
         longitude = float(birth["longitude"])
         house_system = birth.get("houseSystem", "whole_sign")
         zodiac = birth.get("zodiac", "tropical")
-        sidereal = set_zodiac_mode(zodiac)
+        sidereal = set_zodiac_mode(zodiac, warnings)
         cusps, angle_values, _ = build_houses(natal_jd, latitude, longitude, house_system, sidereal, warnings)
         natal_positions = [
             {**row, "house": house_for_longitude(row["longitude"], cusps)}
@@ -182,7 +182,7 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
     bounds_system = birth.get("boundsSystem", "egyptian")
     triplicity_system = birth.get("triplicitySystem", "dorothean")
     aspect_orb = float(request.get("aspectOrb", 3.0))
-    sidereal = set_zodiac_mode(zodiac)
+    sidereal = set_zodiac_mode(zodiac, warnings)
 
     snapshot = classical_snapshot(
         birth_jd,

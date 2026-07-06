@@ -79,6 +79,89 @@ enum TextExportBuilder {
         return csv(rows)
     }
 
+    // MARK: - Modern mode CSV
+
+    private static let modernCSVHeader = [
+        "section", "name", "longitude", "degree_text", "latitude", "speed", "aspect_or_house", "other", "separation", "orb"
+    ]
+
+    private static func positionRows(_ section: String, _ positions: [PositionRow]) -> [[String]] {
+        positions.map {
+            [section, $0.name, number($0.longitude), $0.degreeText, number($0.latitude), number($0.speed), $0.house.map(String.init) ?? "", "", "", ""]
+        }
+    }
+
+    private static func aspectRows(_ section: String, _ aspects: [AspectHit]) -> [[String]] {
+        aspects.map {
+            [section, $0.transitBodyName, "", "", "", "", $0.aspectName, $0.natalBodyName, number($0.separation), number($0.orb)]
+        }
+    }
+
+    private static func patternRows(_ patterns: [PatternResult]?) -> [[String]] {
+        (patterns ?? []).map {
+            ["pattern", $0.typeName, "", "", "", "", $0.confidence, $0.members.joined(separator: ";"), "", ""]
+        }
+    }
+
+    static func csv(_ result: some ChartResultFields) -> String {
+        var rows: [[String]] = [modernCSVHeader]
+        rows += result.angles.map {
+            ["angle", $0.name, number($0.longitude), $0.degreeText, "", "", "\($0.house)", $0.ruler, "", ""]
+        }
+        rows += result.houses.map {
+            ["house_cusp", "\($0.house)", number($0.cuspLongitude), $0.cuspText, "", "", "\($0.house)", $0.ruler, "", ""]
+        }
+        rows += positionRows("planet", result.planets)
+        rows += aspectRows("aspect", result.aspects)
+        rows += patternRows(result.patterns)
+        return csv(rows)
+    }
+
+    static func csv(_ result: SynastryResult) -> String {
+        var rows: [[String]] = [modernCSVHeader]
+        rows += positionRows("person_a_planet", result.personAPlanets)
+        rows += positionRows("person_b_planet", result.personBPlanets)
+        rows += aspectRows("cross_aspect", result.crossAspects)
+        rows += result.aInBHouses.map {
+            ["a_in_b_house", $0.bodyName, "", "", "", "", "\($0.house)", "", "", ""]
+        }
+        rows += result.bInAHouses.map {
+            ["b_in_a_house", $0.bodyName, "", "", "", "", "\($0.house)", "", "", ""]
+        }
+        rows += patternRows(result.patterns)
+        return csv(rows)
+    }
+
+    static func csv(_ result: ProgressionResult) -> String {
+        var rows: [[String]] = [modernCSVHeader]
+        rows += positionRows("natal_position", result.natalPlanets)
+        rows += positionRows("progressed_position", result.progressedPlanets)
+        rows += aspectRows("prog_to_natal_aspect", result.progressedToNatalAspects)
+        rows += aspectRows("prog_to_prog_aspect", result.progressedToProgressedAspects)
+        if let lunation = result.progressedLunation {
+            rows.append(["progressed_lunation", lunation.phaseName, "", "", "", "", "", "", number(lunation.sunMoonSeparation), number(lunation.phaseAngle)])
+        }
+        return csv(rows)
+    }
+
+    static func csv(_ result: SolarArcResult) -> String {
+        var rows: [[String]] = [modernCSVHeader]
+        rows.append(["arc_value", "solar_arc", number(result.arcValue), "", "", "", "", "", "", ""])
+        rows += positionRows("natal_position", result.natalPlanets)
+        rows += positionRows("solar_arc_position", result.solarArcPlanets)
+        rows += aspectRows("sa_to_natal_aspect", result.solarArcToNatalAspects)
+        rows += patternRows(result.patterns)
+        return csv(rows)
+    }
+
+    static func csv(_ result: HarmonicResult) -> String {
+        var rows: [[String]] = [modernCSVHeader]
+        rows.append(["harmonic_order", "H\(result.harmonicOrder)", "", "", "", "", "", "", "", ""])
+        rows += positionRows("harmonic_position", result.planets)
+        rows += aspectRows("harmonic_aspect", result.aspects)
+        return csv(rows)
+    }
+
     private static let sectionErrorLabels: [String: String] = [
         "primary_directions": "主限法",
         "circumambulations": "沿界推进",

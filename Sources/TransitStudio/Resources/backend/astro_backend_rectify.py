@@ -346,7 +346,8 @@ def compute_window(request: dict[str, Any]) -> dict[str, Any]:
         return {"error": f"Cannot parse datetime: {bd} {ct}"}
 
     center_dt += timedelta(seconds=center_offset_seconds)
-    sidereal = set_zodiac_mode(z)
+    all_warnings: list[str] = []
+    sidereal = set_zodiac_mode(z, all_warnings)
     configure_runtime(False, "warn")
 
     offsets = set()
@@ -361,7 +362,6 @@ def compute_window(request: dict[str, Any]) -> dict[str, Any]:
 
     candidates: list[dict[str, Any]] = []
     center_index = -1
-    all_warnings: list[str] = []
     total = len(offsets)
 
     for i, sec_off in enumerate(sorted(offsets)):

@@ -691,7 +691,7 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
         ayanamsha = "lahiri"
 
     # Set sidereal mode
-    sidereal = set_zodiac_mode(zodiac)
+    sidereal = set_zodiac_mode(zodiac, warnings)
 
     # Supported vargas (default: D1 and D9)
     requested_vargas = request.get("vargas", ["D1", "D9"])
@@ -920,7 +920,7 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
                 for a in rasi_chart["angles"]:
                     if a.get("id") == "ASC":
                         asc_rasi = zodiac_sign_index(a["longitude"])
-            yogas = detect_all_yogas(raw_positions, asc_rasi)
+            yogas = detect_all_yogas(raw_positions, asc_rasi, warnings=warnings)
             if yogas:
                 response["yogas"] = yogas
         except Exception as e:

@@ -80,6 +80,7 @@ def find_patterns(
     aspects: list[dict[str, Any]],
     house_map: dict[str, int] | None = None,
     main_bodies: set[str] | None = None,
+    warnings: list[str] | None = None,
 ) -> list[dict[str, Any]]:
     from astro_backend_core import angular_separation
     if main_bodies is None:
@@ -313,8 +314,9 @@ def find_patterns(
             if sig not in shape_seen:
                 shape_seen.add(sig)
                 patterns.append(s)
-    except Exception:
-        pass
+    except Exception as exc:
+        if warnings is not None:
+            warnings.append(f"星盘形状（chart shape）检测失败，已跳过该部分：{exc}")
 
     patterns.sort(key=lambda p: (p["type"], p["id"]))
     return patterns

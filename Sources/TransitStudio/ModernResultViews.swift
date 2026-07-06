@@ -116,7 +116,7 @@ struct SynastryResultPane: View {
 
     var markdown: String { MarkdownModernExportBuilder.synastry(result) }
     var json: String { TextExportBuilder.json(result) }
-    var csv: String { TextExportBuilder.json(result) }
+    var csv: String { TextExportBuilder.csv(result) }
 }
 
 struct HousePlacementView: View {
@@ -228,9 +228,9 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
         }
     }
 
-    var markdown: String { "" }
-    var json: String { "" }
-    var csv: String { "" }
+    var markdown: String { MarkdownModernExportBuilder.compositeOrDavison(title: title, result: result) }
+    var json: String { TextExportBuilder.json(result) }
+    var csv: String { TextExportBuilder.csv(result) }
 }
 
 // MARK: - Progression Views
@@ -337,7 +337,7 @@ struct ProgressionResultPane: View {
 
     var markdown: String { MarkdownModernExportBuilder.progression(result) }
     var json: String { TextExportBuilder.json(result) }
-    var csv: String { TextExportBuilder.json(result) }
+    var csv: String { TextExportBuilder.csv(result) }
 }
 
 struct ProgressedLunationView: View {
@@ -471,7 +471,7 @@ struct SolarArcResultPane: View {
 
     var markdown: String { MarkdownModernExportBuilder.solarArc(result) }
     var json: String { TextExportBuilder.json(result) }
-    var csv: String { TextExportBuilder.json(result) }
+    var csv: String { TextExportBuilder.csv(result) }
 }
 
 // MARK: - Pattern List View
@@ -532,7 +532,7 @@ struct HarmonicResultPane: View {
 
     var markdown: String { MarkdownModernExportBuilder.harmonic(result) }
     var json: String { TextExportBuilder.json(result) }
-    var csv: String { TextExportBuilder.json(result) }
+    var csv: String { TextExportBuilder.csv(result) }
 }
 
 struct PatternListView: View {
