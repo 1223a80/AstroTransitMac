@@ -1,5 +1,26 @@
 import SwiftUI
 
+struct ModernDiagnosticsView: View {
+    let warnings: [String]
+    let sectionErrors: [String: String]?
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                WarningList(warnings: warnings)
+                if let sectionErrors, !sectionErrors.isEmpty {
+                    SectionErrorList(errors: sectionErrors)
+                } else {
+                    Label("没有子模块错误", systemImage: "checkmark.circle")
+                        .font(TS.Font.body)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
 // MARK: - Synastry Views
 
 struct SynastryResultPane: View {
@@ -75,7 +96,7 @@ struct SynastryResultPane: View {
         case "person_b_planets":
             PositionTableView(title: "B 本命位置", positions: result.personBPlanets)
         case "diagnostics":
-            RawJSONView(value: result)
+            ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
         case "json":
             RawJSONView(value: result)
         case "ai":
@@ -188,7 +209,9 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
             AspectTableView(aspects: result.aspects)
         case "patterns":
             PatternListView(patterns: result.patterns ?? [])
-        case "diagnostics", "json":
+        case "diagnostics":
+            ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
+        case "json":
             RawJSONView(value: result)
         case "ai":
             AIAnalysisView(
@@ -293,7 +316,9 @@ struct ProgressionResultPane: View {
             } else {
                 Text("无月相数据").foregroundStyle(.secondary).frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-        case "diagnostics", "json":
+        case "diagnostics":
+            ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
+        case "json":
             RawJSONView(value: result)
         case "ai":
             AIAnalysisView(
@@ -425,7 +450,9 @@ struct SolarArcResultPane: View {
             )
         case "patterns":
             PatternListView(patterns: result.patterns ?? [])
-        case "diagnostics", "json":
+        case "diagnostics":
+            ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
+        case "json":
             RawJSONView(value: result)
         case "ai":
             AIAnalysisView(
@@ -475,7 +502,7 @@ struct HarmonicResultPane: View {
 
     var tabs: [(String, String)] {
         [
-            ("planets", "调和行星"), ("aspects", "调和相位"), ("json", "JSON"),
+            ("planets", "调和行星"), ("aspects", "调和相位"), ("diagnostics", "诊断"), ("json", "JSON"),
         ]
     }
 
@@ -494,6 +521,8 @@ struct HarmonicResultPane: View {
             PositionTableView(title: "H\(result.harmonicOrder) 调和盘", positions: result.planets)
         case "aspects":
             AspectTableView(title: "H\(result.harmonicOrder) 调和相位", aspects: result.aspects)
+        case "diagnostics":
+            ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
         case "json":
             RawJSONView(value: result)
         default:

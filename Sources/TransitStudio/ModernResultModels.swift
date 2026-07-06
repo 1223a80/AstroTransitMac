@@ -203,6 +203,7 @@ protocol ChartResultFields: Encodable {
     var aspects: [AspectHit] { get }
     var patterns: [PatternResult]? { get }
     var warnings: [String] { get }
+    var sectionErrors: [String: String]? { get }
 }
 
 struct CompositeResult: Codable, ChartResultFields {
@@ -283,6 +284,8 @@ struct ProgressionRequest: Codable {
     let mode: String
     let birth: BirthSettings
     let reference: ChartMoment
+    let houseSystem: String
+    let zodiac: String
     let nodeMode: String
     let aspects: [AspectRequest]
     let ephemerisPath: String?
@@ -293,6 +296,8 @@ struct ProgressionRequest: Codable {
         case mode
         case birth
         case reference
+        case houseSystem = "house_system"
+        case zodiac
         case nodeMode = "node_mode"
         case aspects
         case ephemerisPath = "ephemeris_path"
@@ -349,6 +354,8 @@ struct SolarArcRequest: Codable {
     let mode: String
     let birth: BirthSettings
     let reference: ChartMoment
+    let houseSystem: String
+    let zodiac: String
     let nodeMode: String
     let aspects: [AspectRequest]
     let patternsEnabled: Bool?
@@ -360,6 +367,8 @@ struct SolarArcRequest: Codable {
         case mode
         case birth
         case reference
+        case houseSystem = "house_system"
+        case zodiac
         case nodeMode = "node_mode"
         case aspects
         case patternsEnabled = "patterns_enabled"
@@ -375,6 +384,8 @@ struct HarmonicRequest: Codable {
     let mode: String
     let birth: BirthSettings
     let harmonicOrder: Int
+    let houseSystem: String
+    let zodiac: String
     let nodeMode: String
     let aspects: [AspectRequest]
     let ephemerisPath: String?
@@ -385,6 +396,8 @@ struct HarmonicRequest: Codable {
         case mode
         case birth
         case harmonicOrder = "harmonic_order"
+        case houseSystem = "house_system"
+        case zodiac
         case nodeMode = "node_mode"
         case aspects
         case ephemerisPath = "ephemeris_path"

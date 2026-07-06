@@ -4,6 +4,42 @@
 
 ---
 
+# 代码审计续查 — 已完成（2026-07-06）
+
+## 分支
+`codex/fix-modern-timebased-contract`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 核对规则与当前改动边界 | ✅ | 已读取 `AGENTS.md`；当前仅有上一轮文档改动 |
+| 02 复查现代时基模式请求契约 | ✅ | 已确认 progression / solar_arc / harmonic UI 请求不传顶层 zodiac/house_system，后端忽略 birth 内设置 |
+| 03 扫描结果页 tab / section_errors 风险 | ✅ | 已确认 tab case 基本对应；现代高级诊断页多为 Raw JSON，harmonic 无诊断页 |
+| 04 扫描后端 silent fallback 高风险点 | ✅ | 已记录 silent fallback 审计策略，并补充次限整点出生误报 warning |
+| 05 输出代码审计结论 | ✅ | 已更新审计文档，并将在本轮回复按严重度列 findings、复现依据、建议验证 |
+| 06 修复并补回归 | ✅ | 已修现代时基请求契约、次限整点 warning、现代诊断页，并补 Python/Swift 回归 |
+| 07 验证与打包覆盖 | ✅ | Python 492、Swift 27、一键门禁通过；已打包覆盖 `/Applications` 为 `1.1.13 (33)`，签名/无 pyc/安装后端 smoke 通过 |
+
+---
+
+# 文档整理与技术债审计 — 已完成（2026-07-06）
+
+## 分支
+`main`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 核对项目规则与仓库状态 | ✅ | 已读取 `AGENTS.md`；当前 `main` 领先 `origin/main` 15 个提交 |
+| 02 梳理文档目录与源/生成边界 | ✅ | 已扫描 tracked 文件、source-of-truth、生成产物与历史文档 |
+| 03 汇总技术债与历史遗留 bug | ✅ | 已汇总文档已知债务、历史 bug 主题、占位实现与契约风险 |
+| 04 记录潜在未发现 bug 风险 | ✅ | 已记录异常吞噬、占位实现、schema 漂移、测试空白与现代时基模式契约风险 |
+| 05 补全文档与下一步建议 | ✅ | 已更新 docs/README 与 validation，新增 `docs/project-audit-2026-07-06.md` 并记录演进路线 |
+
+---
+
 # main 合并后打包覆盖 /Applications — 已完成（2026-07-02）
 
 ## 分支

@@ -31,12 +31,13 @@ SOLAR_ARC_BODY_IDS = [
 def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
     from astro_backend_patterns import find_patterns
 
-    sidereal = set_zodiac_mode(request.get("zodiac", "tropical"))
-    house_system = request.get("house_system", "whole_sign")
+    birth = request["birth"]
+    zodiac = request.get("zodiac") or birth.get("zodiac", "tropical")
+    house_system = request.get("house_system") or birth.get("houseSystem", "whole_sign")
+    sidereal = set_zodiac_mode(zodiac)
     node_mode = request.get("node_mode", "true_node")
     aspect_specs = request.get("aspects", [])
 
-    birth = request["birth"]
     birth_dt = moment_to_local_datetime(birth["moment"])
     reference = request["reference"]
     reference_dt = moment_to_local_datetime(reference)

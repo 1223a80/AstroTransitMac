@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 import pytest
 from typing import Any
 
@@ -44,6 +45,17 @@ HARMONIC_REQUEST = {
     "node_mode": "true_node",
     "aspects": ASPECTS,
 }
+
+
+def _without_top_level_zodiac_and_houses(request: dict[str, Any]) -> dict[str, Any]:
+    copied = deepcopy(request)
+    copied.pop("zodiac", None)
+    copied.pop("house_system", None)
+    return copied
+
+
+def _sun_longitude(rows: list[dict[str, Any]]) -> float:
+    return next(row["longitude"] for row in rows if row["body_id"] == "SUN")
 
 
 class TestLunation:
@@ -166,6 +178,46 @@ class TestProgressions:
         result = calculate_progressions(request, warnings)
         assert isinstance(result["progressed_to_natal_aspects"], list)
         assert isinstance(result["progressed_to_progressed_aspects"], list)
+
+    def test_uses_birth_zodiac_when_top_level_zodiac_missing(self) -> None:
+        tropical_request = _without_top_level_zodiac_and_houses({
+            "mode": "progression",
+            "birth": NAtAL_BIRTH,
+            "reference": REFERENCE,
+            "house_system": "whole_sign",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": ASPECTS,
+        })
+        sidereal_request = deepcopy(tropical_request)
+        sidereal_request["birth"]["zodiac"] = "sidereal_lahiri"
+
+        tropical_result = calculate_progressions(tropical_request, [])
+        sidereal_result = calculate_progressions(sidereal_request, [])
+
+        assert abs(
+            _sun_longitude(tropical_result["natal_planets"])
+            - _sun_longitude(sidereal_result["natal_planets"])
+        ) > 20.0
+
+    @pytest.mark.parametrize("hour,minute", [(12, 0), (0, 0), (12, 30)])
+    def test_exact_birth_time_does_not_emit_unknown_time_warning(self, hour: int, minute: int) -> None:
+        birth = deepcopy(NAtAL_BIRTH)
+        birth["moment"]["hour"] = hour
+        birth["moment"]["minute"] = minute
+        request = {
+            "mode": "progression",
+            "birth": birth,
+            "reference": REFERENCE,
+            "house_system": "whole_sign",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": ASPECTS,
+        }
+
+        result = calculate_progressions(request, [])
+
+        assert not any("出生时间不详" in warning for warning in result["warnings"])
 
 
 class TestSolarArc:
@@ -317,9 +369,43 @@ class TestSolarArc:
         result = calculate_solar_arc(request, warnings)
         assert "duplicate_theme_warning" not in result
 
+    def test_uses_birth_zodiac_when_top_level_zodiac_missing(self) -> None:
+        tropical_request = _without_top_level_zodiac_and_houses({
+            "mode": "solar_arc",
+            "birth": NAtAL_BIRTH,
+            "reference": REFERENCE,
+            "house_system": "whole_sign",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": ASPECTS,
+        })
+        sidereal_request = deepcopy(tropical_request)
+        sidereal_request["birth"]["zodiac"] = "sidereal_lahiri"
+
+        tropical_result = calculate_solar_arc(tropical_request, [])
+        sidereal_result = calculate_solar_arc(sidereal_request, [])
+
+        assert abs(
+            _sun_longitude(tropical_result["natal_planets"])
+            - _sun_longitude(sidereal_result["natal_planets"])
+        ) > 20.0
+
 
 class TestHarmonic:
     def test_houses_marked_experimental(self) -> None:
         warnings: list[str] = []
         result = calculate_harmonic(HARMONIC_REQUEST, warnings)
         assert result["houses_experimental"] is True
+
+    def test_uses_birth_zodiac_when_top_level_zodiac_missing(self) -> None:
+        tropical_request = _without_top_level_zodiac_and_houses(HARMONIC_REQUEST)
+        sidereal_request = deepcopy(tropical_request)
+        sidereal_request["birth"]["zodiac"] = "sidereal_lahiri"
+
+        tropical_result = calculate_harmonic(tropical_request, [])
+        sidereal_result = calculate_harmonic(sidereal_request, [])
+
+        assert abs(
+            _sun_longitude(tropical_result["planets"])
+            - _sun_longitude(sidereal_result["planets"])
+        ) > 20.0

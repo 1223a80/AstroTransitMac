@@ -150,6 +150,8 @@ Package the app with:
 
 ## Known Technical Debt
 
+See also `docs/project-audit-2026-07-06.md` for the current folder hygiene notes, potential hidden bug checklist, and prioritized next-step recommendations.
+
 ### classical_snapshot 重复计算
 
 `classical_snapshot()` 在单次调用内调用了两次 `calculate_positions`：

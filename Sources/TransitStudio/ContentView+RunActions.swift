@@ -190,6 +190,8 @@ extension ContentView {
                 mode: "progression",
                 birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
                 reference: makeMoment(from: classicalReferenceDate),
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
                 nodeMode: modernNodeMode, aspects: selectedAspectRequests(orb: globalOrb),
                 ephemerisPath: normalizedEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
             )
@@ -206,6 +208,8 @@ extension ContentView {
                 mode: "solar_arc",
                 birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
                 reference: makeMoment(from: classicalReferenceDate),
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
                 nodeMode: modernNodeMode, aspects: selectedAspectRequests(orb: globalOrb),
                 patternsEnabled: false,
                 ephemerisPath: normalizedEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
@@ -222,7 +226,10 @@ extension ContentView {
             let request = HarmonicRequest(
                 mode: "harmonic",
                 birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
-                harmonicOrder: modernHarmonicOrder, nodeMode: modernNodeMode,
+                harmonicOrder: modernHarmonicOrder,
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                nodeMode: modernNodeMode,
                 aspects: selectedAspectRequests(orb: globalOrb),
                 ephemerisPath: normalizedEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
             )

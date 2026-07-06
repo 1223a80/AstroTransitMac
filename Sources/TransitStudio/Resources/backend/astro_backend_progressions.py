@@ -77,12 +77,13 @@ def _calc_lunation(prog_sun_lon: float, prog_moon_lon: float) -> dict[str, Any]:
 
 
 def calculate_progressions(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
-    sidereal = set_zodiac_mode(request.get("zodiac", "tropical"))
-    house_system = request.get("house_system", "whole_sign")
+    birth = request["birth"]
+    zodiac = request.get("zodiac") or birth.get("zodiac", "tropical")
+    house_system = request.get("house_system") or birth.get("houseSystem", "whole_sign")
+    sidereal = set_zodiac_mode(zodiac)
     node_mode = request.get("node_mode", "true_node")
     aspect_specs = request.get("aspects", [])
 
-    birth = request["birth"]
     birth_dt = moment_to_local_datetime(birth["moment"])
     reference = request["reference"]
     reference_dt = moment_to_local_datetime(reference)
@@ -170,7 +171,8 @@ def calculate_progressions(request: dict[str, Any], warnings: list[str]) -> dict
         warnings.append(f"Progressed lunation 计算失败：{exc}")
         section_errors["progressed_lunation"] = str(exc)
 
-    if not birth.get("hour", False) and not birth["moment"].get("minute", False):
+    birth_moment = birth.get("moment", {})
+    if "hour" not in birth_moment or "minute" not in birth_moment:
         warnings.append("出生时间不详，progressed angles/houses 可能不准确。")
 
     return {

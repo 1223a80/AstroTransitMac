@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-06 — 文档整理与项目审计
+
+- 新增 `docs/project-audit-2026-07-06.md`，集中记录目录边界、文档组织建议、技术债、潜在未发现 bug 清单和下一步发展建议。
+- 更新 `docs/README.md` 与 `docs/validation.md`，把审计文档接入现有文档索引和技术债入口。
+- 继续代码审计并补充已复现问题：现代 time-based 模式忽略 UI 选择的 zodiac/house system、次限整点出生误报“出生时间不详”、现代高级诊断页不直观。
+- 修复 Progressions / Solar Arc / Harmonic 的黄道与宫制请求契约：Swift 请求补齐顶层 `house_system` / `zodiac`，Python 后端兼容顶层字段并回退到 `birth` 内设置。
+- 修复次限推进整点出生误报“出生时间不详”的 warning 判断。
+- 现代高级结果页新增通用诊断视图，Synastry / Composite / Davison / Progressions / Solar Arc / Harmonic 的诊断页直接展示 warnings 与 section_errors，JSON 页继续保留原始输出。
+- 新增 Python 与 Swift 回归测试覆盖上述请求契约和整点出生提示。
+- `package_app.sh` 打包版本更新为 `1.1.13 (33)`，用于本轮修复后覆盖安装。
+
 ## 2026-07-02 — Expansion 002 代码评审修复（F1-F5）
 
 - **F1** 修复 magistery 权威点公式文本：`_resolve_lot_ref()` 新增 `mc` 一等参数说明符，注册行改为 `"mc"`，删除特判分支，通用路径补传 `mc=mc_lon`，`_formula_text()` 新增 `"mc"→"MC"` 渲染。公式文本不再显示 `0°`。
