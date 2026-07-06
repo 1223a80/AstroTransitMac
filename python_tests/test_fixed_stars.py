@@ -118,3 +118,40 @@ class TestStarConjunctions:
         assert len(conj) == 1
         assert conj[0]["star"] == "Antares"
         assert conj[0]["planet"] == "MARS"
+
+
+class TestResolveEphePath:
+    """User ephemeris dir must not hide the bundled sefstars.txt (fix 2026-07-06)."""
+
+    def test_user_path_combined_with_bundled(self):
+        from astro_backend_api import _resolve_ephe_path
+        bundled = _bundled_ephemeris_path()
+        assert bundled is not None
+        resolved = _resolve_ephe_path("/tmp/user-ephe", bundled)
+        assert resolved == f"/tmp/user-ephe:{bundled}"
+
+    def test_user_path_only_when_no_bundled(self):
+        from astro_backend_api import _resolve_ephe_path
+        assert _resolve_ephe_path("/tmp/user-ephe", None) == "/tmp/user-ephe"
+
+    def test_bundled_only_when_no_user_path(self):
+        from astro_backend_api import _resolve_ephe_path
+        bundled = _bundled_ephemeris_path()
+        assert _resolve_ephe_path("", bundled) == str(bundled)
+
+    def test_same_path_not_duplicated(self):
+        from astro_backend_api import _resolve_ephe_path
+        bundled = _bundled_ephemeris_path()
+        assert _resolve_ephe_path(str(bundled), bundled) == str(bundled)
+
+    def test_fixstars_reachable_via_combined_path(self, tmp_path):
+        """Simulate the real bug: user dir without sefstars.txt + combined path."""
+        from astro_backend_api import _resolve_ephe_path
+        bundled = _bundled_ephemeris_path()
+        resolved = _resolve_ephe_path(str(tmp_path), bundled)
+        swe.set_ephe_path(resolved)
+        try:
+            values, _, _ = swe.fixstar_ut("Regulus", 2461000.0, swe.FLG_SWIEPH)
+            assert 149 < values[0] < 152
+        finally:
+            swe.set_ephe_path(str(bundled))

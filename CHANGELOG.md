@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-06 — 修复自定义星历目录导致固定星报错
+
+- 修复设置里填了「Ephemeris 文件夹」（或下载小行星星历后被自动填入）时，古典排盘等所有模式报「固定星计算失败：未找到 sefstars.txt」的问题：之前一旦指定自定义目录，后端就完全不再查看 App 内置星历，而自定义目录里通常只有行星/小行星 `.se1` 文件。现在后端把「自定义目录 + 内置目录」用冒号拼成 Swiss Ephemeris 多目录搜索路径，自定义目录优先、缺的文件（如 `sefstars.txt`）自动回落到内置目录。
+- 新增 `python_tests/test_fixed_stars.py::TestResolveEphePath` 5 个测试锁定该行为（507 → 512）。
+
 ## 2026-07-06 — 后端静默回落改为显式警告
 
 - `set_zodiac_mode()` 新增可选 `warnings` 参数：传入无法识别的 zodiac（如拼写错误 `sidereal_lahri`）时不再静默按回归黄道计算，而是写入中文警告；11 处调用点（moment/classical/horary/vedic/synastry/composite/davison/progression/solar_arc/harmonic/rectify）全部接入。

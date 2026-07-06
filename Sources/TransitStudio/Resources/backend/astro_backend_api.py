@@ -65,6 +65,22 @@ def _bundled_ephemeris_path(module_file: Path | None = None) -> Path | None:
     return next((candidate for candidate in candidates if candidate.exists()), None)
 
 
+def _resolve_ephe_path(user_path: str, bundled: Path | None) -> str | None:
+    """Combine the user ephemeris dir with the bundled dir for Swiss Ephemeris.
+
+    Swiss Ephemeris accepts multiple colon-separated directories; keeping the
+    bundled path as fallback ensures files like ``sefstars.txt`` stay reachable
+    when the user directory only holds planet/asteroid ``.se1`` files.
+    """
+    if user_path and bundled is not None and str(bundled) != user_path:
+        return f"{user_path}:{bundled}"
+    if user_path:
+        return user_path
+    if bundled is not None:
+        return str(bundled)
+    return None
+
+
 def _cross_declination_aspects(
     natal_positions: list[dict[str, Any]],
     transit_positions: list[dict[str, Any]],
@@ -631,12 +647,9 @@ def main() -> None:
         configure_runtime(no_asteroids, require_ephemeris)
 
         ephemeris_path = (request.get("ephemeris_path") or request.get("ephemerisPath") or "").strip()
-        if ephemeris_path:
-            swe.set_ephe_path(ephemeris_path)
-        else:
-            bundled_ephemeris = _bundled_ephemeris_path()
-            if bundled_ephemeris is not None:
-                swe.set_ephe_path(str(bundled_ephemeris))
+        resolved_ephe = _resolve_ephe_path(ephemeris_path, _bundled_ephemeris_path())
+        if resolved_ephe:
+            swe.set_ephe_path(resolved_ephe)
 
         mode = request.get("mode", "")
         if mode == "scan":
