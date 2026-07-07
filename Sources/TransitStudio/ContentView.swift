@@ -199,7 +199,7 @@ struct ContentView: View {
                 selectedNatalProfileID = first.id.uuidString
             }
         }
-        .preferredColorScheme(.light)
+        .preferredColorScheme(appState.preferredScheme)
         .tint(TS.SemanticColor.gold)
         .environmentObject(calcVM)
         .environmentObject(aiVM)

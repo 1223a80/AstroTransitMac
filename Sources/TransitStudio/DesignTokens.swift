@@ -1,14 +1,24 @@
 import SwiftUI
+import AppKit
 
 // MARK: - Design Token System
 //
-// "Celestial Almanac" theme — a fixed warm-parchment palette with a single
-// gold accent and serif display type. The app intentionally does NOT follow
-// the system light/dark appearance: it keeps its own crafted character.
-// All values are expressed as fixed colors so the look is stable regardless
-// of the macOS appearance setting.
+// Two skins: "Celestial Almanac" (light = warm parchment) and
+// "Deep Space Night" (dark = deep navy-grey). The active appearance is
+// controlled by the user in Settings → 界面.
 
 enum TS {
+
+    // MARK: Dynamic Color Helper
+    /// Appearance-aware color: parchment palette in light, deep-space in dark.
+    static func dyn(_ lr: Double, _ lg: Double, _ lb: Double,
+                    _ dr: Double, _ dg: Double, _ db: Double) -> Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+                ? NSColor(srgbRed: dr, green: dg, blue: db, alpha: 1)
+                : NSColor(srgbRed: lr, green: lg, blue: lb, alpha: 1)
+        })
+    }
 
     // MARK: Spacing (4pt base grid)
     enum Spacing {
@@ -55,43 +65,43 @@ enum TS {
         static let monoSmall: SwiftUI.Font = .system(.caption, design: .monospaced)
     }
 
-    // MARK: Element Colors (astrology) — retuned for the parchment background
+    // MARK: Element Colors (astrology) — dynamic light/dark
     enum ElementColor {
-        static let fire = Color(red: 0.757, green: 0.294, blue: 0.227)   // #C14B3A
-        static let earth = Color(red: 0.604, green: 0.463, blue: 0.212)  // #9A7636
-        static let air = Color(red: 0.247, green: 0.541, blue: 0.471)    // #3F8A78
-        static let water = Color(red: 0.239, green: 0.435, blue: 0.682)  // #3D6FAE
+        static let fire = TS.dyn(0.757, 0.294, 0.227,  0.878, 0.416, 0.333)
+        static let earth = TS.dyn(0.604, 0.463, 0.212,  0.788, 0.627, 0.353)
+        static let air = TS.dyn(0.247, 0.541, 0.471,  0.373, 0.722, 0.627)
+        static let water = TS.dyn(0.239, 0.435, 0.682,  0.416, 0.608, 0.847)
     }
 
-    // MARK: Semantic Colors — fixed "almanac" palette
+    // MARK: Semantic Colors — dynamic light/dark
     enum SemanticColor {
         // Surfaces
-        static let paper = Color(red: 0.961, green: 0.937, blue: 0.890)        // #F5EFE3
-        static let paperRaised = Color(red: 0.925, green: 0.898, blue: 0.835)  // #ECE5D5
-        static let card = Color(red: 0.984, green: 0.973, blue: 0.945)         // #FBF8F1
+        static let paper = TS.dyn(0.961, 0.937, 0.890,  0.078, 0.086, 0.122)
+        static let paperRaised = TS.dyn(0.925, 0.898, 0.835,  0.106, 0.118, 0.165)
+        static let card = TS.dyn(0.984, 0.973, 0.945,  0.118, 0.133, 0.188)
 
         // Ink (text)
-        static let ink = Color(red: 0.169, green: 0.149, blue: 0.125)          // #2B2620
-        static let inkSoft = Color(red: 0.420, green: 0.388, blue: 0.341)      // #6B6357
-        static let inkFaint = Color(red: 0.612, green: 0.576, blue: 0.522)     // #9C9385
+        static let ink = TS.dyn(0.169, 0.149, 0.125,  0.910, 0.894, 0.847)
+        static let inkSoft = TS.dyn(0.420, 0.388, 0.341,  0.604, 0.592, 0.659)
+        static let inkFaint = TS.dyn(0.612, 0.576, 0.522,  0.431, 0.416, 0.478)
 
         // Lines
-        static let line = Color(red: 0.886, green: 0.851, blue: 0.780)         // #E2D9C7
-        static let lineSoft = Color(red: 0.925, green: 0.894, blue: 0.831)     // #ECE4D4
+        static let line = TS.dyn(0.886, 0.851, 0.780,  0.180, 0.200, 0.267)
+        static let lineSoft = TS.dyn(0.925, 0.894, 0.831,  0.149, 0.169, 0.227)
 
         // Gold accent
-        static let gold = Color(red: 0.710, green: 0.525, blue: 0.184)         // #B5862F
-        static let goldDeep = Color(red: 0.541, green: 0.392, blue: 0.125)     // #8A6420
-        static let goldSoft = Color(red: 0.941, green: 0.894, blue: 0.776)     // #F0E4C6
+        static let gold = TS.dyn(0.710, 0.525, 0.184,  0.831, 0.663, 0.306)
+        static let goldDeep = TS.dyn(0.541, 0.392, 0.125,  0.878, 0.737, 0.420)
+        static let goldSoft = TS.dyn(0.941, 0.894, 0.776,  0.227, 0.196, 0.133)
 
         // Aspect polarity
-        static let hardAspect = Color(red: 0.690, green: 0.322, blue: 0.290)   // #B0524A
-        static let softAspect = Color(red: 0.290, green: 0.490, blue: 0.431)   // #4A7D6E
+        static let hardAspect = TS.dyn(0.690, 0.322, 0.290,  0.878, 0.478, 0.416)
+        static let softAspect = TS.dyn(0.290, 0.490, 0.431,  0.373, 0.722, 0.627)
 
         // Status
-        static let success = Color(red: 0.290, green: 0.490, blue: 0.431)
-        static let warning = Color(red: 0.757, green: 0.494, blue: 0.180)
-        static let error = Color(red: 0.690, green: 0.255, blue: 0.220)
+        static let success = TS.dyn(0.290, 0.490, 0.431,  0.373, 0.722, 0.627)
+        static let warning = TS.dyn(0.757, 0.494, 0.180,  0.878, 0.643, 0.361)
+        static let error = TS.dyn(0.690, 0.255, 0.220,  0.878, 0.467, 0.416)
 
         // Back-compat aliases (kept so existing call sites keep compiling)
         static let accent = gold

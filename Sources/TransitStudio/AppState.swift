@@ -27,6 +27,7 @@ final class AppState: ObservableObject {
         static let momentPresetsJSON = "momentPresetsJSON"
         static let scanPresetsJSON = "scanPresetsJSON"
         static let practiceModeStorage = "natalChartStyle"
+        static let appearance = "appAppearance"
     }
 
     private let defaults: UserDefaults
@@ -55,6 +56,15 @@ final class AppState: ObservableObject {
     @Published var momentPresetsJSON: String { didSet { defaults.set(momentPresetsJSON, forKey: Key.momentPresetsJSON) } }
     @Published var scanPresetsJSON: String { didSet { defaults.set(scanPresetsJSON, forKey: Key.scanPresetsJSON) } }
     @Published var practiceModeStorage: String { didSet { defaults.set(practiceModeStorage, forKey: Key.practiceModeStorage) } }
+    @Published var appearance: String { didSet { defaults.set(appearance, forKey: Key.appearance) } }
+
+    var preferredScheme: ColorScheme? {
+        switch appearance {
+        case "light": return .light
+        case "dark": return .dark
+        default: return nil
+        }
+    }
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -83,5 +93,6 @@ final class AppState: ObservableObject {
         momentPresetsJSON = defaults.string(forKey: Key.momentPresetsJSON) ?? ""
         scanPresetsJSON = defaults.string(forKey: Key.scanPresetsJSON) ?? ""
         practiceModeStorage = defaults.string(forKey: Key.practiceModeStorage) ?? PracticeMode.modern.rawValue
+        appearance = defaults.string(forKey: Key.appearance) ?? "system"
     }
 }

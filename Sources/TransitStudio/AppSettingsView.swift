@@ -24,6 +24,8 @@ struct AppSettingsView: View {
 
     var body: some View {
         TabView {
+            settingsPage { interfaceSettings }
+                .tabItem { Label("界面", systemImage: "paintbrush") }
             settingsPage { pythonSettings }
                 .tabItem { Label("后端", systemImage: "terminal") }
             settingsPage { aiSettings }
@@ -37,6 +39,27 @@ struct AppSettingsView: View {
             swissephStatus = await BackendClient.swissephStatus(pythonPath: appState.pythonPath)
         }
         .tint(.accentColor)
+    }
+
+    private var interfaceSettings: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.xl) {
+            settingsTitle("外观", subtitle: "浅色为羊皮纸主题，深色为深空夜色主题。")
+
+            HStack {
+                Text("外观")
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Picker("外观", selection: $appState.appearance) {
+                    Text("跟随系统").tag("system")
+                    Text("浅色").tag("light")
+                    Text("深色").tag("dark")
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 300)
+            }
+
+            Spacer()
+        }
     }
 
     private var pythonSettings: some View {

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-07 — 第 1 期 UI 重设计：Dark Mode 换肤能力 (1.2.0/36)
+
+- **DesignTokens.swift** — 新增 `import AppKit` + `TS.dyn()` 动态颜色 helper（NSColor.appearance）；全部 16 个 `SemanticColor` 和 4 个 `ElementColor` 从固定 `Color(red:…)` 换为 `TS.dyn()`（浅色值不变、深色=深空夜色）；注释更新为描述浅色/深色双皮肤。
+- **ChartWheelGeometry.swift** — 19 个颜色常量的 12 个改为引用 `TS.SemanticColor.*` / `TS.ElementColor.*`，其余 7 个盘面特有常量用 `TS.dyn()` 动态化；常量名不变，调用处无感知。
+- **AppState.swift** — 新增 `Key.appearance`、`@Published var appearance`（UserDefaults 持久化）和 `preferredScheme: ColorScheme?` computed 属性（"system"/"light"/"dark" 映射）。
+- **ContentView.swift** — `.preferredColorScheme(.light)` 改为 `.preferredColorScheme(appState.preferredScheme)`，全局外观跟随设置。
+- **AppSettingsView.swift** — 设置窗口 TabView 首位新增「界面」tab，含 `settingsTitle("外观", …)` 和 segmented Picker（跟随系统/浅色/深色），绑定 `$appState.appearance`。
+- `PLANS.md` 更新第 1 期状态；`package_app.sh` 版本号升至 `1.2.0 (36)`。
+
 ## 2026-07-06 — 修复自定义星历目录导致固定星报错
 
 - 修复设置里填了「Ephemeris 文件夹」（或下载小行星星历后被自动填入）时，古典排盘等所有模式报「固定星计算失败：未找到 sefstars.txt」的问题：之前一旦指定自定义目录，后端就完全不再查看 App 内置星历，而自定义目录里通常只有行星/小行星 `.se1` 文件。现在后端把「自定义目录 + 内置目录」用冒号拼成 Swiss Ephemeris 多目录搜索路径，自定义目录优先、缺的文件（如 `sefstars.txt`）自动回落到内置目录。

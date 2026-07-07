@@ -5,29 +5,30 @@ import SwiftUI
 // "Celestial Almanac" wheel — warm parchment surfaces with gold rules and a
 // muted element palette, matched to the DesignTokens theme. Element and aspect
 // colors mirror AstroPalette so the wheel reads as the same artifact as the
-// result tables.
+// result tables. All values are now dynamic (light/dark) via TS.dyn or TS token
+// references.
 
-let pageBackground = Color(red: 0.961, green: 0.937, blue: 0.890)   // paper #F5EFE3
-let mainWhite = Color(red: 0.996, green: 0.988, blue: 0.969)        // warm parchment white (dot fills, ticks)
-let outerAuraGray = Color(red: 0.925, green: 0.890, blue: 0.816)    // outer halo beige
-let zodiacRingGray = Color(red: 0.937, green: 0.902, blue: 0.827)   // zodiac band beige
-let signBandWhite = Color(red: 0.984, green: 0.973, blue: 0.945)    // house band cream #FBF8F1
-let innerDiskGray = Color(red: 0.953, green: 0.918, blue: 0.847)    // inner disk
-let lineGray = Color(red: 0.839, green: 0.784, blue: 0.675)         // warm tan rule
-let strongLineGray = Color(red: 0.420, green: 0.388, blue: 0.341)   // axis (ASC/MC) ink-brown
-let accentCyan = Color(red: 0.710, green: 0.525, blue: 0.184)       // gold accent #B5862F
-let primaryText = Color(red: 0.169, green: 0.149, blue: 0.125)      // ink #2B2620
-let secondaryText = Color(red: 0.420, green: 0.388, blue: 0.341)    // ink-soft #6B6357
+let pageBackground = TS.SemanticColor.paper
+let mainWhite = TS.dyn(0.996, 0.988, 0.969,  0.137, 0.153, 0.208)
+let outerAuraGray = TS.dyn(0.925, 0.890, 0.816,  0.098, 0.110, 0.153)
+let zodiacRingGray = TS.dyn(0.937, 0.902, 0.827,  0.118, 0.133, 0.188)
+let signBandWhite = TS.SemanticColor.card
+let innerDiskGray = TS.dyn(0.953, 0.918, 0.847,  0.106, 0.118, 0.165)
+let lineGray = TS.dyn(0.839, 0.784, 0.675,  0.180, 0.200, 0.267)
+let strongLineGray = TS.SemanticColor.inkSoft
+let accentCyan = TS.SemanticColor.gold
+let primaryText = TS.SemanticColor.ink
+let secondaryText = TS.SemanticColor.inkSoft
 
-let fireColor = Color(red: 0.757, green: 0.294, blue: 0.227)        // #C14B3A
-let earthColor = Color(red: 0.604, green: 0.463, blue: 0.212)       // #9A7636
-let airColor = Color(red: 0.247, green: 0.541, blue: 0.471)         // #3F8A78
-let waterColor = Color(red: 0.239, green: 0.435, blue: 0.682)       // #3D6FAE
-let lotTextGray = Color(red: 0.612, green: 0.576, blue: 0.522)      // ink-faint #9C9385
+let fireColor = TS.ElementColor.fire
+let earthColor = TS.ElementColor.earth
+let airColor = TS.ElementColor.air
+let waterColor = TS.ElementColor.water
+let lotTextGray = TS.SemanticColor.inkFaint
 
-let goldLine = Color(red: 0.710, green: 0.525, blue: 0.184)         // #B5862F
-let hardAspectColor = Color(red: 0.690, green: 0.322, blue: 0.290)  // #B0524A
-let softAspectColor = Color(red: 0.290, green: 0.490, blue: 0.431)  // #4A7D6E
+let goldLine = TS.SemanticColor.gold
+let hardAspectColor = TS.SemanticColor.hardAspect
+let softAspectColor = TS.SemanticColor.softAspect
 
 let elementColors: [WheelElement: Color] = [
     .fire: fireColor, .earth: earthColor, .air: airColor, .water: waterColor
