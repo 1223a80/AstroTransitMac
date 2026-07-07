@@ -142,17 +142,11 @@ extension ContentView {
     }
 
     private func capsuleProfileSummary(for profile: NatalProfile) -> String {
-        // Build "YYYY-MM-DD HH:mm UTC±N · latitude, longitude"
-        let dateF = DateFormatter()
-        dateF.dateFormat = "yyyy-MM-dd"
-        dateF.timeZone = selectedTimeZone
-
-        let timeF = DateFormatter()
-        timeF.dateFormat = "HH:mm"
-        timeF.timeZone = selectedTimeZone
-
-        let datePart = dateF.string(from: natalDate)
-        let timePart = timeF.string(from: natalDate)
-        return "\(datePart) \(timePart) \(timezoneLabel) · \(birthLatitude), \(birthLongitude)"
+        // Summary must reflect the saved profile, not in-progress sidebar edits.
+        let moment = profile.moment
+        let datePart = String(format: "%04d-%02d-%02d", moment.year, moment.month, moment.day)
+        let timePart = String(format: "%02d:%02d", moment.hour, moment.minute)
+        let sign = profile.gmtOffset >= 0 ? "+" : ""
+        return "\(datePart) \(timePart) UTC\(sign)\(profile.gmtOffset) · \(profile.latitude), \(profile.longitude)"
     }
 }

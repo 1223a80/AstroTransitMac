@@ -10,6 +10,7 @@
 - **ContentView+ResultsPanes.swift** — `runSection` 删除大运行按钮与 errorMessage 文本块，保留进度条与小行星准备消息；`resultsPane` 在 `Divider()` 后新增错误横幅（`exclamationmark.triangle.fill` + 错误文本 + × 关闭）。
 - **ContentView+RunActions.swift** — `performRun` 中 operation 成功返回后，若无错误且未固定（`!isParamDrawerPinned`），自动收起参数栏。
 - `PLANS.md` 更新第 2 期状态；`package_app.sh` 版本号升至 `1.2.1 (37)`。
+- 验收修正：档案胶囊摘要改为读取**已保存档案**的出生数据（原实现误用侧栏当前编辑值，档案名与数据可能不一致）。
 
 ## 2026-07-07 — 第 1 期 UI 重设计：Dark Mode 换肤能力 (1.2.0/36)
 
