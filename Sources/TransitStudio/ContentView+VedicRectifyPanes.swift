@@ -149,16 +149,6 @@ extension ContentView {
                             } else {
                                 EmptyStateView(title: "无特殊 Lagna 数据", systemImage: "scope")
                             }
-                        case "ai":
-                            AIAnalysisView(
-                                streamKey: "vedic",
-                                analysis: aiVM.vedicAnalysis,
-                                reasoning: aiVM.vedicReasoning,
-                                isAnalyzing: aiVM.isAnalyzing,
-                                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                            ) {
-                                Task { await analyzeVedicResult() }
-                            }
                         case "diagnostics":
                             if let warnings = result.warnings, !warnings.isEmpty {
                                 ScrollView {
@@ -218,7 +208,6 @@ extension ContentView {
             ("bhava", "Bhava"),
             ("upagrahas", "副行星"),
             ("special_lagnas", "特殊 Lagna"),
-            ("ai", "AI 分析"),
             ("diagnostics", "诊断"),
             ("json", "JSON"),
         ]

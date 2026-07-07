@@ -169,7 +169,7 @@ extension ContentView {
 
     var modernNatalTabs: [(id: String, title: String)] {
         [
-            ("wheel", "星盘图"), ("natal_positions", "本命位置"), ("natal_aspects", "本命相位"), ("ai", "AI 分析"),
+            ("wheel", "星盘图"), ("natal_positions", "本命位置"), ("natal_aspects", "本命相位"),
         ]
     }
 
@@ -197,16 +197,6 @@ extension ContentView {
             )
         case "diagnostics":
             DiagnosticsView(result: result)
-        case "ai":
-            AIAnalysisView(
-                streamKey: "moment",
-                analysis: aiVM.momentAnalysis,
-                reasoning: aiVM.momentReasoning,
-                isAnalyzing: aiVM.isAnalyzing,
-                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            ) {
-                Task { await analyzeNatalResult() }
-            }
         default:
             ChartWheelView(data: ChartWheelData(transitResult: result))
         }
@@ -239,7 +229,7 @@ extension ContentView {
 
     var momentTabs: [(id: String, title: String)] {
         [
-            ("wheel", "星盘图"), ("aspects", "相位"), ("transit_positions", "行运位置"), ("natal_positions", "本命位置"), ("ai", "AI 分析"),
+            ("wheel", "星盘图"), ("aspects", "相位"), ("transit_positions", "行运位置"), ("natal_positions", "本命位置"),
         ]
     }
 
@@ -264,16 +254,6 @@ extension ContentView {
             PositionTableView(title: "本命位置", positions: result.natalPositions)
         case "diagnostics":
             DiagnosticsView(result: result)
-        case "ai":
-            AIAnalysisView(
-                streamKey: "moment",
-                analysis: aiVM.momentAnalysis,
-                reasoning: aiVM.momentReasoning,
-                isAnalyzing: aiVM.isAnalyzing,
-                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            ) {
-                Task { await analyzeMomentResult() }
-            }
         default:
             ChartWheelView(data: ChartWheelData(transitResult: result))
         }
@@ -306,7 +286,7 @@ extension ContentView {
 
     var scanTabs: [(id: String, title: String)] {
         [
-            ("hits", "命中"), ("ai", "AI 分析"),
+            ("timeline", "时间轴"), ("hits", "命中表格"),
         ]
     }
 
@@ -321,20 +301,12 @@ extension ContentView {
     @ViewBuilder
     func scanSelectedResultView(_ result: ScanResult) -> some View {
         switch calcVM.scanSelectedTab {
+        case "timeline":
+            ScanTimelineView(result: result)
         case "hits":
             ScanTableView(hits: result.hits)
         case "diagnostics":
             ScanDiagnosticsView(result: result)
-        case "ai":
-            AIAnalysisView(
-                streamKey: "scan",
-                analysis: aiVM.scanAnalysis,
-                reasoning: aiVM.scanReasoning,
-                isAnalyzing: aiVM.isAnalyzing,
-                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            ) {
-                Task { await analyzeScanResult() }
-            }
         default:
             ScanTableView(hits: result.hits)
         }
@@ -345,18 +317,30 @@ extension ContentView {
         Group {
             if calcVM.horaryResult != nil {
                 VStack(alignment: .leading, spacing: TS.Spacing.lg) {
-                    ResultPaneToolbar(
-                        selection: $calcVM.horarySelectedTab,
-                        tabs: horaryTabs,
-                        moreTabs: horaryMoreTabs,
-                        currentTabTitle: horaryTabTitle,
-                        markdownProvider: { MarkdownExportBuilder.horary(calcVM.horaryResult!) },
-                        jsonProvider: { TextExportBuilder.json(calcVM.horaryResult!) },
-                        csvProvider: { TextExportBuilder.csv(calcVM.horaryResult!) },
-                        basename: "horary_chart"
-                    )
-                    horarySelectedResultView(calcVM.horaryResult!)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    HStack(spacing: TS.Spacing.md) {
+                        Spacer(minLength: 0)
+                        CopyMarkdownButton(title: "复制 Markdown", textProvider: { MarkdownExportBuilder.horary(calcVM.horaryResult!) })
+                        ExportMenu(
+                            markdownProvider: { MarkdownExportBuilder.horary(calcVM.horaryResult!) },
+                            jsonProvider: { TextExportBuilder.json(calcVM.horaryResult!) },
+                            csvProvider: { TextExportBuilder.csv(calcVM.horaryResult!) },
+                            basename: "horary_chart"
+                        )
+                        .fixedSize()
+                    }
+                    HStack(alignment: .top, spacing: TS.Spacing.lg) {
+                        VerticalSectionNav(
+                            selection: $calcVM.horarySelectedTab,
+                            sections: horaryTabs,
+                            secondarySections: horaryMoreTabs
+                        )
+                        Rectangle()
+                            .fill(TS.SemanticColor.line)
+                            .frame(width: 1)
+                            .frame(maxHeight: .infinity)
+                        horarySelectedResultView(calcVM.horaryResult!)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
                 }
                 .padding(TS.Padding.resultContent)
             } else {
@@ -368,7 +352,7 @@ extension ContentView {
     var horaryTabs: [(id: String, title: String)] {
         [
             ("wheel", "星盘图"), ("overview", "问卜总览"), ("planets", "行星状态"), ("points", "点位/Lots"), ("houses", "宫位"),
-            ("aspects", "相位/接纳"), ("judgement", "评分明细"), ("ai", "AI 分析"),
+            ("aspects", "相位/接纳"), ("judgement", "评分明细"),
         ]
     }
 
@@ -399,16 +383,6 @@ extension ContentView {
             ClassicalJudgementView(planets: result.planets)
         case "diagnostics":
             HoraryDiagnosticsView(result: result)
-        case "ai":
-            AIAnalysisView(
-                streamKey: "horary",
-                analysis: aiVM.horaryAnalysis,
-                reasoning: aiVM.horaryReasoning,
-                isAnalyzing: aiVM.isAnalyzing,
-                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            ) {
-                Task { await analyzeHoraryResult() }
-            }
         case "json":
             RawJSONView(value: result)
         default:

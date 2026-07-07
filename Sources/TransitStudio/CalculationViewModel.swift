@@ -35,7 +35,7 @@ final class CalculationViewModel: ObservableObject {
     @Published var horarySelectedTab = "overview"
     @Published var modernNatalSelectedTab = "natal_positions"
     @Published var momentSelectedTab = "aspects"
-    @Published var scanSelectedTab = "hits"
+    @Published var scanSelectedTab = "timeline"
     @Published var vedicSelectedTab = "overview"
     @Published var modernSelectedTab = "planets"
 }

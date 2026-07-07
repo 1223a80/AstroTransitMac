@@ -3,6 +3,9 @@ import SwiftUI
 struct ChartWheelView: View {
     let data: ChartWheelData
     @StateObject private var selection = ChartWheelSelection()
+    // Canvas resolves dynamic colors at draw time; force a redraw when the
+    // appearance flips so the wheel switches skins immediately.
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         ZStack {
@@ -34,6 +37,7 @@ struct ChartWheelView: View {
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
             }
         }
+        .id(colorScheme)
         .padding(TS.Padding.sidebarContent)
     }
 }

@@ -12,18 +12,6 @@ extension ContentView {
                 )
             } else if calcVM.classicalResult != nil {
                 VStack(alignment: .leading, spacing: TS.Spacing.lg) {
-                    ResultPaneToolbar(
-                        selection: $calcVM.classicalSelectedTab,
-                        tabs: classicalTabs,
-                        moreTabs: classicalMoreTabs,
-                        currentTabTitle: classicalTabTitle,
-                        markdownProvider: { MarkdownExportBuilder.classical(calcVM.classicalResult!) },
-                        jsonProvider: { TextExportBuilder.json(calcVM.classicalResult!) },
-                        csvProvider: { TextExportBuilder.csv(calcVM.classicalResult!) },
-                        basename: "classical_chart",
-                        classicalSectionPicker: { showClassicalExportSheet = true }
-                    )
-
                     HStack(spacing: TS.Spacing.md) {
                         Label("参考时间", systemImage: "clock")
                             .font(TS.Font.label)
@@ -38,11 +26,37 @@ extension ContentView {
                         .font(TS.Font.label)
                         .buttonStyle(.borderedProminent)
                         .controlSize(.small)
-                    }
-                    .padding(.vertical, TS.Spacing.sm)
 
-                    classicalSelectedResultView(calcVM.classicalResult!)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        Spacer(minLength: TS.Spacing.md)
+
+                        Button("导出 Markdown…") { showClassicalExportSheet = true }
+                            .font(TS.Font.label)
+                            .buttonStyle(.borderedProminent)
+                            .tint(TS.SemanticColor.gold)
+                            .controlSize(.small)
+                        ExportMenu(
+                            markdownProvider: { MarkdownExportBuilder.classical(calcVM.classicalResult!) },
+                            jsonProvider: { TextExportBuilder.json(calcVM.classicalResult!) },
+                            csvProvider: { TextExportBuilder.csv(calcVM.classicalResult!) },
+                            basename: "classical_chart"
+                        )
+                        .fixedSize()
+                    }
+                    .padding(.bottom, TS.Spacing.sm)
+
+                    HStack(alignment: .top, spacing: TS.Spacing.lg) {
+                        VerticalSectionNav(
+                            selection: $calcVM.classicalSelectedTab,
+                            sections: classicalTabs,
+                            secondarySections: classicalMoreTabs
+                        )
+                        Rectangle()
+                            .fill(TS.SemanticColor.line)
+                            .frame(width: 1)
+                            .frame(maxHeight: .infinity)
+                        classicalSelectedResultView(calcVM.classicalResult!)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
                 }
                 .padding(TS.Padding.resultContent)
                 .sheet(isPresented: $showClassicalExportSheet) {
@@ -175,7 +189,6 @@ extension ContentView {
             ("primary", "主限法"),
             ("circumambulations", "沿界推进"),
             ("timing", "时间技法"),
-            ("ai", "AI 分析"),
         ]
     }
 
@@ -240,16 +253,6 @@ extension ContentView {
             )
         case "diagnostics":
             ClassicalDiagnosticsView(result: result)
-        case "ai":
-            AIAnalysisView(
-                streamKey: "classical",
-                analysis: aiVM.classicalAnalysis,
-                reasoning: aiVM.classicalReasoning,
-                isAnalyzing: aiVM.isAnalyzing,
-                canAnalyze: !appState.llmAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            ) {
-                Task { await analyzeClassicalResult() }
-            }
         case "json":
             RawJSONView(value: result)
         default:

@@ -72,6 +72,7 @@ struct ContentView: View {
     @State var classicalExportSections: Set<MarkdownExportBuilder.ExportSection> = Set(MarkdownExportBuilder.ExportSection.classicalSectionIDs)
 
     @State var isParamDrawerPinned = false
+    @State var isAIPanelOpen = false
 
     @State var modernSubMode = ModernSubMode.natal
     @State var modernPersonBDate = Self.fixedDate(year: 1992, month: 6, day: 15, hour: 8, minute: 30)
@@ -194,6 +195,11 @@ struct ContentView: View {
 
             resultsPane
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            if !isShowingAppSettingsPage {
+                divider
+                aiPanelColumn
+            }
             }
             .background(TS.SemanticColor.paper)
         }

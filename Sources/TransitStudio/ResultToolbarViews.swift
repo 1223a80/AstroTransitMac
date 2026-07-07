@@ -54,6 +54,54 @@ func resultTabTitle(_ selection: String, in groups: [(id: String, title: String)
     return ""
 }
 
+// MARK: - Vertical Section Nav (TOC-style section list for dense panes)
+struct VerticalSectionNav: View {
+    @Binding var selection: String
+    let sections: [(id: String, title: String)]
+    var secondarySections: [(id: String, title: String)] = []
+
+    var body: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .leading, spacing: TS.Spacing.xs) {
+                ForEach(sections, id: \.id) { section in
+                    navItem(section)
+                }
+                if !secondarySections.isEmpty {
+                    Rectangle()
+                        .fill(TS.SemanticColor.line)
+                        .frame(height: 1)
+                        .padding(.vertical, TS.Spacing.sm)
+                        .padding(.horizontal, TS.Spacing.sm)
+                    ForEach(secondarySections, id: \.id) { section in
+                        navItem(section)
+                    }
+                }
+            }
+        }
+        .frame(width: 116, alignment: .topLeading)
+    }
+
+    private func navItem(_ section: (id: String, title: String)) -> some View {
+        let isSelected = selection == section.id
+        return Button {
+            selection = section.id
+        } label: {
+            Text(section.title)
+                .font(.system(size: 12.5, weight: isSelected ? .semibold : .regular))
+                .foregroundStyle(isSelected ? TS.SemanticColor.goldDeep : TS.SemanticColor.inkSoft)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, TS.Spacing.md)
+                .padding(.vertical, 5)
+                .background(
+                    RoundedRectangle(cornerRadius: TS.Radius.chip)
+                        .fill(isSelected ? TS.SemanticColor.goldSoft : Color.clear)
+                )
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 // MARK: - Result Pane Toolbar (single-line scrollable tabs + export row)
 struct ResultPaneToolbar: View {
     @Binding var selection: String

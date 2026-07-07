@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-07 — 第 3–5 期 UI 重设计：垂直目录 + 扫描时间轴 + AI 侧滑面板 (1.2.2/38)
+
+- **结果区垂直目录（古典 / Horary）** — 新增 `VerticalSectionNav` 组件（`ResultToolbarViews.swift`）；古典与 Horary 结果页把横向标签+「更多」菜单换成左侧竖排目录（主 section + 分隔线 + 诊断/JSON），导出按钮移到右上角一行。吠陀、现代、时间点结果页保持原有横向标签（吠陀按约定不动新视图）。
+- **扫描时间轴（`ScanTimelineView.swift` 新建）** — 扫描结果新增"时间轴"视图（默认打开）：命中事件按日期铺在横向时间轴上，硬相位红点、软相位绿点、合相/入座/留金点，同日事件纵向堆叠，悬停显示"时间 行运体 相位 目标 orb"，轴上有月份刻度和起止日期，下方保留完整命中表格；"命中表格"标签保留纯表格视图。
+- **AI 全局侧滑面板（`ContentView+AIPanel.swift` 新建）** — 各结果页的"AI 分析"标签全部移除（古典/现代本命/时间点/扫描/Horary/吠陀），改为右侧常驻竖条手柄，点击滑出 380pt 面板；面板自动绑定当前页面的分析上下文（streamKey / 已有分析 / 生成动作），无结果时提示先计算，矫正与现代高级模式提示暂不支持。AI 流式契约（streamBuffer / 每模式存储）不变。
+- **星盘图外观切换兜底** — `ChartWheelView` 增加 `@Environment(\.colorScheme)` + `.id(colorScheme)`，切换浅色/深色时 Canvas 立即重绘。
+- `CalculationViewModel.scanSelectedTab` 默认值改为 `"timeline"`；`package_app.sh` 版本号升至 `1.2.2 (38)`。
+
 ## 2026-07-07 — 第 2 期 UI 重设计：工作台布局重构 (1.2.1/37)
 
 - **新建 `ContentView+TopBar.swift`** — 顶部常驻栏：品牌块（金圈+sun.max+Transit/STUDIO）、档案胶囊 Menu（person.crop.circle + 档案名 + 摘要 + chevron.down）、Spacer、流派分段器（ink 底）、运行按钮（`play.fill` / ProgressView），绑定 `runButtonTitle`/`runDisabled`。
