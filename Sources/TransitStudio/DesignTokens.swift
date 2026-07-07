@@ -130,6 +130,7 @@ enum TS {
         static let sidebarMaxWidth: CGFloat = 560
         static let sidebarDefaultWidth: CGFloat = 410
         static let sidebarCollapseThreshold: CGFloat = 260
+        static let topBarHeight: CGFloat = 52
     }
 }
 

@@ -15,15 +15,6 @@ extension ContentView {
                             .foregroundStyle(TS.SemanticColor.ink)
                     }
                     Spacer(minLength: 0)
-                    if mode == .scan {
-                        Button {
-                            Task { await runCurrentMode() }
-                        } label: {
-                            Label(calcVM.isRunning ? "扫描中" : "扫描窗口", systemImage: calcVM.isRunning ? "hourglass" : "play.fill")
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .disabled(runDisabled)
-                    }
                 }
                 sidebarModeControls
                 if mode != .rectify && mode != .scan {

@@ -2,42 +2,30 @@ import SwiftUI
 
 extension ContentView {
     var runSection: some View {
-        VStack(alignment: .leading, spacing: TS.Spacing.md) {
-            Button {
-                Task { await runCurrentMode() }
-            } label: {
-                Label(calcVM.isRunning ? "计算中" : runButtonTitle, systemImage: calcVM.isRunning ? "hourglass" : "play.fill")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(runDisabled)
+        Group {
+            if calcVM.calculationProgress != nil || !calcVM.asteroidPreparationMessage.isEmpty {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                    if calcVM.calculationProgress != nil {
+                        VStack(alignment: .leading, spacing: TS.Spacing.sm) {
+                            ProgressView(value: calcVM.calculationProgress)
+                            Text(calcVM.calculationProgressText)
+                                .font(TS.Font.label)
+                                .foregroundStyle(.secondary)
+                                .monospacedDigit()
+                        }
+                    }
 
-            if calcVM.calculationProgress != nil {
-                VStack(alignment: .leading, spacing: TS.Spacing.sm) {
-                    ProgressView(value: calcVM.calculationProgress)
-                    Text(calcVM.calculationProgressText)
-                        .font(TS.Font.label)
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
+                    if !calcVM.asteroidPreparationMessage.isEmpty {
+                        Text(calcVM.asteroidPreparationMessage)
+                            .font(TS.Font.label)
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                    }
                 }
-            }
-
-            if calcVM.errorMessage != nil {
-                Text(calcVM.errorMessage!)
-                    .font(TS.Font.body)
-                    .foregroundStyle(TS.SemanticColor.error)
-                    .textSelection(.enabled)
-            }
-
-            if !calcVM.asteroidPreparationMessage.isEmpty {
-                Text(calcVM.asteroidPreparationMessage)
-                    .font(TS.Font.label)
-                    .foregroundStyle(.secondary)
-                    .textSelection(.enabled)
+                .padding(TS.Padding.cardInner)
+                .background(TS.SemanticColor.cardBackground, in: RoundedRectangle(cornerRadius: TS.Radius.card))
             }
         }
-        .padding(TS.Padding.cardInner)
-        .background(TS.SemanticColor.cardBackground, in: RoundedRectangle(cornerRadius: TS.Radius.card))
     }
 
     var runButtonTitle: String {
@@ -106,6 +94,20 @@ extension ContentView {
         VStack(alignment: .leading, spacing: 0) {
             header
             Divider()
+            if let message = calcVM.errorMessage {
+                HStack(spacing: TS.Spacing.md) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                    Text(message).textSelection(.enabled)
+                    Spacer(minLength: 0)
+                    Button { calcVM.errorMessage = nil } label: {
+                        Image(systemName: "xmark")
+                    }.buttonStyle(.plain)
+                }
+                .font(TS.Font.body)
+                .foregroundStyle(TS.SemanticColor.error)
+                .padding(TS.Padding.cardInner)
+                .background(TS.SemanticColor.error.opacity(TS.Opacity.subtle))
+            }
             if isShowingAppSettingsPage {
                 AppSettingsView(usesFixedFrame: false)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)

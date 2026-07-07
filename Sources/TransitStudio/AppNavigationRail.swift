@@ -9,115 +9,12 @@ struct AppNavigationRail: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
-            brandBlock
-            practiceSegmented
             collapseButton
             modeButtons
             Spacer(minLength: TS.Spacing.lg)
             settingsButton
         }
         .padding(.vertical, TS.Spacing.lg)
-    }
-
-    // MARK: Brand
-
-    private var brandBlock: some View {
-        HStack(spacing: TS.Spacing.md) {
-            ZStack {
-                Circle()
-                    .fill(TS.SemanticColor.goldSoft)
-                Circle()
-                    .strokeBorder(TS.SemanticColor.gold, lineWidth: 1.5)
-                Image(systemName: "sun.max")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(TS.SemanticColor.goldDeep)
-            }
-            .frame(width: 30, height: 30)
-
-            if !isCollapsed {
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("Transit")
-                        .font(.system(.callout, design: .serif).weight(.semibold))
-                        .foregroundStyle(TS.SemanticColor.ink)
-                    Text("STUDIO")
-                        .font(.system(size: 9, weight: .semibold))
-                        .tracking(2)
-                        .foregroundStyle(TS.SemanticColor.inkFaint)
-                }
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, TS.Padding.chipHorizontal)
-        .padding(.top, TS.Spacing.sm)
-    }
-
-    // MARK: Practice mode segmented control
-
-    private var practiceSegmented: some View {
-        Group {
-            if isCollapsed {
-                VStack(spacing: TS.Spacing.xs) {
-                    practiceIcon(.classical, icon: "scroll")
-                    practiceIcon(.modern, icon: "sparkles")
-                    practiceIcon(.vedic, icon: "sun.max")
-                }
-                .padding(.horizontal, TS.Spacing.md)
-            } else {
-                HStack(spacing: 2) {
-                    practiceSegment(.classical)
-                    practiceSegment(.modern)
-                    practiceSegment(.vedic)
-                }
-                .padding(3)
-                .background(
-                    RoundedRectangle(cornerRadius: TS.Radius.card)
-                        .fill(TS.SemanticColor.paper)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: TS.Radius.card)
-                                .strokeBorder(TS.SemanticColor.line, lineWidth: 1)
-                        )
-                )
-                .padding(.horizontal, TS.Spacing.md)
-            }
-        }
-    }
-
-    private func practiceSegment(_ mode: PracticeMode) -> some View {
-        let isSelected = selectedPracticeMode == mode
-        return Button {
-            isShowingSettingsPage = false
-            selectedPracticeMode = mode
-        } label: {
-            Text(mode.title)
-                .font(.system(.caption, design: .serif).weight(isSelected ? .semibold : .regular))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 5)
-                .foregroundStyle(isSelected ? TS.SemanticColor.paper : TS.SemanticColor.inkSoft)
-                .background(
-                    RoundedRectangle(cornerRadius: TS.Radius.chip)
-                        .fill(isSelected ? TS.SemanticColor.ink : Color.clear)
-                )
-        }
-        .buttonStyle(.plain)
-    }
-
-    private func practiceIcon(_ mode: PracticeMode, icon: String) -> some View {
-        let isSelected = selectedPracticeMode == mode
-        return Button {
-            isShowingSettingsPage = false
-            selectedPracticeMode = mode
-        } label: {
-            Image(systemName: icon)
-                .font(.system(size: 14, weight: .semibold))
-                .frame(width: 36, height: 30)
-                .foregroundStyle(isSelected ? TS.SemanticColor.paper : TS.SemanticColor.inkSoft)
-                .background(
-                    RoundedRectangle(cornerRadius: TS.Radius.chip)
-                        .fill(isSelected ? TS.SemanticColor.ink : Color.clear)
-                )
-        }
-        .buttonStyle(.plain)
-        .help(mode.title)
     }
 
     // MARK: Collapse

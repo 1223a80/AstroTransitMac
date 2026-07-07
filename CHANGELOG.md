@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-07 — 第 2 期 UI 重设计：工作台布局重构 (1.2.1/37)
+
+- **新建 `ContentView+TopBar.swift`** — 顶部常驻栏：品牌块（金圈+sun.max+Transit/STUDIO）、档案胶囊 Menu（person.crop.circle + 档案名 + 摘要 + chevron.down）、Spacer、流派分段器（ink 底）、运行按钮（`play.fill` / ProgressView），绑定 `runButtonTitle`/`runDisabled`。
+- **ContentView.swift** — body 包进 `VStack(spacing: 0) { appTopBar; divider; HStack{原三栏} }`；新增 `@State isParamDrawerPinned`。
+- **AppNavigationRail.swift** — 删除 `brandBlock`、`practiceSegmented`、`practiceSegment(_:)`、`practiceIcon(_:icon:)`，左导航只保留收起按钮、模式按钮、设置按钮。
+- **ContentView+SidebarColumn.swift** — 收起条改为竖排「参数」窄条（宽 28、paperRaised 底、slider.horizontal.3 + 竖排文字 + chevron.right）；折叠按钮旁新增图钉按钮（`pin.fill` gold / `pin` inkFaint），绑定 `isParamDrawerPinned`，help "固定参数面板（计算后不自动收起）"。
+- **ContentView+SidebarSections.swift** — 删除 `sidebar` 内 scan 模式的运行按钮（已上顶栏）。
+- **ContentView+ResultsPanes.swift** — `runSection` 删除大运行按钮与 errorMessage 文本块，保留进度条与小行星准备消息；`resultsPane` 在 `Divider()` 后新增错误横幅（`exclamationmark.triangle.fill` + 错误文本 + × 关闭）。
+- **ContentView+RunActions.swift** — `performRun` 中 operation 成功返回后，若无错误且未固定（`!isParamDrawerPinned`），自动收起参数栏。
+- `PLANS.md` 更新第 2 期状态；`package_app.sh` 版本号升至 `1.2.1 (37)`。
+
 ## 2026-07-07 — 第 1 期 UI 重设计：Dark Mode 换肤能力 (1.2.0/36)
 
 - **DesignTokens.swift** — 新增 `import AppKit` + `TS.dyn()` 动态颜色 helper（NSColor.appearance）；全部 16 个 `SemanticColor` 和 4 个 `ElementColor` 从固定 `Color(red:…)` 换为 `TS.dyn()`（浅色值不变、深色=深空夜色）；注释更新为描述浅色/深色双皮肤。

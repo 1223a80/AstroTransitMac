@@ -5,7 +5,7 @@ extension ContentView {
     static let minMiddleSidebarWidth: CGFloat = 320
     static let maxMiddleSidebarWidth: CGFloat = 560
     static let middleSidebarCollapseThreshold: CGFloat = 260
-    static let collapsedMiddleSidebarHandleWidth: CGFloat = 22
+    static let collapsedMiddleSidebarHandleWidth: CGFloat = 28
 
     var middleSidebarColumn: some View {
         sidebar
@@ -22,35 +22,52 @@ extension ContentView {
     }
 
     var collapsedMiddleSidebarToggle: some View {
-        VStack {
-            Button {
-                expandMiddleSidebar()
-            } label: {
-                Image(systemName: "sidebar.right")
-                    .font(TS.Font.label.weight(.semibold))
-                    .frame(width: 18, height: 28)
-                    .contentShape(Rectangle())
+        VStack(spacing: TS.Spacing.sm) {
+            Image(systemName: "slider.horizontal.3")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(TS.SemanticColor.inkSoft)
+            VStack(spacing: 0) {
+                Text("参")
+                Text("数")
             }
-            .buttonStyle(.plain)
-            .help("展开侧边栏")
-
+            .font(TS.Font.label)
+            .foregroundStyle(TS.SemanticColor.inkSoft)
+            Image(systemName: "chevron.right")
+                .font(.system(size: 9, weight: .semibold))
+                .foregroundStyle(TS.SemanticColor.inkSoft)
             Spacer(minLength: 0)
         }
         .frame(width: Self.collapsedMiddleSidebarHandleWidth)
-        .background(.thinMaterial)
+        .background(TS.SemanticColor.paperRaised)
+        .contentShape(Rectangle())
+        .onTapGesture { expandMiddleSidebar() }
+        .help("展开参数面板")
     }
 
     var middleSidebarCollapseButton: some View {
-        Button {
-            collapseMiddleSidebar()
-        } label: {
-            Image(systemName: "sidebar.left")
-                .font(TS.Font.label.weight(.semibold))
-                .frame(width: 24, height: 24)
-                .background(TS.SemanticColor.cardBackground, in: RoundedRectangle(cornerRadius: TS.Radius.chip))
+        HStack(spacing: TS.Spacing.sm) {
+            Button {
+                collapseMiddleSidebar()
+            } label: {
+                Image(systemName: "sidebar.left")
+                    .font(TS.Font.label.weight(.semibold))
+                    .frame(width: 24, height: 24)
+                    .background(TS.SemanticColor.cardBackground, in: RoundedRectangle(cornerRadius: TS.Radius.chip))
+            }
+            .buttonStyle(.plain)
+            .help("收起侧边栏")
+
+            Button {
+                isParamDrawerPinned.toggle()
+            } label: {
+                Image(systemName: isParamDrawerPinned ? "pin.fill" : "pin")
+                    .font(TS.Font.label.weight(.semibold))
+                    .foregroundStyle(isParamDrawerPinned ? TS.SemanticColor.gold : TS.SemanticColor.inkFaint)
+                    .frame(width: 24, height: 24)
+            }
+            .buttonStyle(.plain)
+            .help("固定参数面板（计算后不自动收起）")
         }
-        .buttonStyle(.plain)
-        .help("收起侧边栏")
     }
 
     var middleSidebarResizeHandle: some View {

@@ -71,6 +71,8 @@ struct ContentView: View {
     @State var showClassicalExportSheet = false
     @State var classicalExportSections: Set<MarkdownExportBuilder.ExportSection> = Set(MarkdownExportBuilder.ExportSection.classicalSectionIDs)
 
+    @State var isParamDrawerPinned = false
+
     @State var modernSubMode = ModernSubMode.natal
     @State var modernPersonBDate = Self.fixedDate(year: 1992, month: 6, day: 15, hour: 8, minute: 30)
     @State var modernPersonBLatitude = "40.7128"
@@ -165,7 +167,10 @@ struct ContentView: View {
     """
 
     var body: some View {
-        HStack(spacing: 0) {
+        VStack(spacing: 0) {
+            appTopBar
+            Rectangle().fill(TS.SemanticColor.line).frame(height: 1)
+            HStack(spacing: 0) {
             AppNavigationRail(
                 isCollapsed: $isNavigationCollapsed,
                 selectedPracticeMode: practiceModeBinding,
@@ -189,8 +194,9 @@ struct ContentView: View {
 
             resultsPane
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .background(TS.SemanticColor.paper)
         }
-        .background(TS.SemanticColor.paper)
         .task(id: appState.pythonPath) {
             swissephStatus = await BackendClient.swissephStatus(pythonPath: appState.pythonPath)
         }

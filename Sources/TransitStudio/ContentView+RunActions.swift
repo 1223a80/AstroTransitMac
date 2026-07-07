@@ -56,6 +56,9 @@ extension ContentView {
         }
         do {
             try await operation()
+            if calcVM.errorMessage == nil && !isParamDrawerPinned {
+                collapseMiddleSidebar()
+            }
         } catch {
             calcVM.errorMessage = error.localizedDescription
         }
