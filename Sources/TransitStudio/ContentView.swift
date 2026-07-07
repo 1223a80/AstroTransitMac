@@ -202,6 +202,9 @@ struct ContentView: View {
             }
             }
             .background(TS.SemanticColor.paper)
+
+            Rectangle().fill(TS.SemanticColor.line).frame(height: 1)
+            statusBar
         }
         .task(id: appState.pythonPath) {
             swissephStatus = await BackendClient.swissephStatus(pythonPath: appState.pythonPath)
@@ -209,6 +212,9 @@ struct ContentView: View {
         .onAppear {
             if selectedNatalProfileID.isEmpty, let first = natalProfiles.first {
                 selectedNatalProfileID = first.id.uuidString
+                // Populate the form from the saved profile so the fields match
+                // the profile capsule instead of showing hardcoded defaults.
+                loadSelectedNatalProfile()
             }
         }
         .preferredColorScheme(appState.preferredScheme)
@@ -223,6 +229,30 @@ struct ContentView: View {
             .fill(TS.SemanticColor.line)
             .frame(width: 1)
             .frame(maxHeight: .infinity)
+    }
+
+    var statusBar: some View {
+        HStack(spacing: TS.Spacing.xl) {
+            HStack(spacing: TS.Spacing.sm) {
+                Circle()
+                    .fill(swissephStatus.hasPrefix("已") ? TS.SemanticColor.success : TS.SemanticColor.warning)
+                    .frame(width: 6, height: 6)
+                Text(swissephStatus)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
+            Spacer(minLength: TS.Spacing.md)
+            if practiceMode != .vedic {
+                Text("\(houseSystemLabel) · \(zodiacLabel)")
+            } else {
+                Text("Sidereal · \(vedicAyanamsha.capitalized)")
+            }
+        }
+        .font(TS.Font.monoSmall)
+        .foregroundStyle(TS.SemanticColor.inkFaint)
+        .padding(.horizontal, TS.Padding.sidebarContent)
+        .padding(.vertical, TS.Spacing.sm)
+        .background(TS.SemanticColor.paperRaised)
     }
 
     var practiceMode: PracticeMode {

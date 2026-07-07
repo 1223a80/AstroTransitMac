@@ -171,6 +171,7 @@ struct ScanTableView: View {
                     TableColumn("Orb") { Text(degree($0.orb)).monospacedDigit() }
                     TableColumn("阶段") { Text($0.phase ?? "") }
                 }
+                .tsTableStyle()
             }
         }
     }

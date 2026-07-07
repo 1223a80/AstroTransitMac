@@ -4,17 +4,15 @@ extension ContentView {
     var sidebar: some View {
         ScrollView(.vertical) {
             VStack(alignment: .leading, spacing: TS.Spacing.xl) {
-                HStack(alignment: .firstTextBaseline, spacing: TS.Spacing.md) {
-                    VStack(alignment: .leading, spacing: TS.Spacing.xs) {
-                        Text("设置".uppercased())
-                            .font(TS.Font.eyebrow)
-                            .tracking(1.4)
-                            .foregroundStyle(TS.SemanticColor.gold)
-                        Text(sidebarTitle)
-                            .font(TS.Font.pageTitle)
-                            .foregroundStyle(TS.SemanticColor.ink)
-                    }
-                    Spacer(minLength: 0)
+                HStack(spacing: TS.Spacing.md) {
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(TS.SemanticColor.gold)
+                    Text("参数 · \(sidebarTitle)")
+                        .font(TS.Font.sectionTitle)
+                        .foregroundStyle(TS.SemanticColor.ink)
+                    // Keep clear of the collapse/pin buttons overlaid top-trailing.
+                    Spacer(minLength: 56)
                 }
                 sidebarModeControls
                 if mode != .rectify && mode != .scan {
@@ -483,7 +481,7 @@ extension ContentView {
 
     var sidebarTitle: String {
         if mode == .settings {
-            return "\(practiceMode.title) \(mode.title)"
+            return "\(practiceMode.title)\(mode.title)"
         }
         return mode.title
     }

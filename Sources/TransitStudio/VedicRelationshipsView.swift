@@ -82,6 +82,7 @@ struct VedicRelationshipsView: View {
                             .monospacedDigit()
                     }
                 }
+                .tsTableStyle()
             }
         }
     }

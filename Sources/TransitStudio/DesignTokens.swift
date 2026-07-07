@@ -134,6 +134,39 @@ enum TS {
     }
 }
 
+// MARK: - Shared polish modifiers
+
+extension View {
+    /// Suppresses the blue system focus ring that clashes with the parchment
+    /// theme (top-bar menus and similar chrome controls).
+    @ViewBuilder
+    func tsNoFocusRing() -> some View {
+        if #available(macOS 14.0, *) {
+            self.focusEffectDisabled()
+        } else {
+            self
+        }
+    }
+
+    /// Almanac-style table: no alternating stripes filling empty space, table
+    /// blends into a bordered card so short tables don't look unfinished.
+    @ViewBuilder
+    func tsTableStyle() -> some View {
+        if #available(macOS 14.0, *) {
+            self
+                .alternatingRowBackgrounds(.disabled)
+                .scrollContentBackground(.hidden)
+                .background(TS.SemanticColor.card, in: RoundedRectangle(cornerRadius: TS.Radius.card))
+                .overlay(
+                    RoundedRectangle(cornerRadius: TS.Radius.card)
+                        .strokeBorder(TS.SemanticColor.line, lineWidth: 1)
+                )
+        } else {
+            self
+        }
+    }
+}
+
 // MARK: - Astrology Semantic Palette
 //
 // Maps domain values (zodiac sign, aspect kind) to the themed colors so the

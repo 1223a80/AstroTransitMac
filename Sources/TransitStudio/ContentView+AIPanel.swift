@@ -95,6 +95,7 @@ extension ContentView {
 
     private var aiPanelHandle: some View {
         VStack(spacing: TS.Spacing.md) {
+            Spacer(minLength: 0)
             Image(systemName: "sparkles")
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(TS.SemanticColor.gold)
@@ -115,7 +116,6 @@ extension ContentView {
                 .foregroundStyle(TS.SemanticColor.inkFaint)
             Spacer(minLength: 0)
         }
-        .padding(.top, TS.Spacing.lg)
         .frame(width: 26)
         .frame(maxHeight: .infinity)
         .background(TS.SemanticColor.paperRaised)

@@ -29,6 +29,7 @@ struct ClassicalPlanetTableView: View {
                     Text("\(planet.bonification.count)/\(planet.maltreatment.count)")
                 }
             }
+            .tsTableStyle()
         }
     }
 }
@@ -76,6 +77,7 @@ struct PointTable: View {
                 }
                 TableColumn("公式") { Text($0.formula ?? "") }
             }
+            .tsTableStyle()
         } else {
             Table(points) {
                 TableColumn("点") { Text($0.name) }
@@ -84,6 +86,7 @@ struct PointTable: View {
                 TableColumn("主星") { Text($0.ruler) }
                 TableColumn("公式") { Text($0.formula ?? "") }
             }
+            .tsTableStyle()
         }
     }
 }
@@ -101,6 +104,7 @@ struct ClassicalHouseTableView: View {
                 TableColumn("星座") { Text($0.sign) }
                 TableColumn("主星") { Text($0.ruler) }
             }
+            .tsTableStyle()
         }
     }
 }
@@ -121,6 +125,7 @@ struct ClassicalAspectReceptionView: View {
                 TableColumn("容许") { Text(degree($0.orb)) }
                 TableColumn("入离") { Text($0.applying ?? "") }
             }
+            .tsTableStyle()
 
             Text("接纳")
                 .font(TS.Font.sectionTitle)
@@ -131,6 +136,7 @@ struct ClassicalAspectReceptionView: View {
                 TableColumn("经由相位") { Text($0.viaAspect) }
                 TableColumn("强度") { Text($0.strengthLabel ?? "") }
             }
+            .tsTableStyle()
         }
     }
 
@@ -160,6 +166,7 @@ struct AntisciaView: View {
                     }
                 }
             }
+            .tsTableStyle()
         }
     }
 }
@@ -229,6 +236,7 @@ struct CircumambulationsView: View {
                                     .monospacedDigit()
                             }
                         }
+                        .tsTableStyle()
                     }
                     if circ.id != circumambulations.last?.id {
                         Divider()
@@ -288,6 +296,7 @@ struct PrimaryDirectionsView: View {
                         }
                     }
                 }
+                .tsTableStyle()
             }
         }
     }

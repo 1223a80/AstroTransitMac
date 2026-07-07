@@ -72,6 +72,7 @@ struct VedicJaiminiView: View {
                                     .monospacedDigit()
                             }
                         }
+                        .tsTableStyle()
                     }
                 }
 

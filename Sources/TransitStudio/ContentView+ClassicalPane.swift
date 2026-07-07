@@ -31,9 +31,8 @@ extension ContentView {
 
                         Button("导出 Markdown…") { showClassicalExportSheet = true }
                             .font(TS.Font.label)
-                            .buttonStyle(.borderedProminent)
-                            .tint(TS.SemanticColor.gold)
                             .controlSize(.small)
+                            .fixedSize()
                         ExportMenu(
                             markdownProvider: { MarkdownExportBuilder.classical(calcVM.classicalResult!) },
                             jsonProvider: { TextExportBuilder.json(calcVM.classicalResult!) },
@@ -275,7 +274,7 @@ extension ContentView {
             Spacer()
         }
         .padding(.horizontal, TS.Spacing.xxl)
-        .padding(.vertical, TS.Spacing.lg)
+        .padding(.vertical, TS.Spacing.md)
         .background(TS.SemanticColor.paper)
     }
 

@@ -116,14 +116,15 @@ struct ScanTimelineView: View {
                         .position(x: x, y: axisY + 14)
                 }
 
-                Text(shortDate(start))
-                    .font(TS.Font.monoSmall)
-                    .foregroundStyle(TS.SemanticColor.inkSoft)
-                    .position(x: Self.axisPadding + 16, y: axisY - 10)
-                Text(shortDate(end))
-                    .font(TS.Font.monoSmall)
-                    .foregroundStyle(TS.SemanticColor.inkSoft)
-                    .position(x: geo.size.width - Self.axisPadding - 16, y: axisY - 10)
+                HStack {
+                    Text(shortDate(start))
+                    Spacer(minLength: 0)
+                    Text(shortDate(end))
+                }
+                .font(TS.Font.monoSmall)
+                .foregroundStyle(TS.SemanticColor.inkSoft)
+                .frame(width: geo.size.width)
+                .position(x: geo.size.width / 2, y: axisY + 14)
 
                 ForEach(pts) { point in
                     let x = Self.axisPadding + usableWidth * CGFloat(point.date.timeIntervalSince(start) / span)

@@ -133,6 +133,7 @@ struct HousePlacementView: View {
                     TableColumn("天体", value: \.bodyName)
                     TableColumn("宫位") { Text("\($0.house)").monospacedDigit() }
                 }
+                .tsTableStyle()
             }
         }
     }

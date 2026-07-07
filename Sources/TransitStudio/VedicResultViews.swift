@@ -106,6 +106,7 @@ struct VedicOverviewView: View {
                                     .foregroundStyle(.secondary)
                             }
                         }
+                        .tsTableStyle()
                     }
                 }
             }
@@ -358,6 +359,7 @@ struct VedicNavamsaView: View {
                     .monospacedDigit()
             }
         }
+        .tsTableStyle()
     }
 }
 

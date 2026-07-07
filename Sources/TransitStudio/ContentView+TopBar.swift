@@ -82,6 +82,7 @@ extension ContentView {
                 )
             }
             .buttonStyle(.plain)
+            .tsNoFocusRing()
 
             Spacer(minLength: 0)
 
@@ -116,6 +117,7 @@ extension ContentView {
             }
             .buttonStyle(.borderedProminent)
             .disabled(runDisabled || isShowingAppSettingsPage)
+            .help(runButtonHelp)
         }
         .padding(.horizontal, TS.Padding.sidebarContent)
         .frame(height: TS.Layout.topBarHeight)
@@ -129,9 +131,8 @@ extension ContentView {
         } label: {
             Text(mode.title)
                 .font(.system(.caption, design: .serif).weight(isSelected ? .semibold : .regular))
-                .frame(maxWidth: .infinity)
                 .padding(.vertical, 5)
-                .padding(.horizontal, TS.Spacing.md)
+                .padding(.horizontal, TS.Spacing.xl)
                 .foregroundStyle(isSelected ? TS.SemanticColor.paper : TS.SemanticColor.inkSoft)
                 .background(
                     RoundedRectangle(cornerRadius: TS.Radius.chip)

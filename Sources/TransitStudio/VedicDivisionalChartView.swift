@@ -58,6 +58,7 @@ struct VedicDivisionalChartView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
+                    .tsTableStyle()
                 }
             } else {
                 EmptyStateView(

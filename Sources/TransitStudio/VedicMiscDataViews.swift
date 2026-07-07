@@ -26,6 +26,7 @@ struct VedicUpagrahaView: View {
                     .foregroundStyle(.secondary)
             }
         }
+        .tsTableStyle()
     }
 }
 
@@ -56,6 +57,7 @@ struct VedicSpecialLagnaView: View {
                     .foregroundStyle(.secondary)
             }
         }
+        .tsTableStyle()
     }
 }
 
@@ -96,6 +98,7 @@ struct VedicDerivedChartView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            .tsTableStyle()
         }
     }
 }

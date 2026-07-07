@@ -47,26 +47,28 @@ extension ContentView {
     var middleSidebarCollapseButton: some View {
         HStack(spacing: TS.Spacing.sm) {
             Button {
-                collapseMiddleSidebar()
-            } label: {
-                Image(systemName: "sidebar.left")
-                    .font(TS.Font.label.weight(.semibold))
-                    .frame(width: 24, height: 24)
-                    .background(TS.SemanticColor.cardBackground, in: RoundedRectangle(cornerRadius: TS.Radius.chip))
-            }
-            .buttonStyle(.plain)
-            .help("收起侧边栏")
-
-            Button {
                 isParamDrawerPinned.toggle()
             } label: {
                 Image(systemName: isParamDrawerPinned ? "pin.fill" : "pin")
                     .font(TS.Font.label.weight(.semibold))
                     .foregroundStyle(isParamDrawerPinned ? TS.SemanticColor.gold : TS.SemanticColor.inkFaint)
-                    .frame(width: 24, height: 24)
+                    .frame(width: 22, height: 22)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .help("固定参数面板（计算后不自动收起）")
+
+            Button {
+                collapseMiddleSidebar()
+            } label: {
+                Image(systemName: "sidebar.left")
+                    .font(TS.Font.label.weight(.semibold))
+                    .foregroundStyle(TS.SemanticColor.inkFaint)
+                    .frame(width: 22, height: 22)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .help("收起参数面板")
         }
     }
 

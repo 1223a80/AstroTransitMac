@@ -31,10 +31,10 @@ extension ContentView {
     var runButtonTitle: String {
         switch mode {
         case .settings:
-            if practiceMode == .classical { return "保存本命盘并古典排盘" }
-            if practiceMode == .vedic { return "计算吠陀排盘" }
+            if practiceMode == .classical { return "古典排盘" }
+            if practiceMode == .vedic { return "吠陀排盘" }
             switch modernSubMode {
-            case .natal: return "保存本命盘并现代排盘"
+            case .natal: return "现代排盘"
             case .synastry: return "计算合盘"
             case .composite: return "计算组合盘"
             case .davison: return "计算戴维森盘"
@@ -50,6 +50,18 @@ extension ContentView {
             return "扫描窗口"
         case .rectify:
             return "计算生时矫正"
+        }
+    }
+
+    var runButtonHelp: String {
+        switch mode {
+        case .settings:
+            if practiceMode == .classical { return "保存本命盘资料并计算古典排盘" }
+            if practiceMode == .vedic { return "计算吠陀排盘" }
+            if modernSubMode == .natal { return "保存本命盘资料并计算现代排盘" }
+            return runButtonTitle
+        default:
+            return runButtonTitle
         }
     }
 
