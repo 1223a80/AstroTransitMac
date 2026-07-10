@@ -54,6 +54,9 @@ extension ContentView {
     }
 
     var runButtonHelp: String {
+        if calcVM.isRunning {
+            return canStopCurrentRun ? "停止当前计算" : "计算中"
+        }
         switch mode {
         case .settings:
             if practiceMode == .classical { return "保存本命盘资料并计算古典排盘" }
@@ -65,11 +68,13 @@ extension ContentView {
         }
     }
 
-    var runDisabled: Bool {
-        if calcVM.isRunning {
-            return true
-        }
+    var canStopCurrentRun: Bool {
+        // Based on the *active task* (stoppability captured at start), not the
+        // currently visible page — so mid-run mode switches do not flip stop UI.
+        calcVM.isRunning && calcVM.currentRunTask != nil && calcVM.currentRunIsStoppable
+    }
 
+    var runDisabled: Bool {
         switch mode {
         case .settings:
             if practiceMode == .classical {
@@ -94,7 +99,7 @@ extension ContentView {
         case .moment:
             return selectedNatalBodies.isEmpty || selectedTransitBodies.isEmpty || selectedAspectRequests(orb: globalOrb).isEmpty
         case .scan:
-            return selectedTransitBodies.isEmpty
+            return scanTransitBodyIDs().isEmpty && parseAsteroids(customAsteroids).isEmpty
                 || (selectedScanKind == "aspect" && selectedAspectRequests(orb: 0).isEmpty)
                 || (selectedScanKind == "aspect" && resolvedScanTargetText().trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         case .rectify:
@@ -106,6 +111,20 @@ extension ContentView {
         VStack(alignment: .leading, spacing: 0) {
             header
             Divider()
+            if let message = calcVM.warningMessage {
+                HStack(spacing: TS.Spacing.md) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                    Text(message).textSelection(.enabled)
+                    Spacer(minLength: 0)
+                    Button { calcVM.warningMessage = nil } label: {
+                        Image(systemName: "xmark")
+                    }.buttonStyle(.plain)
+                }
+                .font(TS.Font.body)
+                .foregroundStyle(TS.SemanticColor.warning)
+                .padding(TS.Padding.cardInner)
+                .background(TS.SemanticColor.warning.opacity(TS.Opacity.subtle))
+            }
             if let message = calcVM.errorMessage {
                 HStack(spacing: TS.Spacing.md) {
                     Image(systemName: "exclamationmark.triangle.fill")
@@ -157,19 +176,19 @@ extension ContentView {
     // MARK: - Modern Natal Results Pane
     var modernNatalResultsPane: some View {
         Group {
-            if calcVM.momentResult != nil {
+            if calcVM.modernNatalResult != nil {
                 VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                     ResultPaneToolbar(
                         selection: $calcVM.modernNatalSelectedTab,
                         tabs: modernNatalTabs,
                         moreTabs: modernNatalMoreTabs,
                         currentTabTitle: modernNatalTabTitle,
-                        markdownProvider: { MarkdownExportBuilder.natal(calcVM.momentResult!) },
-                        jsonProvider: { TextExportBuilder.natalJSON(calcVM.momentResult!) },
-                        csvProvider: { TextExportBuilder.natalCSV(calcVM.momentResult!) },
+                        markdownProvider: { MarkdownExportBuilder.natal(calcVM.modernNatalResult!) },
+                        jsonProvider: { TextExportBuilder.natalJSON(calcVM.modernNatalResult!) },
+                        csvProvider: { TextExportBuilder.natalCSV(calcVM.modernNatalResult!) },
                         basename: "natal_chart"
                     )
-                    modernNatalSelectedResultView(calcVM.momentResult!)
+                    modernNatalSelectedResultView(calcVM.modernNatalResult!)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 .padding(TS.Padding.resultContent)

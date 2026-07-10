@@ -4,10 +4,15 @@ import json
 import pytest
 from typing import Any
 
-from astro_backend_core import circular_midpoint, norm360, angular_separation
+from astro_backend_core import circular_midpoint, geographic_longitude_midpoint, norm360, angular_separation
 from astro_backend_synastry import calculate_synastry
 from astro_backend_composite import calculate_composite
 from astro_backend_davison import calculate_davison
+
+
+def test_geographic_longitude_midpoint_crosses_dateline() -> None:
+    assert geographic_longitude_midpoint(170.0, -170.0) == -180.0
+    assert geographic_longitude_midpoint(-170.0, 170.0) == -180.0
 
 
 @pytest.fixture
@@ -191,6 +196,8 @@ class TestComposite:
         for key in ("meta", "angles", "houses", "planets", "aspects", "warnings"):
             assert key in result, f"Missing key: {key}"
         assert result["meta"]["method"] == "composite_midpoint"
+        assert result["meta"]["person_a_utc"] == "1990-01-01T04:00:00+00:00"
+        assert result["meta"]["person_b_utc"] == "1992-06-15T12:30:00+00:00"
 
     def test_planets(self, person_a: dict[str, Any], person_b: dict[str, Any], aspect_specs: list[dict[str, Any]]) -> None:
         request = {
@@ -252,6 +259,40 @@ class TestComposite:
         warnings: list[str] = []
         result = calculate_composite(request, warnings)
         assert len(result["houses"]) == 12
+
+    def test_house_rebuild_failure_warns(
+        self,
+        person_a: dict[str, Any],
+        person_b: dict[str, Any],
+        aspect_specs: list[dict[str, Any]],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        import astro_backend_composite as composite_mod
+
+        original = composite_mod.build_houses
+        calls = {"n": 0}
+
+        def flaky_build_houses(*args, **kwargs):
+            calls["n"] += 1
+            # First two calls are person A/B natal houses; third rebuilds composite cusps.
+            if calls["n"] >= 3:
+                raise RuntimeError("house rebuild exploded")
+            return original(*args, **kwargs)
+
+        monkeypatch.setattr(composite_mod, "build_houses", flaky_build_houses)
+        request = {
+            "mode": "composite",
+            "person_a": person_a,
+            "person_b": person_b,
+            "house_system": "placidus",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": aspect_specs,
+        }
+        warnings: list[str] = []
+        result = calculate_composite(request, warnings)
+        assert len(result["houses"]) == 12
+        assert any("宫位重建失败" in w for w in warnings)
 
 
 class TestDavison:
@@ -332,3 +373,28 @@ class TestDavison:
         warnings: list[str] = []
         result = calculate_davison(request, warnings)
         assert isinstance(result["aspects"], list)
+
+    def test_jd_failure_raises_instead_of_jd_zero(
+        self,
+        person_a: dict[str, Any],
+        person_b: dict[str, Any],
+        aspect_specs: list[dict[str, Any]],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        import astro_backend_core as core_mod
+
+        def boom(_dt):
+            raise RuntimeError("jd conversion exploded")
+
+        monkeypatch.setattr(core_mod, "jd_from_datetime", boom)
+        request = {
+            "mode": "davison",
+            "person_a": person_a,
+            "person_b": person_b,
+            "house_system": "whole_sign",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": aspect_specs,
+        }
+        with pytest.raises(ValueError, match="儒略日"):
+            calculate_davison(request, [])

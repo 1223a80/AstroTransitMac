@@ -107,7 +107,7 @@ swift test --filter HoraryResultTests      # horary model JSON decoding
 swift test --filter TransitResultTests     # transit/moment model JSON decoding
 swift test --filter RectifyResultTests     # rectify model JSON decoding + request encoding
 swift test --filter MarkdownExportTests    # markdown export for classical and transit
-swift test --filter BackendContractTests   # vedic/synastry/composite/davison/progression/solar-arc/horary decoding against real backend output fixtures
+swift test --filter BackendContractTests   # vedic/synastry/composite/davison/progression/solar-arc/harmonic/horary decoding against real backend output fixtures
 ```
 
 ### Backend Contract Fixtures

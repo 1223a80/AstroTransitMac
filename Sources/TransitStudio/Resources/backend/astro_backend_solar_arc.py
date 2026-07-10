@@ -88,6 +88,11 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
         for row in natal_positions
     ]
 
+    # Solar arc houses move by the same arc as every directed point.  Assign
+    # houses against the same cusps that are returned to the client.
+    sa_cusps = [norm360(c + arc) for c in natal_cusps]
+    sa_house_rows = house_rows(sa_cusps)
+
     # Solar arc positions = natal lon + arc
     sa_positioned: list[dict[str, Any]] = []
     for row in natal_positions:
@@ -98,7 +103,7 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
             sign, degree_text = format_longitude(sa_lon)
         except Exception:
             pass
-        h = house_for_longitude(sa_lon, natal_cusps)
+        h = house_for_longitude(sa_lon, sa_cusps)
         sa_positioned.append({
             "body_id": row["body_id"],
             "name": row["name"],
@@ -118,15 +123,11 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
 
     sa_angles = {"ASC": sa_asc, "MC": sa_mc, "DSC": sa_dsc, "IC": sa_ic}
     sa_angle_rows = [
-        point_row("ASC", "ASC", sa_asc, natal_cusps),
-        point_row("MC", "MC", sa_mc, natal_cusps),
-        point_row("DSC", "DSC", sa_dsc, natal_cusps),
-        point_row("IC", "IC", sa_ic, natal_cusps),
+        point_row("ASC", "ASC", sa_asc, sa_cusps),
+        point_row("MC", "MC", sa_mc, sa_cusps),
+        point_row("DSC", "DSC", sa_dsc, sa_cusps),
+        point_row("IC", "IC", sa_ic, sa_cusps),
     ]
-
-    # Solar arc houses: natal cusps + arc
-    sa_cusps = [norm360(c + arc) for c in natal_cusps]
-    sa_house_rows = house_rows(sa_cusps)
 
     all_ephemerides = {row.get("_ephemeris", "Swiss Ephemeris") for row in natal_positions + prog_positions}
 
@@ -142,7 +143,9 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     aspects_internal: list[dict[str, Any]] = []
     try:
         aspects_internal = find_aspects(sa_positioned, sa_positioned, aspect_specs, skip_self_aspects=True)
-    except Exception:
+    except Exception as exc:
+        warnings.append(f"Solar Arc 内部相位计算失败：{exc}")
+        section_errors["solar_arc_internal"] = str(exc)
         aspects_internal = []
     house_map = {row["body_id"]: row.get("house", 1) for row in sa_positioned}
     patterns: list[dict[str, Any]] = []
@@ -161,8 +164,8 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
             "progressed_utc": progressed_dt.isoformat() if hasattr(progressed_dt, 'isoformat') else str(progressed_dt),
             "ephemeris": ", ".join(sorted(all_ephemerides)) if all_ephemerides else "unknown",
         },
-        "natal_planets": [row for row in natal_positioned if row["body_id"] in SOLAR_ARC_BODY_IDS],
-        "solar_arc_planets": [row for row in sa_positioned if row["body_id"] in SOLAR_ARC_BODY_IDS],
+        "natal_planets": [row for row in natal_positioned if row["body_id"] in body_ids],
+        "solar_arc_planets": [row for row in sa_positioned if row["body_id"] in body_ids],
         "solar_arc_angles": sa_angle_rows,
         "solar_arc_houses": sa_house_rows,
         "solar_arc_to_natal_aspects": sa_to_natal,

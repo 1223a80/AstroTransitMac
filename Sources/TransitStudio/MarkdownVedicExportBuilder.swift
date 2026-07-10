@@ -92,6 +92,7 @@ enum MarkdownVedicExportBuilder {
     static func settingsSection(_ result: VedicResult) -> String {
         var md = "## 重要设置\n\n"
         md += "- 黄道制: \(result.meta.zodiac == "sidereal" ? "恒星黄道" : "回归黄道")\n"
+        md += "- Ayanamsha: \(result.meta.ayanamshaName ?? result.meta.ayanamsha)\n"
         if let sml = result.meta.siderealModeLabel {
             md += "- 岁差名: \(sml)\n"
         }

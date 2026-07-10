@@ -34,6 +34,19 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .harmonic: return "music.note.list"
         }
     }
+
+    /// Default result-pane tab for this sub-mode. Shared `modernSelectedTab`
+    /// must reset to this when switching modes so stale IDs do not fall through
+    /// to `default` with an empty toolbar title.
+    var defaultResultTab: String {
+        switch self {
+        case .natal: return "natal_positions"
+        case .synastry: return "cross_aspects"
+        case .composite, .davison, .harmonic: return "planets"
+        case .progression: return "progressed_planets"
+        case .solarArc: return "sa_planets"
+        }
+    }
 }
 
 enum ModernResultData {

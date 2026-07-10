@@ -74,10 +74,9 @@ def calc_temporary_friendship(
 ) -> int:
     """Calculate temporary (tatkalika) friendship.
 
-    Rule: If planet_b is in planet_a's own/exaltation sign OR
-    planet_a is in planet_b's own/exaltation sign → temporary friend
-    If either is in the other's debilitation sign → temporary enemy
-    Otherwise → neutral.
+    Rule: planet B is a temporary friend when it occupies the 2nd, 3rd,
+    4th, 10th, 11th or 12th sign counted from planet A.  The remaining
+    relative places (1st, 5th-9th) are temporary enemies.
 
     Returns: 0=friend, 1=neutral, 2=enemy
     """
@@ -93,42 +92,8 @@ def calc_temporary_friendship(
     rasi_a = zodiac_sign_index(lon_a)
     rasi_b = zodiac_sign_index(lon_b)
 
-    lord_a = _get_rasi_lord(rasi_a)
-    lord_b = _get_rasi_lord(rasi_b)
-
-    # Exaltation signs
-    exc_a = EXALTATION_RASI.get(planet_a)
-    exc_b = EXALTATION_RASI.get(planet_b)
-
-    # Debilitation = opposite of exaltation
-    deb_a = (exc_a + 6) % 12 if exc_a is not None else None
-    deb_b = (exc_b + 6) % 12 if exc_b is not None else None
-
-    # Check friendship conditions
-    planet_b_in_planet_a_own = (lord_a == planet_b)
-    planet_b_in_planet_a_exc = (exc_a is not None and rasi_b == exc_a)
-    planet_a_in_planet_b_own = (lord_b == planet_a)
-    planet_a_in_planet_b_exc = (exc_b is not None and rasi_a == exc_b)
-
-    # Enmity conditions
-    planet_b_in_planet_a_deb = (deb_a is not None and rasi_b == deb_a)
-    planet_a_in_planet_b_deb = (deb_b is not None and rasi_a == deb_b)
-
-    is_friend = (planet_b_in_planet_a_own or planet_b_in_planet_a_exc or
-                 planet_a_in_planet_b_own or planet_a_in_planet_b_exc)
-    is_enemy = (planet_b_in_planet_a_deb or planet_a_in_planet_b_deb)
-
-    # Some planets may not have exaltation set
-    if planet_a in ("RAHU", "KETU"):
-        is_friend = False
-        is_enemy = False
-
-    if is_friend and not is_enemy:
-        return 0  # temporary friend
-    elif is_enemy and not is_friend:
-        return 2  # temporary enemy
-    else:
-        return 1  # neutral
+    relative_place = (rasi_b - rasi_a) % 12 + 1
+    return 0 if relative_place in {2, 3, 4, 10, 11, 12} else 2
 
 
 # ─── Compound Friendship ──────────────────────────────────────────────

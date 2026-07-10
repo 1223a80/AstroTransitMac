@@ -1,5 +1,64 @@
 # Changelog
 
+## 2026-07-10 — 产品决策记录
+
+- 记录 LLM API Key 继续使用现有 UserDefaults 持久化是项目所有者的刻意选择；本轮及后续不得自行迁移 Keychain，详见 `docs/product-decisions.md`。
+
+## 2026-07-10 — 二轮审计前端状态、时区与扫描修复（第四批）
+
+- GMT 偏移改为 15 分钟粒度并兼容旧整数档案；人物 A、人物 B 与 Horary 各自持有时区，关系盘请求不再把 B 误用为 A 的时区；定位成功但地名反查失败时仍保留坐标，成功反查会同步当地时区。
+- 现代本命与时间点使用独立结果、AI 文本、推理文本和流 key；新计算会清理对应旧分析，不再跨页面显示陈旧结论。
+- 吠陀扫描目标从吠陀 Rāśi 行星、角点、宫头、特殊 Lagna 与 Upagraha 生成；扫描按月亮筛选和扫描类型校验实际天体，留逆排除太阳/月亮，相位扫描拒绝空相位或空目标。
+- Solar Arc UI 开启图形识别，后端返回所选交点以免相位引用隐藏天体；允许四个合法目标同处一星座；Composite/Davison 的地理中点按跨日期变更线的最短弧计算。
+
+## 2026-07-10 — 二轮审计进程、矫正与契约修复（第五批）
+
+- 生时矫正子级任务可取消；输入变化会清空陈旧结果并终止在途主/子计算；stderr 进度支持跨数据块拼行，超时任务在正常完成后取消，continuation 仅恢复一次；累计秒数标签改用三级绝对偏移。
+- 通用后端 watchdog 正常完成后会取消并释放；启动失败、超时、取消与进程退出统一防止 continuation 重复恢复。
+- 吠陀 Swift 模型、界面和 Markdown 接入 `ayanamsha_name`；Composite 填充双方 UTC；未知 mode 明确报错；IANA 时区拒绝 DST 缺失时刻，并要求重叠时刻传 `fold`。
+- 新增 Harmonic 示例、真实输出 fixture 和 Swift 契约；重新生成 Vedic、Composite、Solar Arc、Horary fixtures。一键门禁通过：Python 555、Swift 50，classical/moment/scan/horary/vedic/harmonic smoke 全绿。
+- 本轮为跨领域修复版本，发布号提升至 `1.3.0 (40)`。
+
+## 2026-07-10 — 二轮审计 P1 静默算错修复（第一批）
+
+- `DateTimeInput` 显示、文本解析与 DatePicker 统一使用界面选择的 GMT 时区，避免先按 Mac 系统时区生成 `Date`、提交时再按所选时区拆分造成数小时偏移。
+- 现代 moment 在计算行星前启用 zodiac；宫位、Lots、行星与固定星现在使用同一黄道。现代本命请求新增 `sameChart`，移除自身相位、镜像相位及重复赤纬/固定星范围，普通时间点仍保留方向性。
+- 窗口扫描请求补传 zodiac，后端 aspect/ingress/station 的粗扫、细化与精确位置统一传递 sidereal。
+- Solar Arc 行星和角点改按响应中的推进宫头落宫；Primary Directions 复用 `house_for_longitude`，不再漏判第 12 宫太阳；固定星黄经支持 sidereal。
+- 新增 Python/Swift 聚焦回归，覆盖黄道坐标一致性、同盘去重、扫描 zodiac、Solar Arc 落宫、第 12 宫太阳、固定星坐标和时间输入时区。
+- 扫描 sidereal 参数保持默认值，现有 tropical 调用与测试 mock 无需改变计算语义。
+- 一键门禁通过：Python 527、Swift 44、classical/scan/horary/vedic smoke 全绿；验证后清理 Swift/Python 构建与测试缓存。本轮未打包。
+
+## 2026-07-10 — 二轮审计吠陀领域计算修复（第二批）
+
+- Moon Chart 保留行星真实 rasi，仅把 house 改为从月亮星座起算；Bhava Chart 使用 D1 实际宫头和实际 ASC/MC/DSC/IC，不再固定 Whole Sign 或伪造 MC。
+- 修正 Dhuma/Vyatipata/Parivesha/Indrachapa/Upaketu 五个太阳型 Upagraha 公式，避免成对重合并与项目期望材料对齐。
+- Tatkalika 临时敌友改按两星相对宫位判定；修正 Hamsa、Malavya、Shasha、Rucaka、Bhadra 的本宫/旺宫成立集合。
+- 修正 Shadbala Naisargika Bala 的 Venus/Jupiter/Mars 固定值映射；日出日落搜索起点改为出生地本地午夜对应的 UT；Vimshottari 余额月份规范到 0...11。
+- 新增领域回归并与既有 focused/smoke 测试合跑，共 137 项通过。
+
+## 2026-07-10 — 二轮审计古典与 Horary 修复（第三批）
+
+- 扩展 Lots 的 `house:N` 改为使用实际宫头；contra-antiscia 改为 antiscion 对点；Moon 喜乐宫改回第 3 宫，行星停滞阈值按各自行星平均速度计算。
+- Ptolemaic triplicity 不再复用 Dorothean 参与主表，水象昼夜主改为 Mars；无参与主的体系在详情和中世纪摘要中不再生成空行星。
+- Horary 月亮事件在精确成相时重新计算双方经度与落宫；闰日年龄与周年日统一按 2 月 28 日回退；Circumambulations 每进入新星座重置界起点。
+- Solar Return synthesis 使用实际 MC、实际 ASC/MC 主星及其真实落宫；古典主限摘要按参考年龄距离排序，meta 正确标注所选 sidereal 与非 Whole Sign 宫制。
+- 新增 11 项聚焦回归；连同既有古典与 Horary 测试共 145 项通过。
+
+## 2026-07-09 — 窗口扫描阈值与停止计算 + P1 bug 修复
+
+- 窗口扫描工作量阈值改为三段：1.5M 软警告、2.5M 需确认后继续、5M 绝对上限；后端 `scan` 继续保留 5M 防线，并在 1.5M 以上结果 warnings 中记录高负载提示。
+- 前端新增与后端一致的扫描工作量估算：按行运体步长、目标点数量、相位精确点数量计算；目标点计数同步忽略空行与 `#` 注释。
+- 通用后端计算运行中，顶部按钮切换为「停止计算」；取消 Swift 任务时会终止正在运行的 Python 子进程，取消后不再把进度条显示为“完成 100%”。
+- **P1 现代 tab 共享** — 切换现代子模式时重置 `modernSelectedTab` 到各模式默认 tab，避免 Progression→Synastry 等跨模式落 `default`、标题空串。
+- **P1 古典 `planets` case** — 默认「行星状态」显式匹配，不再只靠 `default`。
+- **P1 AI 侧滑对齐** — Synastry/Composite/Davison/Progression/Solar Arc 接入全局 AI 面板；去掉结果页内嵌 AI tab（Harmonic 仍无 AI）。
+- **P1 后端静默回落** — Davison JD 失败改为抛错；Composite 宫位重建失败写 warning；Solar Arc 内部相位失败写 warning/`section_errors`；Panchanga 日出日落失败写 warning；Ashtakavarga 缺 ASC 写 notes 并上浮到 warnings。
+- 新增 Swift/Python 回归；本轮按要求未打包。
+- 评审修复：`currentRunTask` 用 run generation 防止停止后立刻重算时旧任务收尾清掉新任务；补 Panchanga 日出/日落失败 warning 测试。
+- 评审修复：古典「重算全盘」改走 `startTrackedRun`，纳入可取消任务；`canStopCurrentRun` 要求 `currentRunTask != nil`，避免假停止。
+- 评审修复：停止按钮基于任务属性 `currentRunIsStoppable`（启动时按任务类型捕获），不再读当前页面 `mode`；扫描中切到矫正仍可停，矫正主计算切到其他页也不会误出停止。
+
 ## 2026-07-07 — 第 6 期 UI 打磨：基于真机截图的细节修整 (1.2.3/39)
 
 - **顶栏** — 档案胶囊去掉突兀的蓝色系统焦点环（`tsNoFocusRing()`，macOS 14+）；流派分段器不再整行拉伸，改为紧凑固定宽度；运行按钮标题缩短（「古典排盘」等），完整说明移入悬停提示。

@@ -24,9 +24,14 @@ extension ContentView {
     }
 
     @MainActor
-    func finishProgress() {
+    func finishProgress(cancelled: Bool = false) {
         calcVM.progressTask?.cancel()
         calcVM.progressTask = nil
+        if cancelled {
+            calcVM.calculationProgress = nil
+            calcVM.calculationProgressText = ""
+            return
+        }
         calcVM.calculationProgress = 1.0
         calcVM.calculationProgressText = "完成 100%"
         Task {

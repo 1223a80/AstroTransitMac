@@ -96,7 +96,7 @@ def calculate_antiscia(planet_rows: list[dict[str, Any]], natal_positions: dict[
     for row in planet_rows:
         lon = row["longitude"]
         antiscia_lon = norm360(180.0 - lon)
-        contra_lon = norm360(180.0 + lon)
+        contra_lon = norm360(360.0 - lon)
         ant_sign, ant_deg = format_longitude(antiscia_lon)
         contra_sign, contra_deg = format_longitude(contra_lon)
 

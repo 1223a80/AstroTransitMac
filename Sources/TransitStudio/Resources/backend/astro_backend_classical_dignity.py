@@ -29,10 +29,10 @@ TRIPLICITY_RULERS = {
         "water": ("VENUS", "MARS", "MOON"),
     },
     "ptolemaic": {
-        "fire": ("SUN", "JUPITER", "SATURN"),
-        "earth": ("VENUS", "MOON", "MARS"),
-        "air": ("SATURN", "MERCURY", "JUPITER"),
-        "water": ("VENUS", "MARS", "MOON"),
+        "fire": ("SUN", "JUPITER", ""),
+        "earth": ("VENUS", "MOON", ""),
+        "air": ("SATURN", "MERCURY", ""),
+        "water": ("MARS", "MARS", ""),
     },
 }
 
@@ -84,7 +84,7 @@ PTOLEMAIC_BOUNDS = {
 FACE_ORDER = ["MARS", "SUN", "VENUS", "MERCURY", "MOON", "SATURN", "JUPITER"]
 
 JOY_HOUSE = {
-    "SUN": 9, "MOON": 11, "MERCURY": 1, "VENUS": 5,
+    "SUN": 9, "MOON": 3, "MERCURY": 1, "VENUS": 5,
     "MARS": 6, "JUPITER": 11, "SATURN": 12,
 }
 
@@ -216,6 +216,8 @@ def triplicity_ruler_details(
     ]
     details: list[dict[str, Any]] = []
     for role_id, role_label, ruler_id in roles:
+        if not ruler_id:
+            continue
         ruler_data = all_planet_positions.get(ruler_id, {})
         ruler_house = ruler_data.get("house", 0)
         ruler_speed = ruler_data.get("speed", 0)
@@ -297,7 +299,15 @@ def solar_phase(body_id: str, lon: float, sun_lon: float, cazimi_orb: float = 17
 def motion_label(body_id: str, speed: float) -> tuple[str, int, list[str], dict[str, Any]]:
     if body_id in {"SUN", "MOON"}:
         return "顺行", 0, [], {"label": "motion", "score": 0, "value": "顺行"}
-    if abs(speed) < 0.05:
+    mean_speed = {
+        "MERCURY": 1.383,
+        "VENUS": 1.2,
+        "MARS": 0.524,
+        "JUPITER": 0.083,
+        "SATURN": 0.033,
+    }.get(body_id, 1.0)
+    station_threshold = max(mean_speed * 0.03, 0.001)
+    if abs(speed) < station_threshold:
         return "停滞", -2, ["停滞"], {"label": "motion", "score": -2, "value": "停滞"}
     if speed < 0:
         return "逆行", -3, ["逆行"], {"label": "motion", "score": -3, "value": "逆行"}

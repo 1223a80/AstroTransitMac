@@ -7,6 +7,12 @@ var targetPlanetOptions: [TargetPositionOption] {
                 TargetPositionOption(id: $0.id, name: $0.name, longitude: $0.longitude)
             } ?? []
         }
+        if practiceMode == .vedic {
+            let planets = calcVM.vedicResult?.rasiChart?.planets ?? calcVM.vedicResult?.planets ?? [:]
+            return planets.values
+                .map { TargetPositionOption(id: $0.bodyId, name: $0.name, longitude: $0.longitude) }
+                .sorted { $0.id < $1.id }
+        }
 
         return calcVM.fullNatalResult?.natalPositions
             .filter { bodyGroup(for: $0.bodyID) == .planets }
@@ -31,6 +37,15 @@ var targetPlanetOptions: [TargetPositionOption] {
                 TargetPositionOption(id: $0.id, name: $0.name, longitude: $0.longitude)
             } ?? []
         }
+        if practiceMode == .vedic {
+            let angleRows = calcVM.vedicResult?.rasiChart?.angles.map {
+                TargetPositionOption(id: $0.id, name: $0.name, longitude: $0.longitude)
+            } ?? []
+            let lagnaRows = calcVM.vedicResult?.specialLagnas?.map {
+                TargetPositionOption(id: $0.id, name: $0.nameZh, longitude: $0.longitude)
+            } ?? []
+            return angleRows + lagnaRows.filter { lagna in !angleRows.contains(where: { $0.id == lagna.id }) }
+        }
 
         let virtualRows = calcVM.fullNatalResult?.natalPositions
             .filter { bodyGroup(for: $0.bodyID) == .virtualPoints }
@@ -45,6 +60,17 @@ var targetPlanetOptions: [TargetPositionOption] {
         if practiceMode == .classical {
             return calcVM.classicalResult?.houses ?? []
         }
+        if practiceMode == .vedic {
+            return calcVM.vedicResult?.rasiChart?.houses.map {
+                HouseRow(
+                    house: $0.house,
+                    sign: $0.sign,
+                    cuspLongitude: $0.cuspLongitude,
+                    cuspText: $0.cuspText,
+                    ruler: $0.ruler
+                )
+            } ?? []
+        }
 
         if let houses = calcVM.fullNatalResult?.houses, !houses.isEmpty {
             return houses
@@ -56,6 +82,11 @@ var targetPlanetOptions: [TargetPositionOption] {
         if practiceMode == .classical {
             return calcVM.classicalResult?.lots.map {
                 TargetPositionOption(id: $0.id, name: $0.name, longitude: $0.longitude)
+            } ?? []
+        }
+        if practiceMode == .vedic {
+            return calcVM.vedicResult?.upagrahas?.map {
+                TargetPositionOption(id: $0.id, name: $0.nameZh, longitude: $0.longitude)
             } ?? []
         }
 

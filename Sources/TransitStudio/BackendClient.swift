@@ -38,55 +38,125 @@ private final class ProcessSharedState: @unchecked Sendable {
     let lock = NSLock()
     var resumed = false
     var terminatedByTimeout = false
+    var terminatedByCancellation = false
     var terminationData: Data?
     var terminationError: Data?
     var continuation: CheckedContinuation<Void, Error>?
+    var watchdog: Task<Void, Never>?
     init() {}
 
-    func setContinuation(_ continuation: CheckedContinuation<Void, Error>) {
+    @discardableResult
+    func setContinuation(_ continuation: CheckedContinuation<Void, Error>) -> Bool {
         lock.lock()
         let shouldResume = resumed
+        let shouldThrowCancellation = terminatedByCancellation
         if !resumed {
             self.continuation = continuation
         }
         lock.unlock()
 
         if shouldResume {
-            continuation.resume()
+            if shouldThrowCancellation {
+                continuation.resume(throwing: CancellationError())
+            } else {
+                continuation.resume()
+            }
+            return false
         }
+        return true
     }
 
     func finish(outData: Data?, errData: Data?) {
         lock.lock()
         let continuationToResume: CheckedContinuation<Void, Error>?
+        let watchdogToCancel: Task<Void, Never>?
         if resumed {
             continuationToResume = nil
+            watchdogToCancel = nil
         } else {
             resumed = true
             terminationData = outData
             terminationError = errData
             continuationToResume = continuation
             continuation = nil
+            watchdogToCancel = watchdog
+            watchdog = nil
         }
         lock.unlock()
 
+        watchdogToCancel?.cancel()
         continuationToResume?.resume()
+    }
+
+    func finishLaunchFailure(_ error: Error) {
+        lock.lock()
+        guard !resumed else {
+            lock.unlock()
+            return
+        }
+        resumed = true
+        let continuationToResume = continuation
+        continuation = nil
+        let watchdog = watchdog
+        self.watchdog = nil
+        lock.unlock()
+
+        watchdog?.cancel()
+        continuationToResume?.resume(throwing: error)
+    }
+
+    func setWatchdog(_ task: Task<Void, Never>) {
+        lock.lock()
+        if resumed {
+            lock.unlock()
+            task.cancel()
+        } else {
+            watchdog = task
+            lock.unlock()
+        }
     }
 
     func finishTimeout() -> Bool {
         lock.lock()
         let continuationToResume: CheckedContinuation<Void, Error>?
+        let watchdogToCancel: Task<Void, Never>?
         if resumed {
             continuationToResume = nil
+            watchdogToCancel = nil
         } else {
             resumed = true
             terminatedByTimeout = true
             continuationToResume = continuation
             continuation = nil
+            watchdogToCancel = watchdog
+            watchdog = nil
         }
         lock.unlock()
 
+        watchdogToCancel?.cancel()
         continuationToResume?.resume()
+        return continuationToResume != nil
+    }
+
+    func finishCancellation() -> Bool {
+        lock.lock()
+        let continuationToResume: CheckedContinuation<Void, Error>?
+        let watchdogToCancel: Task<Void, Never>?
+        if resumed {
+            continuationToResume = nil
+            watchdogToCancel = nil
+        } else {
+            resumed = true
+            terminatedByCancellation = true
+            continuationToResume = continuation
+            continuation = nil
+            watchdogToCancel = watchdog
+            watchdog = nil
+        }
+        lock.unlock()
+
+        watchdogToCancel?.cancel()
+        continuationToResume?.resume(throwing: CancellationError())
         return continuationToResume != nil
     }
 }
@@ -178,7 +248,7 @@ struct BackendClient {
         request: Request,
         pythonPath: String
     ) async throws -> Response {
-        try await Task.detached(priority: .userInitiated) { () async throws -> Response in
+        let backendTask = Task.detached(priority: .userInitiated) { () async throws -> Response in
             let reqType = type(of: request)
             Logger.backend.debug("run(\(reqType)): starting Task.detached")
 
@@ -233,35 +303,53 @@ struct BackendClient {
             state.finish(outData: outData, errData: errData)
         }
 
-            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                state.setContinuation(continuation)
+            try await withTaskCancellationHandler {
+                try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                    guard state.setContinuation(continuation) else {
+                        return
+                    }
 
-            do {
-                Logger.backend.debug("run(\(reqType)): starting process")
-                try process.run()
-                Logger.backend.debug("run(\(reqType)): process started, writing stdin (\(payload.count) bytes)")
-                stdin.fileHandleForWriting.write(payload)
-                stdin.fileHandleForWriting.closeFile()
-                Logger.backend.debug("run(\(reqType)): stdin written and closed")
-            } catch {
-                    try? stdout.close()
-                    try? stderr.close()
-                    try? FileManager.default.removeItem(at: stdoutURL)
-                    try? FileManager.default.removeItem(at: stderrURL)
-                    continuation.resume(throwing: BackendClientError.processFailed("无法启动 Python：\(trimmedPath)\n\(error.localizedDescription)"))
-                    return
-                }
-
-                Task {
-                    try await Task.sleep(nanoseconds: 300_000_000_000)
-                    if state.finishTimeout() {
-                        process.terminate()
+                    do {
+                        Logger.backend.debug("run(\(reqType)): starting process")
+                        try process.run()
+                        Logger.backend.debug("run(\(reqType)): process started, writing stdin (\(payload.count) bytes)")
+                        stdin.fileHandleForWriting.write(payload)
+                        stdin.fileHandleForWriting.closeFile()
+                        Logger.backend.debug("run(\(reqType)): stdin written and closed")
+                    } catch {
                         try? stdout.close()
                         try? stderr.close()
                         try? FileManager.default.removeItem(at: stdoutURL)
                         try? FileManager.default.removeItem(at: stderrURL)
+                        state.finishLaunchFailure(BackendClientError.processFailed("无法启动 Python：\(trimmedPath)\n\(error.localizedDescription)"))
+                        return
                     }
+
+                    let watchdog = Task<Void, Never> {
+                        do {
+                            try await Task.sleep(nanoseconds: 300_000_000_000)
+                        } catch {
+                            return
+                        }
+                        if state.finishTimeout() {
+                            process.terminate()
+                            try? stdout.close()
+                            try? stderr.close()
+                            try? FileManager.default.removeItem(at: stdoutURL)
+                            try? FileManager.default.removeItem(at: stderrURL)
+                        }
+                    }
+                    state.setWatchdog(watchdog)
                 }
+            } onCancel: {
+                _ = state.finishCancellation()
+                if process.isRunning {
+                    process.terminate()
+                }
+                try? stdout.close()
+                try? stderr.close()
+                try? FileManager.default.removeItem(at: stdoutURL)
+                try? FileManager.default.removeItem(at: stderrURL)
             }
 
             if state.terminatedByTimeout {
@@ -295,6 +383,12 @@ struct BackendClient {
             Logger.backend.error("JSON preview: \(preview, privacy: .public)")
             throw BackendClientError.invalidOutput(String(outputText.prefix(500)))
         }
-        }.value
+        }
+
+        return try await withTaskCancellationHandler {
+            try await backendTask.value
+        } onCancel: {
+            backendTask.cancel()
+        }
     }
 }

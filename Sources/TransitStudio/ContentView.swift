@@ -35,12 +35,13 @@ struct ContentView: View {
     @State var customLotTargetsText = ""
     @State var scanMoonFilter = "exclude"
     @State var scanTargetsText = Self.defaultScanTargets
-    @State var gmtOffset = 8
+    @State var gmtOffset = 8.0
     @State var birthLatitude = "31.2304"
     @State var birthLongitude = "121.4737"
     @State var horaryPlaceName = "当前提问地点"
     @State var horaryLatitude = "31.2304"
     @State var horaryLongitude = "121.4737"
+    @State var horaryGmtOffset = 8.0
     @State var horaryQuestionText = ""
     @StateObject var currentLocationManager = CurrentLocationManager()
     @State var selectedHouseSystem = "whole_sign"
@@ -73,11 +74,13 @@ struct ContentView: View {
 
     @State var isParamDrawerPinned = false
     @State var isAIPanelOpen = false
+    @State var pendingScanConfirmation: ScanWorkConfirmation?
 
     @State var modernSubMode = ModernSubMode.natal
-    @State var modernPersonBDate = Self.fixedDate(year: 1992, month: 6, day: 15, hour: 8, minute: 30)
+    @State var modernPersonBDate = Self.fixedDate(year: 1992, month: 6, day: 15, hour: 8, minute: 30, gmtOffset: -5)
     @State var modernPersonBLatitude = "40.7128"
     @State var modernPersonBLongitude = "-74.0060"
+    @State var modernPersonBGmtOffset = -5.0
     @State var modernNodeMode = "true_node"
     @State var modernHarmonicOrder = 4
 
@@ -144,9 +147,9 @@ struct ContentView: View {
         PickerOption(id: "mean_node", title: "平节点"),
     ]
 
-    static func fixedDate(year: Int, month: Int, day: Int, hour: Int, minute: Int) -> Date {
+    static func fixedDate(year: Int, month: Int, day: Int, hour: Int, minute: Int, gmtOffset: Double? = nil) -> Date {
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = .current
+        calendar.timeZone = gmtOffset.map { GMTOffset.timeZone(hours: $0) } ?? .current
         return calendar.date(from: DateComponents(year: year, month: month, day: day, hour: hour, minute: minute)) ?? Date()
     }
 
@@ -216,6 +219,29 @@ struct ContentView: View {
                 // the profile capsule instead of showing hardcoded defaults.
                 loadSelectedNatalProfile()
             }
+        }
+        .onChange(of: modernSubMode) { newValue in
+            calcVM.resetModernSelectedTab(for: newValue)
+        }
+        .onChange(of: rectifyInputHash) { _ in
+            if mode == .rectify, calcVM.isRunning {
+                calcVM.currentRunTask?.cancel()
+                calcVM.invalidateActiveRun()
+                calcVM.isRunning = false
+                finishProgress(cancelled: true)
+            }
+            calcVM.invalidateRectifyResults()
+        }
+        .alert(item: $pendingScanConfirmation) { confirmation in
+            Alert(
+                title: Text("扫描计算量较大"),
+                message: Text(confirmation.estimate.confirmationText),
+                primaryButton: .destructive(Text("仍然计算")) {
+                    pendingScanConfirmation = nil
+                    startRunTask(confirmedHeavyScan: true)
+                },
+                secondaryButton: .cancel(Text("取消"))
+            )
         }
         .preferredColorScheme(appState.preferredScheme)
         .tint(TS.SemanticColor.gold)

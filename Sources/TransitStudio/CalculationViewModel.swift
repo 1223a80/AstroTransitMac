@@ -8,9 +8,44 @@ final class CalculationViewModel: ObservableObject {
     @Published var calculationProgressText = ""
     @Published var asteroidPreparationMessage = ""
     var progressTask: Task<Void, Never>?
+    var currentRunTask: Task<Void, Never>?
+    /// Whether the *active tracked task* may be cancelled via the top-bar stop
+    /// button. Captured at task start so switching pages mid-run does not
+    /// enable/disable stop incorrectly (e.g. scan → rectify, or rectify → scan).
+    private(set) var currentRunIsStoppable = false
+    /// Bumped when a run starts or is force-stopped so only the active run
+    /// may clear `currentRunTask` / `isRunning` or write terminal errors.
+    private(set) var runGeneration = 0
     @Published var errorMessage: String?
+    @Published var warningMessage: String?
+
+    @discardableResult
+    func beginRun(isStoppable: Bool = false) -> Int {
+        runGeneration += 1
+        currentRunIsStoppable = isStoppable
+        return runGeneration
+    }
+
+    func isCurrentRun(_ generation: Int) -> Bool {
+        generation == runGeneration
+    }
+
+    func clearRunTaskIfCurrent(_ generation: Int) {
+        guard isCurrentRun(generation) else { return }
+        currentRunTask = nil
+        currentRunIsStoppable = false
+    }
+
+    /// Cancel-path invalidation: drop task ownership and stoppability without
+    /// waiting for the cancelled task's defer cleanup.
+    func invalidateActiveRun() {
+        runGeneration += 1
+        currentRunTask = nil
+        currentRunIsStoppable = false
+    }
 
     // MARK: - Results
+    @Published var modernNatalResult: TransitResult?
     @Published var momentResult: TransitResult?
     @Published var fullNatalResult: TransitResult?
     @Published var scanResult: ScanResult?
@@ -29,6 +64,23 @@ final class CalculationViewModel: ObservableObject {
     @Published var rectifyLevel2Gen = 0
     @Published var rectifyLevel3Gen = 0
     @Published var rectifyLevel3ResponseID = 0
+    var rectifyLevel2Task: Task<Void, Never>?
+    var rectifyLevel3Task: Task<Void, Never>?
+
+    func invalidateRectifyResults() {
+        rectifyLevel2Task?.cancel()
+        rectifyLevel3Task?.cancel()
+        rectifyLevel2Task = nil
+        rectifyLevel3Task = nil
+        rectifyLevel2Gen += 1
+        rectifyLevel3Gen += 1
+        rectifyResponse = nil
+        rectifyLevel2Response = nil
+        rectifyLevel3Response = nil
+        rectifyActiveLevel = 1
+        rectifyS1Index = 0
+        rectifyS2Index = 0
+    }
 
     // MARK: - Tab Selection
     @Published var classicalSelectedTab = "planets"
@@ -37,5 +89,9 @@ final class CalculationViewModel: ObservableObject {
     @Published var momentSelectedTab = "aspects"
     @Published var scanSelectedTab = "timeline"
     @Published var vedicSelectedTab = "overview"
-    @Published var modernSelectedTab = "planets"
+    @Published var modernSelectedTab = ModernSubMode.synastry.defaultResultTab
+
+    func resetModernSelectedTab(for subMode: ModernSubMode) {
+        modernSelectedTab = subMode.defaultResultTab
+    }
 }

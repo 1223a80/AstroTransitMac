@@ -7,6 +7,7 @@ from astro_backend_core import (
     BODY_REGISTRY,
     moment_to_jd,
     moment_to_local_datetime,
+    geographic_longitude_midpoint,
     norm360,
     set_zodiac_mode,
 )
@@ -55,14 +56,14 @@ def calculate_davison(request: dict[str, Any], warnings: list[str]) -> dict[str,
 
     mid_dt = a_dt + (b_dt - a_dt) / 2
     mid_lat = (a_lat + b_lat) / 2.0
-    mid_lon = (a_lon + b_lon) / 2.0
+    mid_lon = geographic_longitude_midpoint(a_lon, b_lon)
 
     mid_utc = mid_dt.astimezone(timezone.utc)
     try:
         from astro_backend_core import jd_from_datetime
         mid_jd = jd_from_datetime(mid_dt)
-    except Exception:
-        mid_jd = 0.0
+    except Exception as exc:
+        raise ValueError(f"Davison 中间时刻儒略日计算失败：{exc}") from exc
 
     body_ids = list(DAVISON_BODY_IDS)
     if node_mode == "true_node":

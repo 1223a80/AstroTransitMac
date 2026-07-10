@@ -58,12 +58,12 @@ def _rasi_distance(planet_positions, pid1: str, pid2: str) -> int | None:
 # ─── Raja Yogas ──────────────────────────────────────────────────────
 
 def yoga_hans(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
-    """Hamsa Yoga: Jupiter in a kendra in a watery sign (Cancer/Scorpio/Pisces)."""
+    """Hamsa Yoga: Jupiter in a kendra in own signs or exaltation."""
     jup_rasi = _get_rasi(planet_positions, "JUPITER")
     if jup_rasi is None:
         return None
-    if _is_in_kendra(jup_rasi, asc_rasi) and jup_rasi in (3, 7, 11):
-        return _flag_condition_only({"name": "Hamsa", "group": "Raja", "description": "木星在角宫且在水象星座",
+    if _is_in_kendra(jup_rasi, asc_rasi) and jup_rasi in (3, 8, 11):
+        return _flag_condition_only({"name": "Hamsa", "group": "Raja", "description": "木星在角宫且在本宫或旺宫",
                                      "effect": "智慧、声望、财富", "planets": ["JUPITER"]})
     return None
 
@@ -73,8 +73,8 @@ def yoga_malavya(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> 
     ven_rasi = _get_rasi(planet_positions, "VENUS")
     if ven_rasi is None:
         return None
-    if _is_in_kendra(ven_rasi, asc_rasi):
-        return _flag_condition_only({"name": "Malavya", "group": "Raja", "description": "金星在角宫",
+    if _is_in_kendra(ven_rasi, asc_rasi) and ven_rasi in (1, 6, 11):
+        return _flag_condition_only({"name": "Malavya", "group": "Raja", "description": "金星在角宫且在本宫或旺宫",
                                      "effect": "美丽、艺术才华、财富", "planets": ["VENUS"]})
     return None
 
@@ -84,7 +84,7 @@ def yoga_shasha(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> d
     sat_rasi = _get_rasi(planet_positions, "SATURN")
     if sat_rasi is None:
         return None
-    if _is_in_kendra(sat_rasi, asc_rasi) and sat_rasi in (0, 9):
+    if _is_in_kendra(sat_rasi, asc_rasi) and sat_rasi in (6, 9, 10):
         return _flag_condition_only({"name": "Shasha", "group": "Raja", "description": "土星在角宫且在庙旺星座",
                                      "effect": "权威、长寿、领导力", "planets": ["SATURN"]})
     return None
@@ -95,8 +95,8 @@ def yoga_rucaka(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> d
     mar_rasi = _get_rasi(planet_positions, "MARS")
     if mar_rasi is None:
         return None
-    if _is_in_kendra(mar_rasi, asc_rasi) and mar_rasi == 9:
-        return _flag_condition_only({"name": "Rucaka", "group": "Raja", "description": "火星在角宫且在摩羯（庙旺）",
+    if _is_in_kendra(mar_rasi, asc_rasi) and mar_rasi in (0, 7, 9):
+        return _flag_condition_only({"name": "Rucaka", "group": "Raja", "description": "火星在角宫且在本宫或旺宫",
                                      "effect": "勇气、领导力、军事成就", "planets": ["MARS"]})
     return None
 
@@ -106,8 +106,8 @@ def yoga_bhadra(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> d
     mer_rasi = _get_rasi(planet_positions, "MERCURY")
     if mer_rasi is None:
         return None
-    if _is_in_kendra(mer_rasi, asc_rasi) and mer_rasi == 5:
-        return _flag_condition_only({"name": "Bhadra", "group": "Raja", "description": "水星在角宫且在处女（庙旺）",
+    if _is_in_kendra(mer_rasi, asc_rasi) and mer_rasi in (2, 5):
+        return _flag_condition_only({"name": "Bhadra", "group": "Raja", "description": "水星在角宫且在本宫或旺宫",
                                      "effect": "智慧、口才、学术成就", "planets": ["MERCURY"]})
     return None
 

@@ -107,6 +107,8 @@ final class AIAnalysisViewModel: ObservableObject {
     let streamBuffer = AIStreamBuffer()
 
     // MARK: - Analysis results by mode
+    @Published var natalAnalysis = ""
+    @Published var natalReasoning = ""
     @Published var momentAnalysis = ""
     @Published var momentReasoning = ""
     @Published var scanAnalysis = ""
@@ -121,4 +123,18 @@ final class AIAnalysisViewModel: ObservableObject {
     // MARK: - Modern sub-mode analysis
     @Published var modernAnalysisByMode: [String: String] = [:]
     @Published var modernReasoningByMode: [String: String] = [:]
+
+    func clear(modeKey: String) {
+        switch modeKey {
+        case "natal": natalAnalysis = ""; natalReasoning = ""
+        case "moment": momentAnalysis = ""; momentReasoning = ""
+        case "scan": scanAnalysis = ""; scanReasoning = ""
+        case "classical": classicalAnalysis = ""; classicalReasoning = ""
+        case "horary": horaryAnalysis = ""; horaryReasoning = ""
+        case "vedic": vedicAnalysis = ""; vedicReasoning = ""
+        default:
+            modernAnalysisByMode[modeKey] = ""
+            modernReasoningByMode[modeKey] = ""
+        }
+    }
 }

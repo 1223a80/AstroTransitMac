@@ -5,7 +5,7 @@ from typing import Any
 
 from astro_backend_classical import EXALTATION_RULERS, SIGN_RULERS, aspect_offsets_for_angle, classical_aspect_signature, classical_snapshot
 from astro_backend_core import BODY_REGISTRY, SIGNS, angular_separation, format_local, moment_to_jd, moment_to_local_datetime, sign_degree, signed_orb, zodiac_sign_index
-from astro_backend_ephemeris import body_longitude_at
+from astro_backend_ephemeris import body_longitude_at, house_for_longitude
 
 CLASSICAL_ANGLES = {
     "conjunction": 0.0,
@@ -394,7 +394,39 @@ def make_aspect_event(
     source_row: dict[str, Any],
     target_row: dict[str, Any],
     aspect_id: str,
+    warnings: list[str] | None = None,
+    warning_keys: set[str] | None = None,
+    cusps: list[float] | None = None,
+    sidereal: bool = False,
 ) -> dict[str, Any]:
+    source_longitude = source_row["longitude"]
+    target_longitude = target_row["longitude"]
+    if warnings is not None and warning_keys is not None:
+        source_spec = BODY_REGISTRY.get(source_row["id"])
+        target_spec = BODY_REGISTRY.get(target_row["id"])
+        if source_spec is not None:
+            source_result = body_longitude_at(
+                exact, source_spec, warnings, warning_keys, sidereal=sidereal
+            )
+            if source_result is not None:
+                source_longitude = source_result[0]
+        if target_spec is not None:
+            target_result = body_longitude_at(
+                exact, target_spec, warnings, warning_keys, sidereal=sidereal
+            )
+            if target_result is not None:
+                target_longitude = target_result[0]
+
+    source_house = (
+        house_for_longitude(source_longitude, cusps)
+        if cusps is not None and len(cusps) == 12
+        else source_row["house"]
+    )
+    target_house = (
+        house_for_longitude(target_longitude, cusps)
+        if cusps is not None and len(cusps) == 12
+        else target_row["house"]
+    )
     return {
         "id": f"{source_row['id']}|{aspect_id}|{target_row['id']}|{exact.strftime('%Y%m%d%H%M')}",
         "target_id": target_row["id"],
@@ -402,10 +434,10 @@ def make_aspect_event(
         "aspect_id": aspect_id,
         "aspect_name": ASPECT_NAMES[aspect_id],
         "exact_local": format_local(exact),
-        "moon_longitude": source_row["longitude"],
-        "target_longitude": target_row["longitude"],
-        "moon_house": source_row["house"],
-        "target_house": target_row["house"],
+        "moon_longitude": source_longitude,
+        "target_longitude": target_longitude,
+        "moon_house": source_house,
+        "target_house": target_house,
     }
 
 
@@ -414,6 +446,7 @@ def moon_storyline(
     planet_rows: list[dict[str, Any]],
     warnings: list[str],
     sidereal: bool = False,
+    cusps: list[float] | None = None,
 ) -> dict[str, Any]:
     planet_by_id = {row["id"]: row for row in planet_rows}
     moon = planet_by_id["MOON"]
@@ -438,7 +471,9 @@ def moon_storyline(
             exact = next_exact_for_pair(chart_dt, "MOON", target_id, angle, warnings, warning_keys, max_days=4, step_hours=1, sidereal=sidereal)
             if exact is None:
                 continue
-            upcoming_events.append((exact, make_aspect_event(exact, moon, target, aspect_id)))
+            upcoming_events.append((exact, make_aspect_event(
+                exact, moon, target, aspect_id, warnings, warning_keys, cusps, sidereal
+            )))
 
     upcoming_events.sort(key=lambda item: item[0])
     before_sign_exit_events = [
@@ -457,7 +492,9 @@ def moon_storyline(
             exact = previous_exact_for_pair(chart_dt, "MOON", target_id, angle, warnings, warning_keys, max_days=4, step_hours=1, sidereal=sidereal)
             if exact is None:
                 continue
-            previous_events.append((exact, make_aspect_event(exact, moon, target, aspect_id)))
+            previous_events.append((exact, make_aspect_event(
+                exact, moon, target, aspect_id, warnings, warning_keys, cusps, sidereal
+            )))
     previous_events.sort(key=lambda item: item[0], reverse=True)
     previous_rows = [event for _exact, event in previous_events]
 
@@ -469,7 +506,9 @@ def moon_storyline(
             exact = next_exact_for_pair(after_ingress_start, "MOON", target_id, angle, warnings, warning_keys, max_days=4, step_hours=1, sidereal=sidereal)
             if exact is None:
                 continue
-            after_ingress_events.append((exact, make_aspect_event(exact, moon, target, aspect_id)))
+            after_ingress_events.append((exact, make_aspect_event(
+                exact, moon, target, aspect_id, warnings, warning_keys, cusps, sidereal
+            )))
     after_ingress_events.sort(key=lambda item: item[0])
     after_ingress_rows = [event for _exact, event in after_ingress_events]
 
@@ -1269,7 +1308,14 @@ def calculate_horary(request: dict[str, Any], warnings: list[str]) -> dict[str, 
         aspect_orb,
         warnings,
     )
-    moon_packet = moon_storyline(chart_dt, snapshot["planets"], warnings, sidereal=sidereal)
+    horary_cusps = [row["cusp_longitude"] for row in snapshot.get("houses", [])]
+    moon_packet = moon_storyline(
+        chart_dt,
+        snapshot["planets"],
+        warnings,
+        sidereal=sidereal,
+        cusps=horary_cusps,
+    )
     radicality = radicality_flags(snapshot, moon_packet)
     house_ruler_rows = house_rulers(snapshot["houses"])
     candidates = significator_candidates(question_text, snapshot)

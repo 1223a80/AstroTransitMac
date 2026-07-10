@@ -38,16 +38,98 @@ extension ContentView {
                     hasResult: calcVM.vedicResult != nil
                 ) { Task { await analyzeVedicResult() } }
             }
-            if modernSubMode == .natal {
+            switch modernSubMode {
+            case .natal:
                 return AIPanelContext(
-                    streamKey: "moment",
+                    streamKey: "natal",
                     title: "现代本命盘",
-                    analysis: aiVM.momentAnalysis,
-                    reasoning: aiVM.momentReasoning,
-                    hasResult: calcVM.momentResult != nil
+                    analysis: aiVM.natalAnalysis,
+                    reasoning: aiVM.natalReasoning,
+                    hasResult: calcVM.modernNatalResult != nil
                 ) { Task { await analyzeNatalResult() } }
+            case .synastry:
+                return modernAIPanelContext(
+                    modeKey: "synastry",
+                    title: "Synastry 关系分析",
+                    hasResult: {
+                        if case .synastry = calcVM.modernResultData { return true }
+                        return false
+                    }()
+                ) { markdown in
+                    await analyzeModernResult(modeKey: "synastry", title: "Synastry 关系分析", markdown: markdown)
+                } markdownProvider: {
+                    if case .synastry(let r) = calcVM.modernResultData {
+                        return MarkdownModernExportBuilder.synastry(r)
+                    }
+                    return ""
+                }
+            case .composite:
+                return modernAIPanelContext(
+                    modeKey: "composite",
+                    title: "Composite 关系盘分析",
+                    hasResult: {
+                        if case .composite = calcVM.modernResultData { return true }
+                        return false
+                    }()
+                ) { markdown in
+                    await analyzeModernResult(modeKey: "composite", title: "Composite 关系盘分析", markdown: markdown)
+                } markdownProvider: {
+                    if case .composite(let r) = calcVM.modernResultData {
+                        return MarkdownModernExportBuilder.compositeOrDavison(title: "Composite", result: r)
+                    }
+                    return ""
+                }
+            case .davison:
+                return modernAIPanelContext(
+                    modeKey: "davison",
+                    title: "Davison 关系盘分析",
+                    hasResult: {
+                        if case .davison = calcVM.modernResultData { return true }
+                        return false
+                    }()
+                ) { markdown in
+                    await analyzeModernResult(modeKey: "davison", title: "Davison 关系盘分析", markdown: markdown)
+                } markdownProvider: {
+                    if case .davison(let r) = calcVM.modernResultData {
+                        return MarkdownModernExportBuilder.compositeOrDavison(title: "Davison", result: r)
+                    }
+                    return ""
+                }
+            case .progression:
+                return modernAIPanelContext(
+                    modeKey: "progression",
+                    title: "次限推进盘分析",
+                    hasResult: {
+                        if case .progression = calcVM.modernResultData { return true }
+                        return false
+                    }()
+                ) { markdown in
+                    await analyzeModernResult(modeKey: "progression", title: "次限推进盘分析", markdown: markdown)
+                } markdownProvider: {
+                    if case .progression(let r) = calcVM.modernResultData {
+                        return MarkdownModernExportBuilder.progression(r)
+                    }
+                    return ""
+                }
+            case .solarArc:
+                return modernAIPanelContext(
+                    modeKey: "solar_arc",
+                    title: "Solar Arc 盘分析",
+                    hasResult: {
+                        if case .solarArc = calcVM.modernResultData { return true }
+                        return false
+                    }()
+                ) { markdown in
+                    await analyzeModernResult(modeKey: "solar_arc", title: "Solar Arc 盘分析", markdown: markdown)
+                } markdownProvider: {
+                    if case .solarArc(let r) = calcVM.modernResultData {
+                        return MarkdownModernExportBuilder.solarArc(r)
+                    }
+                    return ""
+                }
+            case .harmonic:
+                return nil
             }
-            return nil
         case .horary:
             return AIPanelContext(
                 streamKey: "horary",
@@ -175,11 +257,33 @@ extension ContentView {
                 EmptyStateView(
                     title: "此页面暂不支持 AI 分析",
                     systemImage: "sparkles",
-                    description: "切换到本命、古典、吠陀、Horary、时间点或扫描页试试。"
+                    description: "切换到本命、古典、吠陀、Horary、时间点、扫描或现代高级页试试。"
                 )
             }
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .background(TS.SemanticColor.card)
+    }
+
+    private func modernAIPanelContext(
+        modeKey: String,
+        title: String,
+        hasResult: Bool,
+        analyze: @escaping (String) async -> Void,
+        markdownProvider: @escaping () -> String
+    ) -> AIPanelContext {
+        AIPanelContext(
+            streamKey: modeKey,
+            title: title,
+            analysis: aiVM.modernAnalysisByMode[modeKey, default: ""],
+            reasoning: aiVM.modernReasoningByMode[modeKey, default: ""],
+            hasResult: hasResult
+        ) {
+            Task {
+                let markdown = markdownProvider()
+                guard !markdown.isEmpty else { return }
+                await analyze(markdown)
+            }
+        }
     }
 }

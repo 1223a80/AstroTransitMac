@@ -380,6 +380,9 @@ def _calc_vimsottari_dasa(
     leftover_days = int(remaining_days - balance_years * 365)
     balance_months = leftover_days // 30
     balance_days = leftover_days % 30
+    if balance_months >= 12:
+        balance_years += balance_months // 12
+        balance_months %= 12
 
     # Build sequence starting from birth
     dasa_seq = VIMSOTTARI_LORD_ORDER[start_idx:] + VIMSOTTARI_LORD_ORDER[:start_idx]
@@ -722,13 +725,15 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
         birth_jd, latitude, longitude, house_system, sidereal, positions_with_nak, warnings
     )
 
-    # Extract ASC longitude
-    asc_lon = 0.0
+    # Extract ASC longitude; missing ASC must not silently become 0° Aries.
+    asc_lon: float | None = None
     if rasi_chart and rasi_chart.get("angles"):
         for a in rasi_chart["angles"]:
             if a.get("id") == "ASC":
                 asc_lon = a["longitude"]
                 break
+    if asc_lon is None:
+        warnings.append("ASC 缺失：Ashtakavarga / 分盘等依赖上升点的结果可能不准确。")
 
     # Build expanded meta
     meta = _build_expanded_meta(
@@ -762,9 +767,30 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
         sun_lon = raw_positions.get("SUN", {}).get("longitude", 0.0)
         moon_lon = raw_positions.get("MOON", {}).get("longitude", 0.0)
         response["panchanga"] = calc_panchanga(sun_lon, moon_lon, birth_jd, utc_offset_hours=std_utc_offset)
-        response["solar_day"] = calc_sunrise_sunset(birth_jd, latitude, longitude,
+        solar_day = calc_sunrise_sunset(
+            birth_jd,
+            latitude,
+            longitude,
             utc_offset_hours=std_utc_offset,
-            jd_0h=swe.julday(birth["moment"]["year"], birth["moment"]["month"], birth["moment"]["day"], 0.0) - 0.5)
+            jd_0h=(
+                swe.julday(
+                    birth["moment"]["year"],
+                    birth["moment"]["month"],
+                    birth["moment"]["day"],
+                    0.0,
+                )
+                - std_utc_offset / 24.0
+            ),
+        )
+        response["solar_day"] = solar_day
+        if solar_day.get("sunrise_error"):
+            warnings.append(f"日出计算失败：{solar_day['sunrise_error']}")
+        if solar_day.get("sunset_error"):
+            warnings.append(f"日落计算失败：{solar_day['sunset_error']}")
+        if solar_day.get("sunrise_local") is None and not solar_day.get("sunrise_error"):
+            warnings.append("日出计算无结果（可能为极昼/极夜或星历限制）。")
+        if solar_day.get("sunset_local") is None and not solar_day.get("sunset_error"):
+            warnings.append("日落计算无结果（可能为极昼/极夜或星历限制）。")
     except Exception as e:
         warnings.append(f"Panchanga 计算失败：{e}")
 
@@ -773,77 +799,86 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
         response["navamsa"] = _calc_navamsa_chart(raw_positions)
 
     # ── Divisional Charts (16 vargas) ──
-    try:
-        from astro_backend_jyotish_divisional import (
-            build_divisional_charts,
-            build_moon_chart,
-            build_bhava_chart,
-        )
-        # Build all 16 charts
-        div_charts = build_divisional_charts(raw_positions, asc_lon)
-        response["divisional_charts"] = div_charts
+    if asc_lon is None:
+        warnings.append("ASC 缺失：跳过分盘 / Moon Chart / Bhava Chart。")
+    else:
+        try:
+            from astro_backend_jyotish_divisional import (
+                build_divisional_charts,
+                build_moon_chart,
+                build_bhava_chart,
+            )
+            # Build all 16 charts
+            div_charts = build_divisional_charts(raw_positions, asc_lon)
+            response["divisional_charts"] = div_charts
 
-        # Moon Chart
-        response["moon_chart"] = build_moon_chart(raw_positions, asc_lon)
+            # Moon Chart
+            response["moon_chart"] = build_moon_chart(raw_positions, asc_lon)
 
-        # Bhava Chart
-        cusps = rasi_chart.get("cusps", []) if rasi_chart else []
-        response["bhava_chart"] = build_bhava_chart(raw_positions, asc_lon, cusps)
-    except Exception as e:
-        warnings.append(f"Divisional chart 构建失败：{e}")
+            # Bhava Chart
+            cusps = rasi_chart.get("cusps", []) if rasi_chart else []
+            chart_angles = rasi_chart.get("angles", []) if rasi_chart else []
+            response["bhava_chart"] = build_bhava_chart(
+                raw_positions, asc_lon, cusps, chart_angles
+            )
+        except Exception as e:
+            warnings.append(f"Divisional chart 构建失败：{e}")
 
     # ── Upagrahas & Special Lagnas (for D1 and D9) ──
-    try:
-        from astro_backend_jyotish_aux_points import (
-            calc_upagrahas,
-            calc_special_lagnas,
-            add_aux_points_to_chart,
-        )
-        sun_lon = raw_positions.get("SUN", {}).get("longitude", 0.0)
-        moon_lon = raw_positions.get("MOON", {}).get("longitude", 0.0)
-        upagrahas = calc_upagrahas(sun_lon, asc_lon, birth_jd)
-        special_lagnas = calc_special_lagnas(sun_lon, moon_lon, asc_lon, birth_jd)
-        response["upagrahas"] = upagrahas
-        response["special_lagnas"] = special_lagnas
+    if asc_lon is None:
+        warnings.append("ASC 缺失：跳过 Upagrahas / Special Lagnas。")
+    else:
+        try:
+            from astro_backend_jyotish_aux_points import (
+                calc_upagrahas,
+                calc_special_lagnas,
+                add_aux_points_to_chart,
+            )
+            sun_lon = raw_positions.get("SUN", {}).get("longitude", 0.0)
+            moon_lon = raw_positions.get("MOON", {}).get("longitude", 0.0)
+            upagrahas = calc_upagrahas(sun_lon, asc_lon, birth_jd)
+            special_lagnas = calc_special_lagnas(sun_lon, moon_lon, asc_lon, birth_jd)
+            response["upagrahas"] = upagrahas
+            response["special_lagnas"] = special_lagnas
 
-        if "divisional_charts" in response:
-            if "D1" in response["divisional_charts"]:
-                response["divisional_charts"]["D1"]["upagrahas"] = upagrahas
-                response["divisional_charts"]["D1"]["special_lagnas"] = special_lagnas
-            if "D9" in response["divisional_charts"]:
-                # Map upagrahas through D9 varga
-                from astro_backend_jyotish_varga import calc_varga_longitude
-                from astro_backend_jyotish_divisional import _nakshatra_summary, _format_degree
-                d9_upagrahas = []
-                for upa in upagrahas:
-                    v_lon = calc_varga_longitude(upa["longitude"], 9)
-                    v_rasi = zodiac_sign_index(v_lon)
-                    d9_upagrahas.append({
-                        **upa,
-                        "longitude": round(v_lon, 4),
-                        "rasi": v_rasi,
-                        "rasi_name": ["白羊","金牛","双子","巨蟹","狮子","处女",
-                                      "天秤","天蝎","射手","摩羯","水瓶","双鱼"][v_rasi],
-                        "degree_text": _format_degree(v_lon % 30),
-                        "nakshatra": _nakshatra_summary(v_lon),
-                    })
-                response["divisional_charts"]["D9"]["upagrahas"] = d9_upagrahas
+            if "divisional_charts" in response:
+                if "D1" in response["divisional_charts"]:
+                    response["divisional_charts"]["D1"]["upagrahas"] = upagrahas
+                    response["divisional_charts"]["D1"]["special_lagnas"] = special_lagnas
+                if "D9" in response["divisional_charts"]:
+                    # Map upagrahas through D9 varga
+                    from astro_backend_jyotish_varga import calc_varga_longitude
+                    from astro_backend_jyotish_divisional import _nakshatra_summary, _format_degree
+                    d9_upagrahas = []
+                    for upa in upagrahas:
+                        v_lon = calc_varga_longitude(upa["longitude"], 9)
+                        v_rasi = zodiac_sign_index(v_lon)
+                        d9_upagrahas.append({
+                            **upa,
+                            "longitude": round(v_lon, 4),
+                            "rasi": v_rasi,
+                            "rasi_name": ["白羊","金牛","双子","巨蟹","狮子","处女",
+                                          "天秤","天蝎","射手","摩羯","水瓶","双鱼"][v_rasi],
+                            "degree_text": _format_degree(v_lon % 30),
+                            "nakshatra": _nakshatra_summary(v_lon),
+                        })
+                    response["divisional_charts"]["D9"]["upagrahas"] = d9_upagrahas
 
-                # Map special lagnas through D9 varga
-                d9_lagnas = []
-                for lagna in special_lagnas:
-                    v_lon = calc_varga_longitude(lagna["longitude"], 9)
-                    v_rasi = zodiac_sign_index(v_lon)
-                    d9_lagnas.append({
-                        **lagna,
-                        "longitude": round(v_lon, 4),
-                        "rasi": v_rasi,
-                        "degree_text": _format_degree(v_lon % 30),
-                        "nakshatra": _nakshatra_summary(v_lon),
-                    })
-                response["divisional_charts"]["D9"]["special_lagnas"] = d9_lagnas
-    except Exception as e:
-        warnings.append(f"Aux points 计算失败：{e}")
+                    # Map special lagnas through D9 varga
+                    d9_lagnas = []
+                    for lagna in special_lagnas:
+                        v_lon = calc_varga_longitude(lagna["longitude"], 9)
+                        v_rasi = zodiac_sign_index(v_lon)
+                        d9_lagnas.append({
+                            **lagna,
+                            "longitude": round(v_lon, 4),
+                            "rasi": v_rasi,
+                            "degree_text": _format_degree(v_lon % 30),
+                            "nakshatra": _nakshatra_summary(v_lon),
+                        })
+                    response["divisional_charts"]["D9"]["special_lagnas"] = d9_lagnas
+        except Exception as e:
+            warnings.append(f"Aux points 计算失败：{e}")
 
     # ── Planet Relationships ──
     try:
@@ -853,11 +888,14 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
         warnings.append(f"Planet relationships 计算失败：{e}")
 
     # ── Arudha ──
-    try:
-        from astro_backend_jyotish_arudha import compute_arudha
-        response["arudha"] = compute_arudha(asc_lon, raw_positions)
-    except Exception as e:
-        warnings.append(f"Arudha 计算失败：{e}")
+    if asc_lon is None:
+        warnings.append("ASC 缺失：跳过 Arudha。")
+    else:
+        try:
+            from astro_backend_jyotish_arudha import compute_arudha
+            response["arudha"] = compute_arudha(asc_lon, raw_positions)
+        except Exception as e:
+            warnings.append(f"Arudha 计算失败：{e}")
 
     # ── Jaimini Karakas ──
     try:
@@ -869,7 +907,10 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
     # ── Ashtakavarga ──
     try:
         from astro_backend_jyotish_ashtakavarga import compute_ashtakavarga
-        response["ashtakavarga"] = compute_ashtakavarga(raw_positions, asc_lon)
+        ashtakavarga = compute_ashtakavarga(raw_positions, asc_lon)
+        response["ashtakavarga"] = ashtakavarga
+        for note in ashtakavarga.get("notes", []):
+            warnings.append(note)
     except Exception as e:
         warnings.append(f"Ashtakavarga 计算失败：{e}")
 
@@ -905,9 +946,17 @@ def calculate_vedic(request: dict[str, Any], warnings: list[str]) -> dict[str, A
     if requested_shadbala:
         try:
             from astro_backend_jyotish_shadbala import calc_shadbala
-            shadbala = calc_shadbala(raw_positions, birth_jd, latitude, longitude, asc_longitude=asc_lon)
+            shadbala = calc_shadbala(
+                raw_positions,
+                birth_jd,
+                latitude,
+                longitude,
+                asc_longitude=asc_lon,
+            )
             if shadbala:
                 response["shadbala"] = shadbala
+                if asc_lon is None:
+                    warnings.append("ASC 缺失：Shadbala Dig Bala 按白羊回退，结果仅供参考。")
         except Exception as e:
             warnings.append(f"Shadbala 计算失败：{e}")
 

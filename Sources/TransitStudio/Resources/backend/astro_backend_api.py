@@ -106,28 +106,46 @@ def _cross_declination_aspects(
     return aspects
 
 
+def _closest_primary_directions(
+    primary_directions: list[dict[str, Any]],
+    reference_age: float,
+    limit: int = 3,
+) -> list[dict[str, Any]]:
+    """Return directions nearest the requested age, not merely the first rows."""
+    return sorted(
+        primary_directions,
+        key=lambda entry: abs(float(entry.get("age_from_abs_arc", 0)) - reference_age),
+    )[:limit]
+
+
 def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
     natal_jd, natal_utc = moment_to_jd(request["natal"])
     transit_jd, transit_utc = moment_to_jd(request["transit"])
+    birth = request.get("birth")
+    zodiac = (birth or {}).get("zodiac", request.get("zodiac", "tropical"))
+    sidereal = set_zodiac_mode(zodiac, warnings)
+    same_chart = bool(request.get("sameChart", request.get("same_chart", False)))
     custom_asteroids = [int(value) for value in request.get("customAsteroids", [])]
     natal_specs = resolve_bodies(request.get("natalBodies", []), custom_asteroids, warnings)
     transit_specs = resolve_bodies(request.get("transitBodies", []), custom_asteroids, warnings)
 
-    natal_positions = calculate_positions(natal_jd, natal_specs, warnings)
-    transit_positions = calculate_positions(transit_jd, transit_specs, warnings)
-    aspects = find_aspects(transit_positions, natal_positions, request.get("aspects", []))
+    natal_positions = calculate_positions(natal_jd, natal_specs, warnings, sidereal=sidereal)
+    transit_positions = calculate_positions(transit_jd, transit_specs, warnings, sidereal=sidereal)
+    aspects = find_aspects(
+        transit_positions,
+        natal_positions,
+        request.get("aspects", []),
+        skip_self_aspects=same_chart,
+    )
     ephemerides = {row.get("_ephemeris", "Swiss Ephemeris") for row in natal_positions + transit_positions}
 
     angles: list[dict[str, Any]] = []
     houses: list[dict[str, Any]] = []
     lots: list[dict[str, Any]] = []
-    birth = request.get("birth")
     if birth:
         latitude = float(birth["latitude"])
         longitude = float(birth["longitude"])
         house_system = birth.get("houseSystem", "whole_sign")
-        zodiac = birth.get("zodiac", "tropical")
-        sidereal = set_zodiac_mode(zodiac, warnings)
         cusps, angle_values, _ = build_houses(natal_jd, latitude, longitude, house_system, sidereal, warnings)
         natal_positions = [
             {**row, "house": house_for_longitude(row["longitude"], cusps)}
@@ -154,16 +172,18 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
     # Compute separately for natal-natal, transit-transit, and cross-aspects
     # to avoid ambiguous "SUN parallel SUN" entries.
     nn_aspects = find_declination_aspects(natal_positions)
-    tt_aspects = find_declination_aspects(transit_positions)
+    tt_aspects = [] if same_chart else find_declination_aspects(transit_positions)
     # Cross-aspects: tag with natal_/transit_ prefix to disambiguate.
-    nt_aspects = _cross_declination_aspects(natal_positions, transit_positions)
+    nt_aspects = [] if same_chart else _cross_declination_aspects(natal_positions, transit_positions)
     declination_aspects = nn_aspects + tt_aspects + nt_aspects
 
     # 恒星合相
-    natal_star_positions = compute_star_positions(natal_jd, warnings=warnings)
+    natal_star_positions = compute_star_positions(natal_jd, warnings=warnings, sidereal=sidereal)
     natal_star_conj = find_star_conjunctions(natal_positions, natal_star_positions)
-    transit_star_positions = compute_star_positions(transit_jd, warnings=warnings)
-    transit_star_conj = find_star_conjunctions(transit_positions, transit_star_positions)
+    transit_star_positions = [] if same_chart else compute_star_positions(
+        transit_jd, warnings=warnings, sidereal=sidereal
+    )
+    transit_star_conj = [] if same_chart else find_star_conjunctions(transit_positions, transit_star_positions)
 
     return {
         "meta": {
@@ -477,7 +497,8 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
     except Exception:
         ref_age = 0
     if primary_directions:
-        for pd_entry in primary_directions[:3]:
+        closest_directions = _closest_primary_directions(primary_directions, ref_age)
+        for pd_entry in closest_directions:
             top_signatures.append({
                 "type": "primary_direction",
                 "description": f"{pd_entry['promissor']} → {pd_entry['significator']} {pd_entry['aspect_name']} @ {pd_entry['age_from_abs_arc']:.1f}y",
@@ -485,10 +506,21 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
                 "strength": "approaching" if pd_entry.get("age_from_abs_arc", 0) > ref_age else "past",
             })
     declination_aspects = find_declination_aspects(planet_rows, id_key="id")
-    star_positions = compute_star_positions(birth_jd, warnings=warnings)
+    star_positions = compute_star_positions(birth_jd, warnings=warnings, sidereal=sidereal)
     natal_star_conj = find_star_conjunctions(
         [{"body_id": r["id"], "longitude": r["longitude"]} for r in planet_rows],
         star_positions,
+    )
+    sidereal_labels = {
+        "sidereal_lahiri": "Lahiri Sidereal",
+        "sidereal_raman": "Raman Sidereal",
+        "sidereal_krishnamurti": "Krishnamurti Sidereal",
+        "sidereal_yukteshwar": "Yukteshwar Sidereal",
+    }
+    house_system_note = (
+        "宫头为各星座 0°（Whole Sign），角点度数为实际计算值"
+        if house_system == "whole_sign"
+        else "宫头与角点均为 Swiss Ephemeris 实际计算值"
     )
     return {
         "meta": {
@@ -501,8 +533,8 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
             "longitude": longitude,
             "sect": "昼盘" if is_day else "夜盘",
             "house_system": snapshot["house_label"],
-            "house_system_note": "宫头为各星座 0°（Whole Sign），角点度数为实际计算值",
-            "zodiac": "Lahiri Sidereal" if sidereal else "Tropical",
+            "house_system_note": house_system_note,
+            "zodiac": sidereal_labels.get(zodiac, zodiac) if sidereal else "Tropical",
             "bounds_system": "Ptolemaic" if bounds_system == "ptolemaic" else "Egyptian",
             "triplicity_system": "Ptolemaic" if triplicity_system == "ptolemaic" else "Dorothean",
             "aspect_orb": aspect_orb,
@@ -562,6 +594,12 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
 def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
     """Return an error dict if required fields are missing, otherwise None."""
     mode = request.get("mode", "")
+    supported_modes = {
+        "moment", "classical", "vedic", "horary", "scan", "rectify",
+        "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
+    }
+    if mode not in supported_modes:
+        return {"error": f"不支持的 mode：{mode or '<empty>'}", "mode": mode}
     required_by_mode: dict[str, list[str]] = {
         "classical": ["birth", "reference"],
         "vedic": ["birth"],
@@ -575,7 +613,6 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "solar_arc": ["birth", "reference"],
         "harmonic": ["birth"],
     }
-    # For any mode not explicitly listed, assume transit/natal requirements
     default_required = ["natal", "transit"]
     required = required_by_mode.get(mode, default_required)
     missing = [f for f in required if f not in request]

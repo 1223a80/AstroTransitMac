@@ -35,16 +35,16 @@ extension ContentView {
 
     @MainActor
     func analyzeNatalResult() async {
-        guard let momentResult = calcVM.momentResult else {
+        guard let natalResult = calcVM.modernNatalResult else {
             calcVM.errorMessage = "请先完成本命盘排盘。"
             return
         }
         await analyze(
             title: "本命盘分析",
-            markdown: MarkdownExportBuilder.natal(momentResult),
-            streamKey: "moment",
-            assignText: { aiVM.momentAnalysis = $0 },
-            assignReasoning: { aiVM.momentReasoning = $0 }
+            markdown: MarkdownExportBuilder.natal(natalResult),
+            streamKey: "natal",
+            assignText: { aiVM.natalAnalysis = $0 },
+            assignReasoning: { aiVM.natalReasoning = $0 }
         )
     }
 

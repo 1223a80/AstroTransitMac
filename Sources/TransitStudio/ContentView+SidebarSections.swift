@@ -144,8 +144,13 @@ extension ContentView {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             HStack {
                 Text("起盘时间").foregroundStyle(.secondary)
-                DateTimeInput(date: $horaryDate)
+                DateTimeInput(date: $horaryDate, timeZone: timeZone(for: horaryGmtOffset))
                 Button("现在") { horaryDate = Date() }
+            }
+            HStack {
+                Text("起盘时区").foregroundStyle(.secondary)
+                Spacer()
+                gmtOffsetControl($horaryGmtOffset)
             }
             VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 Text("问题文本")
@@ -170,9 +175,12 @@ extension ContentView {
                     currentLocationManager.requestCurrentLocation { result in
                         switch result {
                         case .success(let payload):
-                            horaryPlaceName = payload.0
-                            horaryLatitude = String(format: "%.4f", payload.1)
-                            horaryLongitude = String(format: "%.4f", payload.2)
+                            horaryPlaceName = payload.placeName
+                            horaryLatitude = String(format: "%.4f", payload.latitude)
+                            horaryLongitude = String(format: "%.4f", payload.longitude)
+                            if let timeZone = payload.timeZone {
+                                horaryGmtOffset = Double(timeZone.secondsFromGMT(for: horaryDate)) / 3600.0
+                            }
                         case .failure(let error):
                             calcVM.errorMessage = error.localizedDescription
                         }
@@ -234,11 +242,11 @@ extension ContentView {
             }
             GridRow {
                 Text("开始").foregroundStyle(.secondary)
-                DateTimeInput(date: $scanStartDate)
+                DateTimeInput(date: $scanStartDate, timeZone: selectedTimeZone)
             }
             GridRow {
                 Text("结束").foregroundStyle(.secondary)
-                DateTimeInput(date: $scanEndDate)
+                DateTimeInput(date: $scanEndDate, timeZone: selectedTimeZone)
             }
         }
     }
@@ -271,7 +279,7 @@ extension ContentView {
         Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
             GridRow {
                 Text("出生").foregroundStyle(.secondary)
-                DateTimeInput(date: $natalDate)
+                DateTimeInput(date: $natalDate, timeZone: selectedTimeZone)
             }
             GridRow {
                 Text("时区").foregroundStyle(.secondary)
@@ -310,7 +318,7 @@ extension ContentView {
                     Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
                         GridRow {
                             Text("参考").foregroundStyle(.secondary)
-                            DateTimeInput(date: $classicalReferenceDate)
+                            DateTimeInput(date: $classicalReferenceDate, timeZone: selectedTimeZone)
                         }
                     }
                     Text("用于 annual profection、solar return 以及其他时间技法的落点判断。")
@@ -331,7 +339,7 @@ extension ContentView {
                     Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
                         GridRow {
                             Text("参考").foregroundStyle(.secondary)
-                            DateTimeInput(date: $classicalReferenceDate)
+                            DateTimeInput(date: $classicalReferenceDate, timeZone: selectedTimeZone)
                         }
                     }
                     Text("用于 Daśā 当前期判断。").font(TS.Font.label).foregroundStyle(.secondary)
@@ -381,7 +389,7 @@ extension ContentView {
                     Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
                         GridRow {
                             Text("参考").foregroundStyle(.secondary)
-                            DateTimeInput(date: $classicalReferenceDate)
+                            DateTimeInput(date: $classicalReferenceDate, timeZone: selectedTimeZone)
                         }
                     }
                 }
@@ -411,7 +419,11 @@ extension ContentView {
             Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
                 GridRow {
                     Text("出生").foregroundStyle(.secondary)
-                    DateTimeInput(date: $natalDate)
+                    DateTimeInput(date: $natalDate, timeZone: selectedTimeZone)
+                }
+                GridRow {
+                    Text("时区").foregroundStyle(.secondary)
+                    gmtOffsetControl($gmtOffset)
                 }
                 GridRow {
                     Text("纬度").foregroundStyle(.secondary)
@@ -430,7 +442,11 @@ extension ContentView {
             Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
                 GridRow {
                     Text("出生").foregroundStyle(.secondary)
-                    DateTimeInput(date: $modernPersonBDate)
+                    DateTimeInput(date: $modernPersonBDate, timeZone: timeZone(for: modernPersonBGmtOffset))
+                }
+                GridRow {
+                    Text("时区").foregroundStyle(.secondary)
+                    gmtOffsetControl($modernPersonBGmtOffset)
                 }
                 GridRow {
                     Text("纬度").foregroundStyle(.secondary)
@@ -506,13 +522,17 @@ extension ContentView {
     func dateTimeInputRow(_ title: String, date: Binding<Date>) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: TS.Spacing.lg) {
             Text(title).foregroundStyle(.secondary)
-            DateTimeInput(date: date)
+            DateTimeInput(date: date, timeZone: selectedTimeZone)
         }
     }
 
     var gmtOffsetControl: some View {
-        Stepper(value: $gmtOffset, in: -12...14) {
-            Text(timezoneLabel).monospacedDigit()
+        gmtOffsetControl($gmtOffset)
+    }
+
+    func gmtOffsetControl(_ offset: Binding<Double>) -> some View {
+        Stepper(value: offset, in: -12...14, step: 0.25) {
+            Text(timezoneLabel(for: offset.wrappedValue)).monospacedDigit()
         }
     }
 

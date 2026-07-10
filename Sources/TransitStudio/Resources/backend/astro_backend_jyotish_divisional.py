@@ -15,6 +15,7 @@ from astro_backend_jyotish_data import (
     NAKSHATRA_LEN,
     nakshatra_for_longitude,
 )
+from astro_backend_ephemeris import house_for_longitude
 from astro_backend_jyotish_varga import calc_varga, calc_varga_longitude, varga_rasi_for_planet
 
 
@@ -194,40 +195,41 @@ def build_moon_chart(
     moon_lon = planet_positions.get("MOON", {}).get("longitude", 0.0)
     moon_rasi = zodiac_sign_index(moon_lon)
 
-    # Moon chart: shift all planets so Moon's rasi = 0 (ASC)
+    # Keep the physical rasi unchanged; only the house number is counted from
+    # the Moon's sign.  The UI displays rasi and house as separate concepts.
     planets = {}
     for pid, pos in planet_positions.items():
         orig_rasi = zodiac_sign_index(pos["longitude"])
-        shifted_rasi = (orig_rasi - moon_rasi) % 12
+        moon_house = (orig_rasi - moon_rasi) % 12 + 1
         shifted_deg = pos["longitude"] % 30.0
         planets[pid] = {
             "body_id": pid,
             "name": pos.get("name", pid),
             "longitude": pos["longitude"],
-            "rasi": shifted_rasi,
+            "rasi": orig_rasi,
             "rasi_name": [
                 "白羊", "金牛", "双子", "巨蟹", "狮子", "处女",
                 "天秤", "天蝎", "射手", "摩羯", "水瓶", "双鱼"
-            ][shifted_rasi],
+            ][orig_rasi],
             "degree_text": _format_degree(shifted_deg),
-            "house": shifted_rasi + 1,
+            "house": moon_house,
             "nakshatra": _nakshatra_summary(pos["longitude"]),
         }
 
     # ASC in moon chart
     asc_rasi = zodiac_sign_index(asc_longitude)
-    shifted_asc_rasi = (asc_rasi - moon_rasi) % 12
+    asc_house = (asc_rasi - moon_rasi) % 12 + 1
     planets["ASC"] = {
         "body_id": "ASC",
         "name": "Asc",
         "longitude": asc_longitude,
-        "rasi": shifted_asc_rasi,
+        "rasi": asc_rasi,
         "rasi_name": [
             "白羊", "金牛", "双子", "巨蟹", "狮子", "处女",
             "天秤", "天蝎", "射手", "摩羯", "水瓶", "双鱼"
-        ][shifted_asc_rasi],
+        ][asc_rasi],
         "degree_text": _format_degree(asc_longitude % 30.0),
-        "house": shifted_asc_rasi + 1,
+        "house": asc_house,
         "nakshatra": _nakshatra_summary(asc_longitude),
     }
 
@@ -245,6 +247,7 @@ def build_bhava_chart(
     planet_positions: dict[str, dict[str, Any]],
     asc_longitude: float,
     cusps: list[float] | None = None,
+    chart_angles: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Build Bhava Chart (house chart).
 
@@ -252,14 +255,17 @@ def build_bhava_chart(
     the actual cusp positions, not whole-sign. This is equivalent to the
     D1 chart but with house numbering based on cusps.
     """
-    # For whole sign, Bhava is essentially same as Rasi chart but house
-    # numbering follows actual cusp positions
     asc_rasi = zodiac_sign_index(asc_longitude)
+    valid_cusps = cusps if cusps is not None and len(cusps) == 12 else None
 
     planets = {}
     for pid, pos in planet_positions.items():
         rasi = zodiac_sign_index(pos["longitude"])
-        house_num = (rasi - asc_rasi) % 12 + 1
+        house_num = (
+            house_for_longitude(pos["longitude"], valid_cusps)
+            if valid_cusps is not None
+            else (rasi - asc_rasi) % 12 + 1
+        )
         planets[pid] = {
             "body_id": pid,
             "name": pos.get("name", pid),
@@ -284,25 +290,33 @@ def build_bhava_chart(
         "nakshatra": _nakshatra_summary(asc_longitude),
     }
 
-    # Angle points for Bhava
-    angles = []
-    for angle_id, angle_name, offset in [
-        ("ASC", "Asc", 0),
-        ("MC", "MC", 90),
-        ("DSC", "Dsc", 180),
-        ("IC", "IC", 270),
-    ]:
-        angle_lon = (asc_longitude + offset) % 360.0
-        sign_idx = zodiac_sign_index(angle_lon)
-        _, deg_text = format_longitude(angle_lon)
-        angles.append({
-            "id": angle_id,
-            "name": angle_name,
-            "longitude": angle_lon,
-            "sign": SIGNS[sign_idx],
-            "degree_text": deg_text,
-            "house": 1 if offset == 0 else (offset // 30 + 1),
-        })
+    # Preserve the real D1 angles when provided.  The fallback keeps the
+    # standalone helper backwards compatible for synthetic callers.
+    if chart_angles:
+        angles = [dict(row) for row in chart_angles]
+    else:
+        angles = []
+        for angle_id, angle_name, offset in [
+            ("ASC", "Asc", 0),
+            ("MC", "MC", 90),
+            ("DSC", "Dsc", 180),
+            ("IC", "IC", 270),
+        ]:
+            angle_lon = (asc_longitude + offset) % 360.0
+            sign_idx = zodiac_sign_index(angle_lon)
+            _, deg_text = format_longitude(angle_lon)
+            angles.append({
+                "id": angle_id,
+                "name": angle_name,
+                "longitude": angle_lon,
+                "sign": SIGNS[sign_idx],
+                "degree_text": deg_text,
+                "house": (
+                    house_for_longitude(angle_lon, valid_cusps)
+                    if valid_cusps is not None
+                    else (1 if offset == 0 else offset // 30 + 1)
+                ),
+            })
 
     return {
         "chart_id": "BHAVA",

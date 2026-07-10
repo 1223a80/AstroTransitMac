@@ -4,6 +4,96 @@
 
 ---
 
+# 二轮审计问题全量修复、合并、打包与推送 — 进行中（2026-07-10）
+
+## 分支与交付
+- 当前施工分支：`codex/fix-audit-p1-batch`。
+- 最终要求：全部审计问题修复并验证；上一批扫描任务与本轮修复拆成清晰提交；合并 `main`；更新版本；打包覆盖 `/Applications/TransitStudio.app`；验证安装包；推送远端。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|------|------|------|
+| A 坐标系与落宫第一批 | ✅ | 时间输入、moment/scan 黄道、同盘去重、Solar Arc、PD 第12宫、固定星 |
+| B 吠陀领域计算 | ✅ | 领域修复完成；聚焦回归 137 项通过 |
+| C 古典与 Horary | ✅ | 领域修复完成；新增 11 项回归，连同原测试共 145 项通过 |
+| D 前端状态与时区 | ✅ | 独立/小数时区、结果与 AI 隔离、Vedic 扫描目标、SA 图形/节点、扫描校验、定位与日期变更线均已修复 |
+| E 矫正/进程/契约 | ✅ | rectify 取消/陈旧态/分片流、watchdog、ayanamsha、UTC、mode/DST、fixtures/Harmonic 已完成；API Key 按决策不改 |
+| F 完成审计与发布 | 🔄 | 一键门禁通过：Python 555、Swift 50、六类 smoke；待 diff 审核、缓存清理、拆分提交、合并、打包覆盖、安装验证、push |
+
+---
+
+# 二轮审计 P1 静默算错修复（第一批）— 已完成（2026-07-10）
+
+## 分支
+`codex/fix-audit-p1-batch`
+
+## 工作树边界
+- 上一批 `scan-threshold-cancel` 改动已完成但尚未提交；本轮保留其内容，不回退、不覆盖。
+- 本轮先处理可通过现有契约明确修复的坐标系、落宫与同盘去重问题；人物独立时区、半小时区 UI 等需要较大模型迁移的项目放到下一批。
+- 提交或推送前，必须把上一批与本轮改动拆成独立提交并复核完整 diff。
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 读取约束与划清 dirty diff | ✅ | 已复读 `AGENTS.md`，确认上一批 28 个文件的任务边界并新建独立分支 |
+| 02 现代 moment 黄道一致性与本命去重 | ✅ | 行星、宫位、Lots、固定星统一 zodiac；本命同盘移除自身/镜像相位与重复赤纬范围 |
+| 03 scan 黄道贯通 | ✅ | Swift 请求增加 zodiac；aspect/ingress/station 全链路传递 sidereal |
+| 04 Solar Arc 落宫一致性 | ✅ | 推进行星与角点按响应中的推进宫头落宫 |
+| 05 Primary Directions 与固定星 | ✅ | 修第 12 宫太阳昼夜判定；固定星支持 sidereal 坐标 |
+| 06 前端时间输入显示/解析 | ✅ | `DateTimeInput` 使用当前选择时区，消除系统时区二次解释 |
+| 07 回归测试与记录 | ✅ | 聚焦 Python 85、Swift 44 通过；一键门禁 Python 527、Swift 44、四类 smoke 全绿；diff/check 与缓存清理完成 |
+
+---
+
+# 窗口扫描阈值与停止计算 + P1 bug 修复 — 已完成（2026-07-09）
+
+## 分支
+`codex/scan-threshold-cancel`
+
+## 用户确认的范围
+- 不打包。
+- 扫描工作量：1.5M 软警告，2.5M 需确认后计算，5M 绝对上限。
+- 增加运行中的停止计算按钮，避免长扫描只能等到 300 秒超时。
+- 在本分支已完成的 scan 改动上继续修此前定位的 P1 bugs。
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 读取约束与现有链路 | ✅ | 已复查 `AGENTS.md`、扫描后端、顶部运行按钮、BackendClient 子进程管理 |
+| 02 后端阈值调整 | ✅ | scan 绝对上限提高到 5M；2.5M 以上要求 `confirmedHeavyScan`；1.5M 以上写入 warning |
+| 03 前端精确预估与确认 | ✅ | 新增与后端一致的步长/相位精确点估算；1.5M 软提示、2.5M 确认弹窗、5M 前端拦截 |
+| 04 停止计算链路 | ✅ | 通用后端计算运行中切换为停止，取消 Swift Task 并终止 Python 子进程；生时矫正仍沿用原进度链路 |
+| 05 scan 验证与记录 | ✅ | 已补 CHANGELOG 条目；估算/阈值测试已写 |
+| 06 现代 tab 共享状态 | ✅ | `defaultResultTab` + `onChange` 重置 |
+| 07 古典 planets 显式 case | ✅ | `case "planets"` 显式渲染行星表 |
+| 08 AI 侧滑对齐现代高级 | ✅ | 侧滑接入 5 个现代高级；去掉内嵌 AI tab |
+| 09 后端静默回落改 warning | ✅ | Davison/Composite/SA/Panchanga/Ashtakavarga |
+| 10 回归验证 | ✅ | pytest 相关 69+27 通过；`swift build` + `swift test` 38 通过；未打包 |
+| 11 评审修复 | ✅ | run generation 防停止竞态；Panchanga 失败路径测试 |
+| 12 评审修复：重算全盘可停 | ✅ | `startTrackedRun` + `canStop` 需 tracked task |
+| 13 评审修复：可停性跟任务 | ✅ | `currentRunIsStoppable` 启动时捕获，不跟当前页面 mode |
+
+---
+
+# 窗口扫描超量报错定位 — 已完成（2026-07-08）
+
+## 分支
+`main`
+
+## 执行计划
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| 01 读取项目约束与当前计划 | ✅ | 已读取 `AGENTS.md`、`PLANS.md`、`CHANGELOG.md`，确认本轮先做定位不改计算规则 |
+| 02 定位 scan 报错来源 | ✅ | 已确认错误来自 `astro_backend_scan.py` 的 `reject_oversized_scan()` 上限保护，而非 Python 进程崩溃 |
+| 03 回溯前端请求与触发条件 | ✅ | 已确认前端把扫描窗口、行运体、目标点、相位原样送入后端；超量由 `steps × targets × exact-aspects` 组合触发 |
+| 04 输出结论与后续建议 | ✅ | 本轮回复将给出触发公式、截图对应的量级含义，以及可选修复方向 |
+
+---
+
 # 前端重设计 2026-07（观星台布局 + Dark Mode）— 已完成（2026-07-07）
 
 ## 分支
@@ -395,7 +485,7 @@
 
 ---
 
-# AI 思考过程截断修复与打包 — 进行中（2026-06-10）
+# AI 思考过程截断修复与打包 — 已完成（2026-06-10）
 
 ## 分支
 `codex/ai-streaming-stutter-followup`
@@ -486,7 +576,7 @@
 ## 跳过项（用户决定）
 
 - 本命档案导出/备份（建议后续单独做：当前档案只存 UserDefaults，无迁移机制）
-- LLM API key 迁 Keychain；后端 60 秒硬超时调整
+- LLM API key 迁 Keychain（用户明确否决并要求长期保留 UserDefaults；见 `docs/product-decisions.md`）；后端 60 秒硬超时调整
 
 ---
 

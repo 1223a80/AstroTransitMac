@@ -13,6 +13,7 @@ from astro_backend_core import (
     format_longitude,
     norm360,
     parse_targets,
+    set_zodiac_mode,
     signed_orb,
     zodiac_sign_index,
 )
@@ -34,7 +35,9 @@ BODY_WEIGHT = {
 
 SCAN_MIN_YEAR = 1800
 SCAN_MAX_YEAR = 2100
-MAX_SCAN_WORK_UNITS = 500_000
+SCAN_SOFT_WARNING_WORK_UNITS = 1_500_000
+SCAN_CONFIRMATION_WORK_UNITS = 2_500_000
+MAX_SCAN_WORK_UNITS = 5_000_000
 
 ASPECT_WEIGHT = {
     "conjunction": 1.0,
@@ -122,11 +125,24 @@ def estimated_steps(start_dt: datetime, end_dt: datetime, spec: BodySpec) -> int
     return int(seconds // step_seconds) + 1
 
 
-def reject_oversized_scan(work_units: int) -> None:
+def reject_oversized_scan(
+    work_units: int,
+    warnings: list[str] | None = None,
+    confirmed: bool = False,
+) -> None:
     if work_units > MAX_SCAN_WORK_UNITS:
         raise ValueError(
             f"扫描窗口过大，预计计算量 {work_units}，上限 {MAX_SCAN_WORK_UNITS}。"
             "请缩短时间范围、减少天体/目标点/相位。"
+        )
+    if work_units > SCAN_CONFIRMATION_WORK_UNITS and not confirmed:
+        raise ValueError(
+            f"扫描计算量较大，预计计算量 {work_units}，超过需确认阈值 {SCAN_CONFIRMATION_WORK_UNITS}。"
+            "请确认后再计算，或缩短时间范围、减少天体/目标点/相位。"
+        )
+    if warnings is not None and work_units > SCAN_SOFT_WARNING_WORK_UNITS:
+        warnings.append(
+            f"扫描计算量较大，预计计算量 {work_units}，可能耗时较长。"
         )
 
 
@@ -274,6 +290,7 @@ def scan_ingresses(
     bodies: list[BodySpec],
     label: str,
     warnings: list[str],
+    sidereal: bool = False,
 ) -> dict[str, Any]:
     rows: list[dict[str, Any]] = []
     warning_keys: set[str] = set()
@@ -281,7 +298,7 @@ def scan_ingresses(
 
     for spec in bodies:
         t_prev = start_dt
-        previous = body_longitude_at(t_prev, spec, warnings, warning_keys)
+        previous = body_longitude_at(t_prev, spec, warnings, warning_keys, sidereal=sidereal)
         if previous is None:
             continue
         lon_prev, ephemeris_name = previous
@@ -289,7 +306,7 @@ def scan_ingresses(
 
         while t_prev < end_dt:
             t_next = min(t_prev + step_for_body(spec), end_dt)
-            next_value = body_longitude_at(t_next, spec, warnings, warning_keys)
+            next_value = body_longitude_at(t_next, spec, warnings, warning_keys, sidereal=sidereal)
             if next_value is None:
                 break
             lon_next, ephemeris_name = next_value
@@ -303,8 +320,12 @@ def scan_ingresses(
                 boundary_sign = sign_next if direction > 0 else sign_prev
                 target_sign_index = sign_next
                 exact_lon = boundary_sign * 30.0
-                exact_t = refine_crossing(t_prev, t_next, spec, exact_lon, warnings, warning_keys)
-                exact_result = body_longitude_at(exact_t, spec, warnings, warning_keys)
+                exact_t = refine_crossing(
+                    t_prev, t_next, spec, exact_lon, warnings, warning_keys, sidereal=sidereal
+                )
+                exact_result = body_longitude_at(
+                    exact_t, spec, warnings, warning_keys, sidereal=sidereal
+                )
                 if exact_result is not None:
                     exact_body_lon, ephemeris_name = exact_result
                     ephemerides.add(ephemeris_name)
@@ -343,6 +364,7 @@ def scan_stations(
     bodies: list[BodySpec],
     label: str,
     warnings: list[str],
+    sidereal: bool = False,
 ) -> dict[str, Any]:
     rows: list[dict[str, Any]] = []
     warning_keys: set[str] = set()
@@ -352,7 +374,7 @@ def scan_stations(
         if spec.body_id in {"SUN", "MOON"}:
             continue
         t_prev = start_dt
-        previous = body_speed_at(t_prev, spec, warnings, warning_keys)
+        previous = body_speed_at(t_prev, spec, warnings, warning_keys, sidereal=sidereal)
         if previous is None:
             continue
         speed_prev, ephemeris_name = previous
@@ -360,7 +382,7 @@ def scan_stations(
 
         while t_prev < end_dt:
             t_next = min(t_prev + step_for_body(spec), end_dt)
-            next_value = body_speed_at(t_next, spec, warnings, warning_keys)
+            next_value = body_speed_at(t_next, spec, warnings, warning_keys, sidereal=sidereal)
             if next_value is None:
                 break
             speed_next, ephemeris_name = next_value
@@ -368,9 +390,15 @@ def scan_stations(
             crossed = (speed_prev <= 0 <= speed_next) or (speed_prev >= 0 >= speed_next)
 
             if crossed and speed_prev != speed_next:
-                exact_t = refine_station(t_prev, t_next, spec, warnings, warning_keys)
-                exact_result = body_longitude_at(exact_t, spec, warnings, warning_keys)
-                exact_speed = body_speed_at(exact_t, spec, warnings, warning_keys)
+                exact_t = refine_station(
+                    t_prev, t_next, spec, warnings, warning_keys, sidereal=sidereal
+                )
+                exact_result = body_longitude_at(
+                    exact_t, spec, warnings, warning_keys, sidereal=sidereal
+                )
+                exact_speed = body_speed_at(
+                    exact_t, spec, warnings, warning_keys, sidereal=sidereal
+                )
                 if exact_result is not None and exact_speed is not None:
                     exact_body_lon, ephemeris_name = exact_result
                     speed_at_exact, _ = exact_speed
@@ -408,6 +436,7 @@ def scan_window(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
 
     start_dt = moment_to_local_datetime(request["start"])
     end_dt = moment_to_local_datetime(request["end"])
+    sidereal = set_zodiac_mode(request.get("zodiac", "tropical"), warnings)
     original_start_dt = start_dt
     original_end_dt = end_dt
     min_dt = start_dt.replace(year=SCAN_MIN_YEAR, month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -434,13 +463,18 @@ def scan_window(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
 
     label = (request.get("label") or "Transit window").strip()
     scan_kind = request.get("scanKind", "aspect")
+    confirmed_heavy_scan = bool(
+        request.get("confirmedHeavyScan", request.get("confirmed_heavy_scan", False))
+    )
     if scan_kind == "ingress":
-        reject_oversized_scan(sum(estimated_steps(start_dt, end_dt, spec) for spec in bodies))
-        return scan_ingresses(start_dt, end_dt, bodies, label, warnings)
+        work_units = sum(estimated_steps(start_dt, end_dt, spec) for spec in bodies)
+        reject_oversized_scan(work_units, warnings, confirmed=confirmed_heavy_scan)
+        return scan_ingresses(start_dt, end_dt, bodies, label, warnings, sidereal=sidereal)
     if scan_kind == "station":
         station_bodies = [spec for spec in bodies if spec.body_id not in {"SUN", "MOON"}]
-        reject_oversized_scan(sum(estimated_steps(start_dt, end_dt, spec) for spec in station_bodies))
-        return scan_stations(start_dt, end_dt, bodies, label, warnings)
+        work_units = sum(estimated_steps(start_dt, end_dt, spec) for spec in station_bodies)
+        reject_oversized_scan(work_units, warnings, confirmed=confirmed_heavy_scan)
+        return scan_stations(start_dt, end_dt, bodies, label, warnings, sidereal=sidereal)
 
     targets = parse_targets(request.get("targetText", ""))
     aspects = request.get("aspects", [])
@@ -450,7 +484,7 @@ def scan_window(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
         * max(len(targets), 1)
         * max(aspect_exact_count, 1)
     )
-    reject_oversized_scan(work_units)
+    reject_oversized_scan(work_units, warnings, confirmed=confirmed_heavy_scan)
     rows: list[dict[str, Any]] = []
     seen_hits: set[str] = set()
     warning_keys: set[str] = set()
@@ -463,7 +497,9 @@ def scan_window(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
                 aspect_angle = float(aspect["angle"])
                 for exact_lon in exact_longitudes_for_aspect(target.longitude, aspect_angle):
                     t_prev = start_dt
-                    previous = orb_at(t_prev, spec, exact_lon, warnings, warning_keys)
+                    previous = orb_at(
+                        t_prev, spec, exact_lon, warnings, warning_keys, sidereal=sidereal
+                    )
                     if previous is None:
                         continue
                     f_prev, ephemeris_name = previous
@@ -471,7 +507,9 @@ def scan_window(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
 
                     while t_prev < end_dt:
                         t_next = min(t_prev + step, end_dt)
-                        next_value = orb_at(t_next, spec, exact_lon, warnings, warning_keys)
+                        next_value = orb_at(
+                            t_next, spec, exact_lon, warnings, warning_keys, sidereal=sidereal
+                        )
                         if next_value is None:
                             break
                         f_next, ephemeris_name = next_value
@@ -480,8 +518,18 @@ def scan_window(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
                         if abs(f_prev - f_next) < 20:
                             crossed = (f_prev <= 0 <= f_next) or (f_prev >= 0 >= f_next)
                             if crossed:
-                                exact_t = refine_crossing(t_prev, t_next, spec, exact_lon, warnings, warning_keys)
-                                longitude_result = body_longitude_at(exact_t, spec, warnings, warning_keys)
+                                exact_t = refine_crossing(
+                                    t_prev,
+                                    t_next,
+                                    spec,
+                                    exact_lon,
+                                    warnings,
+                                    warning_keys,
+                                    sidereal=sidereal,
+                                )
+                                longitude_result = body_longitude_at(
+                                    exact_t, spec, warnings, warning_keys, sidereal=sidereal
+                                )
                                 if longitude_result is not None:
                                     p_lon, ephemeris_name = longitude_result
                                     ephemerides.add(ephemeris_name)

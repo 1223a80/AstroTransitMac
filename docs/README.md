@@ -7,6 +7,7 @@ Use these files before changing the project:
 - `git-workflow.md` - local-vs-GitHub state checks, task-boundary rules, and push checklist.
 - `backend-contracts.md` - JSON contracts and calculation-specific invariants.
 - `validation.md` - local setup, test commands, and smoke checks.
+- `product-decisions.md` - intentional product constraints that audits and future changes must preserve.
 - `project-audit-2026-07-06.md` - current folder hygiene notes, technical debt, potential hidden bugs, and next-step recommendations.
 - `opencode-next-step-requirements.md` - scoped product requirement for config preset management.
 - `frontend-refactor/` - 2026-06 frontend refactor module specs and handoff notes (completed, kept for reference).

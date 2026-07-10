@@ -39,6 +39,7 @@ struct BackendContractTests {
         #expect(result.planetRelationships != nil)
         #expect(result.moonChart != nil)
         #expect(result.bhavaChart != nil)
+        #expect(result.meta.ayanamshaName?.isEmpty == false)
     }
 
     @Test func decodeSynastryResult() throws {
@@ -54,6 +55,8 @@ struct BackendContractTests {
     @Test func decodeCompositeResult() throws {
         let result = try JSONDecoder().decode(CompositeResult.self, from: fixtureData("composite-result"))
         #expect(!result.planets.isEmpty)
+        #expect(result.meta.personAUTC?.isEmpty == false)
+        #expect(result.meta.personBUTC?.isEmpty == false)
     }
 
     @Test func decodeDavisonResult() throws {
@@ -75,6 +78,15 @@ struct BackendContractTests {
         #expect(!result.natalPlanets.isEmpty)
         #expect(!result.solarArcPlanets.isEmpty)
         #expect(result.arcValue != 0)
+        #expect(result.solarArcPlanets.contains { $0.bodyID == "TRUE_NODE" })
+        #expect(result.patterns?.isEmpty == false)
+    }
+
+    @Test func decodeHarmonicResult() throws {
+        let result = try JSONDecoder().decode(HarmonicResult.self, from: fixtureData("harmonic-result"))
+        #expect(result.harmonicOrder == 4)
+        #expect(!result.planets.isEmpty)
+        #expect(!result.houses.isEmpty)
     }
 
     @Test func decodeHoraryResultFromRealOutput() throws {

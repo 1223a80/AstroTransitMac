@@ -104,19 +104,21 @@ extension ContentView {
 
             // 4. Run button
             Button {
-                Task { await runCurrentMode() }
+                handleRunButtonTapped()
             } label: {
                 HStack(spacing: TS.Spacing.md) {
-                    if calcVM.isRunning {
+                    if canStopCurrentRun {
+                        Image(systemName: "xmark.circle.fill")
+                    } else if calcVM.isRunning {
                         ProgressView().controlSize(.small)
                     } else {
                         Image(systemName: "play.fill")
                     }
-                    Text(calcVM.isRunning ? "计算中" : runButtonTitle)
+                    Text(canStopCurrentRun ? "停止计算" : (calcVM.isRunning ? "计算中" : runButtonTitle))
                 }
             }
             .buttonStyle(.borderedProminent)
-            .disabled(runDisabled || isShowingAppSettingsPage)
+            .disabled((calcVM.isRunning && !canStopCurrentRun) || (!calcVM.isRunning && runDisabled) || isShowingAppSettingsPage)
             .help(runButtonHelp)
         }
         .padding(.horizontal, TS.Padding.sidebarContent)
@@ -147,7 +149,6 @@ extension ContentView {
         let moment = profile.moment
         let datePart = String(format: "%04d-%02d-%02d", moment.year, moment.month, moment.day)
         let timePart = String(format: "%02d:%02d", moment.hour, moment.minute)
-        let sign = profile.gmtOffset >= 0 ? "+" : ""
-        return "\(datePart) \(timePart) UTC\(sign)\(profile.gmtOffset) · \(profile.latitude), \(profile.longitude)"
+        return "\(datePart) \(timePart) \(timezoneLabel(for: profile.gmtOffset)) · \(profile.latitude), \(profile.longitude)"
     }
 }

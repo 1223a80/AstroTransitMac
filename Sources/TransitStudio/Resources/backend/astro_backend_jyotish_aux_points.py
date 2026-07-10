@@ -52,9 +52,9 @@ def calc_upagrahas(
     Based on BPHS descriptions:
     - Dhuma = Sun + 133°20'
     - Vyatipata = 360° - Dhuma
-    - Parivesha = 360° - Vyatipata
-    - Indrachapa = 360° - Parivesha = Vyatipata
-    - Upaketu = Sun + 186°40' (or Indrachapa + 53°20')
+    - Parivesha = Vyatipata + 180°
+    - Indrachapa = 360° - Parivesha
+    - Upaketu = Indrachapa + 16°40' (= Sun - 30°)
     - Kaala = 1/2 of day/night from ASC
     - Mrityu = 3/4 of day from ASC (or from Kaala)
     - Artha Praharaka = specific fraction
@@ -67,9 +67,9 @@ def calc_upagrahas(
     # Sun-based upagrahas (using arcminute precision 13°20' = 800' = 13.3333°)
     dhuma_lon = norm360(sun_longitude + 133.3333333333)
     vyatipata_lon = norm360(360.0 - dhuma_lon)
-    parivesha_lon = norm360(360.0 - vyatipata_lon)  # = dhuma_lon + 180°
-    indrachapa_lon = norm360(360.0 - parivesha_lon)  # = vyatipata_lon
-    upaketu_lon = norm360(sun_longitude + 186.6666666667)  # Sun + 186°40'
+    parivesha_lon = norm360(vyatipata_lon + 180.0)
+    indrachapa_lon = norm360(360.0 - parivesha_lon)
+    upaketu_lon = norm360(indrachapa_lon + 16.6666666667)
 
     # Time-based upagrahas (approximate)
     # Gulika: based on weekday sunrise, each day Lord of the hour

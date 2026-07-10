@@ -35,14 +35,16 @@ swift test 2>&1 | tail -2 || { echo "❌ Swift 测试失败"; exit 1; }
 echo "✅ Swift 测试通过"
 echo
 
-echo "3. 关键 smoke 测试（classical + scan + horary + vedic + rectify）..."
+echo "3. 关键 smoke 测试（classical + moment + scan + horary + vedic + harmonic + rectify）..."
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-request.json > /dev/null && echo "✅ classical smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-request.json > /dev/null && echo "✅ moment smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-scan-request.json > /dev/null && echo "✅ scan smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-horary-request.json > /dev/null && echo "✅ horary smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-vedic-ai-request.json > /dev/null && echo "✅ vedic smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-harmonic-request.json > /dev/null && echo "✅ harmonic smoke OK"
 
 # rectify 简单 smoke（不要求完整 UI）
-echo '{"mode":"rectify","birth_date":"2000-01-01","center_time":"12:00","timezone":"Asia/Shanghai","latitude":31.23,"longitude":121.47,"house_system":"whole_sign","zodiac":"tropical","bounds_system":"egyptian","triplicity_system":"dorothean","max_age":30,"window_minutes":5,"step_minutes":5}' | "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py 2>/dev/null | head -c 200 > /dev/null && echo "✅ rectify smoke 至少能跑通"
+echo '{"mode":"rectify","birth_date":"2000-01-01","center_time":"12:00","timezone":"Asia/Shanghai","latitude":31.23,"longitude":121.47,"house_system":"whole_sign","zodiac":"tropical","bounds_system":"egyptian","triplicity_system":"dorothean","max_age":30,"window_minutes":5,"step_minutes":5}' | "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py 2>/dev/null | "$PY" -c 'import json,sys; data=json.load(sys.stdin); assert data.get("total_candidates") == 3' && echo "✅ rectify smoke OK"
 echo
 
 echo "4. 个人数据 / 作者痕迹扫描（应该只剩少量明确测试数据）..."

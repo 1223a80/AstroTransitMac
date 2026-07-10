@@ -2,7 +2,55 @@ import SwiftUI
 
 extension ContentView {
     @MainActor
-    func runCurrentMode() async {
+    func handleRunButtonTapped() {
+        if calcVM.isRunning {
+            stopCurrentRun()
+        } else {
+            startRunTask()
+        }
+    }
+
+    /// Starts work on a tracked Task so the top-bar stop button can cancel it
+    /// and only this generation may clear `currentRunTask` / `isRunning`.
+    /// `isStoppable` is a property of the task, not of the currently visible page.
+    @MainActor
+    func startTrackedRun(isStoppable: Bool = true, _ work: @escaping @MainActor () async -> Void) {
+        calcVM.currentRunTask?.cancel()
+        let generation = calcVM.beginRun(isStoppable: isStoppable)
+        calcVM.currentRunTask = Task {
+            await work()
+            await MainActor.run {
+                calcVM.clearRunTaskIfCurrent(generation)
+            }
+        }
+    }
+
+    @MainActor
+    func startRunTask(confirmedHeavyScan: Bool = false) {
+        // Capture stoppability from the mode that *started* the run.
+        let isStoppable = mode != .rectify
+        startTrackedRun(isStoppable: isStoppable) {
+            await runCurrentMode(confirmedHeavyScan: confirmedHeavyScan)
+        }
+    }
+
+    @MainActor
+    func stopCurrentRun() {
+        guard calcVM.currentRunIsStoppable else { return }
+        calcVM.currentRunTask?.cancel()
+        // Invalidate in-flight cleanup so a superseded run cannot clear a newer
+        // task reference or flip isRunning after the user already stopped.
+        calcVM.invalidateActiveRun()
+        if calcVM.isRunning {
+            calcVM.isRunning = false
+            finishProgress(cancelled: true)
+            calcVM.errorMessage = "计算已停止。"
+        }
+    }
+
+    @MainActor
+    func runCurrentMode(confirmedHeavyScan: Bool = false) async {
+        clearAnalysisForCurrentMode()
         switch mode {
         case .settings:
             if practiceMode == .classical {
@@ -25,9 +73,23 @@ extension ContentView {
         case .moment:
             await runCalculation()
         case .scan:
-            await runScan()
+            await runScan(confirmedHeavyScan: confirmedHeavyScan)
         case .rectify:
             await runRectify()
+        }
+    }
+
+    @MainActor
+    func clearAnalysisForCurrentMode() {
+        switch mode {
+        case .settings:
+            if practiceMode == .classical { aiVM.clear(modeKey: "classical") }
+            else if practiceMode == .vedic { aiVM.clear(modeKey: "vedic") }
+            else { aiVM.clear(modeKey: modernSubMode == .natal ? "natal" : modernSubMode.rawValue) }
+        case .horary: aiVM.clear(modeKey: "horary")
+        case .moment: aiVM.clear(modeKey: "moment")
+        case .scan: aiVM.clear(modeKey: "scan")
+        case .rectify: break
         }
     }
 
@@ -40,26 +102,38 @@ extension ContentView {
     func performRun(
         progressWork: Int? = nil,
         progressLabel: String = "",
+        preRunWarning: String? = nil,
         _ operation: () async throws -> Void
     ) async {
+        let generation = calcVM.runGeneration
         calcVM.isRunning = true
         calcVM.errorMessage = nil
+        calcVM.warningMessage = preRunWarning
         calcVM.asteroidPreparationMessage = ""
+        var wasCancelled = false
         if let progressWork {
             startEstimatedProgress(totalWork: progressWork, label: progressLabel)
         }
         defer {
-            calcVM.isRunning = false
-            if progressWork != nil {
-                finishProgress()
+            if calcVM.isCurrentRun(generation) {
+                calcVM.isRunning = false
+                if progressWork != nil {
+                    finishProgress(cancelled: wasCancelled || Task.isCancelled)
+                }
             }
         }
         do {
             try await operation()
+            guard calcVM.isCurrentRun(generation) else { return }
             if calcVM.errorMessage == nil && !isParamDrawerPinned {
                 collapseMiddleSidebar()
             }
+        } catch is CancellationError {
+            guard calcVM.isCurrentRun(generation) else { return }
+            wasCancelled = true
+            calcVM.errorMessage = "计算已停止。"
         } catch {
+            guard calcVM.isCurrentRun(generation) else { return }
             calcVM.errorMessage = error.localizedDescription
         }
     }
@@ -97,7 +171,7 @@ extension ContentView {
     ) -> (personA: PersonSettings, personB: PersonSettings) {
         (
             PersonSettings(name: "Person A", moment: makeMoment(from: natalDate), latitude: latitudeA, longitude: longitudeA),
-            PersonSettings(name: "Person B", moment: makeMoment(from: modernPersonBDate), latitude: latitudeB, longitude: longitudeB)
+            PersonSettings(name: "Person B", moment: makeMoment(from: modernPersonBDate, gmtOffset: modernPersonBGmtOffset), latitude: latitudeB, longitude: longitudeB)
         )
     }
 
@@ -119,11 +193,12 @@ extension ContentView {
                 aspects: selectedAspectRequests(orb: globalOrb),
                 ephemerisPath: effectiveEphemerisPath,
                 noAsteroids: appState.noAsteroids,
-                requireEphemeris: appState.requireEphemeris
+                requireEphemeris: appState.requireEphemeris,
+                sameChart: true
             )
             let result = try await BackendClient.calculate(request: request, pythonPath: appState.pythonPath)
             calcVM.fullNatalResult = result
-            calcVM.momentResult = filteredModernNatalResult(from: result, asteroidIDs: asteroidIDs)
+            calcVM.modernNatalResult = filteredModernNatalResult(from: result, asteroidIDs: asteroidIDs)
             syncScanTargetsFromNatalChart()
         }
     }
@@ -214,7 +289,7 @@ extension ContentView {
                 houseSystem: selectedHouseSystem,
                 zodiac: selectedZodiac,
                 nodeMode: modernNodeMode, aspects: selectedAspectRequests(orb: globalOrb),
-                patternsEnabled: false,
+                patternsEnabled: true,
                 ephemerisPath: normalizedEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.solarArc(request: request, pythonPath: appState.pythonPath)
@@ -257,24 +332,57 @@ extension ContentView {
                 aspects: selectedAspectRequests(orb: globalOrb),
                 ephemerisPath: effectiveEphemerisPath,
                 noAsteroids: appState.noAsteroids,
-                requireEphemeris: appState.requireEphemeris
+                requireEphemeris: appState.requireEphemeris,
+                sameChart: false
             )
             calcVM.momentResult = try await BackendClient.calculate(request: request, pythonPath: appState.pythonPath)
         }
     }
 
     @MainActor
-    func runScan() async {
+    func runScan(confirmedHeavyScan: Bool = false) async {
         guard scanEndDate > scanStartDate else {
             calcVM.errorMessage = "结束时间必须晚于开始时间。"
             return
         }
+        calcVM.errorMessage = nil
+        calcVM.warningMessage = nil
 
-        await performRun(progressWork: estimatedScanWork(), progressLabel: "扫描窗口") {
+        let transitBodies = scanTransitBodyIDs()
+        let targetText = resolvedScanTargetText()
+        let asteroidIDs = parseAsteroids(customAsteroids)
+        let aspects = selectedAspectRequests(orb: 0)
+        guard !transitBodies.isEmpty || !asteroidIDs.isEmpty else {
+            calcVM.errorMessage = selectedScanKind == "station"
+                ? "留逆扫描至少需要选择一个可能发生留逆的行星（不含太阳、月亮）。"
+                : "当前月亮筛选与天体选择下没有可扫描天体。"
+            return
+        }
+        if selectedScanKind == "aspect" && (aspects.isEmpty || targetText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) {
+            calcVM.errorMessage = "相位扫描需要至少一个相位和一个有效目标点。"
+            return
+        }
+        let estimate = scanWorkEstimate(
+            transitBodies: transitBodies,
+            targetText: targetText,
+            asteroidIDs: asteroidIDs,
+            aspects: aspects
+        )
+        if estimate.isBlocked {
+            calcVM.errorMessage = estimate.blockedText
+            return
+        }
+        if estimate.requiresConfirmation && !confirmedHeavyScan {
+            pendingScanConfirmation = ScanWorkConfirmation(estimate: estimate)
+            return
+        }
+
+        await performRun(
+            progressWork: estimate.workUnits,
+            progressLabel: "扫描窗口",
+            preRunWarning: estimate.warningText
+        ) {
             let label = scanWindowLabel.trimmingCharacters(in: .whitespacesAndNewlines)
-            let transitBodies = scanTransitBodyIDs()
-            let targetText = resolvedScanTargetText()
-            let asteroidIDs = parseAsteroids(customAsteroids)
             let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
             let request = ScanRequest(
                 mode: "scan",
@@ -284,12 +392,14 @@ extension ContentView {
                 end: makeMoment(from: scanEndDate),
                 transitBodies: transitBodies,
                 customAsteroids: asteroidIDs,
-                aspects: selectedAspectRequests(orb: 0),
+                aspects: aspects,
                 targetText: targetText,
                 ephemerisPath: effectiveEphemerisPath,
                 noAsteroids: appState.noAsteroids,
                 requireEphemeris: appState.requireEphemeris,
-                moonFilter: scanMoonFilter
+                moonFilter: scanMoonFilter,
+                confirmedHeavyScan: confirmedHeavyScan,
+                zodiac: practiceMode == .vedic ? "sidereal_\(vedicAyanamsha)" : selectedZodiac
             )
             calcVM.scanResult = try await BackendClient.scan(request: request, pythonPath: appState.pythonPath)
         }
@@ -324,6 +434,7 @@ extension ContentView {
     @MainActor
     func runClassicalTiming() async {
         guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        aiVM.clear(modeKey: "classical")
         await performRun(progressWork: 4, progressLabel: "更新技法") {
             let request = makeClassicalRequest(latitude: coords.latitude, longitude: coords.longitude)
             let result = try await BackendClient.classical(request: request, pythonPath: appState.pythonPath)
@@ -344,7 +455,7 @@ extension ContentView {
             let request = HoraryRequest(
                 mode: "horary",
                 chart: HoraryChartSettings(
-                    moment: makeMoment(from: horaryDate),
+                    moment: makeMoment(from: horaryDate, gmtOffset: horaryGmtOffset),
                     latitude: coords.latitude,
                     longitude: coords.longitude,
                     houseSystem: selectedHouseSystem,
@@ -425,6 +536,8 @@ extension ContentView {
             )
 
             // Invalidate any in-flight child requests BEFORE sending new level‑1 request
+            calcVM.rectifyLevel2Task?.cancel()
+            calcVM.rectifyLevel3Task?.cancel()
             calcVM.rectifyLevel2Gen += 1
             calcVM.rectifyLevel3Gen += 1
             calcVM.rectifyResponse = try await RectifyClient.fetch(
@@ -461,7 +574,10 @@ extension ContentView {
             calcVM.rectifyLevel2Response = response
             calcVM.rectifyActiveLevel = 2
             calcVM.rectifyS2Index = response.centerOffsetIndex
+        } catch is CancellationError {
+            return
         } catch {
+            guard gen == calcVM.rectifyLevel2Gen else { return }
             calcVM.errorMessage = error.localizedDescription
         }
     }
@@ -482,7 +598,10 @@ extension ContentView {
             calcVM.rectifyLevel3Response = response
             calcVM.rectifyActiveLevel = 3
             calcVM.rectifyLevel3ResponseID += 1
+        } catch is CancellationError {
+            return
         } catch {
+            guard gen == calcVM.rectifyLevel3Gen else { return }
             calcVM.errorMessage = error.localizedDescription
         }
     }

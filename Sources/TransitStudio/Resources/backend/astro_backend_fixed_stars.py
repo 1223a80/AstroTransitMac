@@ -63,6 +63,7 @@ def compute_star_positions(
     jd_ut: float,
     stars: list[dict[str, Any]] | None = None,
     warnings: list[str] | None = None,
+    sidereal: bool = False,
 ) -> list[dict[str, Any]]:
     """Compute ecliptic longitudes for all (or given) fixed stars.
 
@@ -77,9 +78,12 @@ def compute_star_positions(
         warnings = []
     results: list[dict[str, Any]] = []
     starfile_warning_emitted = False
+    longitude_flags = swe.FLG_SWIEPH | swe.FLG_SPEED
+    if sidereal:
+        longitude_flags |= swe.FLG_SIDEREAL
     for star in stars:
         try:
-            values, name_str, _ = swe.fixstar_ut(star["swe_name"], jd_ut, swe.FLG_SWIEPH | swe.FLG_SPEED)
+            values, name_str, _ = swe.fixstar_ut(star["swe_name"], jd_ut, longitude_flags)
             lon = norm360(values[0])
             lat = values[1]
             # Declination from equatorial coordinates

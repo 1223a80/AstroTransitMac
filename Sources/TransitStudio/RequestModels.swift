@@ -1,5 +1,23 @@
 import Foundation
 
+enum GMTOffset {
+    static func timeZone(hours: Double) -> TimeZone {
+        TimeZone(secondsFromGMT: Int((hours * 3600).rounded())) ?? .current
+    }
+
+    static func label(hours: Double) -> String {
+        let totalMinutes = Int((hours * 60).rounded())
+        let sign = totalMinutes >= 0 ? "+" : "-"
+        let absoluteMinutes = abs(totalMinutes)
+        let wholeHours = absoluteMinutes / 60
+        let minutes = absoluteMinutes % 60
+        if minutes == 0 {
+            return "GMT\(sign)\(wholeHours)"
+        }
+        return String(format: "GMT%@%d:%02d", sign, wholeHours, minutes)
+    }
+}
+
 struct ChartMoment: Codable {
     let year: Int
     let month: Int
@@ -28,6 +46,7 @@ struct TransitRequest: Codable {
     let ephemerisPath: String?
     let noAsteroids: Bool
     let requireEphemeris: String
+    let sameChart: Bool
 }
 
 struct ScanRequest: Codable {
@@ -44,6 +63,8 @@ struct ScanRequest: Codable {
     let noAsteroids: Bool
     let requireEphemeris: String
     let moonFilter: String
+    let confirmedHeavyScan: Bool
+    let zodiac: String
 }
 
 struct BirthSettings: Codable {
@@ -122,7 +143,7 @@ struct NatalProfile: Codable, Identifiable {
     var moment: ChartMoment
     var latitude: String
     var longitude: String
-    var gmtOffset: Int
+    var gmtOffset: Double
     var chartStyle: String
     var houseSystem: String
     var zodiac: String

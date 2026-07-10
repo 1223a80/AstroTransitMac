@@ -261,6 +261,10 @@ def calc_sunrise_sunset(
     epheflag = swe.FLG_SWIEPH
     geopos = (longitude, latitude, 0.0)
     offset = utc_offset_hours if utc_offset_hours is not None else (longitude / 15.0)
+    if jd_0h is None:
+        local_jd = jd_ut + offset / 24.0
+        local_midnight_jd = math.floor(local_jd - 0.5) + 0.5
+        jd_0h = local_midnight_jd - offset / 24.0
 
     # Sunrise: CALC_RISE | BIT_DISC_CENTER | BIT_NO_REFRACTION
     try:
@@ -275,8 +279,8 @@ def calc_sunrise_sunset(
             dt_ut = _dt_module.datetime(int(yr_r), int(mo_r), int(dy_r), hour, minute, second, tzinfo=utc)
             local_dt = dt_ut + _dt_module.timedelta(hours=offset)
             result["sunrise_local"] = local_dt.strftime("%Y-%m-%d %H:%M:%S")
-    except Exception:
-        pass
+    except Exception as exc:
+        result["sunrise_error"] = str(exc)
 
     # Sunset: CALC_SET | BIT_DISC_CENTER | BIT_NO_REFRACTION
     try:
@@ -291,7 +295,7 @@ def calc_sunrise_sunset(
             dt_ut = _dt_module.datetime(int(yr_s), int(mo_s), int(dy_s), hour, minute, second, tzinfo=utc)
             local_dt = dt_ut + _dt_module.timedelta(hours=offset)
             result["sunset_local"] = local_dt.strftime("%Y-%m-%d %H:%M:%S")
-    except Exception:
-        pass
+    except Exception as exc:
+        result["sunset_error"] = str(exc)
 
     return result

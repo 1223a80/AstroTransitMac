@@ -135,9 +135,8 @@ def calc_nathonatha_bala(jd_ut: float, latitude: float, longitude: float) -> dic
 
 def calc_naisargika_bala() -> dict[str, float]:
     """Naisargika Bala (natural strength): fixed values.
-    From Maitreya: Order from weakest to strongest:
-    Sun(0, 60), Moon(1, 51.4), Venus(4, 25.7), Jupiter(2, 42.9),
-    Mercury(5, 17.1), Mars(3, 34.3), Saturn(6, 8.6)
+    Standard order from strongest to weakest:
+    Sun, Moon, Venus, Jupiter, Mercury, Mars, Saturn.
     """
     # Base values: 7 planets ordered by natural strength
     # The strongest gets 60 rupas, scaled proportionally
@@ -146,9 +145,9 @@ def calc_naisargika_bala() -> dict[str, float]:
         "SUN": base[0],
         "MOON": base[1],
         "MERCURY": base[4],
-        "VENUS": base[3],
-        "MARS": base[2],
-        "JUPITER": base[5],
+        "VENUS": base[2],
+        "MARS": base[5],
+        "JUPITER": base[3],
         "SATURN": base[6],
     }
 

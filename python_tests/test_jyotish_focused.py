@@ -168,6 +168,22 @@ class TestPanchanga:
         assert "1990-04-20" in r["sunrise_local"], f"sunrise date wrong: {r['sunrise_local']}"
         assert "1990-04-20" in r["sunset_local"], f"sunset date wrong: {r['sunset_local']}"
 
+    def test_sunrise_sunset_exception_records_error(self, monkeypatch):
+        """rise_trans exceptions must not be swallowed; record per-side errors."""
+        from astro_backend_jyotish_panchanga import calc_sunrise_sunset
+        from astro_backend_core import swe
+
+        def boom(*args, **kwargs):
+            raise RuntimeError("rise_trans exploded")
+
+        monkeypatch.setattr(swe, "rise_trans", boom)
+        jd_0h = swe.julday(1990, 4, 20, 0.0) - 0.5
+        r = calc_sunrise_sunset(2448001.5, 39.93, 116.41, utc_offset_hours=8.0, jd_0h=jd_0h)
+        assert r["sunrise_local"] is None
+        assert r["sunset_local"] is None
+        assert "rise_trans exploded" in r.get("sunrise_error", "")
+        assert "rise_trans exploded" in r.get("sunset_error", "")
+
     def test_d9_upagrahas_different_from_d1(self, positions_with_reference):
         """D9 upagraha longitudes should differ from D1 (varga-mapped)."""
         dc = positions_with_reference.get("divisional_charts", {})

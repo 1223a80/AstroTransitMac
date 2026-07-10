@@ -80,9 +80,9 @@ var natalProfiles: [NatalProfile] {
         }
     }
 
-    func date(from moment: ChartMoment, gmtOffset: Int) -> Date {
+    func date(from moment: ChartMoment, gmtOffset: Double) -> Date {
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(secondsFromGMT: gmtOffset * 3600) ?? .current
+        calendar.timeZone = timeZone(for: gmtOffset)
         return calendar.date(from: DateComponents(
             year: moment.year,
             month: moment.month,

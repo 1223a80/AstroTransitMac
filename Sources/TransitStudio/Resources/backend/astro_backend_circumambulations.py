@@ -45,10 +45,10 @@ def calculate_circumambulations(
     asc_sign = zodiac_sign_index(asc_lon)
     asc_deg = asc_lon % 30.0
 
-    prev_upper = 0
     for offset in range(12):
         sign_idx = (asc_sign + offset) % 12
         bounds = table[sign_idx]
+        prev_upper = 0
         for ruler, upper in bounds:
             if offset == 0 and upper <= asc_deg:
                 prev_upper = upper

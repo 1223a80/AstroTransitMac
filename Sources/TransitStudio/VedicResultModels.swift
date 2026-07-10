@@ -63,6 +63,7 @@ struct VedicMeta: Codable {
     let longitude: Double
     let houseSystem: String
     let ayanamsha: String
+    let ayanamshaName: String?
     let zodiac: String
     let ephemeris: String
 
@@ -83,6 +84,7 @@ struct VedicMeta: Codable {
         case latitude, longitude
         case houseSystem = "house_system"
         case ayanamsha, zodiac, ephemeris
+        case ayanamshaName = "ayanamsha_name"
         case timezoneLabel = "timezone_label"
         case utcOffsetText = "utc_offset_text"
         case siderealModeLabel = "sidereal_mode_label"

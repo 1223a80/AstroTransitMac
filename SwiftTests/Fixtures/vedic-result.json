@@ -86,7 +86,7 @@
       {
         "id": "ASC",
         "name": "ASC",
-        "longitude": 59.730063318082486,
+        "longitude": 59.730062938828794,
         "sign": "金牛",
         "degree_text": "29°43'48\" 金牛",
         "house": 1,
@@ -99,7 +99,7 @@
       {
         "id": "MC",
         "name": "MC",
-        "longitude": 305.93220483561703,
+        "longitude": 305.93220445636337,
         "sign": "水瓶",
         "degree_text": "05°55'56\" 水瓶",
         "house": 10,
@@ -112,7 +112,7 @@
       {
         "id": "DSC",
         "name": "DSC",
-        "longitude": 239.7300633180825,
+        "longitude": 239.73006293882878,
         "sign": "天蝎",
         "degree_text": "29°43'48\" 天蝎",
         "house": 7,
@@ -125,7 +125,7 @@
       {
         "id": "IC",
         "name": "IC",
-        "longitude": 125.93220483561703,
+        "longitude": 125.93220445636337,
         "sign": "狮子",
         "degree_text": "05°55'56\" 狮子",
         "house": 4,
@@ -226,10 +226,10 @@
       "SUN": {
         "body_id": "SUN",
         "name": "太阳",
-        "longitude": 5.961978287637598,
+        "longitude": 5.9619811129426115,
         "sign": "白羊",
         "degree_text": "05°57'43\" 白羊",
-        "speed": 0.9766629225536181,
+        "speed": 0.9766631620268501,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -275,10 +275,10 @@
       "MOON": {
         "body_id": "MOON",
         "name": "月亮",
-        "longitude": 296.5341132227868,
+        "longitude": 296.5336633140008,
         "sign": "摩羯",
-        "degree_text": "26°32'03\" 摩羯",
-        "speed": 13.245808668127863,
+        "degree_text": "26°32'01\" 摩羯",
+        "speed": 13.245904365810157,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -324,10 +324,10 @@
       "MARS": {
         "body_id": "MARS",
         "name": "火星",
-        "longitude": 305.61052295977527,
+        "longitude": 305.6105273483272,
         "sign": "水瓶",
         "degree_text": "05°36'38\" 水瓶",
-        "speed": 0.7480562689236804,
+        "speed": 0.7480559957604912,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -373,10 +373,10 @@
       "MERCURY": {
         "body_id": "MERCURY",
         "name": "水星",
-        "longitude": 23.287983203670766,
+        "longitude": 23.287983019592172,
         "sign": "白羊",
         "degree_text": "23°17'17\" 白羊",
-        "speed": 0.3240114814496571,
+        "speed": 0.32400604494631324,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -422,10 +422,10 @@
       "JUPITER": {
         "body_id": "JUPITER",
         "name": "木星",
-        "longitude": 71.48317180608676,
+        "longitude": 71.48323626700625,
         "sign": "双子",
-        "degree_text": "11°28'59\" 双子",
-        "speed": 0.14862577874383276,
+        "degree_text": "11°29'00\" 双子",
+        "speed": 0.14862590744812856,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -471,10 +471,10 @@
       "VENUS": {
         "body_id": "VENUS",
         "name": "金星",
-        "longitude": 320.6944579114331,
+        "longitude": 320.69447465355705,
         "sign": "水瓶",
         "degree_text": "20°41'40\" 水瓶",
-        "speed": 1.0829039482637979,
+        "speed": 1.0829041398362167,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -520,10 +520,10 @@
       "SATURN": {
         "body_id": "SATURN",
         "name": "土星",
-        "longitude": 271.4413789510154,
+        "longitude": 271.44133895570644,
         "sign": "摩羯",
         "degree_text": "01°26'29\" 摩羯",
-        "speed": 0.0244130396850253,
+        "speed": 0.024413010247908,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -565,6 +565,104 @@
           }
         },
         "house": 9
+      },
+      "RAHU": {
+        "body_id": "RAHU",
+        "name": "罗睺",
+        "longitude": 289.495407139116,
+        "sign": "摩羯",
+        "degree_text": "19°29'43\" 摩羯",
+        "speed": -0.009052696457915366,
+        "_ephemeris": "Swiss Ephemeris",
+        "nakshatra": {
+          "nakshatra": {
+            "index": 21,
+            "name_zh": "室罗筏拏",
+            "name_sa": "Shravana",
+            "lord": "MOON",
+            "pada": 3,
+            "start_longitude": 280.0,
+            "end_longitude": 293.3333333333333
+          },
+          "yoni": {
+            "id": 5,
+            "name_sa": "Vanara",
+            "name_zh": "猴",
+            "is_male": false
+          },
+          "gana": {
+            "id": 0,
+            "name_sa": "Deva",
+            "name_zh": "天"
+          },
+          "nadi": {
+            "id": 2,
+            "name_sa": "Antya",
+            "name_zh": "终"
+          },
+          "rajju": {
+            "type": "aroha",
+            "sub_type": 3,
+            "name_sa": "Shira",
+            "name_zh": "头"
+          },
+          "tara": {
+            "tara": 8,
+            "name": "Mitra",
+            "effect": "友好",
+            "is_benefic": false
+          }
+        },
+        "house": 9
+      },
+      "KETU": {
+        "body_id": "KETU",
+        "name": "计都",
+        "longitude": 109.49540713911603,
+        "sign": "巨蟹",
+        "degree_text": "19°29'43\" 巨蟹",
+        "speed": -0.009052696457915366,
+        "_ephemeris": "Swiss Ephemeris",
+        "nakshatra": {
+          "nakshatra": {
+            "index": 8,
+            "name_zh": "阿沙莱沙",
+            "name_sa": "Ashlesha",
+            "lord": "MERCURY",
+            "pada": 1,
+            "start_longitude": 106.6666666667,
+            "end_longitude": 120.00000000003332
+          },
+          "yoni": {
+            "id": 10,
+            "name_sa": "Marjara",
+            "name_zh": "猫",
+            "is_male": true
+          },
+          "gana": {
+            "id": 2,
+            "name_sa": "Rakshasa",
+            "name_zh": "罗刹"
+          },
+          "nadi": {
+            "id": 2,
+            "name_sa": "Antya",
+            "name_zh": "终"
+          },
+          "rajju": {
+            "type": "avaroha",
+            "sub_type": 0,
+            "name_sa": "Pada",
+            "name_zh": "足"
+          },
+          "tara": {
+            "tara": 4,
+            "name": "Pratyari",
+            "effect": "敌对",
+            "is_benefic": false
+          }
+        },
+        "house": 3
       }
     },
     "cusps": [
@@ -586,10 +684,10 @@
     "SUN": {
       "body_id": "SUN",
       "name": "太阳",
-      "longitude": 5.961978287637598,
+      "longitude": 5.9619811129426115,
       "sign": "白羊",
       "degree_text": "05°57'43\" 白羊",
-      "speed": 0.9766629225536181,
+      "speed": 0.9766631620268501,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -634,10 +732,10 @@
     "MOON": {
       "body_id": "MOON",
       "name": "月亮",
-      "longitude": 296.5341132227868,
+      "longitude": 296.5336633140008,
       "sign": "摩羯",
-      "degree_text": "26°32'03\" 摩羯",
-      "speed": 13.245808668127863,
+      "degree_text": "26°32'01\" 摩羯",
+      "speed": 13.245904365810157,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -682,10 +780,10 @@
     "MARS": {
       "body_id": "MARS",
       "name": "火星",
-      "longitude": 305.61052295977527,
+      "longitude": 305.6105273483272,
       "sign": "水瓶",
       "degree_text": "05°36'38\" 水瓶",
-      "speed": 0.7480562689236804,
+      "speed": 0.7480559957604912,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -730,10 +828,10 @@
     "MERCURY": {
       "body_id": "MERCURY",
       "name": "水星",
-      "longitude": 23.287983203670766,
+      "longitude": 23.287983019592172,
       "sign": "白羊",
       "degree_text": "23°17'17\" 白羊",
-      "speed": 0.3240114814496571,
+      "speed": 0.32400604494631324,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -778,10 +876,10 @@
     "JUPITER": {
       "body_id": "JUPITER",
       "name": "木星",
-      "longitude": 71.48317180608676,
+      "longitude": 71.48323626700625,
       "sign": "双子",
-      "degree_text": "11°28'59\" 双子",
-      "speed": 0.14862577874383276,
+      "degree_text": "11°29'00\" 双子",
+      "speed": 0.14862590744812856,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -826,10 +924,10 @@
     "VENUS": {
       "body_id": "VENUS",
       "name": "金星",
-      "longitude": 320.6944579114331,
+      "longitude": 320.69447465355705,
       "sign": "水瓶",
       "degree_text": "20°41'40\" 水瓶",
-      "speed": 1.0829039482637979,
+      "speed": 1.0829041398362167,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -874,10 +972,10 @@
     "SATURN": {
       "body_id": "SATURN",
       "name": "土星",
-      "longitude": 271.4413789510154,
+      "longitude": 271.44133895570644,
       "sign": "摩羯",
       "degree_text": "01°26'29\" 摩羯",
-      "speed": 0.0244130396850253,
+      "speed": 0.024413010247908,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -918,11 +1016,105 @@
           "is_benefic": true
         }
       }
+    },
+    "RAHU": {
+      "body_id": "RAHU",
+      "name": "罗睺",
+      "longitude": 289.495407139116,
+      "sign": "摩羯",
+      "degree_text": "19°29'43\" 摩羯",
+      "speed": -0.009052696457915366,
+      "_ephemeris": "Swiss Ephemeris",
+      "nakshatra": {
+        "nakshatra": {
+          "index": 21,
+          "name_zh": "室罗筏拏",
+          "name_sa": "Shravana",
+          "lord": "MOON",
+          "pada": 3,
+          "start_longitude": 280.0,
+          "end_longitude": 293.3333333333333
+        },
+        "yoni": {
+          "id": 5,
+          "name_sa": "Vanara",
+          "name_zh": "猴",
+          "is_male": false
+        },
+        "gana": {
+          "id": 0,
+          "name_sa": "Deva",
+          "name_zh": "天"
+        },
+        "nadi": {
+          "id": 2,
+          "name_sa": "Antya",
+          "name_zh": "终"
+        },
+        "rajju": {
+          "type": "aroha",
+          "sub_type": 3,
+          "name_sa": "Shira",
+          "name_zh": "头"
+        },
+        "tara": {
+          "tara": 8,
+          "name": "Mitra",
+          "effect": "友好",
+          "is_benefic": false
+        }
+      }
+    },
+    "KETU": {
+      "body_id": "KETU",
+      "name": "计都",
+      "longitude": 109.49540713911603,
+      "sign": "巨蟹",
+      "degree_text": "19°29'43\" 巨蟹",
+      "speed": -0.009052696457915366,
+      "_ephemeris": "Swiss Ephemeris",
+      "nakshatra": {
+        "nakshatra": {
+          "index": 8,
+          "name_zh": "阿沙莱沙",
+          "name_sa": "Ashlesha",
+          "lord": "MERCURY",
+          "pada": 1,
+          "start_longitude": 106.6666666667,
+          "end_longitude": 120.00000000003332
+        },
+        "yoni": {
+          "id": 10,
+          "name_sa": "Marjara",
+          "name_zh": "猫",
+          "is_male": true
+        },
+        "gana": {
+          "id": 2,
+          "name_sa": "Rakshasa",
+          "name_zh": "罗刹"
+        },
+        "nadi": {
+          "id": 2,
+          "name_sa": "Antya",
+          "name_zh": "终"
+        },
+        "rajju": {
+          "type": "avaroha",
+          "sub_type": 0,
+          "name_sa": "Pada",
+          "name_zh": "足"
+        },
+        "tara": {
+          "tara": 4,
+          "name": "Pratyari",
+          "effect": "敌对",
+          "is_benefic": false
+        }
+      }
     }
   },
-  "warnings": [
-    "计算南北交点失败：swisseph.calc_ut: jd -0.001010 outside Moshier planet range 625000.50 .. 2818000.50 "
-  ],
+  "warnings": [],
   "panchanga": {
     "tithi": {
       "index": 24,
@@ -932,7 +1124,7 @@
       "start_longitude": 288.0,
       "end_longitude": 300.0,
       "sun_longitude": 5.962,
-      "moon_longitude": 296.5341
+      "moon_longitude": 296.5337
     },
     "vara": {
       "index": 5,
@@ -1010,6 +1202,18 @@
       "name": "土星",
       "navamsa_rasi": 9,
       "navamsa_rasi_name": "摩羯"
+    },
+    "RAHU": {
+      "body_id": "RAHU",
+      "name": "罗睺",
+      "navamsa_rasi": 2,
+      "navamsa_rasi_name": "双子"
+    },
+    "KETU": {
+      "body_id": "KETU",
+      "name": "计都",
+      "navamsa_rasi": 8,
+      "navamsa_rasi_name": "射手"
     }
   },
   "divisional_charts": {
@@ -1021,7 +1225,7 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
+          "longitude": 5.9619811129426115,
           "varga_longitude": 5.962,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -1037,8 +1241,8 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 296.5341,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 296.5337,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
           "varga_degree": 26.53,
@@ -1053,7 +1257,7 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
+          "longitude": 305.6105273483272,
           "varga_longitude": 305.6105,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -1069,7 +1273,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 23.288,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -1085,7 +1289,7 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
+          "longitude": 71.48323626700625,
           "varga_longitude": 71.4832,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -1101,7 +1305,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
+          "longitude": 320.69447465355705,
           "varga_longitude": 320.6945,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -1117,8 +1321,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 271.4414,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 271.4413,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
           "varga_degree": 1.44,
@@ -1130,10 +1334,42 @@
             "lord": "SUN"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 289.4954,
+          "varga_rasi": 9,
+          "varga_rasi_sign": "摩羯",
+          "varga_degree": 19.5,
+          "house": 9,
+          "degree_text": "19°29'",
+          "nakshatra": {
+            "name_sa": "Shravana",
+            "pada": 3,
+            "lord": "MOON"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 109.4954,
+          "varga_rasi": 3,
+          "varga_rasi_sign": "巨蟹",
+          "varga_degree": 19.5,
+          "house": 3,
+          "degree_text": "19°29'",
+          "nakshatra": {
+            "name_sa": "Ashlesha",
+            "pada": 1,
+            "lord": "MERCURY"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 59.7301,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
@@ -1180,42 +1416,42 @@
           "id": "parivesha",
           "name_sa": "Parivesha",
           "name_zh": "晕",
-          "longitude": 139.2953,
-          "rasi": 4,
-          "rasi_name": "狮子",
-          "degree_text": "19°17'",
+          "longitude": 40.7047,
+          "rasi": 1,
+          "rasi_name": "金牛",
+          "degree_text": "10°42'",
           "nakshatra": {
-            "name_sa": "Purva Phalguni",
-            "pada": 2,
-            "lord": "VENUS"
+            "name_sa": "Rohini",
+            "pada": 1,
+            "lord": "MOON"
           }
         },
         {
           "id": "indrachaapa",
           "name_sa": "Indrachapa",
           "name_zh": "弓",
-          "longitude": 220.7047,
-          "rasi": 7,
-          "rasi_name": "天蝎",
-          "degree_text": "10°42'",
+          "longitude": 319.2953,
+          "rasi": 10,
+          "rasi_name": "水瓶",
+          "degree_text": "19°17'",
           "nakshatra": {
-            "name_sa": "Anuradha",
-            "pada": 3,
-            "lord": "SATURN"
+            "name_sa": "Shatabhisha",
+            "pada": 4,
+            "lord": "RAHU"
           }
         },
         {
           "id": "upaketu",
           "name_sa": "Upaketu",
           "name_zh": "彗",
-          "longitude": 192.6286,
-          "rasi": 6,
-          "rasi_name": "天秤",
-          "degree_text": "12°37'",
+          "longitude": 335.962,
+          "rasi": 11,
+          "rasi_name": "双鱼",
+          "degree_text": "5°57'",
           "nakshatra": {
-            "name_sa": "Swati",
-            "pada": 2,
-            "lord": "RAHU"
+            "name_sa": "Uttara Bhadrapada",
+            "pada": 1,
+            "lord": "SATURN"
           }
         },
         {
@@ -1347,7 +1583,7 @@
           "id": "vighati_lagna",
           "name_sa": "ViGhati Lagna",
           "name_zh": "水微升",
-          "longitude": 350.3022,
+          "longitude": 350.3017,
           "rasi": 11,
           "degree_text": "20°18'",
           "nakshatra": {
@@ -1373,7 +1609,7 @@
           "id": "sree_lagna",
           "name_sa": "Sree Lagna",
           "name_zh": "福升",
-          "longitude": 356.2642,
+          "longitude": 356.2637,
           "rasi": 11,
           "degree_text": "26°15'",
           "nakshatra": {
@@ -1386,7 +1622,7 @@
           "id": "indu_lagna",
           "name_sa": "Indu Lagna",
           "name_zh": "月升",
-          "longitude": 296.5341,
+          "longitude": 296.5337,
           "rasi": 9,
           "degree_text": "26°32'",
           "nakshatra": {
@@ -1412,7 +1648,7 @@
           "id": "kunda",
           "name_sa": "Kunda",
           "name_zh": "井",
-          "longitude": 56.5341,
+          "longitude": 56.5337,
           "rasi": 1,
           "degree_text": "26°32'",
           "nakshatra": {
@@ -1425,7 +1661,7 @@
           "id": "yogi_point",
           "name_sa": "Yogi Point",
           "name_zh": "瑜伽",
-          "longitude": 302.4961,
+          "longitude": 302.4956,
           "rasi": 10,
           "degree_text": "2°29'",
           "nakshatra": {
@@ -1438,7 +1674,7 @@
           "id": "avayogi_point",
           "name_sa": "Avayogi Point",
           "name_zh": "反瑜伽",
-          "longitude": 129.1628,
+          "longitude": 129.1623,
           "rasi": 4,
           "degree_text": "9°09'",
           "nakshatra": {
@@ -1457,7 +1693,7 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
+          "longitude": 5.9619811129426115,
           "varga_longitude": 131.924,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -1473,8 +1709,8 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 143.0682,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 143.0673,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
           "varga_degree": 23.07,
@@ -1489,8 +1725,8 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
-          "varga_longitude": 131.221,
+          "longitude": 305.6105273483272,
+          "varga_longitude": 131.2211,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
           "varga_degree": 11.22,
@@ -1505,7 +1741,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 106.576,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -1521,8 +1757,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 142.9663,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 142.9665,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
           "varga_degree": 22.97,
@@ -1537,7 +1773,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
+          "longitude": 320.69447465355705,
           "varga_longitude": 101.3889,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -1553,8 +1789,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 92.8828,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 92.8827,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
           "varga_degree": 2.88,
@@ -1566,10 +1802,42 @@
             "lord": "JUPITER"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 128.9908,
+          "varga_rasi": 4,
+          "varga_rasi_sign": "狮子",
+          "varga_degree": 8.99,
+          "house": 1,
+          "degree_text": "8°59'",
+          "nakshatra": {
+            "name_sa": "Magha",
+            "pada": 3,
+            "lord": "KETU"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 128.9908,
+          "varga_rasi": 4,
+          "varga_rasi_sign": "狮子",
+          "varga_degree": 8.99,
+          "house": 1,
+          "degree_text": "8°59'",
+          "nakshatra": {
+            "name_sa": "Magha",
+            "pada": 3,
+            "lord": "KETU"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 149.4601,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -1592,7 +1860,7 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
+          "longitude": 5.9619811129426115,
           "varga_longitude": 17.8859,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -1608,8 +1876,8 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 169.6023,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 169.601,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
           "varga_degree": 19.6,
@@ -1624,7 +1892,7 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
+          "longitude": 305.6105273483272,
           "varga_longitude": 316.8316,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -1640,7 +1908,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 249.8639,
           "varga_rasi": 8,
           "varga_rasi_sign": "射手",
@@ -1656,8 +1924,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 184.4495,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 184.4497,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
           "varga_degree": 4.45,
@@ -1672,7 +1940,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
+          "longitude": 320.69447465355705,
           "varga_longitude": 182.0834,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
@@ -1688,8 +1956,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 274.3241,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 274.324,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
           "varga_degree": 4.32,
@@ -1701,10 +1969,42 @@
             "lord": "SUN"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 58.4862,
+          "varga_rasi": 1,
+          "varga_rasi_sign": "金牛",
+          "varga_degree": 28.49,
+          "house": 5,
+          "degree_text": "28°29'",
+          "nakshatra": {
+            "name_sa": "Mrigashira",
+            "pada": 2,
+            "lord": "MARS"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 238.4862,
+          "varga_rasi": 7,
+          "varga_rasi_sign": "天蝎",
+          "varga_degree": 28.49,
+          "house": 11,
+          "degree_text": "28°29'",
+          "nakshatra": {
+            "name_sa": "Jyeshtha",
+            "pada": 4,
+            "lord": "MERCURY"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 299.1902,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -1727,7 +2027,7 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
+          "longitude": 5.9619811129426115,
           "varga_longitude": 23.8479,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -1743,11 +2043,11 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 196.1365,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 196.1347,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
-          "varga_degree": 16.14,
+          "varga_degree": 16.13,
           "house": 9,
           "degree_text": "16°08'",
           "nakshatra": {
@@ -1759,7 +2059,7 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
+          "longitude": 305.6105273483272,
           "varga_longitude": 322.4421,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -1775,7 +2075,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 273.1519,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -1791,8 +2091,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 165.9327,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 165.9329,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
           "varga_degree": 15.93,
@@ -1807,8 +2107,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 142.7778,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 142.7779,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
           "varga_degree": 22.78,
@@ -1823,8 +2123,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 275.7655,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 275.7654,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
           "varga_degree": 5.77,
@@ -1836,10 +2136,42 @@
             "lord": "SUN"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 107.9816,
+          "varga_rasi": 3,
+          "varga_rasi_sign": "巨蟹",
+          "varga_degree": 17.98,
+          "house": 6,
+          "degree_text": "17°58'",
+          "nakshatra": {
+            "name_sa": "Ashlesha",
+            "pada": 1,
+            "lord": "MERCURY"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 287.9816,
+          "varga_rasi": 9,
+          "varga_rasi_sign": "摩羯",
+          "varga_degree": 17.98,
+          "house": 12,
+          "degree_text": "17°58'",
+          "nakshatra": {
+            "name_sa": "Shravana",
+            "pada": 3,
+            "lord": "MOON"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 328.9203,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -1862,8 +2194,8 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
-          "varga_longitude": 41.7338,
+          "longitude": 5.9619811129426115,
+          "varga_longitude": 41.7339,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
           "varga_degree": 11.73,
@@ -1878,8 +2210,8 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 275.7388,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 275.7356,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
           "varga_degree": 5.74,
@@ -1894,7 +2226,7 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
+          "longitude": 305.6105273483272,
           "varga_longitude": 339.2737,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
@@ -1910,7 +2242,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 163.0159,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -1926,8 +2258,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 140.3822,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 140.3827,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
           "varga_degree": 20.38,
@@ -1942,8 +2274,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 84.8612,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 84.8613,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
           "varga_degree": 24.86,
@@ -1958,8 +2290,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 100.0897,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 100.0894,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
           "varga_degree": 10.09,
@@ -1971,10 +2303,42 @@
             "lord": "SATURN"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 226.4678,
+          "varga_rasi": 7,
+          "varga_rasi_sign": "天蝎",
+          "varga_degree": 16.47,
+          "house": 7,
+          "degree_text": "16°28'",
+          "nakshatra": {
+            "name_sa": "Anuradha",
+            "pada": 4,
+            "lord": "SATURN"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 46.4678,
+          "varga_rasi": 1,
+          "varga_rasi_sign": "金牛",
+          "varga_degree": 16.47,
+          "house": 1,
+          "degree_text": "16°28'",
+          "nakshatra": {
+            "name_sa": "Rohini",
+            "pada": 2,
+            "lord": "MOON"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 58.1104,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
@@ -1997,7 +2361,7 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
+          "longitude": 5.9619811129426115,
           "varga_longitude": 53.6578,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
@@ -2013,11 +2377,11 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 148.807,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 148.803,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
-          "varga_degree": 28.81,
+          "varga_degree": 28.8,
           "house": 12,
           "degree_text": "28°48'",
           "nakshatra": {
@@ -2029,7 +2393,7 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
+          "longitude": 305.6105273483272,
           "varga_longitude": 230.4947,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -2045,7 +2409,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 209.5918,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
@@ -2061,8 +2425,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 283.3485,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 283.3491,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
           "varga_degree": 13.35,
@@ -2077,8 +2441,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 6.2501,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 6.2503,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
           "varga_degree": 6.25,
@@ -2093,8 +2457,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 282.9724,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 282.9721,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
           "varga_degree": 12.97,
@@ -2106,10 +2470,42 @@
             "lord": "MOON"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 85.4587,
+          "varga_rasi": 2,
+          "varga_rasi_sign": "双子",
+          "varga_degree": 25.46,
+          "house": 10,
+          "degree_text": "25°27'",
+          "nakshatra": {
+            "name_sa": "Punarvasu",
+            "pada": 2,
+            "lord": "JUPITER"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 265.4587,
+          "varga_rasi": 8,
+          "varga_rasi_sign": "射手",
+          "varga_degree": 25.46,
+          "house": 4,
+          "degree_text": "25°27'",
+          "nakshatra": {
+            "name_sa": "Purva Ashadha",
+            "pada": 4,
+            "lord": "VENUS"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 177.5706,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -2156,42 +2552,42 @@
           "id": "parivesha",
           "name_sa": "Parivesha",
           "name_zh": "晕",
-          "longitude": 173.6577,
-          "rasi": 5,
-          "rasi_name": "处女",
-          "degree_text": "23°39'",
+          "longitude": 6.3423,
+          "rasi": 0,
+          "rasi_name": "白羊",
+          "degree_text": "6°20'",
           "nakshatra": {
-            "name_sa": "Chitra",
-            "pada": 1,
-            "lord": "MARS"
+            "name_sa": "Ashvini",
+            "pada": 2,
+            "lord": "KETU"
           }
         },
         {
           "id": "indrachaapa",
           "name_sa": "Indrachapa",
           "name_zh": "弓",
-          "longitude": 186.3423,
-          "rasi": 6,
-          "rasi_name": "天秤",
-          "degree_text": "6°20'",
+          "longitude": 353.6577,
+          "rasi": 11,
+          "rasi_name": "双鱼",
+          "degree_text": "23°39'",
           "nakshatra": {
-            "name_sa": "Chitra",
-            "pada": 4,
-            "lord": "MARS"
+            "name_sa": "Revati",
+            "pada": 3,
+            "lord": "MERCURY"
           }
         },
         {
           "id": "upaketu",
           "name_sa": "Upaketu",
           "name_zh": "彗",
-          "longitude": 293.6574,
-          "rasi": 9,
-          "rasi_name": "摩羯",
+          "longitude": 143.658,
+          "rasi": 4,
+          "rasi_name": "狮子",
           "degree_text": "23°39'",
           "nakshatra": {
-            "name_sa": "Dhanishtha",
-            "pada": 1,
-            "lord": "MARS"
+            "name_sa": "Purva Phalguni",
+            "pada": 4,
+            "lord": "VENUS"
           }
         },
         {
@@ -2323,9 +2719,9 @@
           "id": "vighati_lagna",
           "name_sa": "ViGhati Lagna",
           "name_zh": "水微升",
-          "longitude": 272.7198,
+          "longitude": 272.7153,
           "rasi": 9,
-          "degree_text": "2°43'",
+          "degree_text": "2°42'",
           "nakshatra": {
             "name_sa": "Uttara Ashadha",
             "pada": 2,
@@ -2349,7 +2745,7 @@
           "id": "sree_lagna",
           "name_sa": "Sree Lagna",
           "name_zh": "福升",
-          "longitude": 326.3778,
+          "longitude": 326.3733,
           "rasi": 10,
           "degree_text": "26°22'",
           "nakshatra": {
@@ -2362,7 +2758,7 @@
           "id": "indu_lagna",
           "name_sa": "Indu Lagna",
           "name_zh": "月升",
-          "longitude": 148.8069,
+          "longitude": 148.8033,
           "rasi": 4,
           "degree_text": "28°48'",
           "nakshatra": {
@@ -2388,7 +2784,7 @@
           "id": "kunda",
           "name_sa": "Kunda",
           "name_zh": "井",
-          "longitude": 148.8069,
+          "longitude": 148.8033,
           "rasi": 4,
           "degree_text": "28°48'",
           "nakshatra": {
@@ -2401,7 +2797,7 @@
           "id": "yogi_point",
           "name_sa": "Yogi Point",
           "name_zh": "瑜伽",
-          "longitude": 202.4649,
+          "longitude": 202.4604,
           "rasi": 6,
           "degree_text": "22°27'",
           "nakshatra": {
@@ -2414,7 +2810,7 @@
           "id": "avayogi_point",
           "name_sa": "Avayogi Point",
           "name_zh": "反瑜伽",
-          "longitude": 82.4652,
+          "longitude": 82.4607,
           "rasi": 2,
           "degree_text": "22°27'",
           "nakshatra": {
@@ -2433,7 +2829,7 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
+          "longitude": 5.9619811129426115,
           "varga_longitude": 59.6198,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
@@ -2449,8 +2845,8 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 55.3411,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 55.3366,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
           "varga_degree": 25.34,
@@ -2465,8 +2861,8 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
-          "varga_longitude": 356.1052,
+          "longitude": 305.6105273483272,
+          "varga_longitude": 356.1053,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
           "varga_degree": 26.11,
@@ -2481,7 +2877,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 232.8798,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -2497,8 +2893,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 174.8317,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 174.8324,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
           "varga_degree": 24.83,
@@ -2513,8 +2909,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 146.9446,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 146.9447,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
           "varga_degree": 26.94,
@@ -2529,8 +2925,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 164.4138,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 164.4134,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
           "varga_degree": 14.41,
@@ -2542,10 +2938,42 @@
             "lord": "MOON"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 344.9541,
+          "varga_rasi": 11,
+          "varga_rasi_sign": "双鱼",
+          "varga_degree": 14.95,
+          "house": 6,
+          "degree_text": "14°57'",
+          "nakshatra": {
+            "name_sa": "Uttara Bhadrapada",
+            "pada": 4,
+            "lord": "SATURN"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 164.9541,
+          "varga_rasi": 5,
+          "varga_rasi_sign": "处女",
+          "varga_degree": 14.95,
+          "house": 12,
+          "degree_text": "14°57'",
+          "nakshatra": {
+            "name_sa": "Hasta",
+            "pada": 2,
+            "lord": "MOON"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 207.3006,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
@@ -2568,8 +2996,8 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
-          "varga_longitude": 71.5437,
+          "longitude": 5.9619811129426115,
+          "varga_longitude": 71.5438,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
           "varga_degree": 11.54,
@@ -2584,11 +3012,11 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 228.4094,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 228.404,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
-          "varga_degree": 18.41,
+          "varga_degree": 18.4,
           "house": 8,
           "degree_text": "18°24'",
           "nakshatra": {
@@ -2600,7 +3028,7 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
+          "longitude": 305.6105273483272,
           "varga_longitude": 7.3263,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -2616,7 +3044,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 279.4558,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -2632,8 +3060,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 197.7981,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 197.7988,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
           "varga_degree": 17.8,
@@ -2648,8 +3076,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 188.3335,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 188.3337,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
           "varga_degree": 8.33,
@@ -2664,8 +3092,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 287.2965,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 287.2961,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
           "varga_degree": 17.3,
@@ -2677,10 +3105,42 @@
             "lord": "MOON"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 143.9449,
+          "varga_rasi": 4,
+          "varga_rasi_sign": "狮子",
+          "varga_degree": 23.94,
+          "house": 5,
+          "degree_text": "23°56'",
+          "nakshatra": {
+            "name_sa": "Purva Phalguni",
+            "pada": 4,
+            "lord": "VENUS"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 323.9449,
+          "varga_rasi": 10,
+          "varga_rasi_sign": "水瓶",
+          "varga_degree": 23.94,
+          "house": 11,
+          "degree_text": "23°56'",
+          "nakshatra": {
+            "name_sa": "Purva Bhadrapada",
+            "pada": 2,
+            "lord": "JUPITER"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 26.7608,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -2703,7 +3163,7 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
+          "longitude": 5.9619811129426115,
           "varga_longitude": 95.3917,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -2719,11 +3179,11 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 64.5458,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 64.5386,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
-          "varga_degree": 4.55,
+          "varga_degree": 4.54,
           "house": 8,
           "degree_text": "4°32'",
           "nakshatra": {
@@ -2735,7 +3195,7 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
+          "longitude": 305.6105273483272,
           "varga_longitude": 209.7684,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
@@ -2751,7 +3211,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 12.6077,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -2767,8 +3227,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 63.7307,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 63.7318,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
           "varga_degree": 3.73,
@@ -2783,8 +3243,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 91.1113,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 91.1116,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
           "varga_degree": 1.11,
@@ -2799,8 +3259,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 23.0621,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 23.0614,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
           "varga_degree": 23.06,
@@ -2812,10 +3272,42 @@
             "lord": "VENUS"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 311.9265,
+          "varga_rasi": 10,
+          "varga_rasi_sign": "水瓶",
+          "varga_degree": 11.93,
+          "house": 4,
+          "degree_text": "11°55'",
+          "nakshatra": {
+            "name_sa": "Shatabhisha",
+            "pada": 2,
+            "lord": "RAHU"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 311.9265,
+          "varga_rasi": 10,
+          "varga_rasi_sign": "水瓶",
+          "varga_degree": 11.93,
+          "house": 4,
+          "degree_text": "11°55'",
+          "nakshatra": {
+            "name_sa": "Shatabhisha",
+            "pada": 2,
+            "lord": "RAHU"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 235.681,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -2838,7 +3330,7 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
+          "longitude": 5.9619811129426115,
           "varga_longitude": 119.2396,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -2854,11 +3346,11 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 170.6823,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 170.6733,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
-          "varga_degree": 20.68,
+          "varga_degree": 20.67,
           "house": 3,
           "degree_text": "20°40'",
           "nakshatra": {
@@ -2870,7 +3362,7 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
+          "longitude": 305.6105273483272,
           "varga_longitude": 352.2105,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
@@ -2886,7 +3378,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 105.7597,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -2902,8 +3394,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 349.6634,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 349.6647,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
           "varga_degree": 19.66,
@@ -2918,8 +3410,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 293.8892,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 293.8895,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
           "varga_degree": 23.89,
@@ -2934,8 +3426,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 28.8276,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 28.8268,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
           "varga_degree": 28.83,
@@ -2947,10 +3439,42 @@
             "lord": "SUN"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 29.9081,
+          "varga_rasi": 0,
+          "varga_rasi_sign": "白羊",
+          "varga_degree": 29.91,
+          "house": 10,
+          "degree_text": "29°54'",
+          "nakshatra": {
+            "name_sa": "Krittika",
+            "pada": 1,
+            "lord": "SUN"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 29.9081,
+          "varga_rasi": 0,
+          "varga_rasi_sign": "白羊",
+          "varga_degree": 29.91,
+          "house": 10,
+          "degree_text": "29°54'",
+          "nakshatra": {
+            "name_sa": "Krittika",
+            "pada": 1,
+            "lord": "SUN"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 114.6013,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -2973,7 +3497,7 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
+          "longitude": 5.9619811129426115,
           "varga_longitude": 263.0875,
           "varga_rasi": 8,
           "varga_rasi_sign": "射手",
@@ -2989,13 +3513,13 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 6.8187,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 6.8079,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
-          "varga_degree": 6.82,
+          "varga_degree": 6.81,
           "house": 11,
-          "degree_text": "6°49'",
+          "degree_text": "6°48'",
           "nakshatra": {
             "name_sa": "Ashvini",
             "pada": 3,
@@ -3005,8 +3529,8 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
-          "varga_longitude": 254.6526,
+          "longitude": 305.6105273483272,
+          "varga_longitude": 254.6527,
           "varga_rasi": 8,
           "varga_rasi_sign": "射手",
           "varga_degree": 14.65,
@@ -3021,7 +3545,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 318.9116,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -3037,8 +3561,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 35.5961,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 35.5977,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
           "varga_degree": 5.6,
@@ -3053,8 +3577,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 256.667,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 256.6674,
           "varga_rasi": 8,
           "varga_rasi_sign": "射手",
           "varga_degree": 16.67,
@@ -3069,8 +3593,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 124.5931,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 124.5921,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
           "varga_degree": 4.59,
@@ -3082,10 +3606,42 @@
             "lord": "KETU"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 197.8898,
+          "varga_rasi": 6,
+          "varga_rasi_sign": "天秤",
+          "varga_degree": 17.89,
+          "house": 5,
+          "degree_text": "17°53'",
+          "nakshatra": {
+            "name_sa": "Swati",
+            "pada": 4,
+            "lord": "RAHU"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 197.8898,
+          "varga_rasi": 6,
+          "varga_rasi_sign": "天秤",
+          "varga_degree": 17.89,
+          "house": 5,
+          "degree_text": "17°53'",
+          "nakshatra": {
+            "name_sa": "Swati",
+            "pada": 4,
+            "lord": "RAHU"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 83.5215,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -3108,8 +3664,8 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
-          "varga_longitude": 160.9734,
+          "longitude": 5.9619811129426115,
+          "varga_longitude": 160.9735,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
           "varga_degree": 10.97,
@@ -3124,13 +3680,13 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 86.4211,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 86.4089,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
-          "varga_degree": 26.42,
+          "varga_degree": 26.41,
           "house": 10,
-          "degree_text": "26°25'",
+          "degree_text": "26°24'",
           "nakshatra": {
             "name_sa": "Punarvasu",
             "pada": 2,
@@ -3140,8 +3696,8 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
-          "varga_longitude": 331.4841,
+          "longitude": 305.6105273483272,
+          "varga_longitude": 331.4842,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
           "varga_degree": 1.48,
@@ -3156,7 +3712,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 268.7755,
           "varga_rasi": 8,
           "varga_rasi_sign": "射手",
@@ -3172,8 +3728,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 130.0456,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 130.0474,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
           "varga_degree": 10.05,
@@ -3188,8 +3744,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 18.7504,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 18.7508,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
           "varga_degree": 18.75,
@@ -3204,23 +3760,55 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 128.9172,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 128.9162,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
           "varga_degree": 8.92,
           "house": 12,
-          "degree_text": "8°55'",
+          "degree_text": "8°54'",
           "nakshatra": {
             "name_sa": "Magha",
             "pada": 3,
             "lord": "KETU"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 256.376,
+          "varga_rasi": 8,
+          "varga_rasi_sign": "射手",
+          "varga_degree": 16.38,
+          "house": 4,
+          "degree_text": "16°22'",
+          "nakshatra": {
+            "name_sa": "Purva Ashadha",
+            "pada": 1,
+            "lord": "VENUS"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 76.376,
+          "varga_rasi": 2,
+          "varga_rasi_sign": "双子",
+          "varga_degree": 16.38,
+          "house": 10,
+          "degree_text": "16°22'",
+          "nakshatra": {
+            "name_sa": "Ardra",
+            "pada": 3,
+            "lord": "RAHU"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 172.7117,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -3243,7 +3831,7 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
+          "longitude": 5.9619811129426115,
           "varga_longitude": 305.7719,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -3259,8 +3847,8 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 230.7953,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 230.798,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
           "varga_degree": 20.8,
@@ -3275,8 +3863,8 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
-          "varga_longitude": 303.6631,
+          "longitude": 305.6105273483272,
+          "varga_longitude": 303.6632,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
           "varga_degree": 3.66,
@@ -3291,7 +3879,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 82.6628,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -3307,8 +3895,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 245.5619,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 245.5621,
           "varga_rasi": 8,
           "varga_rasi_sign": "射手",
           "varga_degree": 5.56,
@@ -3323,7 +3911,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
+          "longitude": 320.69447465355705,
           "varga_longitude": 71.5477,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -3339,8 +3927,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 51.3517,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 51.352,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
           "varga_degree": 21.35,
@@ -3352,10 +3940,42 @@
             "lord": "MOON"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 293.5911,
+          "varga_rasi": 9,
+          "varga_rasi_sign": "摩羯",
+          "varga_degree": 23.59,
+          "house": 3,
+          "degree_text": "23°35'",
+          "nakshatra": {
+            "name_sa": "Dhanishtha",
+            "pada": 1,
+            "lord": "MARS"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 293.5911,
+          "varga_rasi": 9,
+          "varga_rasi_sign": "摩羯",
+          "varga_degree": 23.59,
+          "house": 3,
+          "degree_text": "23°35'",
+          "nakshatra": {
+            "name_sa": "Dhanishtha",
+            "pada": 1,
+            "lord": "MARS"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 211.6196,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -3378,8 +3998,8 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
-          "varga_longitude": 238.4791,
+          "longitude": 5.9619811129426115,
+          "varga_longitude": 238.4792,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
           "varga_degree": 28.48,
@@ -3394,13 +4014,13 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 161.3645,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 161.3465,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
-          "varga_degree": 11.36,
+          "varga_degree": 11.35,
           "house": 9,
-          "degree_text": "11°21'",
+          "degree_text": "11°20'",
           "nakshatra": {
             "name_sa": "Hasta",
             "pada": 1,
@@ -3410,8 +4030,8 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
-          "varga_longitude": 224.4209,
+          "longitude": 305.6105273483272,
+          "varga_longitude": 224.4211,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
           "varga_degree": 14.42,
@@ -3426,7 +4046,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 211.5193,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -3442,8 +4062,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 99.3269,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 99.3295,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
           "varga_degree": 9.33,
@@ -3458,8 +4078,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 107.7783,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 107.779,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
           "varga_degree": 17.78,
@@ -3474,13 +4094,45 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 237.6552,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 237.6536,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
-          "varga_degree": 27.66,
+          "varga_degree": 27.65,
           "house": 11,
           "degree_text": "27°39'",
+          "nakshatra": {
+            "name_sa": "Jyeshtha",
+            "pada": 4,
+            "lord": "MERCURY"
+          }
+        },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 239.8163,
+          "varga_rasi": 7,
+          "varga_rasi_sign": "天蝎",
+          "varga_degree": 29.82,
+          "house": 11,
+          "degree_text": "29°48'",
+          "nakshatra": {
+            "name_sa": "Jyeshtha",
+            "pada": 4,
+            "lord": "MERCURY"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 239.8163,
+          "varga_rasi": 7,
+          "varga_rasi_sign": "天蝎",
+          "varga_degree": 29.82,
+          "house": 11,
+          "degree_text": "29°48'",
           "nakshatra": {
             "name_sa": "Jyeshtha",
             "pada": 4,
@@ -3490,7 +4142,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 289.2025,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -3513,8 +4165,8 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
-          "varga_longitude": 268.289,
+          "longitude": 5.9619811129426115,
+          "varga_longitude": 268.2892,
           "varga_rasi": 8,
           "varga_rasi_sign": "射手",
           "varga_degree": 28.29,
@@ -3529,13 +4181,13 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 114.0351,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 114.0148,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
-          "varga_degree": 24.04,
+          "varga_degree": 24.01,
           "house": 4,
-          "degree_text": "24°02'",
+          "degree_text": "24°00'",
           "nakshatra": {
             "name_sa": "Ashlesha",
             "pada": 3,
@@ -3545,8 +4197,8 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
-          "varga_longitude": 12.4735,
+          "longitude": 305.6105273483272,
+          "varga_longitude": 12.4737,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
           "varga_degree": 12.47,
@@ -3561,7 +4213,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 327.9592,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -3577,11 +4229,11 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 36.7427,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 36.7456,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
-          "varga_degree": 6.74,
+          "varga_degree": 6.75,
           "house": 2,
           "degree_text": "6°44'",
           "nakshatra": {
@@ -3593,8 +4245,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 331.2506,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 331.2514,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
           "varga_degree": 1.25,
@@ -3609,8 +4261,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 64.8621,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 64.8603,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
           "varga_degree": 4.86,
@@ -3622,10 +4274,42 @@
             "lord": "MARS"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 157.2933,
+          "varga_rasi": 5,
+          "varga_rasi_sign": "处女",
+          "varga_degree": 7.29,
+          "house": 6,
+          "degree_text": "7°17'",
+          "nakshatra": {
+            "name_sa": "Uttara Phalguni",
+            "pada": 4,
+            "lord": "SUN"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 157.2933,
+          "varga_rasi": 5,
+          "varga_rasi_sign": "处女",
+          "varga_degree": 7.29,
+          "house": 6,
+          "degree_text": "7°17'",
+          "nakshatra": {
+            "name_sa": "Uttara Phalguni",
+            "pada": 4,
+            "lord": "SUN"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 17.8528,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -3648,8 +4332,8 @@
         "SUN": {
           "body_id": "SUN",
           "name": "太阳",
-          "longitude": 5.961978287637598,
-          "varga_longitude": 357.7187,
+          "longitude": 5.9619811129426115,
+          "varga_longitude": 357.7189,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
           "varga_degree": 27.72,
@@ -3664,13 +4348,13 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5341132227868,
-          "varga_longitude": 62.0468,
+          "longitude": 296.5336633140008,
+          "varga_longitude": 62.0198,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
-          "varga_degree": 2.05,
+          "varga_degree": 2.02,
           "house": 3,
-          "degree_text": "2°02'",
+          "degree_text": "2°01'",
           "nakshatra": {
             "name_sa": "Mrigashira",
             "pada": 3,
@@ -3680,8 +4364,8 @@
         "MARS": {
           "body_id": "MARS",
           "name": "火星",
-          "longitude": 305.61052295977527,
-          "varga_longitude": 276.6314,
+          "longitude": 305.6105273483272,
+          "varga_longitude": 276.6316,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
           "varga_degree": 6.63,
@@ -3696,7 +4380,7 @@
         "MERCURY": {
           "body_id": "MERCURY",
           "name": "水星",
-          "longitude": 23.287983203670766,
+          "longitude": 23.287983019592172,
           "varga_longitude": 317.279,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -3712,8 +4396,8 @@
         "JUPITER": {
           "body_id": "JUPITER",
           "name": "木星",
-          "longitude": 71.48317180608676,
-          "varga_longitude": 28.9903,
+          "longitude": 71.48323626700625,
+          "varga_longitude": 28.9942,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
           "varga_degree": 28.99,
@@ -3728,8 +4412,8 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.6944579114331,
-          "varga_longitude": 101.6675,
+          "longitude": 320.69447465355705,
+          "varga_longitude": 101.6685,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
           "varga_degree": 11.67,
@@ -3744,8 +4428,8 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.4413789510154,
-          "varga_longitude": 356.4827,
+          "longitude": 271.44133895570644,
+          "varga_longitude": 356.4803,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
           "varga_degree": 26.48,
@@ -3757,10 +4441,42 @@
             "lord": "MERCURY"
           }
         },
+        "RAHU": {
+          "body_id": "RAHU",
+          "name": "罗睺",
+          "longitude": 289.495407139116,
+          "varga_longitude": 359.7244,
+          "varga_rasi": 11,
+          "varga_rasi_sign": "双鱼",
+          "varga_degree": 29.72,
+          "house": 12,
+          "degree_text": "29°43'",
+          "nakshatra": {
+            "name_sa": "Revati",
+            "pada": 4,
+            "lord": "MERCURY"
+          }
+        },
+        "KETU": {
+          "body_id": "KETU",
+          "name": "计都",
+          "longitude": 109.49540713911603,
+          "varga_longitude": 179.7244,
+          "varga_rasi": 5,
+          "varga_rasi_sign": "处女",
+          "varga_degree": 29.72,
+          "house": 6,
+          "degree_text": "29°43'",
+          "nakshatra": {
+            "name_sa": "Chitra",
+            "pada": 2,
+            "lord": "MARS"
+          }
+        },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730063318082486,
+          "longitude": 59.730062938828794,
           "varga_longitude": 13.8038,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -3784,9 +4500,9 @@
       "SUN": {
         "body_id": "SUN",
         "name": "太阳",
-        "longitude": 5.961978287637598,
-        "rasi": 3,
-        "rasi_name": "巨蟹",
+        "longitude": 5.9619811129426115,
+        "rasi": 0,
+        "rasi_name": "白羊",
         "degree_text": "5°57'",
         "house": 4,
         "nakshatra": {
@@ -3798,9 +4514,9 @@
       "MOON": {
         "body_id": "MOON",
         "name": "月亮",
-        "longitude": 296.5341132227868,
-        "rasi": 0,
-        "rasi_name": "白羊",
+        "longitude": 296.5336633140008,
+        "rasi": 9,
+        "rasi_name": "摩羯",
         "degree_text": "26°32'",
         "house": 1,
         "nakshatra": {
@@ -3812,9 +4528,9 @@
       "MARS": {
         "body_id": "MARS",
         "name": "火星",
-        "longitude": 305.61052295977527,
-        "rasi": 1,
-        "rasi_name": "金牛",
+        "longitude": 305.6105273483272,
+        "rasi": 10,
+        "rasi_name": "水瓶",
         "degree_text": "5°36'",
         "house": 2,
         "nakshatra": {
@@ -3826,9 +4542,9 @@
       "MERCURY": {
         "body_id": "MERCURY",
         "name": "水星",
-        "longitude": 23.287983203670766,
-        "rasi": 3,
-        "rasi_name": "巨蟹",
+        "longitude": 23.287983019592172,
+        "rasi": 0,
+        "rasi_name": "白羊",
         "degree_text": "23°17'",
         "house": 4,
         "nakshatra": {
@@ -3840,9 +4556,9 @@
       "JUPITER": {
         "body_id": "JUPITER",
         "name": "木星",
-        "longitude": 71.48317180608676,
-        "rasi": 5,
-        "rasi_name": "处女",
+        "longitude": 71.48323626700625,
+        "rasi": 2,
+        "rasi_name": "双子",
         "degree_text": "11°28'",
         "house": 6,
         "nakshatra": {
@@ -3854,9 +4570,9 @@
       "VENUS": {
         "body_id": "VENUS",
         "name": "金星",
-        "longitude": 320.6944579114331,
-        "rasi": 1,
-        "rasi_name": "金牛",
+        "longitude": 320.69447465355705,
+        "rasi": 10,
+        "rasi_name": "水瓶",
         "degree_text": "20°41'",
         "house": 2,
         "nakshatra": {
@@ -3868,9 +4584,9 @@
       "SATURN": {
         "body_id": "SATURN",
         "name": "土星",
-        "longitude": 271.4413789510154,
-        "rasi": 0,
-        "rasi_name": "白羊",
+        "longitude": 271.44133895570644,
+        "rasi": 9,
+        "rasi_name": "摩羯",
         "degree_text": "1°26'",
         "house": 1,
         "nakshatra": {
@@ -3879,12 +4595,40 @@
           "lord": "SUN"
         }
       },
+      "RAHU": {
+        "body_id": "RAHU",
+        "name": "罗睺",
+        "longitude": 289.495407139116,
+        "rasi": 9,
+        "rasi_name": "摩羯",
+        "degree_text": "19°29'",
+        "house": 1,
+        "nakshatra": {
+          "name_sa": "Shravana",
+          "pada": 3,
+          "lord": "MOON"
+        }
+      },
+      "KETU": {
+        "body_id": "KETU",
+        "name": "计都",
+        "longitude": 109.49540713911603,
+        "rasi": 3,
+        "rasi_name": "巨蟹",
+        "degree_text": "19°29'",
+        "house": 7,
+        "nakshatra": {
+          "name_sa": "Ashlesha",
+          "pada": 1,
+          "lord": "MERCURY"
+        }
+      },
       "ASC": {
         "body_id": "ASC",
         "name": "Asc",
-        "longitude": 59.730063318082486,
-        "rasi": 4,
-        "rasi_name": "狮子",
+        "longitude": 59.730062938828794,
+        "rasi": 1,
+        "rasi_name": "金牛",
         "degree_text": "29°43'",
         "house": 5,
         "nakshatra": {
@@ -3901,42 +4645,62 @@
     "angles": [
       {
         "id": "ASC",
-        "name": "Asc",
-        "longitude": 59.730063318082486,
+        "name": "ASC",
+        "longitude": 59.730062938828794,
         "sign": "金牛",
         "degree_text": "29°43'48\" 金牛",
-        "house": 1
+        "house": 1,
+        "ruler": "金星",
+        "formula": null,
+        "formula_day": null,
+        "formula_night": null,
+        "used_formula": null
       },
       {
         "id": "MC",
         "name": "MC",
-        "longitude": 239.73006331808256,
-        "sign": "天蝎",
-        "degree_text": "29°43'48\" 天蝎",
-        "house": 4
+        "longitude": 305.93220445636337,
+        "sign": "水瓶",
+        "degree_text": "05°55'56\" 水瓶",
+        "house": 10,
+        "ruler": "土星",
+        "formula": null,
+        "formula_day": null,
+        "formula_night": null,
+        "used_formula": null
       },
       {
         "id": "DSC",
-        "name": "Dsc",
-        "longitude": 59.7300633180821,
-        "sign": "金牛",
-        "degree_text": "29°43'48\" 金牛",
-        "house": 7
+        "name": "DSC",
+        "longitude": 239.73006293882878,
+        "sign": "天蝎",
+        "degree_text": "29°43'48\" 天蝎",
+        "house": 7,
+        "ruler": "火星",
+        "formula": null,
+        "formula_day": null,
+        "formula_night": null,
+        "used_formula": null
       },
       {
         "id": "IC",
         "name": "IC",
-        "longitude": 239.7300633180821,
-        "sign": "天蝎",
-        "degree_text": "29°43'48\" 天蝎",
-        "house": 10
+        "longitude": 125.93220445636337,
+        "sign": "狮子",
+        "degree_text": "05°55'56\" 狮子",
+        "house": 4,
+        "ruler": "太阳",
+        "formula": null,
+        "formula_day": null,
+        "formula_night": null,
+        "used_formula": null
       }
     ],
     "planets": {
       "SUN": {
         "body_id": "SUN",
         "name": "太阳",
-        "longitude": 5.961978287637598,
+        "longitude": 5.9619811129426115,
         "house": 12,
         "rasi": 0,
         "rasi_name": "白羊",
@@ -3950,11 +4714,11 @@
       "MOON": {
         "body_id": "MOON",
         "name": "月亮",
-        "longitude": 296.5341132227868,
+        "longitude": 296.5336633140008,
         "house": 9,
         "rasi": 9,
         "rasi_name": "摩羯",
-        "degree_text": "26°32'03\" 摩羯",
+        "degree_text": "26°32'01\" 摩羯",
         "nakshatra": {
           "name_sa": "Dhanishtha",
           "pada": 1,
@@ -3964,7 +4728,7 @@
       "MARS": {
         "body_id": "MARS",
         "name": "火星",
-        "longitude": 305.61052295977527,
+        "longitude": 305.6105273483272,
         "house": 10,
         "rasi": 10,
         "rasi_name": "水瓶",
@@ -3978,7 +4742,7 @@
       "MERCURY": {
         "body_id": "MERCURY",
         "name": "水星",
-        "longitude": 23.287983203670766,
+        "longitude": 23.287983019592172,
         "house": 12,
         "rasi": 0,
         "rasi_name": "白羊",
@@ -3992,11 +4756,11 @@
       "JUPITER": {
         "body_id": "JUPITER",
         "name": "木星",
-        "longitude": 71.48317180608676,
+        "longitude": 71.48323626700625,
         "house": 2,
         "rasi": 2,
         "rasi_name": "双子",
-        "degree_text": "11°28'59\" 双子",
+        "degree_text": "11°29'00\" 双子",
         "nakshatra": {
           "name_sa": "Ardra",
           "pada": 2,
@@ -4006,7 +4770,7 @@
       "VENUS": {
         "body_id": "VENUS",
         "name": "金星",
-        "longitude": 320.6944579114331,
+        "longitude": 320.69447465355705,
         "house": 10,
         "rasi": 10,
         "rasi_name": "水瓶",
@@ -4020,7 +4784,7 @@
       "SATURN": {
         "body_id": "SATURN",
         "name": "土星",
-        "longitude": 271.4413789510154,
+        "longitude": 271.44133895570644,
         "house": 9,
         "rasi": 9,
         "rasi_name": "摩羯",
@@ -4031,10 +4795,38 @@
           "lord": "SUN"
         }
       },
+      "RAHU": {
+        "body_id": "RAHU",
+        "name": "罗睺",
+        "longitude": 289.495407139116,
+        "house": 9,
+        "rasi": 9,
+        "rasi_name": "摩羯",
+        "degree_text": "19°29'43\" 摩羯",
+        "nakshatra": {
+          "name_sa": "Shravana",
+          "pada": 3,
+          "lord": "MOON"
+        }
+      },
+      "KETU": {
+        "body_id": "KETU",
+        "name": "计都",
+        "longitude": 109.49540713911603,
+        "house": 3,
+        "rasi": 3,
+        "rasi_name": "巨蟹",
+        "degree_text": "19°29'43\" 巨蟹",
+        "nakshatra": {
+          "name_sa": "Ashlesha",
+          "pada": 1,
+          "lord": "MERCURY"
+        }
+      },
       "ASC": {
         "body_id": "ASC",
         "name": "Asc",
-        "longitude": 59.730063318082486,
+        "longitude": 59.730062938828794,
         "house": 1,
         "rasi": 1,
         "rasi_name": "金牛",
@@ -4080,42 +4872,42 @@
       "id": "parivesha",
       "name_sa": "Parivesha",
       "name_zh": "晕",
-      "longitude": 139.2953,
-      "rasi": 4,
-      "rasi_name": "狮子",
-      "degree_text": "19°17'",
+      "longitude": 40.7047,
+      "rasi": 1,
+      "rasi_name": "金牛",
+      "degree_text": "10°42'",
       "nakshatra": {
-        "name_sa": "Purva Phalguni",
-        "pada": 2,
-        "lord": "VENUS"
+        "name_sa": "Rohini",
+        "pada": 1,
+        "lord": "MOON"
       }
     },
     {
       "id": "indrachaapa",
       "name_sa": "Indrachapa",
       "name_zh": "弓",
-      "longitude": 220.7047,
-      "rasi": 7,
-      "rasi_name": "天蝎",
-      "degree_text": "10°42'",
+      "longitude": 319.2953,
+      "rasi": 10,
+      "rasi_name": "水瓶",
+      "degree_text": "19°17'",
       "nakshatra": {
-        "name_sa": "Anuradha",
-        "pada": 3,
-        "lord": "SATURN"
+        "name_sa": "Shatabhisha",
+        "pada": 4,
+        "lord": "RAHU"
       }
     },
     {
       "id": "upaketu",
       "name_sa": "Upaketu",
       "name_zh": "彗",
-      "longitude": 192.6286,
-      "rasi": 6,
-      "rasi_name": "天秤",
-      "degree_text": "12°37'",
+      "longitude": 335.962,
+      "rasi": 11,
+      "rasi_name": "双鱼",
+      "degree_text": "5°57'",
       "nakshatra": {
-        "name_sa": "Swati",
-        "pada": 2,
-        "lord": "RAHU"
+        "name_sa": "Uttara Bhadrapada",
+        "pada": 1,
+        "lord": "SATURN"
       }
     },
     {
@@ -4247,7 +5039,7 @@
       "id": "vighati_lagna",
       "name_sa": "ViGhati Lagna",
       "name_zh": "水微升",
-      "longitude": 350.3022,
+      "longitude": 350.3017,
       "rasi": 11,
       "degree_text": "20°18'",
       "nakshatra": {
@@ -4273,7 +5065,7 @@
       "id": "sree_lagna",
       "name_sa": "Sree Lagna",
       "name_zh": "福升",
-      "longitude": 356.2642,
+      "longitude": 356.2637,
       "rasi": 11,
       "degree_text": "26°15'",
       "nakshatra": {
@@ -4286,7 +5078,7 @@
       "id": "indu_lagna",
       "name_sa": "Indu Lagna",
       "name_zh": "月升",
-      "longitude": 296.5341,
+      "longitude": 296.5337,
       "rasi": 9,
       "degree_text": "26°32'",
       "nakshatra": {
@@ -4312,7 +5104,7 @@
       "id": "kunda",
       "name_sa": "Kunda",
       "name_zh": "井",
-      "longitude": 56.5341,
+      "longitude": 56.5337,
       "rasi": 1,
       "degree_text": "26°32'",
       "nakshatra": {
@@ -4325,7 +5117,7 @@
       "id": "yogi_point",
       "name_sa": "Yogi Point",
       "name_zh": "瑜伽",
-      "longitude": 302.4961,
+      "longitude": 302.4956,
       "rasi": 10,
       "degree_text": "2°29'",
       "nakshatra": {
@@ -4338,7 +5130,7 @@
       "id": "avayogi_point",
       "name_sa": "Avayogi Point",
       "name_zh": "反瑜伽",
-      "longitude": 129.1628,
+      "longitude": 129.1623,
       "rasi": 4,
       "degree_text": "9°09'",
       "nakshatra": {
@@ -4418,94 +5210,94 @@
     "temporary": {
       "data": {
         "SUN": {
-          "MOON": 1,
+          "MOON": 0,
           "MARS": 0,
-          "MERCURY": 0,
-          "JUPITER": 1,
-          "VENUS": 1,
-          "SATURN": 2,
-          "RAHU": 1,
-          "KETU": 1
+          "MERCURY": 2,
+          "JUPITER": 0,
+          "VENUS": 0,
+          "SATURN": 0,
+          "RAHU": 0,
+          "KETU": 0
         },
         "MOON": {
-          "SUN": 1,
+          "SUN": 0,
           "MARS": 0,
-          "MERCURY": 1,
+          "MERCURY": 0,
           "JUPITER": 2,
-          "VENUS": 1,
-          "SATURN": 0,
-          "RAHU": 1,
-          "KETU": 1
+          "VENUS": 0,
+          "SATURN": 2,
+          "RAHU": 2,
+          "KETU": 2
         },
         "MARS": {
           "SUN": 0,
           "MOON": 0,
           "MERCURY": 0,
-          "JUPITER": 1,
-          "VENUS": 1,
+          "JUPITER": 2,
+          "VENUS": 2,
           "SATURN": 0,
-          "RAHU": 1,
-          "KETU": 1
+          "RAHU": 0,
+          "KETU": 2
         },
         "MERCURY": {
-          "SUN": 0,
-          "MOON": 1,
-          "MARS": 0,
-          "JUPITER": 0,
-          "VENUS": 1,
-          "SATURN": 2,
-          "RAHU": 1,
-          "KETU": 1
-        },
-        "JUPITER": {
-          "SUN": 1,
-          "MOON": 2,
-          "MARS": 1,
-          "MERCURY": 0,
-          "VENUS": 1,
-          "SATURN": 2,
-          "RAHU": 1,
-          "KETU": 1
-        },
-        "VENUS": {
-          "SUN": 1,
-          "MOON": 1,
-          "MARS": 1,
-          "MERCURY": 1,
-          "JUPITER": 1,
-          "SATURN": 0,
-          "RAHU": 1,
-          "KETU": 1
-        },
-        "SATURN": {
           "SUN": 2,
           "MOON": 0,
           "MARS": 0,
-          "MERCURY": 2,
+          "JUPITER": 0,
+          "VENUS": 0,
+          "SATURN": 0,
+          "RAHU": 0,
+          "KETU": 0
+        },
+        "JUPITER": {
+          "SUN": 0,
+          "MOON": 2,
+          "MARS": 2,
+          "MERCURY": 0,
+          "VENUS": 2,
+          "SATURN": 2,
+          "RAHU": 2,
+          "KETU": 0
+        },
+        "VENUS": {
+          "SUN": 0,
+          "MOON": 0,
+          "MARS": 2,
+          "MERCURY": 0,
+          "JUPITER": 2,
+          "SATURN": 0,
+          "RAHU": 0,
+          "KETU": 2
+        },
+        "SATURN": {
+          "SUN": 0,
+          "MOON": 2,
+          "MARS": 0,
+          "MERCURY": 0,
           "JUPITER": 2,
           "VENUS": 0,
-          "RAHU": 1,
-          "KETU": 1
+          "RAHU": 2,
+          "KETU": 2
         },
         "RAHU": {
-          "SUN": 1,
-          "MOON": 1,
-          "MARS": 1,
-          "MERCURY": 1,
-          "JUPITER": 1,
-          "VENUS": 1,
-          "SATURN": 1,
-          "KETU": 1
+          "SUN": 0,
+          "MOON": 2,
+          "MARS": 0,
+          "MERCURY": 0,
+          "JUPITER": 2,
+          "VENUS": 0,
+          "SATURN": 2,
+          "KETU": 2
         },
         "KETU": {
-          "SUN": 1,
-          "MOON": 1,
-          "MARS": 1,
-          "MERCURY": 1,
-          "JUPITER": 1,
-          "VENUS": 1,
-          "SATURN": 1,
-          "RAHU": 1
+          "SUN": 0,
+          "MOON": 2,
+          "MARS": 2,
+          "MERCURY": 0,
+          "JUPITER": 0,
+          "VENUS": 2,
+          "SATURN": 2,
+          "RAHU": 2
         }
       },
       "labels": {
@@ -4517,94 +5309,94 @@
     "compound": {
       "data": {
         "SUN": {
-          "MOON": 1,
+          "MOON": 0,
           "MARS": 0,
-          "MERCURY": 1,
-          "JUPITER": 1,
-          "VENUS": 3,
-          "SATURN": 4,
-          "RAHU": 2,
-          "KETU": 2
+          "MERCURY": 3,
+          "JUPITER": 0,
+          "VENUS": 2,
+          "SATURN": 2,
+          "RAHU": 1,
+          "KETU": 1
         },
         "MOON": {
-          "SUN": 1,
+          "SUN": 0,
           "MARS": 1,
-          "MERCURY": 1,
+          "MERCURY": 0,
           "JUPITER": 3,
-          "VENUS": 2,
-          "SATURN": 1,
-          "RAHU": 2,
-          "KETU": 2
+          "VENUS": 1,
+          "SATURN": 3,
+          "RAHU": 3,
+          "KETU": 3
         },
         "MARS": {
           "SUN": 0,
           "MOON": 0,
           "MERCURY": 2,
-          "JUPITER": 1,
-          "VENUS": 2,
+          "JUPITER": 2,
+          "VENUS": 3,
           "SATURN": 1,
-          "RAHU": 2,
-          "KETU": 2
+          "RAHU": 1,
+          "KETU": 3
         },
         "MERCURY": {
-          "SUN": 0,
-          "MOON": 3,
+          "SUN": 2,
+          "MOON": 2,
           "MARS": 1,
           "JUPITER": 1,
-          "VENUS": 1,
-          "SATURN": 3,
-          "RAHU": 2,
-          "KETU": 2
+          "VENUS": 0,
+          "SATURN": 1,
+          "RAHU": 1,
+          "KETU": 1
         },
         "JUPITER": {
-          "SUN": 1,
+          "SUN": 0,
           "MOON": 2,
-          "MARS": 1,
+          "MARS": 2,
           "MERCURY": 2,
-          "VENUS": 3,
+          "VENUS": 4,
           "SATURN": 3,
-          "RAHU": 2,
-          "KETU": 2
+          "RAHU": 3,
+          "KETU": 1
         },
         "VENUS": {
-          "SUN": 3,
-          "MOON": 3,
-          "MARS": 2,
-          "MERCURY": 1,
-          "JUPITER": 2,
+          "SUN": 2,
+          "MOON": 2,
+          "MARS": 3,
+          "MERCURY": 0,
+          "JUPITER": 3,
           "SATURN": 0,
-          "RAHU": 2,
-          "KETU": 2
+          "RAHU": 1,
+          "KETU": 3
         },
         "SATURN": {
-          "SUN": 4,
-          "MOON": 2,
+          "SUN": 2,
+          "MOON": 4,
           "MARS": 2,
-          "MERCURY": 2,
+          "MERCURY": 0,
           "JUPITER": 3,
           "VENUS": 0,
-          "RAHU": 2,
-          "KETU": 2
+          "RAHU": 3,
+          "KETU": 3
         },
         "RAHU": {
-          "SUN": 2,
-          "MOON": 2,
-          "MARS": 2,
-          "MERCURY": 2,
-          "JUPITER": 2,
-          "VENUS": 2,
-          "SATURN": 2,
-          "KETU": 2
+          "SUN": 1,
+          "MOON": 3,
+          "MARS": 1,
+          "MERCURY": 1,
+          "JUPITER": 3,
+          "VENUS": 1,
+          "SATURN": 3,
+          "KETU": 3
         },
         "KETU": {
-          "SUN": 2,
-          "MOON": 2,
-          "MARS": 2,
-          "MERCURY": 2,
-          "JUPITER": 2,
-          "VENUS": 2,
-          "SATURN": 2,
-          "RAHU": 2
+          "SUN": 1,
+          "MOON": 3,
+          "MARS": 3,
+          "MERCURY": 1,
+          "JUPITER": 1,
+          "VENUS": 3,
+          "SATURN": 3,
+          "RAHU": 3
         }
       },
       "labels": {
@@ -4626,9 +5418,9 @@
   "arudha": {
     "AL": {
       "pada_name": "Arudha Lagna",
-      "rasi": 7,
-      "rasi_name": "天蝎",
-      "house": 7
+      "rasi": 5,
+      "rasi_name": "处女",
+      "house": 5
     },
     "A2": {
       "pada_name": "A2 (Dhana)",
@@ -4662,9 +5454,9 @@
     },
     "A7": {
       "pada_name": "A7 (Kama)",
-      "rasi": 1,
-      "rasi_name": "金牛",
-      "house": 1
+      "rasi": 11,
+      "rasi_name": "双鱼",
+      "house": 11
     },
     "A8": {
       "pada_name": "A8 (Moksha)",
@@ -4686,9 +5478,9 @@
     },
     "A11": {
       "pada_name": "A11 (Aya)",
-      "rasi": 5,
-      "rasi_name": "处女",
-      "house": 5
+      "rasi": 3,
+      "rasi_name": "巨蟹",
+      "house": 3
     },
     "UL": {
       "pada_name": "Upapada Lagna",
@@ -4703,8 +5495,8 @@
         "karaka_type": 0,
         "planet": "MOON",
         "planet_name": "月亮",
-        "longitude_in_rasi": 26.5341,
-        "effective_longitude": 26.5341,
+        "longitude_in_rasi": 26.5337,
+        "effective_longitude": 26.5337,
         "name_sa": "Atma Karaka",
         "name_zh": "灵魂星 (Atma Karaka)"
       },
@@ -4737,28 +5529,28 @@
       },
       {
         "karaka_type": 4,
-        "planet": "SUN",
-        "planet_name": "太阳",
-        "longitude_in_rasi": 5.962,
-        "effective_longitude": 5.962,
+        "planet": "RAHU",
+        "planet_name": "罗睺",
+        "longitude_in_rasi": 10.5046,
+        "effective_longitude": 10.5046,
         "name_sa": "Putra Karaka",
         "name_zh": "子女星 (Putra Karaka)"
       },
       {
         "karaka_type": 5,
-        "planet": "MARS",
-        "planet_name": "火星",
-        "longitude_in_rasi": 5.6105,
-        "effective_longitude": 5.6105,
+        "planet": "SUN",
+        "planet_name": "太阳",
+        "longitude_in_rasi": 5.962,
+        "effective_longitude": 5.962,
         "name_sa": "Gnati Karaka",
         "name_zh": "知识星 (Gnati Karaka)"
       },
       {
         "karaka_type": 6,
-        "planet": "SATURN",
-        "planet_name": "土星",
-        "longitude_in_rasi": 1.4414,
-        "effective_longitude": 1.4414,
+        "planet": "MARS",
+        "planet_name": "火星",
+        "longitude_in_rasi": 5.6105,
+        "effective_longitude": 5.6105,
         "name_sa": "Dara Karaka",
         "name_zh": "配偶星 (Dara Karaka)"
       }
@@ -5305,61 +6097,61 @@
       {
         "lord": "MARS",
         "duration_years": 7,
-        "start": "1988-08-14 14:19",
-        "end": "1995-08-15 07:04",
+        "start": "1988-08-14 16:24",
+        "end": "1995-08-15 09:08",
         "antardashas": [
           {
             "lord": "MARS",
-            "start": "1988-08-14 14:19",
-            "end": "1989-01-10 17:41",
+            "start": "1988-08-14 16:24",
+            "end": "1989-01-10 19:46",
             "duration_years": 0.4083
           },
           {
             "lord": "RAHU",
-            "start": "1989-01-10 17:41",
-            "end": "1990-01-29 05:48",
+            "start": "1989-01-10 19:46",
+            "end": "1990-01-29 07:53",
             "duration_years": 1.05
           },
           {
             "lord": "JUPITER",
-            "start": "1990-01-29 05:48",
-            "end": "1991-01-05 03:14",
+            "start": "1990-01-29 07:53",
+            "end": "1991-01-05 05:19",
             "duration_years": 0.9333
           },
           {
             "lord": "SATURN",
-            "start": "1991-01-05 03:14",
-            "end": "1992-02-13 22:41",
+            "start": "1991-01-05 05:19",
+            "end": "1992-02-14 00:46",
             "duration_years": 1.1083
           },
           {
             "lord": "MERCURY",
-            "start": "1992-02-13 22:41",
-            "end": "1993-02-10 03:27",
+            "start": "1992-02-14 00:46",
+            "end": "1993-02-10 05:32",
             "duration_years": 0.9917
           },
           {
             "lord": "KETU",
-            "start": "1993-02-10 03:27",
-            "end": "1993-07-09 06:50",
+            "start": "1993-02-10 05:32",
+            "end": "1993-07-09 08:55",
             "duration_years": 0.4083
           },
           {
             "lord": "VENUS",
-            "start": "1993-07-09 06:50",
-            "end": "1994-09-08 09:37",
+            "start": "1993-07-09 08:55",
+            "end": "1994-09-08 11:42",
             "duration_years": 1.1667
           },
           {
             "lord": "SUN",
-            "start": "1994-09-08 09:37",
-            "end": "1995-01-14 05:39",
+            "start": "1994-09-08 11:42",
+            "end": "1995-01-14 07:44",
             "duration_years": 0.35
           },
           {
             "lord": "MOON",
-            "start": "1995-01-14 05:39",
-            "end": "1995-08-15 07:03",
+            "start": "1995-01-14 07:44",
+            "end": "1995-08-15 09:08",
             "duration_years": 0.5833
           }
         ]
@@ -5367,61 +6159,61 @@
       {
         "lord": "RAHU",
         "duration_years": 18,
-        "start": "1995-08-15 07:04",
-        "end": "2013-08-14 15:49",
+        "start": "1995-08-15 09:08",
+        "end": "2013-08-14 17:54",
         "antardashas": [
           {
             "lord": "RAHU",
-            "start": "1995-08-15 07:04",
-            "end": "1998-04-27 10:46",
+            "start": "1995-08-15 09:08",
+            "end": "1998-04-27 12:50",
             "duration_years": 2.7
           },
           {
             "lord": "JUPITER",
-            "start": "1998-04-27 10:46",
-            "end": "2000-09-20 00:44",
+            "start": "1998-04-27 12:50",
+            "end": "2000-09-20 02:48",
             "duration_years": 2.4
           },
           {
             "lord": "SATURN",
-            "start": "2000-09-20 00:44",
-            "end": "2003-07-27 23:20",
+            "start": "2000-09-20 02:48",
+            "end": "2003-07-28 01:24",
             "duration_years": 2.85
           },
           {
             "lord": "MERCURY",
-            "start": "2003-07-27 23:20",
-            "end": "2006-02-13 08:10",
+            "start": "2003-07-28 01:24",
+            "end": "2006-02-13 10:14",
             "duration_years": 2.55
           },
           {
             "lord": "KETU",
-            "start": "2006-02-13 08:10",
-            "end": "2007-03-03 20:17",
+            "start": "2006-02-13 10:14",
+            "end": "2007-03-03 22:21",
             "duration_years": 1.05
           },
           {
             "lord": "VENUS",
-            "start": "2007-03-03 20:17",
-            "end": "2010-03-03 13:44",
+            "start": "2007-03-03 22:21",
+            "end": "2010-03-03 15:48",
             "duration_years": 3.0
           },
           {
             "lord": "SUN",
-            "start": "2010-03-03 13:44",
-            "end": "2011-01-26 06:59",
+            "start": "2010-03-03 15:48",
+            "end": "2011-01-26 09:03",
             "duration_years": 0.9
           },
           {
             "lord": "MOON",
-            "start": "2011-01-26 06:59",
-            "end": "2012-07-27 03:42",
+            "start": "2011-01-26 09:03",
+            "end": "2012-07-27 05:46",
             "duration_years": 1.5
           },
           {
             "lord": "MARS",
-            "start": "2012-07-27 03:42",
-            "end": "2013-08-14 15:49",
+            "start": "2012-07-27 05:46",
+            "end": "2013-08-14 17:53",
             "duration_years": 1.05
           }
         ]
@@ -5429,61 +6221,61 @@
       {
         "lord": "JUPITER",
         "duration_years": 16,
-        "start": "2013-08-14 15:49",
-        "end": "2029-08-14 12:57",
+        "start": "2013-08-14 17:54",
+        "end": "2029-08-14 15:01",
         "antardashas": [
           {
             "lord": "JUPITER",
-            "start": "2013-08-14 15:49",
-            "end": "2015-10-02 20:13",
+            "start": "2013-08-14 17:54",
+            "end": "2015-10-02 22:18",
             "duration_years": 2.1333
           },
           {
             "lord": "SATURN",
-            "start": "2015-10-02 20:13",
-            "end": "2018-04-15 02:58",
+            "start": "2015-10-02 22:18",
+            "end": "2018-04-15 05:03",
             "duration_years": 2.5333
           },
           {
             "lord": "MERCURY",
-            "start": "2018-04-15 02:58",
-            "end": "2020-07-21 00:10",
+            "start": "2018-04-15 05:03",
+            "end": "2020-07-21 02:15",
             "duration_years": 2.2667
           },
           {
             "lord": "KETU",
-            "start": "2020-07-21 00:10",
-            "end": "2021-06-26 21:36",
+            "start": "2020-07-21 02:15",
+            "end": "2021-06-26 23:41",
             "duration_years": 0.9333
           },
           {
             "lord": "VENUS",
-            "start": "2021-06-26 21:36",
-            "end": "2024-02-25 21:07",
+            "start": "2021-06-26 23:41",
+            "end": "2024-02-25 23:12",
             "duration_years": 2.6667
           },
           {
             "lord": "SUN",
-            "start": "2024-02-25 21:07",
-            "end": "2024-12-14 01:46",
+            "start": "2024-02-25 23:12",
+            "end": "2024-12-14 03:51",
             "duration_years": 0.8
           },
           {
             "lord": "MOON",
-            "start": "2024-12-14 01:46",
-            "end": "2026-04-15 01:32",
+            "start": "2024-12-14 03:51",
+            "end": "2026-04-15 03:37",
             "duration_years": 1.3333
           },
           {
             "lord": "MARS",
-            "start": "2026-04-15 01:32",
-            "end": "2027-03-21 22:58",
+            "start": "2026-04-15 03:37",
+            "end": "2027-03-22 01:03",
             "duration_years": 0.9333
           },
           {
             "lord": "RAHU",
-            "start": "2027-03-21 22:58",
-            "end": "2029-08-14 12:56",
+            "start": "2027-03-22 01:03",
+            "end": "2029-08-14 15:01",
             "duration_years": 2.4
           }
         ]
@@ -5491,61 +6283,61 @@
       {
         "lord": "SATURN",
         "duration_years": 19,
-        "start": "2029-08-14 12:57",
-        "end": "2048-08-14 03:31",
+        "start": "2029-08-14 15:01",
+        "end": "2048-08-14 05:36",
         "antardashas": [
           {
             "lord": "SATURN",
-            "start": "2029-08-14 12:57",
-            "end": "2032-08-17 07:27",
+            "start": "2029-08-14 15:01",
+            "end": "2032-08-17 09:31",
             "duration_years": 3.0083
           },
           {
             "lord": "MERCURY",
-            "start": "2032-08-17 07:27",
-            "end": "2035-04-27 10:07",
+            "start": "2032-08-17 09:31",
+            "end": "2035-04-27 12:11",
             "duration_years": 2.6917
           },
           {
             "lord": "KETU",
-            "start": "2035-04-27 10:07",
-            "end": "2036-06-05 05:34",
+            "start": "2035-04-27 12:11",
+            "end": "2036-06-05 07:38",
             "duration_years": 1.1083
           },
           {
             "lord": "VENUS",
-            "start": "2036-06-05 05:34",
-            "end": "2039-08-05 20:00",
+            "start": "2036-06-05 07:38",
+            "end": "2039-08-05 22:04",
             "duration_years": 3.1667
           },
           {
             "lord": "SUN",
-            "start": "2039-08-05 20:00",
-            "end": "2040-07-17 19:32",
+            "start": "2039-08-05 22:04",
+            "end": "2040-07-17 21:36",
             "duration_years": 0.95
           },
           {
             "lord": "MOON",
-            "start": "2040-07-17 19:32",
-            "end": "2042-02-16 02:44",
+            "start": "2040-07-17 21:36",
+            "end": "2042-02-16 04:48",
             "duration_years": 1.5833
           },
           {
             "lord": "MARS",
-            "start": "2042-02-16 02:44",
-            "end": "2043-03-27 22:11",
+            "start": "2042-02-16 04:48",
+            "end": "2043-03-28 00:15",
             "duration_years": 1.1083
           },
           {
             "lord": "RAHU",
-            "start": "2043-03-27 22:11",
-            "end": "2046-01-31 20:47",
+            "start": "2043-03-28 00:15",
+            "end": "2046-01-31 22:51",
             "duration_years": 2.85
           },
           {
             "lord": "JUPITER",
-            "start": "2046-01-31 20:47",
-            "end": "2048-08-14 03:31",
+            "start": "2046-01-31 22:51",
+            "end": "2048-08-14 05:35",
             "duration_years": 2.5333
           }
         ]
@@ -5553,61 +6345,61 @@
       {
         "lord": "MERCURY",
         "duration_years": 17,
-        "start": "2048-08-14 03:31",
-        "end": "2065-08-14 06:28",
+        "start": "2048-08-14 05:36",
+        "end": "2065-08-14 08:32",
         "antardashas": [
           {
             "lord": "MERCURY",
-            "start": "2048-08-14 03:31",
-            "end": "2051-01-10 18:31",
+            "start": "2048-08-14 05:36",
+            "end": "2051-01-10 20:36",
             "duration_years": 2.4083
           },
           {
             "lord": "KETU",
-            "start": "2051-01-10 18:31",
-            "end": "2052-01-07 23:18",
+            "start": "2051-01-10 20:36",
+            "end": "2052-01-08 01:23",
             "duration_years": 0.9917
           },
           {
             "lord": "VENUS",
-            "start": "2052-01-07 23:18",
-            "end": "2054-11-07 19:47",
+            "start": "2052-01-08 01:23",
+            "end": "2054-11-07 21:52",
             "duration_years": 2.8333
           },
           {
             "lord": "SUN",
-            "start": "2054-11-07 19:47",
-            "end": "2055-09-14 06:44",
+            "start": "2054-11-07 21:52",
+            "end": "2055-09-14 08:49",
             "duration_years": 0.85
           },
           {
             "lord": "MOON",
-            "start": "2055-09-14 06:44",
-            "end": "2057-02-12 16:59",
+            "start": "2055-09-14 08:49",
+            "end": "2057-02-12 19:04",
             "duration_years": 1.4167
           },
           {
             "lord": "MARS",
-            "start": "2057-02-12 16:59",
-            "end": "2058-02-09 21:45",
+            "start": "2057-02-12 19:04",
+            "end": "2058-02-09 23:50",
             "duration_years": 0.9917
           },
           {
             "lord": "RAHU",
-            "start": "2058-02-09 21:45",
-            "end": "2060-08-29 06:35",
+            "start": "2058-02-09 23:50",
+            "end": "2060-08-29 08:40",
             "duration_years": 2.55
           },
           {
             "lord": "JUPITER",
-            "start": "2060-08-29 06:35",
-            "end": "2062-12-05 03:47",
+            "start": "2060-08-29 08:40",
+            "end": "2062-12-05 05:52",
             "duration_years": 2.2667
           },
           {
             "lord": "SATURN",
-            "start": "2062-12-05 03:47",
-            "end": "2065-08-14 06:27",
+            "start": "2062-12-05 05:52",
+            "end": "2065-08-14 08:32",
             "duration_years": 2.6917
           }
         ]
@@ -5615,61 +6407,61 @@
       {
         "lord": "KETU",
         "duration_years": 7,
-        "start": "2065-08-14 06:28",
-        "end": "2072-08-13 23:12",
+        "start": "2065-08-14 08:32",
+        "end": "2072-08-14 01:17",
         "antardashas": [
           {
             "lord": "KETU",
-            "start": "2065-08-14 06:28",
-            "end": "2066-01-10 09:50",
+            "start": "2065-08-14 08:32",
+            "end": "2066-01-10 11:54",
             "duration_years": 0.4083
           },
           {
             "lord": "VENUS",
-            "start": "2066-01-10 09:50",
-            "end": "2067-03-12 12:37",
+            "start": "2066-01-10 11:54",
+            "end": "2067-03-12 14:41",
             "duration_years": 1.1667
           },
           {
             "lord": "SUN",
-            "start": "2067-03-12 12:37",
-            "end": "2067-07-18 08:40",
+            "start": "2067-03-12 14:41",
+            "end": "2067-07-18 10:44",
             "duration_years": 0.35
           },
           {
             "lord": "MOON",
-            "start": "2067-07-18 08:40",
-            "end": "2068-02-16 10:03",
+            "start": "2067-07-18 10:44",
+            "end": "2068-02-16 12:07",
             "duration_years": 0.5833
           },
           {
             "lord": "MARS",
-            "start": "2068-02-16 10:03",
-            "end": "2068-07-14 13:26",
+            "start": "2068-02-16 12:07",
+            "end": "2068-07-14 15:30",
             "duration_years": 0.4083
           },
           {
             "lord": "RAHU",
-            "start": "2068-07-14 13:26",
-            "end": "2069-08-02 01:33",
+            "start": "2068-07-14 15:30",
+            "end": "2069-08-02 03:37",
             "duration_years": 1.05
           },
           {
             "lord": "JUPITER",
-            "start": "2069-08-02 01:33",
-            "end": "2070-07-08 22:59",
+            "start": "2069-08-02 03:37",
+            "end": "2070-07-09 01:03",
             "duration_years": 0.9333
           },
           {
             "lord": "SATURN",
-            "start": "2070-07-08 22:59",
-            "end": "2071-08-17 18:26",
+            "start": "2070-07-09 01:03",
+            "end": "2071-08-17 20:30",
             "duration_years": 1.1083
           },
           {
             "lord": "MERCURY",
-            "start": "2071-08-17 18:26",
-            "end": "2072-08-13 23:12",
+            "start": "2071-08-17 20:30",
+            "end": "2072-08-14 01:16",
             "duration_years": 0.9917
           }
         ]
@@ -5677,61 +6469,61 @@
       {
         "lord": "VENUS",
         "duration_years": 20,
-        "start": "2072-08-13 23:12",
-        "end": "2092-08-13 19:36",
+        "start": "2072-08-14 01:17",
+        "end": "2092-08-13 21:41",
         "antardashas": [
           {
             "lord": "VENUS",
-            "start": "2072-08-13 23:12",
-            "end": "2075-12-14 10:36",
+            "start": "2072-08-14 01:17",
+            "end": "2075-12-14 12:41",
             "duration_years": 3.3333
           },
           {
             "lord": "SUN",
-            "start": "2075-12-14 10:36",
-            "end": "2076-12-13 16:25",
+            "start": "2075-12-14 12:41",
+            "end": "2076-12-13 18:30",
             "duration_years": 1.0
           },
           {
             "lord": "MOON",
-            "start": "2076-12-13 16:25",
-            "end": "2078-08-14 10:07",
+            "start": "2076-12-13 18:30",
+            "end": "2078-08-14 12:12",
             "duration_years": 1.6667
           },
           {
             "lord": "MARS",
-            "start": "2078-08-14 10:07",
-            "end": "2079-10-14 12:54",
+            "start": "2078-08-14 12:12",
+            "end": "2079-10-14 14:59",
             "duration_years": 1.1667
           },
           {
             "lord": "RAHU",
-            "start": "2079-10-14 12:54",
-            "end": "2082-10-14 06:22",
+            "start": "2079-10-14 14:59",
+            "end": "2082-10-14 08:27",
             "duration_years": 3.0
           },
           {
             "lord": "JUPITER",
-            "start": "2082-10-14 06:22",
-            "end": "2085-06-14 05:53",
+            "start": "2082-10-14 08:27",
+            "end": "2085-06-14 07:58",
             "duration_years": 2.6667
           },
           {
             "lord": "SATURN",
-            "start": "2085-06-14 05:53",
-            "end": "2088-08-13 20:19",
+            "start": "2085-06-14 07:58",
+            "end": "2088-08-13 22:24",
             "duration_years": 3.1667
           },
           {
             "lord": "MERCURY",
-            "start": "2088-08-13 20:19",
-            "end": "2091-06-14 16:48",
+            "start": "2088-08-13 22:24",
+            "end": "2091-06-14 18:53",
             "duration_years": 2.8333
           },
           {
             "lord": "KETU",
-            "start": "2091-06-14 16:48",
-            "end": "2092-08-13 19:36",
+            "start": "2091-06-14 18:53",
+            "end": "2092-08-13 21:41",
             "duration_years": 1.1667
           }
         ]
@@ -5739,61 +6531,61 @@
       {
         "lord": "SUN",
         "duration_years": 6,
-        "start": "2092-08-13 19:36",
-        "end": "2098-08-14 06:31",
+        "start": "2092-08-13 21:41",
+        "end": "2098-08-14 08:36",
         "antardashas": [
           {
             "lord": "SUN",
-            "start": "2092-08-13 19:36",
-            "end": "2092-12-01 09:20",
+            "start": "2092-08-13 21:41",
+            "end": "2092-12-01 11:25",
             "duration_years": 0.3
           },
           {
             "lord": "MOON",
-            "start": "2092-12-01 09:20",
-            "end": "2093-06-02 00:15",
+            "start": "2092-12-01 11:25",
+            "end": "2093-06-02 02:20",
             "duration_years": 0.5
           },
           {
             "lord": "MARS",
-            "start": "2093-06-02 00:15",
-            "end": "2093-10-07 20:17",
+            "start": "2093-06-02 02:20",
+            "end": "2093-10-07 22:22",
             "duration_years": 0.35
           },
           {
             "lord": "RAHU",
-            "start": "2093-10-07 20:17",
-            "end": "2094-09-01 13:31",
+            "start": "2093-10-07 22:22",
+            "end": "2094-09-01 15:36",
             "duration_years": 0.9
           },
           {
             "lord": "JUPITER",
-            "start": "2094-09-01 13:31",
-            "end": "2095-06-20 18:11",
+            "start": "2094-09-01 15:36",
+            "end": "2095-06-20 20:16",
             "duration_years": 0.8
           },
           {
             "lord": "SATURN",
-            "start": "2095-06-20 18:11",
-            "end": "2096-06-01 17:42",
+            "start": "2095-06-20 20:16",
+            "end": "2096-06-01 19:47",
             "duration_years": 0.95
           },
           {
             "lord": "MERCURY",
-            "start": "2096-06-01 17:42",
-            "end": "2097-04-08 04:39",
+            "start": "2096-06-01 19:47",
+            "end": "2097-04-08 06:44",
             "duration_years": 0.85
           },
           {
             "lord": "KETU",
-            "start": "2097-04-08 04:39",
-            "end": "2097-08-14 00:42",
+            "start": "2097-04-08 06:44",
+            "end": "2097-08-14 02:47",
             "duration_years": 0.35
           },
           {
             "lord": "VENUS",
-            "start": "2097-08-14 00:42",
-            "end": "2098-08-14 06:31",
+            "start": "2097-08-14 02:47",
+            "end": "2098-08-14 08:36",
             "duration_years": 1.0
           }
         ]
@@ -5801,61 +6593,61 @@
       {
         "lord": "MOON",
         "duration_years": 10,
-        "start": "2098-08-14 06:31",
-        "end": "2108-08-14 16:43",
+        "start": "2098-08-14 08:36",
+        "end": "2108-08-14 18:48",
         "antardashas": [
           {
             "lord": "MOON",
-            "start": "2098-08-14 06:31",
-            "end": "2099-06-14 15:22",
+            "start": "2098-08-14 08:36",
+            "end": "2099-06-14 17:27",
             "duration_years": 0.8333
           },
           {
             "lord": "MARS",
-            "start": "2099-06-14 15:22",
-            "end": "2100-01-13 16:45",
+            "start": "2099-06-14 17:27",
+            "end": "2100-01-13 18:50",
             "duration_years": 0.5833
           },
           {
             "lord": "RAHU",
-            "start": "2100-01-13 16:45",
-            "end": "2101-07-15 13:29",
+            "start": "2100-01-13 18:50",
+            "end": "2101-07-15 15:34",
             "duration_years": 1.5
           },
           {
             "lord": "JUPITER",
-            "start": "2101-07-15 13:29",
-            "end": "2102-11-14 13:15",
+            "start": "2101-07-15 15:34",
+            "end": "2102-11-14 15:20",
             "duration_years": 1.3333
           },
           {
             "lord": "SATURN",
-            "start": "2102-11-14 13:15",
-            "end": "2104-06-14 20:28",
+            "start": "2102-11-14 15:20",
+            "end": "2104-06-14 22:33",
             "duration_years": 1.5833
           },
           {
             "lord": "MERCURY",
-            "start": "2104-06-14 20:28",
-            "end": "2105-11-14 06:42",
+            "start": "2104-06-14 22:33",
+            "end": "2105-11-14 08:47",
             "duration_years": 1.4167
           },
           {
             "lord": "KETU",
-            "start": "2105-11-14 06:42",
-            "end": "2106-06-15 08:06",
+            "start": "2105-11-14 08:47",
+            "end": "2106-06-15 10:11",
             "duration_years": 0.5833
           },
           {
             "lord": "VENUS",
-            "start": "2106-06-15 08:06",
-            "end": "2108-02-14 01:48",
+            "start": "2106-06-15 10:11",
+            "end": "2108-02-14 03:53",
             "duration_years": 1.6667
           },
           {
             "lord": "SUN",
-            "start": "2108-02-14 01:48",
-            "end": "2108-08-14 16:43",
+            "start": "2108-02-14 03:53",
+            "end": "2108-08-14 18:48",
             "duration_years": 0.5
           }
         ]
@@ -5864,61 +6656,61 @@
     "current_mahadasa": {
       "lord": "JUPITER",
       "duration_years": 16,
-      "start": "2013-08-14 15:49",
-      "end": "2029-08-14 12:57",
+      "start": "2013-08-14 17:54",
+      "end": "2029-08-14 15:01",
       "antardashas": [
         {
           "lord": "JUPITER",
-          "start": "2013-08-14 15:49",
-          "end": "2015-10-02 20:13",
+          "start": "2013-08-14 17:54",
+          "end": "2015-10-02 22:18",
           "duration_years": 2.1333
         },
         {
           "lord": "SATURN",
-          "start": "2015-10-02 20:13",
-          "end": "2018-04-15 02:58",
+          "start": "2015-10-02 22:18",
+          "end": "2018-04-15 05:03",
           "duration_years": 2.5333
         },
         {
           "lord": "MERCURY",
-          "start": "2018-04-15 02:58",
-          "end": "2020-07-21 00:10",
+          "start": "2018-04-15 05:03",
+          "end": "2020-07-21 02:15",
           "duration_years": 2.2667
         },
         {
           "lord": "KETU",
-          "start": "2020-07-21 00:10",
-          "end": "2021-06-26 21:36",
+          "start": "2020-07-21 02:15",
+          "end": "2021-06-26 23:41",
           "duration_years": 0.9333
         },
         {
           "lord": "VENUS",
-          "start": "2021-06-26 21:36",
-          "end": "2024-02-25 21:07",
+          "start": "2021-06-26 23:41",
+          "end": "2024-02-25 23:12",
           "duration_years": 2.6667
         },
         {
           "lord": "SUN",
-          "start": "2024-02-25 21:07",
-          "end": "2024-12-14 01:46",
+          "start": "2024-02-25 23:12",
+          "end": "2024-12-14 03:51",
           "duration_years": 0.8
         },
         {
           "lord": "MOON",
-          "start": "2024-12-14 01:46",
-          "end": "2026-04-15 01:32",
+          "start": "2024-12-14 03:51",
+          "end": "2026-04-15 03:37",
           "duration_years": 1.3333
         },
         {
           "lord": "MARS",
-          "start": "2026-04-15 01:32",
-          "end": "2027-03-21 22:58",
+          "start": "2026-04-15 03:37",
+          "end": "2027-03-22 01:03",
           "duration_years": 0.9333
         },
         {
           "lord": "RAHU",
-          "start": "2027-03-21 22:58",
-          "end": "2029-08-14 12:56",
+          "start": "2027-03-22 01:03",
+          "end": "2029-08-14 15:01",
           "duration_years": 2.4
         }
       ]
@@ -5929,163 +6721,163 @@
       {
         "yogini": "Mangala",
         "duration_years": 1,
-        "start": "1989-05-04 15:15",
-        "end": "1990-05-04 21:04"
+        "start": "1989-05-04 16:26",
+        "end": "1990-05-04 22:15"
       },
       {
         "yogini": "Pingala",
         "duration_years": 2,
-        "start": "1990-05-04 21:04",
-        "end": "1992-05-04 08:43"
+        "start": "1990-05-04 22:15",
+        "end": "1992-05-04 09:54"
       },
       {
         "yogini": "Dhanya",
         "duration_years": 3,
-        "start": "1992-05-04 08:43",
-        "end": "1995-05-05 02:10"
+        "start": "1992-05-04 09:54",
+        "end": "1995-05-05 03:21"
       },
       {
         "yogini": "Bhramari",
         "duration_years": 4,
-        "start": "1995-05-05 02:10",
-        "end": "1999-05-05 01:27"
+        "start": "1995-05-05 03:21",
+        "end": "1999-05-05 02:38"
       },
       {
         "yogini": "Bhadrika",
         "duration_years": 5,
-        "start": "1999-05-05 01:27",
-        "end": "2004-05-04 06:33"
+        "start": "1999-05-05 02:38",
+        "end": "2004-05-04 07:44"
       },
       {
         "yogini": "Ulka",
         "duration_years": 6,
-        "start": "2004-05-04 06:33",
-        "end": "2010-05-04 17:28"
+        "start": "2004-05-04 07:44",
+        "end": "2010-05-04 18:39"
       },
       {
         "yogini": "Siddha",
         "duration_years": 7,
-        "start": "2010-05-04 17:28",
-        "end": "2017-05-04 10:13"
+        "start": "2010-05-04 18:39",
+        "end": "2017-05-04 11:24"
       },
       {
         "yogini": "Sankata",
         "duration_years": 8,
-        "start": "2017-05-04 10:13",
-        "end": "2025-05-04 08:46"
+        "start": "2017-05-04 11:24",
+        "end": "2025-05-04 09:57"
       },
       {
         "yogini": "Mangala",
         "duration_years": 1,
-        "start": "2025-05-04 08:46",
-        "end": "2026-05-04 14:36"
+        "start": "2025-05-04 09:57",
+        "end": "2026-05-04 15:47"
       },
       {
         "yogini": "Pingala",
         "duration_years": 2,
-        "start": "2026-05-04 14:36",
-        "end": "2028-05-04 02:14"
+        "start": "2026-05-04 15:47",
+        "end": "2028-05-04 03:25"
       },
       {
         "yogini": "Dhanya",
         "duration_years": 3,
-        "start": "2028-05-04 02:14",
-        "end": "2031-05-04 19:42"
+        "start": "2028-05-04 03:25",
+        "end": "2031-05-04 20:53"
       },
       {
         "yogini": "Bhramari",
         "duration_years": 4,
-        "start": "2031-05-04 19:42",
-        "end": "2035-05-04 18:58"
+        "start": "2031-05-04 20:53",
+        "end": "2035-05-04 20:09"
       },
       {
         "yogini": "Bhadrika",
         "duration_years": 5,
-        "start": "2035-05-04 18:58",
-        "end": "2040-05-04 00:04"
+        "start": "2035-05-04 20:09",
+        "end": "2040-05-04 01:15"
       },
       {
         "yogini": "Ulka",
         "duration_years": 6,
-        "start": "2040-05-04 00:04",
-        "end": "2046-05-04 11:00"
+        "start": "2040-05-04 01:15",
+        "end": "2046-05-04 12:11"
       },
       {
         "yogini": "Siddha",
         "duration_years": 7,
-        "start": "2046-05-04 11:00",
-        "end": "2053-05-04 03:44"
+        "start": "2046-05-04 12:11",
+        "end": "2053-05-04 04:55"
       },
       {
         "yogini": "Sankata",
         "duration_years": 8,
-        "start": "2053-05-04 03:44",
-        "end": "2061-05-04 02:18"
+        "start": "2053-05-04 04:55",
+        "end": "2061-05-04 03:29"
       }
     ],
     "current_yogini": {
       "yogini": "Pingala",
       "duration_years": 2,
-      "start": "2026-05-04 14:36",
-      "end": "2028-05-04 02:14"
+      "start": "2026-05-04 15:47",
+      "end": "2028-05-04 03:25"
     }
   },
   "ashtottari_dasa": {
     "ashtottari_dasas": [
       {
+        "lord": "JUPITER",
+        "duration_years": 19,
+        "start": "1988-10-12 03:04",
+        "end": "2007-10-12 17:39"
+      },
+      {
         "lord": "RAHU",
         "duration_years": 12,
-        "start": "1987-06-03 04:47",
-        "end": "1999-06-03 02:37"
+        "start": "2007-10-12 17:39",
+        "end": "2019-10-12 15:29"
       },
       {
         "lord": "VENUS",
         "duration_years": 21,
-        "start": "1999-06-03 02:37",
-        "end": "2020-06-02 04:50"
+        "start": "2019-10-12 15:29",
+        "end": "2040-10-11 17:43"
       },
       {
         "lord": "SUN",
         "duration_years": 6,
-        "start": "2020-06-02 04:50",
-        "end": "2026-06-02 15:45"
+        "start": "2040-10-11 17:43",
+        "end": "2046-10-12 04:38"
       },
       {
         "lord": "MOON",
         "duration_years": 15,
-        "start": "2026-06-02 15:45",
-        "end": "2041-06-02 07:03"
+        "start": "2046-10-12 04:38",
+        "end": "2061-10-11 19:56"
       },
       {
         "lord": "MARS",
         "duration_years": 8,
-        "start": "2041-06-02 07:03",
-        "end": "2049-06-02 05:37"
+        "start": "2061-10-11 19:56",
+        "end": "2069-10-11 18:29"
       },
       {
         "lord": "MERCURY",
         "duration_years": 17,
-        "start": "2049-06-02 05:37",
-        "end": "2066-06-02 08:33"
+        "start": "2069-10-11 18:29",
+        "end": "2086-10-11 21:26"
       },
       {
         "lord": "SATURN",
         "duration_years": 10,
-        "start": "2066-06-02 08:33",
-        "end": "2076-06-01 18:45"
-      },
-      {
-        "lord": "JUPITER",
-        "duration_years": 19,
-        "start": "2076-06-01 18:45",
-        "end": "2095-06-02 09:20"
+        "start": "2086-10-11 21:26",
+        "end": "2096-10-11 07:38"
       }
     ],
     "current_ashtottari": {
-      "lord": "MOON",
-      "duration_years": 15,
-      "start": "2026-06-02 15:45",
-      "end": "2041-06-02 07:03"
+      "lord": "VENUS",
+      "duration_years": 21,
+      "start": "2019-10-12 15:29",
+      "end": "2040-10-11 17:43"
     }
   },
   "shadbala": {
@@ -6130,14 +6922,14 @@
       "dig_bala": 60.0,
       "kāla_bala": 39.4,
       "ceṣṭa_bala": 15.0,
-      "naiṣargika_bala": 42.9,
+      "naiṣargika_bala": 17.1,
       "dṛg_bala": 0.0,
-      "shadbala_total": 170.3,
-      "shadbala_rupas": 2.84,
+      "shadbala_total": 144.6,
+      "shadbala_rupas": 2.41,
       "required": 300,
       "required_rupas": 5.0,
       "meets_required": null,
-      "percent": 56.8,
+      "percent": 48.2,
       "is_complete": false,
       "status": "incomplete",
       "note": "Full Sthana/Dig/Kala/Cheshta/Naisargika/Drik implementation pending; no meets_required judgment is allowed.",
@@ -6166,14 +6958,14 @@
       "dig_bala": 50.0,
       "kāla_bala": 95.6,
       "ceṣṭa_bala": 30.0,
-      "naiṣargika_bala": 17.1,
+      "naiṣargika_bala": 34.3,
       "dṛg_bala": 0.0,
-      "shadbala_total": 208.3,
-      "shadbala_rupas": 3.47,
+      "shadbala_total": 225.4,
+      "shadbala_rupas": 3.76,
       "required": 390,
       "required_rupas": 6.5,
       "meets_required": null,
-      "percent": 53.4,
+      "percent": 57.8,
       "is_complete": false,
       "status": "incomplete",
       "note": "Full Sthana/Dig/Kala/Cheshta/Naisargika/Drik implementation pending; no meets_required judgment is allowed.",
@@ -6184,14 +6976,14 @@
       "dig_bala": 0.0,
       "kāla_bala": 80.6,
       "ceṣṭa_bala": 15.0,
-      "naiṣargika_bala": 34.3,
+      "naiṣargika_bala": 42.9,
       "dṛg_bala": 0.0,
-      "shadbala_total": 145.2,
-      "shadbala_rupas": 2.42,
+      "shadbala_total": 153.7,
+      "shadbala_rupas": 2.56,
       "required": 330,
       "required_rupas": 5.5,
       "meets_required": null,
-      "percent": 44.0,
+      "percent": 46.6,
       "is_complete": false,
       "status": "incomplete",
       "note": "Full Sthana/Dig/Kala/Cheshta/Naisargika/Drik implementation pending; no meets_required judgment is allowed.",
@@ -6217,17 +7009,6 @@
     }
   },
   "yogas": [
-    {
-      "name": "Malavya",
-      "group": "Raja",
-      "description": "金星在角宫",
-      "effect": "美丽、艺术才华、财富",
-      "planets": [
-        "VENUS"
-      ],
-      "condition_only": true,
-      "needs_strength_check": true
-    },
     {
       "name": "Dhana Yoga",
       "group": "Dhana",

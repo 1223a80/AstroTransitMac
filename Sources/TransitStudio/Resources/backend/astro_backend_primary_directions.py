@@ -19,7 +19,7 @@ from astro_backend_core import (
     sign_degree,
     zodiac_sign_index,
 )
-from astro_backend_ephemeris import build_houses, body_longitude_at, calculate_positions
+from astro_backend_ephemeris import build_houses, body_longitude_at, calculate_positions, house_for_longitude
 
 ASPECT_ANGLES = {
     "conjunction": 0.0,
@@ -156,12 +156,7 @@ def calculate_primary_directions(
     mc_lon = angles.get("MC", 0.0)
     asc_lon = angles.get("ASC", 0.0)
     sun_lon = pos_by_id["SUN"]["longitude"]
-    sun_house = 1
-    for i, cusp in enumerate(cusps[:-1]):
-        next_cusp = cusps[i + 1] if i + 1 < len(cusps) else cusps[0] + 360
-        if cusp <= sun_lon < next_cusp or (next_cusp < cusp and (sun_lon >= cusp or sun_lon < next_cusp)):
-            sun_house = i + 1
-            break
+    sun_house = house_for_longitude(sun_lon, cusps)
     is_diurnal = sun_house >= 7
 
     directions: list[dict[str, Any]] = []

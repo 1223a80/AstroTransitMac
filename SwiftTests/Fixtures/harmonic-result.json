@@ -1,0 +1,408 @@
+{
+  "meta": {
+    "method": "harmonic_4",
+    "natal_utc": "1990-01-01T04:00:00+00:00",
+    "progressed_utc": null,
+    "ephemeris": "Swiss Ephemeris"
+  },
+  "planets": [
+    {
+      "body_id": "SUN",
+      "name": "太阳",
+      "longitude": 41.89772862557743,
+      "latitude": -1.4456373208462643e-07,
+      "speed": 4.077978313231081,
+      "sign": "金牛",
+      "degree_text": "11°53'52\" 金牛",
+      "house": 12
+    },
+    {
+      "body_id": "MOON",
+      "name": "月亮",
+      "longitude": 235.1545171242076,
+      "latitude": 1.0760957094851988,
+      "speed": 53.616723654960985,
+      "sign": "天蝎",
+      "degree_text": "25°09'16\" 天蝎",
+      "house": 6
+    },
+    {
+      "body_id": "MERCURY",
+      "name": "水星",
+      "longitude": 103.04017325730092,
+      "latitude": 0.5264157494465413,
+      "speed": -0.9152144476970239,
+      "sign": "巨蟹",
+      "degree_text": "13°02'25\" 巨蟹",
+      "house": 2
+    },
+    {
+      "body_id": "VENUS",
+      "name": "金星",
+      "longitude": 145.052209617696,
+      "latitude": 1.819410982703759,
+      "speed": -0.4650750598430841,
+      "sign": "狮子",
+      "degree_text": "25°03'08\" 狮子",
+      "house": 3
+    },
+    {
+      "body_id": "MARS",
+      "name": "火星",
+      "longitude": 279.06211829827066,
+      "latitude": -0.02927884615672335,
+      "speed": 2.8143068616005396,
+      "sign": "摩羯",
+      "degree_text": "09°03'44\" 摩羯",
+      "house": 8
+    },
+    {
+      "body_id": "JUPITER",
+      "name": "木星",
+      "longitude": 20.7746013506366,
+      "latitude": -0.11779759643045594,
+      "speed": -0.538623382884447,
+      "sign": "白羊",
+      "degree_text": "20°46'29\" 白羊",
+      "house": 11
+    },
+    {
+      "body_id": "SATURN",
+      "name": "土星",
+      "longitude": 62.472318220625766,
+      "latitude": 0.29371553637827535,
+      "speed": 0.4729616371786294,
+      "sign": "双子",
+      "degree_text": "02°28'20\" 双子",
+      "house": 1
+    },
+    {
+      "body_id": "URANUS",
+      "name": "天王星",
+      "longitude": 23.061732011605727,
+      "latitude": -0.27004982406245664,
+      "speed": 0.24014218918019264,
+      "sign": "白羊",
+      "degree_text": "23°03'42\" 白羊",
+      "house": 11
+    },
+    {
+      "body_id": "NEPTUNE",
+      "name": "海王星",
+      "longitude": 48.10187558520511,
+      "latitude": 0.8473821364872266,
+      "speed": 0.1516514115996087,
+      "sign": "金牛",
+      "degree_text": "18°06'07\" 金牛",
+      "house": 12
+    },
+    {
+      "body_id": "PLUTO",
+      "name": "冥王星",
+      "longitude": 188.33593770220955,
+      "latitude": 15.282379187055618,
+      "speed": 0.10992503778285076,
+      "sign": "天秤",
+      "degree_text": "08°20'09\" 天秤",
+      "house": 5
+    },
+    {
+      "body_id": "TRUE_NODE",
+      "name": "北交点 真",
+      "longitude": 187.4533729283187,
+      "latitude": 0.0,
+      "speed": 0.07492575495353365,
+      "sign": "天秤",
+      "degree_text": "07°27'12\" 天秤",
+      "house": 5
+    },
+    {
+      "body_id": "SOUTH_TRUE_NODE",
+      "name": "南交点 真",
+      "longitude": 187.4533729283187,
+      "latitude": 0.0,
+      "speed": 0.07492575495353365,
+      "sign": "天秤",
+      "degree_text": "07°27'12\" 天秤",
+      "house": 5
+    }
+  ],
+  "angles": [
+    {
+      "id": "ASC",
+      "name": "ASC",
+      "longitude": 70.46406921769825,
+      "sign": "双子",
+      "degree_text": "10°27'51\" 双子",
+      "house": 1,
+      "ruler": "水星",
+      "formula": null,
+      "formula_day": null,
+      "formula_night": null,
+      "used_formula": null
+    },
+    {
+      "id": "MC",
+      "name": "MC",
+      "longitude": 44.230528441366914,
+      "sign": "金牛",
+      "degree_text": "14°13'50\" 金牛",
+      "house": 12,
+      "ruler": "金星",
+      "formula": null,
+      "formula_day": null,
+      "formula_night": null,
+      "used_formula": null
+    },
+    {
+      "id": "DSC",
+      "name": "DSC",
+      "longitude": 250.46406921769824,
+      "sign": "射手",
+      "degree_text": "10°27'51\" 射手",
+      "house": 7,
+      "ruler": "木星",
+      "formula": null,
+      "formula_day": null,
+      "formula_night": null,
+      "used_formula": null
+    },
+    {
+      "id": "IC",
+      "name": "IC",
+      "longitude": 224.2305284413669,
+      "sign": "天蝎",
+      "degree_text": "14°13'50\" 天蝎",
+      "house": 6,
+      "ruler": "火星",
+      "formula": null,
+      "formula_day": null,
+      "formula_night": null,
+      "used_formula": null
+    }
+  ],
+  "houses": [
+    {
+      "house": 1,
+      "sign": "双子",
+      "cusp_longitude": 60.0,
+      "cusp_text": "00°00'00\" 双子",
+      "ruler": "水星"
+    },
+    {
+      "house": 2,
+      "sign": "巨蟹",
+      "cusp_longitude": 90.0,
+      "cusp_text": "00°00'00\" 巨蟹",
+      "ruler": "月亮"
+    },
+    {
+      "house": 3,
+      "sign": "狮子",
+      "cusp_longitude": 120.0,
+      "cusp_text": "00°00'00\" 狮子",
+      "ruler": "太阳"
+    },
+    {
+      "house": 4,
+      "sign": "处女",
+      "cusp_longitude": 150.0,
+      "cusp_text": "00°00'00\" 处女",
+      "ruler": "水星"
+    },
+    {
+      "house": 5,
+      "sign": "天秤",
+      "cusp_longitude": 180.0,
+      "cusp_text": "00°00'00\" 天秤",
+      "ruler": "金星"
+    },
+    {
+      "house": 6,
+      "sign": "天蝎",
+      "cusp_longitude": 210.0,
+      "cusp_text": "00°00'00\" 天蝎",
+      "ruler": "火星"
+    },
+    {
+      "house": 7,
+      "sign": "射手",
+      "cusp_longitude": 240.0,
+      "cusp_text": "00°00'00\" 射手",
+      "ruler": "木星"
+    },
+    {
+      "house": 8,
+      "sign": "摩羯",
+      "cusp_longitude": 270.0,
+      "cusp_text": "00°00'00\" 摩羯",
+      "ruler": "土星"
+    },
+    {
+      "house": 9,
+      "sign": "水瓶",
+      "cusp_longitude": 300.0,
+      "cusp_text": "00°00'00\" 水瓶",
+      "ruler": "土星"
+    },
+    {
+      "house": 10,
+      "sign": "双鱼",
+      "cusp_longitude": 330.0,
+      "cusp_text": "00°00'00\" 双鱼",
+      "ruler": "木星"
+    },
+    {
+      "house": 11,
+      "sign": "白羊",
+      "cusp_longitude": 0.0,
+      "cusp_text": "00°00'00\" 白羊",
+      "ruler": "火星"
+    },
+    {
+      "house": 12,
+      "sign": "金牛",
+      "cusp_longitude": 30.0,
+      "cusp_text": "00°00'00\" 金牛",
+      "ruler": "金星"
+    }
+  ],
+  "houses_experimental": true,
+  "aspects": [
+    {
+      "id": "MOON|square|VENUS|0.10230751",
+      "transit_body_id": "MOON",
+      "transit_body_name": "月亮",
+      "natal_body_id": "VENUS",
+      "natal_body_name": "金星",
+      "aspect_id": "square",
+      "aspect_name": "刑相",
+      "angle": 90.0,
+      "separation": 90.10230750651158,
+      "orb": 0.10230750651157905
+    },
+    {
+      "id": "MARS|square|PLUTO|0.72618060",
+      "transit_body_id": "MARS",
+      "transit_body_name": "火星",
+      "natal_body_id": "PLUTO",
+      "natal_body_name": "冥王星",
+      "aspect_id": "square",
+      "aspect_name": "刑相",
+      "angle": 90.0,
+      "separation": 90.72618059606111,
+      "orb": 0.7261805960611127
+    },
+    {
+      "id": "SUN|sextile|MERCURY|1.14244463",
+      "transit_body_id": "SUN",
+      "transit_body_name": "太阳",
+      "natal_body_id": "MERCURY",
+      "natal_body_name": "水星",
+      "aspect_id": "sextile",
+      "aspect_name": "六合",
+      "angle": 60.0,
+      "separation": 61.14244463172349,
+      "orb": 1.1424446317234924
+    },
+    {
+      "id": "VENUS|trine|URANUS|1.99047761",
+      "transit_body_id": "VENUS",
+      "transit_body_name": "金星",
+      "natal_body_id": "URANUS",
+      "natal_body_name": "天王星",
+      "aspect_id": "trine",
+      "aspect_name": "拱相",
+      "angle": 120.0,
+      "separation": 121.99047760609028,
+      "orb": 1.9904776060902805
+    },
+    {
+      "id": "JUPITER|conjunction|URANUS|2.28713066",
+      "transit_body_id": "JUPITER",
+      "transit_body_name": "木星",
+      "natal_body_id": "URANUS",
+      "natal_body_name": "天王星",
+      "aspect_id": "conjunction",
+      "aspect_name": "合相",
+      "angle": 0.0,
+      "separation": 2.287130660969126,
+      "orb": 2.287130660969126
+    },
+    {
+      "id": "SUN|trine|MARS|2.83561033",
+      "transit_body_id": "SUN",
+      "transit_body_name": "太阳",
+      "natal_body_id": "MARS",
+      "natal_body_name": "火星",
+      "aspect_id": "trine",
+      "aspect_name": "拱相",
+      "angle": 120.0,
+      "separation": 122.83561032730677,
+      "orb": 2.8356103273067674
+    },
+    {
+      "id": "MERCURY|opposition|MARS|3.97805496",
+      "transit_body_id": "MERCURY",
+      "transit_body_name": "水星",
+      "natal_body_id": "MARS",
+      "natal_body_name": "火星",
+      "aspect_id": "opposition",
+      "aspect_name": "冲相",
+      "angle": 180.0,
+      "separation": 176.02194504096974,
+      "orb": 3.97805495903026
+    },
+    {
+      "id": "VENUS|trine|JUPITER|4.27760827",
+      "transit_body_id": "VENUS",
+      "transit_body_name": "金星",
+      "natal_body_id": "JUPITER",
+      "natal_body_name": "木星",
+      "aspect_id": "trine",
+      "aspect_name": "拱相",
+      "angle": 120.0,
+      "separation": 124.2776082670594,
+      "orb": 4.277608267059406
+    },
+    {
+      "id": "MERCURY|square|PLUTO|4.70423556",
+      "transit_body_id": "MERCURY",
+      "transit_body_name": "水星",
+      "natal_body_id": "PLUTO",
+      "natal_body_name": "冥王星",
+      "aspect_id": "square",
+      "aspect_name": "刑相",
+      "angle": 90.0,
+      "separation": 85.29576444490863,
+      "orb": 4.704235555091373
+    },
+    {
+      "id": "MERCURY|sextile|NEPTUNE|5.06170233",
+      "transit_body_id": "MERCURY",
+      "transit_body_name": "水星",
+      "natal_body_id": "NEPTUNE",
+      "natal_body_name": "海王星",
+      "aspect_id": "sextile",
+      "aspect_name": "六合",
+      "angle": 60.0,
+      "separation": 54.938297672095814,
+      "orb": 5.061702327904186
+    },
+    {
+      "id": "SATURN|trine|PLUTO|5.86361948",
+      "transit_body_id": "SATURN",
+      "transit_body_name": "土星",
+      "natal_body_id": "PLUTO",
+      "natal_body_name": "冥王星",
+      "aspect_id": "trine",
+      "aspect_name": "拱相",
+      "angle": 120.0,
+      "separation": 125.86361948158378,
+      "orb": 5.8636194815837825
+    }
+  ],
+  "warnings": [],
+  "harmonic_order": 4,
+  "section_errors": null
+}

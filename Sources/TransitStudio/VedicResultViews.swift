@@ -73,7 +73,7 @@ struct VedicOverviewView: View {
                             Text("Ayanamsha")
                                 .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
-                            Text(result.meta.ayanamsha)
+                            Text(result.meta.ayanamshaName ?? result.meta.ayanamsha)
                                 .font(TS.Font.body)
                                 .textSelection(.enabled)
                         }

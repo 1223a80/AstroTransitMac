@@ -26,11 +26,13 @@ extension ContentView {
                         // Invalidate in-flight immediately, before debounce fires
                         calcVM.rectifyLevel2Gen += 1
                         calcVM.rectifyLevel3Gen += 1
-                        Task { await runRectifyLevel2(offsetSeconds: offsetSec) }
+                        calcVM.rectifyLevel2Task?.cancel()
+                        calcVM.rectifyLevel2Task = Task { await runRectifyLevel2(offsetSeconds: offsetSec) }
                     },
                     onComputeLevel3: { offsetSec in
                         calcVM.rectifyLevel3Gen += 1
-                        Task { await runRectifyLevel3(offsetSeconds: offsetSec) }
+                        calcVM.rectifyLevel3Task?.cancel()
+                        calcVM.rectifyLevel3Task = Task { await runRectifyLevel3(offsetSeconds: offsetSec) }
                     }
                 )
             } else {

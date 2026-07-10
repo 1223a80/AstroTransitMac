@@ -20,7 +20,7 @@ extension ContentView {
                             .labelsHidden()
                             .frame(width: 180)
                         Button("重算全盘") {
-                            Task { await runClassicalTiming() }
+                            startTrackedRun(isStoppable: true) { await runClassicalTiming() }
                         }
                         .disabled(calcVM.isRunning)
                         .font(TS.Font.label)
@@ -216,6 +216,8 @@ extension ContentView {
         switch calcVM.classicalSelectedTab {
         case "wheel":
             ChartWheelView(data: ChartWheelData(classicalResult: result))
+        case "planets":
+            ClassicalPlanetTableView(planets: result.planets)
         case "points":
             ClassicalPointsView(angles: result.angles, lots: result.lots, experimentalLots: result.experimentalLots)
         case "houses":

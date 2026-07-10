@@ -125,7 +125,9 @@ struct AppNavigationRail: View {
         return navButtonLabel(title: title, icon: icon, isSelected: isSelected) {
             isShowingSettingsPage = false
             selectedMode = .settings
-            modernSubMode = subMode
+            if modernSubMode != subMode {
+                modernSubMode = subMode
+            }
         }
     }
 

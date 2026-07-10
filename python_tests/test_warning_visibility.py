@@ -64,6 +64,116 @@ class TestHouseSystemWarnings:
         assert warnings == []
 
 
+class TestPanchangaSunriseSunsetWarnings:
+    def test_sunrise_sunset_errors_surface_as_warnings(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from astro_backend_jyotish import calculate_vedic
+        import astro_backend_jyotish_panchanga as panchanga_mod
+
+        def boom_solar_day(*args, **kwargs):
+            return {
+                "sunrise_local": None,
+                "sunset_local": None,
+                "sunrise_error": "rise boom",
+                "sunset_error": "set boom",
+            }
+
+        # calculate_vedic does `from ... import calc_sunrise_sunset` each call,
+        # so patch the module attribute that import will bind.
+        monkeypatch.setattr(panchanga_mod, "calc_sunrise_sunset", boom_solar_day)
+
+        request = {
+            "mode": "vedic",
+            "birth": {
+                "moment": {
+                    "year": 1990, "month": 4, "day": 20, "hour": 12, "minute": 0,
+                    "timezone": "Asia/Shanghai",
+                },
+                "latitude": 39.93,
+                "longitude": 116.41,
+                "houseSystem": "whole_sign",
+                "zodiac": "sidereal_lahiri",
+            },
+            "reference": {
+                "year": 2026, "month": 1, "day": 1, "hour": 12, "minute": 0,
+                "timezone": "Asia/Shanghai",
+            },
+            "full": False,
+            "vargas": ["D1"],
+            "dasas": ["vimshottari"],
+            "shadbala": False,
+            "yogas": False,
+        }
+        warnings: list[str] = []
+        result = calculate_vedic(request, warnings)
+        combined = list(result.get("warnings", [])) + warnings
+        assert any("日出计算失败" in w and "rise boom" in w for w in combined)
+        assert any("日落计算失败" in w and "set boom" in w for w in combined)
+
+
+class TestAshtakavargaMissingASC:
+    def test_missing_asc_records_note(self) -> None:
+        from astro_backend_jyotish_ashtakavarga import compute_ashtakavarga
+
+        positions = {
+            "SUN": {"longitude": 10.0},
+            "MOON": {"longitude": 40.0},
+            "MARS": {"longitude": 70.0},
+            "MERCURY": {"longitude": 100.0},
+            "JUPITER": {"longitude": 130.0},
+            "VENUS": {"longitude": 160.0},
+            "SATURN": {"longitude": 190.0},
+        }
+        result = compute_ashtakavarga(positions, None)
+        assert "notes" in result
+        assert any("ASC 缺失" in n for n in result["notes"])
+        assert "bav" in result and "sav" in result
+
+
+class TestSolarArcInternalAspectWarning:
+    def test_internal_aspect_failure_warns(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        from astro_backend_solar_arc import calculate_solar_arc
+
+        import astro_backend_solar_arc as sa_mod
+
+        original = sa_mod.find_aspects
+        calls = {"n": 0}
+
+        def flaky_find_aspects(*args, **kwargs):
+            calls["n"] += 1
+            if calls["n"] >= 2:
+                raise RuntimeError("internal aspects exploded")
+            return original(*args, **kwargs)
+
+        monkeypatch.setattr(sa_mod, "find_aspects", flaky_find_aspects)
+        request = {
+            "mode": "solar_arc",
+            "birth": {
+                "moment": {
+                    "year": 1990, "month": 1, "day": 1, "hour": 12, "minute": 0,
+                    "timezone": "Asia/Shanghai",
+                },
+                "latitude": 31.23,
+                "longitude": 121.47,
+                "houseSystem": "whole_sign",
+                "zodiac": "tropical",
+            },
+            "reference": {
+                "year": 2026, "month": 1, "day": 1, "hour": 12, "minute": 0,
+                "timezone": "Asia/Shanghai",
+            },
+            "house_system": "whole_sign",
+            "zodiac": "tropical",
+            "aspects": [{"id": "conjunction", "name": "合相", "angle": 0, "orb": 8}],
+            "patterns_enabled": True,
+        }
+        warnings: list[str] = []
+        result = calculate_solar_arc(request, warnings)
+        assert any("内部相位" in w for w in warnings)
+        assert result.get("section_errors", {}).get("solar_arc_internal")
+
+
 class TestPatternShapeFailureWarning:
     def test_chart_shape_crash_appends_warning(self, monkeypatch: pytest.MonkeyPatch) -> None:
         import astro_backend_patterns as patterns_mod

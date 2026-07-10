@@ -150,7 +150,8 @@ def compute_ashtakavarga(
     Returns:
         Dict with bav and sav sections.
     """
-    # Get planet rasis
+    # Get planet rasis. Missing ASC is an explicit fallback (Aries), not a silent default.
+    notes: list[str] = []
     planet_rasi = {}
     for pid, idx in PLANET_INDEX.items():
         if pid == "ASC":
@@ -158,14 +159,11 @@ def compute_ashtakavarga(
                 planet_rasi[pid] = zodiac_sign_index(asc_longitude)
             else:
                 planet_rasi[pid] = 0
+                notes.append("ASC 缺失，Ashtakavarga 的 ASC 行按白羊座 (0°) 回退计算。")
         elif pid in planet_positions:
             planet_rasi[pid] = zodiac_sign_index(planet_positions[pid]["longitude"])
         else:
             planet_rasi[pid] = 0
-
-    # Use Moon's rasi as a proxy for ASC position if not available in planet_positions
-    # ASC is needed as a reference point for patterns
-    # For simplicity, assume ASC = 0 (Aries) as a placeholder
 
     # Initialize rekha, trikona, ekadhi matrices [planet][rasi]
     # 8 planets × 12 rasis
@@ -256,7 +254,7 @@ def compute_ashtakavarga(
     for pid in ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN", "ASC"]:
         bav_matrix[pid] = bav_planets[pid]["rekha"]
 
-    return {
+    result = {
         "bav": {
             "planets": bav_matrix,
             "rekha_by_planet": bav_planets,
@@ -267,3 +265,6 @@ def compute_ashtakavarga(
             "ekadhi": sarva_ekadhi,
         },
     }
+    if notes:
+        result["notes"] = notes
+    return result

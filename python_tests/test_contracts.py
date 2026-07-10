@@ -222,7 +222,7 @@ class TestScanContract:
 
 
 class TestErrorContract:
-    def test_invalid_mode_falls_back_to_moment(self) -> None:
+    def test_invalid_mode_is_rejected_explicitly(self) -> None:
         result = subprocess.run(
             ["python3", str(TRANSIT_CALC)],
             input=json.dumps({"mode": "nonexistent"}),
@@ -234,7 +234,8 @@ class TestErrorContract:
         assert result.returncode == 0
         data = json.loads(result.stdout)
         assert "error" in data
-        assert "missing" in data
+        assert data["error"] == "不支持的 mode：nonexistent"
+        assert data["mode"] == "nonexistent"
         assert data["mode"] == "nonexistent"
 
     def test_missing_fields_handled_as_error(self) -> None:

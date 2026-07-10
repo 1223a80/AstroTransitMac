@@ -134,23 +134,48 @@ def moment_to_local_datetime(moment: dict[str, Any]) -> datetime:
         sign = 1 if offset_match.group(1) == "+" else -1
         hours = int(offset_match.group(2))
         minutes = int(offset_match.group(3) or "0")
-        if hours > 14 or minutes >= 60:
+        if hours > 14 or minutes >= 60 or (hours == 14 and minutes != 0):
             raise ValueError(f"未知时区：{moment.get('timezone')}")
         zone = timezone(sign * timedelta(hours=hours, minutes=minutes), name=f"GMT{offset_match.group(1)}{hours:g}")
+        return datetime(
+            int(moment["year"]),
+            int(moment["month"]),
+            int(moment["day"]),
+            int(moment["hour"]),
+            int(moment["minute"]),
+            tzinfo=zone,
+        )
     else:
         try:
             zone = ZoneInfo(zone_text)
         except ZoneInfoNotFoundError as exc:
             raise ValueError(f"未知时区：{moment.get('timezone')}") from exc
 
-    return datetime(
+    naive = datetime(
         int(moment["year"]),
         int(moment["month"]),
         int(moment["day"]),
         int(moment["hour"]),
         int(moment["minute"]),
-        tzinfo=zone,
     )
+    candidates = [naive.replace(tzinfo=zone, fold=fold) for fold in (0, 1)]
+    valid = [
+        candidate.astimezone(timezone.utc).astimezone(zone).replace(tzinfo=None) == naive
+        for candidate in candidates
+    ]
+    if not any(valid):
+        raise ValueError(f"本地时间不存在（夏令时跳时）：{naive:%Y-%m-%d %H:%M} {zone_text}")
+
+    is_ambiguous = valid[0] and valid[1] and candidates[0].utcoffset() != candidates[1].utcoffset()
+    requested_fold = moment.get("fold")
+    if is_ambiguous and requested_fold is None:
+        raise ValueError(
+            f"本地时间有两个可能时刻（夏令时回拨）：{naive:%Y-%m-%d %H:%M} {zone_text}；请传 fold=0 或 fold=1"
+        )
+    fold = int(requested_fold or 0)
+    if fold not in (0, 1) or not valid[fold]:
+        raise ValueError("fold 必须为 0 或 1，且对应有效的本地时间")
+    return candidates[fold]
 
 
 def jd_from_datetime(dt: datetime) -> float:
@@ -223,6 +248,12 @@ def circular_midpoint(lon1: float, lon2: float) -> float:
     if abs(abs(diff) - 180.0) < 1e-9:
         return norm360(lon1 + 90.0)
     return norm360(lon1 + diff / 2.0)
+
+
+def geographic_longitude_midpoint(lon1: float, lon2: float) -> float:
+    """Shortest-arc midpoint normalized to geographic -180...180 longitude."""
+    midpoint = circular_midpoint(norm360(lon1), norm360(lon2))
+    return ((midpoint + 180.0) % 360.0) - 180.0
 
 
 def zodiac_sign_index(longitude: float) -> int:
@@ -447,10 +478,6 @@ def target_by_name(targets: list[TargetSpec], suffix: str) -> TargetSpec | None:
 
 
 def validate_targets(targets: list[TargetSpec]) -> None:
-    sign_buckets = {int(target.longitude // 30) for target in targets}
-    if len(targets) >= 4 and len(sign_buckets) <= 1:
-        raise ValueError("Targets collapsed into one sign. Check degree_in_sign vs absolute_longitude.")
-
     for first, second in [("asc", "dsc"), ("mc", "ic"), ("house cusp 3rd", "house cusp 9th")]:
         a = target_by_name(targets, first)
         b = target_by_name(targets, second)
@@ -495,9 +522,8 @@ def add_years_approx(dt: datetime, years: float) -> datetime:
 
 def completed_age(birth_dt: datetime, reference_dt: datetime) -> int:
     age = reference_dt.year - birth_dt.year
-    birth_tuple = (birth_dt.month, birth_dt.day, birth_dt.hour, birth_dt.minute)
-    ref_tuple = (reference_dt.month, reference_dt.day, reference_dt.hour, reference_dt.minute)
-    if ref_tuple < birth_tuple:
+    anniversary = same_month_day(reference_dt.year, birth_dt)
+    if reference_dt < anniversary:
         age -= 1
     return max(age, 0)
 

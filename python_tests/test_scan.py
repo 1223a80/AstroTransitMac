@@ -195,10 +195,27 @@ class TestRejectOversized:
         from astro_backend_scan import reject_oversized_scan
         reject_oversized_scan(100)  # should not raise
 
+    def test_soft_warning_is_non_blocking(self) -> None:
+        from astro_backend_scan import reject_oversized_scan, SCAN_SOFT_WARNING_WORK_UNITS
+        warnings = []
+        reject_oversized_scan(SCAN_SOFT_WARNING_WORK_UNITS + 1, warnings=warnings)
+        assert warnings
+
+    def test_confirmation_threshold_requires_confirmation(self) -> None:
+        from astro_backend_scan import reject_oversized_scan, SCAN_CONFIRMATION_WORK_UNITS
+        with pytest.raises(ValueError, match="确认"):
+            reject_oversized_scan(SCAN_CONFIRMATION_WORK_UNITS + 1)
+
+    def test_confirmed_heavy_scan_passes_until_max_limit(self) -> None:
+        from astro_backend_scan import reject_oversized_scan, SCAN_CONFIRMATION_WORK_UNITS
+        warnings = []
+        reject_oversized_scan(SCAN_CONFIRMATION_WORK_UNITS + 1, warnings=warnings, confirmed=True)
+        assert warnings
+
     def test_over_limit_raises(self) -> None:
         from astro_backend_scan import reject_oversized_scan, MAX_SCAN_WORK_UNITS
         with pytest.raises(ValueError, match="扫描窗口过大"):
-            reject_oversized_scan(MAX_SCAN_WORK_UNITS + 1)
+            reject_oversized_scan(MAX_SCAN_WORK_UNITS + 1, confirmed=True)
 
 
 class TestEstimateSteps:
@@ -234,6 +251,7 @@ class TestIngressScan:
             _spec: BodySpec,
             _warnings: list[str],
             _warning_keys: set[str],
+            sidereal: bool = False,
         ) -> tuple[float, str]:
             if dt == start:
                 return 0.5, "test"
@@ -246,7 +264,7 @@ class TestIngressScan:
         monkeypatch.setattr(
             scan,
             "refine_crossing",
-            lambda _start, _end, _spec, _exact_lon, _warnings, _warning_keys: start + timedelta(minutes=30),
+            lambda _start, _end, _spec, _exact_lon, _warnings, _warning_keys, sidereal=False: start + timedelta(minutes=30),
         )
 
         result = scan.scan_ingresses(start, end, [BodySpec("MERCURY", "水星", 2)], "test", [])

@@ -4,13 +4,20 @@ import Foundation
 private let currentLocationMaximumAge: TimeInterval = 60
 private let currentLocationMaximumHorizontalAccuracy: CLLocationAccuracy = 1000
 
+struct CurrentLocationResult {
+    let placeName: String
+    let latitude: Double
+    let longitude: Double
+    let timeZone: TimeZone?
+}
+
 @MainActor
 final class CurrentLocationManager: NSObject, ObservableObject {
     @Published var statusText = "未定位"
     @Published var isLocating = false
 
     private let manager = CLLocationManager()
-    private var completion: ((Result<(String, Double, Double), Error>) -> Void)?
+    private var completion: ((Result<CurrentLocationResult, Error>) -> Void)?
 
     override init() {
         super.init()
@@ -18,7 +25,7 @@ final class CurrentLocationManager: NSObject, ObservableObject {
         manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
     }
 
-    func requestCurrentLocation(completion: @escaping (Result<(String, Double, Double), Error>) -> Void) {
+    func requestCurrentLocation(completion: @escaping (Result<CurrentLocationResult, Error>) -> Void) {
         self.completion = completion
         let status = manager.authorizationStatus
 
@@ -99,9 +106,14 @@ extension CurrentLocationManager: CLLocationManagerDelegate {
 
         CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
             Task { @MainActor in
-                if let error {
+                if error != nil {
                     self.statusText = "定位成功，地名解析失败"
-                    self.completion?(.failure(error))
+                    self.completion?(.success(CurrentLocationResult(
+                        placeName: "当前位置",
+                        latitude: location.coordinate.latitude,
+                        longitude: location.coordinate.longitude,
+                        timeZone: nil
+                    )))
                     self.completion = nil
                     self.isLocating = false
                     return
@@ -114,7 +126,12 @@ extension CurrentLocationManager: CLLocationManagerDelegate {
                 } ?? "Current Location"
 
                 self.statusText = "定位成功"
-                self.completion?(.success((placeName, location.coordinate.latitude, location.coordinate.longitude)))
+                self.completion?(.success(CurrentLocationResult(
+                    placeName: placeName,
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude,
+                    timeZone: placemarks?.first?.timeZone
+                )))
                 self.completion = nil
                 self.isLocating = false
             }

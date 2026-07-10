@@ -14,18 +14,23 @@ enum RectifyClient {
             throw BackendClientError.scriptNotFound
         }
 
-        let encoder = JSONEncoder()
-        let payload = try encoder.encode(request)
-
-        let tmpDir = FileManager.default.temporaryDirectory
-        let stdoutURL = tmpDir.appendingPathComponent("rectify-out-\(UUID().uuidString).json")
-
+        let payload = try JSONEncoder().encode(request)
+        let stdoutURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("rectify-out-\(UUID().uuidString).json")
         FileManager.default.createFile(atPath: stdoutURL.path, contents: nil)
         let stdoutHandle = try FileHandle(forWritingTo: stdoutURL)
 
         let process = Process()
         let stdin = Pipe()
         let stderrPipe = Pipe()
+        let stderrBuffer = RectifyStderrBuffer()
+        let resources = RectifyProcessResources(
+            process: process,
+            stderrPipe: stderrPipe,
+            stdoutHandle: stdoutHandle,
+            stdoutURL: stdoutURL
+        )
+        let state = RectifyContinuationState()
 
         let trimmedPath = pythonPath.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmedPath.contains("/") {
@@ -35,7 +40,6 @@ enum RectifyClient {
             process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
             process.arguments = [trimmedPath.isEmpty ? "python3" : trimmedPath, scriptURL.path]
         }
-
         process.standardInput = stdin
         process.standardOutput = stdoutHandle
         process.standardError = stderrPipe
@@ -43,104 +47,185 @@ enum RectifyClient {
         environment["PYTHONDONTWRITEBYTECODE"] = "1"
         process.environment = environment
 
-        return try await withCheckedThrowingContinuation { continuation in
-            let guardState = ContinuationGuard()
-            var stderrAccumulator = Data()
-            let stderrLock = NSLock()
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                guard state.install(continuation) else { return }
 
-            // Read stderr in real time for progress callbacks
-            stderrPipe.fileHandleForReading.readabilityHandler = { handle in
-                let data = handle.availableData
-                guard !data.isEmpty else { return }
-                stderrLock.lock()
-                stderrAccumulator.append(data)
-                stderrLock.unlock()
-                if let str = String(data: data, encoding: .utf8) {
-                    for line in str.components(separatedBy: "\n") {
-                        guard !line.isEmpty,
-                              let json = try? JSONSerialization.jsonObject(with: Data(line.utf8)),
-                              let dict = json as? [String: Any],
-                              let p = dict["progress"] as? Double
-                        else { continue }
-                        progressCallback?(p)
+                stderrPipe.fileHandleForReading.readabilityHandler = { handle in
+                    let data = handle.availableData
+                    guard !data.isEmpty else { return }
+                    for progress in stderrBuffer.append(data) {
+                        progressCallback?(progress)
                     }
                 }
-            }
 
-            // Timeout watchdog
-            Task {
-                try? await Task.sleep(nanoseconds: UInt64(defaultTimeoutSeconds * 1_000_000_000))
-                if guardState.tryResume() {
-                    stderrPipe.fileHandleForReading.readabilityHandler = nil
-                    process.terminate()
-                    stdoutHandle.closeFile()
-                    try? FileManager.default.removeItem(at: stdoutURL)
-                    continuation.resume(throwing: BackendClientError.processFailed(
+                process.terminationHandler = { proc in
+                    let outData = (try? Data(contentsOf: stdoutURL)) ?? Data()
+                    let errData = stderrBuffer.allData()
+                    resources.cleanup(terminate: false)
+
+                    guard proc.terminationStatus == 0 else {
+                        let message = String(data: errData, encoding: .utf8) ?? "Unknown error"
+                        state.finish(.failure(BackendClientError.processFailed(message)))
+                        return
+                    }
+                    if let backendError = tryDecodeBackendError(from: outData) {
+                        state.finish(.failure(backendError))
+                        return
+                    }
+                    do {
+                        state.finish(.success(try JSONDecoder().decode(RectifyResponse.self, from: outData)))
+                    } catch {
+                        let raw = String(data: outData, encoding: .utf8) ?? "<binary>"
+                        state.finish(.failure(BackendClientError.invalidOutput(raw)))
+                    }
+                }
+
+                let watchdog = Task {
+                    do {
+                        try await Task.sleep(nanoseconds: UInt64(defaultTimeoutSeconds * 1_000_000_000))
+                    } catch {
+                        return
+                    }
+                    resources.cleanup(terminate: true)
+                    state.finish(.failure(BackendClientError.processFailed(
                         "Python 后端执行超时（超过 \(Int(defaultTimeoutSeconds)) 秒）。"
-                    ))
+                    )))
                 }
-            }
-
-            process.terminationHandler = { proc in
-                stderrPipe.fileHandleForReading.readabilityHandler = nil
-                stdoutHandle.closeFile()
-
-                let outData = (try? Data(contentsOf: stdoutURL)) ?? Data()
-                stderrLock.lock()
-                let errData = stderrAccumulator
-                stderrLock.unlock()
-
-                try? FileManager.default.removeItem(at: stdoutURL)
-
-                guard guardState.tryResume() else { return }
-
-                if proc.terminationStatus != 0 {
-                    let msg = String(data: errData, encoding: .utf8) ?? "Unknown error"
-                    continuation.resume(throwing: BackendClientError.processFailed(msg))
-                    return
-                }
-
-                if let backendError = tryDecodeBackendError(from: outData) {
-                    continuation.resume(throwing: backendError)
-                    return
-                }
+                state.setWatchdog(watchdog)
 
                 do {
-                    let response = try JSONDecoder().decode(RectifyResponse.self, from: outData)
-                    continuation.resume(returning: response)
+                    try process.run()
+                    if Task.isCancelled {
+                        resources.cleanup(terminate: true)
+                        state.finish(.failure(CancellationError()))
+                        return
+                    }
+                    stdin.fileHandleForWriting.write(payload)
+                    stdin.fileHandleForWriting.closeFile()
                 } catch {
-                    let raw = String(data: outData, encoding: .utf8) ?? "<binary>"
-                    continuation.resume(throwing: BackendClientError.invalidOutput(raw))
+                    resources.cleanup(terminate: true)
+                    state.finish(.failure(BackendClientError.processFailed(error.localizedDescription)))
                 }
             }
-
-            do {
-                try process.run()
-                stdin.fileHandleForWriting.write(payload)
-                stdin.fileHandleForWriting.closeFile()
-            } catch {
-                stderrPipe.fileHandleForReading.readabilityHandler = nil
-                guardState.tryResume()
-                stdoutHandle.closeFile()
-                try? FileManager.default.removeItem(at: stdoutURL)
-                continuation.resume(throwing: BackendClientError.processFailed(error.localizedDescription))
-            }
+        } onCancel: {
+            resources.cleanup(terminate: true)
+            state.finish(.failure(CancellationError()))
         }
     }
 }
 
-private final class ContinuationGuard: @unchecked Sendable {
+private final class RectifyContinuationState: @unchecked Sendable {
     private let lock = NSLock()
-    private var resumed = false
+    private var continuation: CheckedContinuation<RectifyResponse, Error>?
+    private var terminalResult: Result<RectifyResponse, Error>?
+    private var watchdog: Task<Void, Never>?
 
-    func tryResume() -> Bool {
+    func install(_ continuation: CheckedContinuation<RectifyResponse, Error>) -> Bool {
         lock.lock()
-        if resumed {
+        if let result = terminalResult {
             lock.unlock()
+            continuation.resume(with: result)
             return false
         }
-        resumed = true
+        self.continuation = continuation
         lock.unlock()
         return true
+    }
+
+    func setWatchdog(_ task: Task<Void, Never>) {
+        lock.lock()
+        if terminalResult == nil {
+            watchdog = task
+            lock.unlock()
+        } else {
+            lock.unlock()
+            task.cancel()
+        }
+    }
+
+    func finish(_ result: Result<RectifyResponse, Error>) {
+        lock.lock()
+        guard terminalResult == nil else {
+            lock.unlock()
+            return
+        }
+        terminalResult = result
+        let continuation = continuation
+        self.continuation = nil
+        let watchdog = watchdog
+        self.watchdog = nil
+        lock.unlock()
+
+        watchdog?.cancel()
+        continuation?.resume(with: result)
+    }
+}
+
+private final class RectifyProcessResources: @unchecked Sendable {
+    private let lock = NSLock()
+    private let process: Process
+    private let stderrPipe: Pipe
+    private let stdoutHandle: FileHandle
+    private let stdoutURL: URL
+    private var cleaned = false
+
+    init(process: Process, stderrPipe: Pipe, stdoutHandle: FileHandle, stdoutURL: URL) {
+        self.process = process
+        self.stderrPipe = stderrPipe
+        self.stdoutHandle = stdoutHandle
+        self.stdoutURL = stdoutURL
+    }
+
+    func cleanup(terminate: Bool) {
+        lock.lock()
+        guard !cleaned else {
+            lock.unlock()
+            return
+        }
+        cleaned = true
+        lock.unlock()
+
+        stderrPipe.fileHandleForReading.readabilityHandler = nil
+        process.terminationHandler = nil
+        if terminate, process.isRunning {
+            process.terminate()
+        }
+        try? stdoutHandle.close()
+        try? FileManager.default.removeItem(at: stdoutURL)
+    }
+}
+
+final class RectifyStderrBuffer: @unchecked Sendable {
+    private let lock = NSLock()
+    private var accumulated = Data()
+    private var pending = Data()
+
+    func append(_ data: Data) -> [Double] {
+        lock.lock()
+        accumulated.append(data)
+        pending.append(data)
+        var lines: [Data] = []
+        while let newline = pending.firstIndex(of: 0x0A) {
+            lines.append(pending[..<newline])
+            pending.removeSubrange(...newline)
+        }
+        lock.unlock()
+
+        return lines.compactMap { line in
+            guard !line.isEmpty,
+                  let object = try? JSONSerialization.jsonObject(with: line),
+                  let dictionary = object as? [String: Any],
+                  let progress = dictionary["progress"] as? Double
+            else { return nil }
+            return progress
+        }
+    }
+
+    func allData() -> Data {
+        lock.lock()
+        let data = accumulated
+        lock.unlock()
+        return data
     }
 }

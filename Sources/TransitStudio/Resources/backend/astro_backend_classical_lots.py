@@ -162,7 +162,14 @@ reg("acquisition_old","获取点","Acquisition","ASC + Spirit - Fortune","ASC + 
 reg("children_old","子女点(旧)","Children(Old)","ASC + Jupiter - Saturn","ASC + Saturn - Jupiter","experimental","Paulus","planet:JUPITER","planet:SATURN")
 
 
-def _resolve_lot_ref(ref: str, computed: dict[str, float], positions, asc: float, mc: float | None = None) -> float:
+def _resolve_lot_ref(
+    ref: str,
+    computed: dict[str, float],
+    positions,
+    asc: float,
+    mc: float | None = None,
+    cusps: list[float] | None = None,
+) -> float:
     """Resolve a reference that may be another lot's ID or a ``planet:``/``house:``/etc spec."""
     if ref in computed:
         return computed[ref]
@@ -173,6 +180,8 @@ def _resolve_lot_ref(ref: str, computed: dict[str, float], positions, asc: float
         return positions[pid]["longitude"]
     if ref.startswith("house:"):
         h = int(ref.split(":", 1)[1])
+        if cusps is not None and len(cusps) == 12 and 1 <= h <= 12:
+            return norm360(cusps[h - 1])
         return house_cusp_lon(h)
     if ref.startswith("lon:"):
         return float(ref.split(":", 1)[1])
@@ -219,7 +228,7 @@ def calculate_lots(
     asc = angles["ASC"]
 
     # Resolve MC for magistery lot
-    mc_lon = mc if mc is not None else house_cusp_lon(10)
+    mc_lon = mc if mc is not None else (norm360(cusps[9]) if len(cusps) == 12 else house_cusp_lon(10))
 
     # First pass: compute lots in order (dependencies: earlier lots feed later ones)
     computed: dict[str, float] = {}
@@ -237,8 +246,8 @@ def calculate_lots(
             p1 = lot_def["day_p1"] if is_day else lot_def["night_p1"]
             p2 = lot_def["day_p2"] if is_day else lot_def["night_p2"]
 
-            a = _resolve_lot_ref(p1, computed, positions, asc, mc=mc_lon)
-            b = _resolve_lot_ref(p2, computed, positions, asc, mc=mc_lon)
+            a = _resolve_lot_ref(p1, computed, positions, asc, mc=mc_lon, cusps=cusps)
+            b = _resolve_lot_ref(p2, computed, positions, asc, mc=mc_lon, cusps=cusps)
             lon = lot_value(asc, a, b)
 
             computed[lid] = lon

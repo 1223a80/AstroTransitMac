@@ -26,23 +26,6 @@ struct ModernDiagnosticsView: View {
 struct SynastryResultPane: View {
     let result: SynastryResult
     @Binding var selectedTab: String
-    let streamKey: String
-    let analysis: String
-    let reasoning: String
-    let isAnalyzing: Bool
-    let canAnalyze: Bool
-    let onAnalyze: () -> Void
-
-    init(result: SynastryResult, selectedTab: Binding<String>, streamKey: String = "", analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
-        self.result = result
-        self._selectedTab = selectedTab
-        self.streamKey = streamKey
-        self.analysis = analysis
-        self.reasoning = reasoning
-        self.isAnalyzing = isAnalyzing
-        self.canAnalyze = canAnalyze
-        self.onAnalyze = onAnalyze
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
@@ -65,7 +48,7 @@ struct SynastryResultPane: View {
     var tabs: [(String, String)] {
         [
             ("cross_aspects", "跨盘相位"), ("a_in_b_houses", "A入B宫"), ("b_in_a_houses", "B入A宫"),
-            ("person_a_planets", "A本命"), ("person_b_planets", "B本命"), ("ai", "AI分析"),
+            ("person_a_planets", "A本命"), ("person_b_planets", "B本命"),
         ]
     }
 
@@ -99,16 +82,6 @@ struct SynastryResultPane: View {
             ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
         case "json":
             RawJSONView(value: result)
-        case "ai":
-            AIAnalysisView(
-                streamKey: streamKey,
-                analysis: analysis,
-                reasoning: reasoning,
-                isAnalyzing: isAnalyzing,
-                canAnalyze: canAnalyze
-            ) {
-                onAnalyze()
-            }
         default:
             AspectTableView(title: "跨盘相位", leftColumnTitle: "A天体", rightColumnTitle: "B天体", aspects: result.crossAspects)
         }
@@ -145,24 +118,6 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
     let title: String
     let result: T
     @Binding var selectedTab: String
-    let streamKey: String
-    let analysis: String
-    let reasoning: String
-    let isAnalyzing: Bool
-    let canAnalyze: Bool
-    let onAnalyze: () -> Void
-
-    init(title: String, result: T, selectedTab: Binding<String>, streamKey: String = "", analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
-        self.title = title
-        self.result = result
-        self._selectedTab = selectedTab
-        self.streamKey = streamKey
-        self.analysis = analysis
-        self.reasoning = reasoning
-        self.isAnalyzing = isAnalyzing
-        self.canAnalyze = canAnalyze
-        self.onAnalyze = onAnalyze
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
@@ -185,7 +140,7 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
     var tabs: [(String, String)] {
         [
             ("planets", "行星"), ("angles", "角点"), ("houses", "宫位"), ("aspects", "相位"),
-            ("patterns", "图形"), ("ai", "AI分析"),
+            ("patterns", "图形"),
         ]
     }
 
@@ -214,16 +169,6 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
             ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
         case "json":
             RawJSONView(value: result)
-        case "ai":
-            AIAnalysisView(
-                streamKey: streamKey,
-                analysis: analysis,
-                reasoning: reasoning,
-                isAnalyzing: isAnalyzing,
-                canAnalyze: canAnalyze
-            ) {
-                onAnalyze()
-            }
         default:
             PositionTableView(title: "\(title) 行星位置", positions: result.planets)
         }
@@ -239,23 +184,6 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
 struct ProgressionResultPane: View {
     let result: ProgressionResult
     @Binding var selectedTab: String
-    let streamKey: String
-    let analysis: String
-    let reasoning: String
-    let isAnalyzing: Bool
-    let canAnalyze: Bool
-    let onAnalyze: () -> Void
-
-    init(result: ProgressionResult, selectedTab: Binding<String>, streamKey: String = "", analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
-        self.result = result
-        self._selectedTab = selectedTab
-        self.streamKey = streamKey
-        self.analysis = analysis
-        self.reasoning = reasoning
-        self.isAnalyzing = isAnalyzing
-        self.canAnalyze = canAnalyze
-        self.onAnalyze = onAnalyze
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
@@ -278,7 +206,7 @@ struct ProgressionResultPane: View {
     var tabs: [(String, String)] {
         [
             ("progressed_planets", "推进盘"), ("natal_planets", "本命盘"), ("prog_to_natal", "推进→本命相位"),
-            ("prog_to_prog", "推进盘相位"), ("lunation", "推进月相"), ("ai", "AI分析"),
+            ("prog_to_prog", "推进盘相位"), ("lunation", "推进月相"),
         ]
     }
 
@@ -321,16 +249,6 @@ struct ProgressionResultPane: View {
             ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
         case "json":
             RawJSONView(value: result)
-        case "ai":
-            AIAnalysisView(
-                streamKey: streamKey,
-                analysis: analysis,
-                reasoning: reasoning,
-                isAnalyzing: isAnalyzing,
-                canAnalyze: canAnalyze
-            ) {
-                onAnalyze()
-            }
         default:
             PositionTableView(title: "次限推进盘", positions: result.progressedPlanets)
         }
@@ -377,23 +295,6 @@ struct ProgressedLunationView: View {
 struct SolarArcResultPane: View {
     let result: SolarArcResult
     @Binding var selectedTab: String
-    let streamKey: String
-    let analysis: String
-    let reasoning: String
-    let isAnalyzing: Bool
-    let canAnalyze: Bool
-    let onAnalyze: () -> Void
-
-    init(result: SolarArcResult, selectedTab: Binding<String>, streamKey: String = "", analysis: String = "", reasoning: String = "", isAnalyzing: Bool = false, canAnalyze: Bool = false, onAnalyze: @escaping () -> Void = {}) {
-        self.result = result
-        self._selectedTab = selectedTab
-        self.streamKey = streamKey
-        self.analysis = analysis
-        self.reasoning = reasoning
-        self.isAnalyzing = isAnalyzing
-        self.canAnalyze = canAnalyze
-        self.onAnalyze = onAnalyze
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
@@ -416,7 +317,7 @@ struct SolarArcResultPane: View {
     var tabs: [(String, String)] {
         [
             ("sa_planets", "Solar Arc盘"), ("natal_planets", "本命盘"), ("sa_to_natal", "SA→本命相位"),
-            ("patterns", "图形"), ("ai", "AI分析"),
+            ("patterns", "图形"),
         ]
     }
 
@@ -455,16 +356,6 @@ struct SolarArcResultPane: View {
             ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
         case "json":
             RawJSONView(value: result)
-        case "ai":
-            AIAnalysisView(
-                streamKey: streamKey,
-                analysis: analysis,
-                reasoning: reasoning,
-                isAnalyzing: isAnalyzing,
-                canAnalyze: canAnalyze
-            ) {
-                onAnalyze()
-            }
         default:
             PositionTableView(title: "Solar Arc 盘", positions: result.solarArcPlanets)
         }

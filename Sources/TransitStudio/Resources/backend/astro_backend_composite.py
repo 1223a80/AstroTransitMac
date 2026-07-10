@@ -5,6 +5,7 @@ from typing import Any
 from astro_backend_core import (
     BODY_REGISTRY,
     circular_midpoint,
+    geographic_longitude_midpoint,
     moment_to_jd,
     norm360,
     set_zodiac_mode,
@@ -41,8 +42,8 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
 
     person_a = request["person_a"]
     person_b = request["person_b"]
-    a_jd, _ = moment_to_jd(person_a["moment"])
-    b_jd, _ = moment_to_jd(person_b["moment"])
+    a_jd, a_utc = moment_to_jd(person_a["moment"])
+    b_jd, b_utc = moment_to_jd(person_b["moment"])
     a_lat = float(person_a["latitude"])
     a_lon = float(person_a["longitude"])
     b_lat = float(person_b["latitude"])
@@ -70,7 +71,7 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
 
     # ASC/MC midpoints
     asc_lat = (a_lat + b_lat) / 2.0
-    asc_lon = (a_lon + b_lon) / 2.0
+    asc_lon = geographic_longitude_midpoint(a_lon, b_lon)
     a_cusps, a_angles, _ = build_houses(a_jd, a_lat, a_lon, house_system, sidereal, warnings)
     b_cusps, b_angles, _ = build_houses(b_jd, b_lat, b_lon, house_system, sidereal, warnings)
     comp_asc = circular_midpoint(a_angles["ASC"], b_angles["ASC"])
@@ -85,7 +86,10 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
             raw_cusps, _ = build_houses(a_jd, asc_lat, asc_lon, house_system, sidereal, warnings)
             mc_delta = norm360(comp_mc - a_angles["MC"])
             comp_cusps = [norm360(c + mc_delta) for c in raw_cusps]
-        except Exception:
+        except Exception as exc:
+            warnings.append(
+                f"Composite 宫位重建失败，已回退等宫：{exc}"
+            )
             comp_cusps = [norm360(comp_asc + 30.0 * i) for i in range(12)]
 
     comp_angles = {
@@ -152,19 +156,11 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
         warnings.append(f"Composite 图形识别失败：{exc}")
         section_errors["patterns"] = str(exc)
 
-    meta_utc = ""
-    try:
-        mid_jd = (a_jd + b_jd) / 2.0
-        from astro_backend_core import swe
-        meta_utc = swe.revjul(mid_jd - 0.5)
-    except Exception as exc:
-        warnings.append(f"composite 计算局部失败: {exc}")
-
     return {
         "meta": {
             "method": "composite_midpoint",
-            "person_a_utc": "",
-            "person_b_utc": "",
+            "person_a_utc": a_utc,
+            "person_b_utc": b_utc,
             "ephemeris": ", ".join(sorted(all_ephemerides)) if all_ephemerides else "unknown",
         },
         "angles": comp_angle_rows,

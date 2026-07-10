@@ -45,6 +45,9 @@ struct PrimaryDirectionRectifierView: View {
             s3Index = l3.centerOffsetIndex
             activeLevel = 3
         }
+        .onDisappear {
+            computeTask?.cancel()
+        }
     }
 
     // MARK: - Real local time for active candidate
@@ -91,9 +94,8 @@ struct PrimaryDirectionRectifierView: View {
                 Text(activeLocalTimeString)
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(.secondary)
-                if activeLevel > 1, let c = activeCandidate, let s = c.offsetSeconds {
-                    let totalSec = c.offsetMinutes * 60 + s
-                    Text("(\(totalSec >= 0 ? "+" : "")\(totalSec)s)")
+                if activeLevel > 1 {
+                    Text("(\(absoluteOffsetSeconds >= 0 ? "+" : "")\(absoluteOffsetSeconds)s)")
                         .font(TS.Font.detail)
                         .foregroundStyle(.tertiary)
                 }

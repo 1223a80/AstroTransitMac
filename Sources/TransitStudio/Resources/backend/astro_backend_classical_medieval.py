@@ -79,7 +79,11 @@ def sect_light_triplicity_rulers(
     rulers_info = []
     position_lookup = {r["id"]: r for r in planet_rows} if not positions_by_id else positions_by_id
 
-    for idx, ruler_id in enumerate([first_ruler_id, second_ruler_id, third_ruler_id]):
+    ordered_rulers = [
+        ruler_id for ruler_id in [first_ruler_id, second_ruler_id, third_ruler_id]
+        if ruler_id
+    ]
+    for idx, ruler_id in enumerate(ordered_rulers):
         rank = idx + 1
         row = position_lookup.get(ruler_id, {})
         rulers_info.append({
@@ -259,10 +263,12 @@ def profection_solar_return_synthesis(
 
     # Solar return data
     sr_asc_lon = 0.0
-    sr_planets = []
+    sr_mc_lon: float | None = None
     for angle in solar_return_snapshot.get("angles", []):
         if angle.get("id") == "ASC":
             sr_asc_lon = angle["longitude"]
+        elif angle.get("id") == "MC":
+            sr_mc_lon = angle["longitude"]
     sr_asc_idx = zodiac_sign_index(sr_asc_lon)
     sr_asc_sign = SIGNS[sr_asc_idx]
     sr_planet_rows = solar_return_snapshot.get("planets", [])
@@ -290,9 +296,12 @@ def profection_solar_return_synthesis(
 
     # SR highlights
     sr_asc_ruler_id = SIGN_RULERS[sr_asc_idx]
-    sr_mc_house = 10  # Whole Sign MC = 10th house
-    sr_mc_sign_idx = (sr_asc_idx + 9) % 12  # MC = ASC + 9 signs in Whole Sign
+    sr_mc_sign_idx = zodiac_sign_index(sr_mc_lon) if sr_mc_lon is not None else (sr_asc_idx + 9) % 12
     sr_mc_ruler_id = SIGN_RULERS[sr_mc_sign_idx]
+
+    def ruler_house(ruler_id: str) -> int:
+        row = next((planet for planet in sr_planet_rows if planet.get("id") == ruler_id), None)
+        return int(row.get("house", 0)) if row is not None else 0
 
     # Find stellium (3+ planets in same sign) in SR
     sr_sign_counts: dict[str, int] = {}
@@ -307,9 +316,9 @@ def profection_solar_return_synthesis(
 
     sr_highlights = {
         "asc_ruler": planet_name(sr_asc_ruler_id),
-        "asc_ruler_house": 1,
+        "asc_ruler_house": ruler_house(sr_asc_ruler_id),
         "mc_ruler": planet_name(sr_mc_ruler_id),
-        "mc_ruler_house": 10,
+        "mc_ruler_house": ruler_house(sr_mc_ruler_id),
         "stellium_sign": stellium_sign,
     }
 

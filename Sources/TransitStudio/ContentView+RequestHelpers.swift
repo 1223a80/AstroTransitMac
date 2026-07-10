@@ -48,9 +48,10 @@ func selectedAspectRequests(orb: Double) -> [AspectRequest] {
         return String(format: "%.2f°", value)
     }
 
-    func makeMoment(from date: Date) -> ChartMoment {
+    func makeMoment(from date: Date, gmtOffset: Double? = nil) -> ChartMoment {
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = selectedTimeZone
+        let effectiveOffset = gmtOffset ?? self.gmtOffset
+        calendar.timeZone = timeZone(for: effectiveOffset)
         let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
 
         return ChartMoment(
@@ -59,7 +60,7 @@ func selectedAspectRequests(orb: Double) -> [AspectRequest] {
             day: components.day ?? 1,
             hour: components.hour ?? 0,
             minute: components.minute ?? 0,
-            timezone: timezoneLabel
+            timezone: timezoneLabel(for: effectiveOffset)
         )
     }
 
@@ -79,11 +80,19 @@ func selectedAspectRequests(orb: Double) -> [AspectRequest] {
     }
 
     var selectedTimeZone: TimeZone {
-        TimeZone(secondsFromGMT: gmtOffset * 3600) ?? .current
+        timeZone(for: gmtOffset)
     }
 
     var timezoneLabel: String {
-        gmtOffset >= 0 ? "GMT+\(gmtOffset)" : "GMT\(gmtOffset)"
+        timezoneLabel(for: gmtOffset)
+    }
+
+    func timeZone(for offset: Double) -> TimeZone {
+        GMTOffset.timeZone(hours: offset)
+    }
+
+    func timezoneLabel(for offset: Double) -> String {
+        GMTOffset.label(hours: offset)
     }
 
     func dateTimeText(_ date: Date) -> String {
@@ -99,23 +108,37 @@ func selectedAspectRequests(orb: Double) -> [AspectRequest] {
     }
 
     func scanTransitBodyIDs() -> [String] {
+        let filtered: [String]
         switch scanMoonFilter {
         case "exclude":
-            return sortedBodyIDs(selectedTransitBodies).filter { $0 != "MOON" }
+            filtered = sortedBodyIDs(selectedTransitBodies).filter { $0 != "MOON" }
         case "only":
-            return ["MOON"]
+            filtered = ["MOON"]
         default:
-            return sortedBodyIDs(selectedTransitBodies)
+            filtered = sortedBodyIDs(selectedTransitBodies)
         }
+        if selectedScanKind == "station" {
+            return filtered.filter { $0 != "SUN" && $0 != "MOON" }
+        }
+        return filtered
     }
 
-    func estimatedScanWork() -> Int {
-        let bodyCount = max(scanTransitBodyIDs().count + parseAsteroids(customAsteroids).count, 1)
-        let aspectCount = selectedScanKind == "aspect" ? max(selectedAspectRequests(orb: 0).count, 1) : 1
-        let targetCount = selectedScanKind == "aspect"
-            ? max(resolvedScanTargetText().split(separator: "\n").filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }.count, 1)
-            : 1
-        return max(bodyCount * aspectCount * targetCount, 1)
+    func scanWorkEstimate(
+        transitBodies: [String]? = nil,
+        targetText: String? = nil,
+        asteroidIDs: [Int]? = nil,
+        aspects: [AspectRequest]? = nil
+    ) -> ScanWorkEstimate {
+        ScanWorkEstimator.estimate(
+            start: scanStartDate,
+            end: scanEndDate,
+            transitBodyIDs: transitBodies ?? scanTransitBodyIDs(),
+            customAsteroids: asteroidIDs ?? parseAsteroids(customAsteroids),
+            moonFilter: scanMoonFilter,
+            scanKind: selectedScanKind,
+            aspects: aspects ?? selectedAspectRequests(orb: 0),
+            targetText: targetText ?? resolvedScanTargetText()
+        )
     }
     func parseAsteroids(_ text: String) -> [Int] {
         text
