@@ -405,7 +405,11 @@ extension ContentView {
         case "planets":
             ClassicalPlanetTableView(planets: result.planets)
         case "points":
-            ClassicalPointsView(angles: result.angles, lots: result.lots, experimentalLots: nil)
+            ClassicalPointsView(
+                angles: result.angles,
+                lots: result.lots.filter { $0.lotGroup != "experimental" },
+                experimentalLots: result.lots.filter { $0.lotGroup == "experimental" }
+            )
         case "houses":
             ClassicalHouseTableView(houses: result.houses)
         case "aspects":

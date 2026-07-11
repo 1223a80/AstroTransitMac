@@ -1,3 +1,32 @@
+# Horary 审计问题全量修复（2026-07-11）
+
+## 分支
+
+`codex/fix-horary-audit-2026-07`（基于 `49002fe`，包含审计文档及修复改动）
+
+## 范围
+
+修复 `docs/horary-audit-2026-07-10.md` 确认的 16 项 REQUIRED 问题；P3-02 为 DECISION_REQUIRED，未经用户确认不实现。
+
+## 执行状态
+
+| 批次 | 状态 | 结果 |
+|---|---|---|
+| A：UTC / refranation / ingress | ✅ | 完成并复审；移除五点启发式，改为当前相位分支的 UTC 连续收敛检查 |
+| B：Moon 对称 / Advanced 事件 | ✅ | 完成并复审；四类 detector 共用同一 pair event facts，补 Moon 右侧与正向 Collection 回归 |
+| C：Lots / score / negative reception | ✅ | 四项公式、最终 score label、detriment + fall 已修复 |
+| D：Wheel / Swift / Lots / Raw JSON | ✅ | 稳定端点 ID、动态字段、实验组、同步 JSON 刷新及导出已完成 |
+| E：meta / provenance / API validation | ✅ | sidereal 标签、aspect orb、全导出 provenance 和嵌套校验已完成 |
+| F：全量门禁 | ✅ | Python 580；Swift 50；classical/moment/scan/horary/vedic/harmonic/rectify smoke 全绿 |
+| F：版本 / 打包 / 安装 | ✅ | 1.3.1 (41) 已覆盖 /Applications；codesign、无 pycache、安装包 Horary smoke 均通过 |
+| F：本地缓存清理 | ✅ | 已清理 `.build`、pytest cache、全部 `__pycache__` 与 `.pyc` |
+
+## 明确边界
+
+- P3-02 保持 DECISION_REQUIRED：未增加 quesited-house picker，也未擅自扩展 derived-house 关键词。
+- 未改变 VOC、out-of-sign、mutual reception、moiety、默认宫制或 Hayz/ASC 业务口径。
+- 未 push；分支改动在本地提交后交付。
+
 # PLANS
 
 按 `AGENTS.md` 约定：开始任务前在此写计划，执行中更新状态；已完结的历史任务批次归档到 `docs/archive/`（如 `plans-frontend-refactor-2026-06.md`）。

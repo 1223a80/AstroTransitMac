@@ -1,5 +1,58 @@
 # Changelog
 
+## 2026-07-11 — Horary 审计全量修复发布 1.3.1 (41)
+
+- 完成 Horary 审计 16 项 REQUIRED 修复及既有 A–C 改动复审；P3-02 仍按产品决策边界保留，不擅自增加宫位选择器或扩展问题推断规则。
+- 发布版本提升至 `1.3.1 (41)` 并覆盖 `/Applications`；全量门禁通过（Python 580、Swift 50、七类 smoke），安装版 codesign、无 pycache 与 Horary smoke 通过；最终清理 `.build`、pytest cache、`__pycache__` 与 `.pyc`。
+
+## 2026-07-11 — Horary 审计修复 Batch C
+
+- 扩展 Lots 的 Marriage、Travel、Lost Objects、Murder 公式对齐项目 source of truth，并让宫主引用解析实际宫头星座及其主星真实黄经。
+- 行星 conditioning 完成后统一重算 `score_label`，避免最终分数与文字标签不一致。
+- 负接纳改为逐项保留 detriment 与 fall，同一行星同时满足两项时不再被 `elif` 截断。
+- 复核 Batch A 时移除五点采样、固定 8° 与起终点速度符号启发式；改为锁定当前相位分支，在 UTC 时间轴连续检查 orb 收敛性，并把 refranation 原因传入关键征象星链接。
+- 修正旧 Jupiter–Saturn “无中断慢相位”回归的错误起点：原 2016-11-06 实际存在先收敛、后发散、再入相；测试改从 2017-07-14 的真实连续 application 开始。
+- 复核 Batch B 时将 Advanced 四类判断改为消费同一份 pair aspect/event fact table，避免每个 detector 独立搜索未来；Collection、Prohibition、Frustration 和 Translation 现在共享相同 exact 与中断结论。
+
+## 2026-07-11 — Horary 审计修复 Batch E（后端）
+
+- Horary meta 复用统一黄道标签映射，正确区分 Lahiri、Raman、Krishnamurti、Yukteshwar，并记录本次 `aspect_orb`。
+- Horary API 增加嵌套结构、时刻字段、经纬度范围、非空问题和 0...10° orb 的结构化校验，错误输入不再落到裸 `KeyError`。
+
+## 2026-07-11 — Horary 审计修复 Batch D
+
+- Classical/Horary 星盘图通过行星显示名映射稳定 ID，并统一整宫相位颜色名称；无法解析的端点在盘面显示诊断，不再静默丢线。
+- Swift 补齐 Advanced `frustrating_planet` 与精确时间展示，Horary Lots 按 `lot_group` 分离实验组并保留 confidence。
+- Raw JSON 改为随编码结果 revision 更新，停留 JSON 页重算不再保留旧盘。
+- Horary Markdown/AI 与 CSV 增加 house、zodiac、bounds、triplicity、aspect orb provenance；Advanced 导出保留 exact time/受阻双方，Lots CSV 保留 group/confidence。
+- 新增后端嵌套校验/四种 sidereal 标签回归与 Swift 真实 fixture 轮盘端点、provenance、Advanced 动态字段契约测试。
+- 修正 Swift Markdown provenance 字符串的插值语法，保持格式化值在数组构造前计算。
+- 清理 ChartWheelData 中对非可选宫位重复使用 `??` 的编译警告。
+- 加固 Batch B 回归：真实验证 Moon 位于 pair 右侧仍复用 08:40 storyline，并把原先只断言“无 key aspects”的空 Collection 测试改为共享事件表下的正向 detected 测试。
+- 复核 Lots 宫主解析时移除“缺主星则静默返回 0°”的错误兜底，保持与其他行星引用一致：缺数据由现有 warning/跳过路径显式处理。
+- 复核 Raw JSON 刷新实现时移除异步 state 过渡，JSON tab 直接由当前 `value` 编码，确保重算后的单次渲染也不会短暂沿用旧结果。
+- Advanced 去重条件补上第三方行星身份比较，避免两个不同事件仅因格式化到同一分钟而被误合并。
+
+## 2026-07-11 — Horary 审计修复 Batch A & B
+
+- **Batch A — UTC 搜索与连续 application**（P1-01、P2-01、P2-02、P1-03）：
+  - `refine_pair_crossing`、`next_exact_for_pair_branch`、`previous_exact_for_pair_branch`、`next_sign_exit_for_body`、`refine_body_longitude_crossing` 全部改用 UTC 时间轴搜索，返回值转换回原时区；新增 `_to_utc_for_search`/`_from_utc_result` helper。
+  - 修复 IANA DST 回拨期间精确相位搜索返回伪根的问题（P2-01）。
+  - 修复 ingress 后首相位跳过 1 分钟的问题：`timedelta(minutes=1)` → `timedelta(microseconds=1)`（P2-02）。
+  - `exact_datetime_for_signature` 增加 orb 收敛发散采样 + 应用星速度符号检查以识别 refranation（P1-01）。
+  - `_detect_translation` 要求 translator 比两颗主征象星都快（P1-03）。
+  - `key_significator_links` 中 Moon 在 pair 任一侧时复用 Moon storyline（P1-02）。
+- **Batch B — 统一事件序列**（P1-04）：
+  - `_detect_collection` 增加主相位时间比较：Collection 的两次入相完成必须在主 Querent–Matter 相位之前，否则 NOT detected。
+  - `advanced_candidates` 增加 Prohibition/Frustration 去重：同一事件同时触发两者时，只保留 Frustration（子类型优先），Prohibition 标记为 not detected 并注明原因。
+  - 新增 `python_tests/test_batch_b.py` 3 项真实回归测试。
+
+## 2026-07-11 — Horary 计算模块专项审计
+
+- 完成 Horary 请求、古典快照、精确相位/换座、Moon storyline、征象星、接纳、Advanced Candidates、Swift 解码/展示/导出与测试契约的全链路只读审查。
+- 通过真实星历与边界样例确认 17 项问题（5 P1 / 10 P2 / 2 P3）：包括 refranation 后误报完成、Moon 位于配对右侧时漏算、慢行星误判 Translation、Advanced 事件顺序冲突、星盘图相位端点失配，以及 DST、Lots 公式、评分标签、负接纳、sidereal 元数据与 Swift 数据丢失等问题。
+- 新增 `docs/horary-audit-2026-07-10.md` 与 `docs/horary-fix-guide-2026-07-11.md`，记录架构、复现证据、严重度、分批修复方案、验收矩阵、流派边界和可直接交给下一 Agent 的提示词；本轮未修改计算业务代码。
+
 ## 2026-07-10 — 产品决策记录
 
 - 记录 LLM API Key 继续使用现有 UserDefaults 持久化是项目所有者的刻意选择；本轮及后续不得自行迁移 Keychain，详见 `docs/product-decisions.md`。

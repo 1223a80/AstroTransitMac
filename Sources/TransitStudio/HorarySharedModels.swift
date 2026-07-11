@@ -12,6 +12,7 @@ struct HoraryMeta: Codable {
     let zodiac: String
     let boundsSystem: String
     let triplicitySystem: String
+    let aspectOrb: Double?
     let ephemeris: String
 
     enum CodingKeys: String, CodingKey {
@@ -26,6 +27,7 @@ struct HoraryMeta: Codable {
         case zodiac
         case boundsSystem = "bounds_system"
         case triplicitySystem = "triplicity_system"
+        case aspectOrb = "aspect_orb"
         case ephemeris
     }
 }
@@ -41,6 +43,7 @@ struct HoraryAdvancedResult: Codable, Identifiable {
     let collector: String?
     let prohibitor: String?
     let frustratedPlanet: String?
+    let frustratingPlanet: String?
     let from: String?
     let to: String?
     let reason: String?
@@ -56,6 +59,7 @@ struct HoraryAdvancedResult: Codable, Identifiable {
         case collector
         case prohibitor
         case frustratedPlanet = "frustrated_planet"
+        case frustratingPlanet = "frustrating_planet"
         case from
         case to
         case reason

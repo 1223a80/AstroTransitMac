@@ -141,7 +141,9 @@ class TestPerfectionTiming:
         from astro_backend_ephemeris import body_longitude_at, body_speed_at
         from astro_backend_horary import body_exits_sign_before, exact_datetime_for_signature
 
-        chart_dt = datetime(2016, 11, 6, 0, 0)
+        # Start after the 2016/17 interruption; from here the slow application
+        # is continuous for more than 30 days until exact perfection.
+        chart_dt = datetime(2017, 7, 14, 0, 0)
         warnings: list[str] = []
         warning_keys: set[str] = set()
         planets = []

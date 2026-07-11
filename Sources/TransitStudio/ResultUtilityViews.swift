@@ -2,28 +2,12 @@ import SwiftUI
 
 struct RawJSONView<Value: Encodable>: View {
     let value: Value
-    @State private var prettyJSON: String?
-    @State private var hasGeneratedJSON = false
 
     var body: some View {
-        Group {
-            if let prettyJSON {
-                TextEditor(text: .constant(prettyJSON))
-                    .font(.system(.body, design: .monospaced))
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                Text("切换到 JSON 页后生成完整 JSON。")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-        }
-        .onAppear {
-            guard !hasGeneratedJSON else {
-                return
-            }
-            hasGeneratedJSON = true
-            prettyJSON = makePrettyJSON()
-        }
+        TextEditor(text: .constant(makePrettyJSON()))
+            .font(.system(.body, design: .monospaced))
+            .textSelection(.enabled)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func makePrettyJSON() -> String {

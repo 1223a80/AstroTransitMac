@@ -36,6 +36,18 @@ struct ChartWheelView: View {
                 .frame(width: side, height: side)
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
             }
+            if !data.unresolvedAspectEndpoints.isEmpty {
+                VStack {
+                    HStack {
+                        Label("有 \(data.unresolvedAspectEndpoints.count) 条相位端点无法解析", systemImage: "exclamationmark.triangle")
+                            .font(TS.Font.label)
+                            .foregroundStyle(.orange)
+                            .help(data.unresolvedAspectEndpoints.joined(separator: "\n"))
+                        Spacer()
+                    }
+                    Spacer()
+                }
+            }
         }
         .id(colorScheme)
         .padding(TS.Padding.sidebarContent)

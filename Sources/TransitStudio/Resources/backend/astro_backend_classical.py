@@ -176,17 +176,7 @@ def calculate_classical_planets(
         accidental = house_strength(house)
         accidental_score = 3 if accidental == "角宫" else 1 if accidental == "续宫" else -1
         base_score = dignity_score + phase_score + motion_score + sect_score + accidental_score + hayz_score + joy_score
-        # Human-readable score interpretation
-        if base_score >= 10:
-            score_label = "强而有力"
-        elif base_score >= 5:
-            score_label = "状态良好"
-        elif base_score >= 1:
-            score_label = "一般可用"
-        elif base_score >= -4:
-            score_label = "偏弱受克"
-        else:
-            score_label = "严重衰弱"
+        score_label = score_label_for(base_score)
         notes = dignity_notes + phase_notes + motion_notes + sect_notes + hayz_notes + joy_notes + [accidental]
         score_breakdown = dignity_breakdown + [phase_breakdown, motion_breakdown, sect_breakdown, hayz_breakdown, joy_breakdown, {"label": "accidental", "score": accidental_score, "value": accidental}]
 
@@ -322,6 +312,19 @@ def conditioning_strength(aspect: str, orb: float | None, applying: str | None) 
     return base, "弱"
 
 
+def score_label_for(score: int) -> str:
+    """Return the single display label for a planet's final score."""
+    if score >= 10:
+        return "强而有力"
+    if score >= 5:
+        return "状态良好"
+    if score >= 1:
+        return "一般可用"
+    if score >= -4:
+        return "偏弱受克"
+    return "严重衰弱"
+
+
 def apply_conditioning(
     planet_rows: list[dict[str, Any]],
     planet_positions: dict[str, dict[str, Any]],
@@ -401,6 +404,8 @@ def apply_conditioning(
             maybe_add(body_a, body_b)
             maybe_add(body_b, body_a)
 
+    for row in planet_rows:
+        row["score_label"] = score_label_for(int(row.get("score", 0)))
     return planet_rows
 
 

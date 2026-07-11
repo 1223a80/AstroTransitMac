@@ -61,6 +61,43 @@ struct ChartWheelData {
     let houseCusps: [Double]
     let axisLongitudes: [Double]
     let aspects: [WheelAspect]
+    let unresolvedAspectEndpoints: [String]
+}
+
+func normalizedClassicalAspectName(_ name: String) -> String {
+    switch name {
+    case "整宫冲相": return "冲相"
+    case "整宫拱相": return "拱相"
+    case "整宫刑相": return "刑相"
+    case "整宫六合": return "六合"
+    case "同宫": return "合相"
+    default: return name
+    }
+}
+
+func resolvedClassicalWheelAspects(
+    _ rows: [ClassicalAspectRow],
+    points: [ChartWheelData.WheelPoint]
+) -> ([ChartWheelData.WheelAspect], [String]) {
+    var endpointIDs: [String: String] = [:]
+    for point in points {
+        endpointIDs[point.id] = point.id
+        endpointIDs[point.name] = point.id
+    }
+    var unresolved: [String] = []
+    let aspects = rows.compactMap { row -> ChartWheelData.WheelAspect? in
+        guard let leftID = endpointIDs[row.bodyA], let rightID = endpointIDs[row.bodyB] else {
+            unresolved.append("\(row.bodyA) \(row.aspect) \(row.bodyB)")
+            return nil
+        }
+        return ChartWheelData.WheelAspect(
+            id: row.id,
+            pointAID: leftID,
+            pointBID: rightID,
+            type: normalizedClassicalAspectName(row.aspect)
+        )
+    }
+    return (aspects, unresolved)
 }
 
 extension ChartWheelData {
@@ -96,9 +133,7 @@ extension ChartWheelData {
         self.points = pts
         self.houseCusps = classicalResult.houses.map(\.cuspLongitude)
         self.axisLongitudes = classicalResult.angles.map(\.longitude)
-        self.aspects = classicalResult.aspects.map { a in
-            WheelAspect(id: "\(a.bodyA)-\(a.bodyB)", pointAID: a.bodyA, pointBID: a.bodyB, type: a.aspect)
-        }
+        (self.aspects, self.unresolvedAspectEndpoints) = resolvedClassicalWheelAspects(classicalResult.aspects, points: pts)
     }
 
     init(transitResult: TransitResult) {
@@ -135,6 +170,7 @@ extension ChartWheelData {
                 type: a.aspectName
             )
         }
+        self.unresolvedAspectEndpoints = []
     }
 
     init(natalResult: TransitResult) {
@@ -155,7 +191,7 @@ extension ChartWheelData {
                 pts.append(WheelPoint(
                     id: a.id, name: a.name,
                     shortLabel: angleShortLabels[a.id] ?? String(a.name.prefix(1)),
-                    longitude: a.longitude, house: a.house ?? 0, sign: a.sign, signIndex: signIdx,
+                    longitude: a.longitude, house: a.house, sign: a.sign, signIndex: signIdx,
                     degreeText: a.degreeText, element: elementForSign(index: signIdx),
                     type: .angle, isTransit: false
                 ))
@@ -173,6 +209,7 @@ extension ChartWheelData {
                 type: a.aspectName
             )
         }
+        self.unresolvedAspectEndpoints = []
     }
 
     init(horaryResult: HoraryResult) {
@@ -198,8 +235,6 @@ extension ChartWheelData {
         self.points = pts
         self.houseCusps = horaryResult.houses.map(\.cuspLongitude)
         self.axisLongitudes = horaryResult.angles.map(\.longitude)
-        self.aspects = horaryResult.aspects.map { a in
-            WheelAspect(id: "\(a.bodyA)-\(a.bodyB)", pointAID: a.bodyA, pointBID: a.bodyB, type: a.aspect)
-        }
+        (self.aspects, self.unresolvedAspectEndpoints) = resolvedClassicalWheelAspects(horaryResult.aspects, points: pts)
     }
 }

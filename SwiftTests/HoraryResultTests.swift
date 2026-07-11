@@ -19,6 +19,7 @@ struct HoraryResultTests {
                 "zodiac": "Tropical",
                 "bounds_system": "Egyptian",
                 "triplicity_system": "Dorothean",
+                "aspect_orb": 3.5,
                 "ephemeris": "Swiss Ephemeris"
             },
             "question_text": "感情",
@@ -54,7 +55,7 @@ struct HoraryResultTests {
                 {"id": "translation", "type": "Translation of Light", "status": "not detected", "details": "缺少关键象征星", "planets": [], "exact_time": null},
                 {"id": "collection", "type": "Collection of Light", "status": "not detected", "details": "缺少关键象征星", "planets": [], "exact_time": null},
                 {"id": "prohibition", "type": "Prohibition", "status": "not evaluated", "details": "缺少关键象征星", "planets": [], "exact_time": null},
-                {"id": "frustration", "type": "Frustration", "status": "not evaluated", "details": "缺少关键象征星", "planets": [], "exact_time": null}
+                {"id": "frustration", "type": "Frustration", "status": "detected", "details": "第三方先成相", "planets": ["火星", "金星", "土星"], "exact_time": "2026-05-06 12:34", "frustrated_planet": "火星", "frustrating_planet": "土星"}
             ],
             "moon_storyline": {
                 "current_position": "0° 金牛",
@@ -86,6 +87,7 @@ struct HoraryResultTests {
         let result = try JSONDecoder().decode(HoraryResult.self, from: data)
 
         #expect(result.meta.askedLocal == "2026-05-05 12:00")
+        #expect(result.meta.aspectOrb == 3.5)
         #expect(result.questionText == "感情")
         #expect(result.machineSummary.count == 2)
         #expect(result.radicalityFlags.count == 1)
@@ -97,6 +99,8 @@ struct HoraryResultTests {
         #expect(result.solarCondition.count == 1)
         #expect(result.lotsSummary.count == 1)
         #expect(result.advancedCandidates.count == 4)
+        #expect(result.advancedCandidates.last?.frustratingPlanet == "土星")
+        #expect(result.advancedCandidates.last?.exactTime == "2026-05-06 12:34")
         #expect(result.moonStoryline.voc == true)
         #expect(result.moonStoryline.currentHouse == 2)
     }

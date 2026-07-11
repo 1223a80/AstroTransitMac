@@ -94,5 +94,20 @@ struct BackendContractTests {
 
         #expect(!result.planets.isEmpty)
         #expect(!result.houses.isEmpty)
+        #expect(result.meta.aspectOrb == 3)
+
+        let wheel = ChartWheelData(horaryResult: result)
+        #expect(wheel.unresolvedAspectEndpoints.isEmpty)
+        #expect(wheel.aspects.count == result.aspects.count)
+        #expect(wheel.aspects.allSatisfy { ["合相", "冲相", "刑相", "拱相", "六合"].contains($0.type) })
+
+        let markdown = MarkdownExportBuilder.horary(result)
+        #expect(markdown.contains("Aspect orb: 3.0°"))
+        #expect(markdown.contains(result.meta.zodiac))
+
+        let csv = TextExportBuilder.csv(result)
+        #expect(csv.contains("calculation_setting,aspect_orb,3.00000000"))
+        #expect(csv.contains("lot_group") == false)
+        #expect(csv.contains("experimental"))
     }
 }

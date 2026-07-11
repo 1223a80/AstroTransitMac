@@ -255,6 +255,15 @@ struct HoraryOverviewView: View {
                                     Text("受阻行星：\(frustrated)")
                                         .font(TS.Font.label)
                                 }
+                                if let frustrating = row.frustratingPlanet {
+                                    Text("造成阻碍：\(frustrating)")
+                                        .font(TS.Font.label)
+                                }
+                                if let exactTime = row.exactTime, !exactTime.isEmpty {
+                                    Text("精确时间：\(exactTime)")
+                                        .font(TS.Font.label)
+                                        .monospacedDigit()
+                                }
                             }
                         }
                     }

@@ -33,6 +33,7 @@ from astro_backend_core import (
     public_position,
     set_zodiac_mode,
     swe,
+    zodiac_mode_label,
 )
 from astro_backend_ephemeris import (
     build_houses,
@@ -511,12 +512,6 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
         [{"body_id": r["id"], "longitude": r["longitude"]} for r in planet_rows],
         star_positions,
     )
-    sidereal_labels = {
-        "sidereal_lahiri": "Lahiri Sidereal",
-        "sidereal_raman": "Raman Sidereal",
-        "sidereal_krishnamurti": "Krishnamurti Sidereal",
-        "sidereal_yukteshwar": "Yukteshwar Sidereal",
-    }
     house_system_note = (
         "宫头为各星座 0°（Whole Sign），角点度数为实际计算值"
         if house_system == "whole_sign"
@@ -534,7 +529,7 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
             "sect": "昼盘" if is_day else "夜盘",
             "house_system": snapshot["house_label"],
             "house_system_note": house_system_note,
-            "zodiac": sidereal_labels.get(zodiac, zodiac) if sidereal else "Tropical",
+            "zodiac": zodiac_mode_label(zodiac),
             "bounds_system": "Ptolemaic" if bounds_system == "ptolemaic" else "Egyptian",
             "triplicity_system": "Ptolemaic" if triplicity_system == "ptolemaic" else "Dorothean",
             "aspect_orb": aspect_orb,
@@ -626,6 +621,34 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         for f in ("year", "month", "day"):
             if f not in ref:
                 missing.append(f"reference.{f}")
+    invalid: list[str] = []
+    if mode == "horary" and "chart" in request:
+        chart = request["chart"]
+        if not isinstance(chart, dict):
+            invalid.append("chart must be an object")
+        else:
+            moment = chart.get("moment")
+            if not isinstance(moment, dict):
+                missing.append("chart.moment")
+            else:
+                for field in ("year", "month", "day", "hour", "minute", "timezone"):
+                    if field not in moment:
+                        missing.append(f"chart.moment.{field}")
+            for field in ("latitude", "longitude"):
+                if field not in chart:
+                    missing.append(f"chart.{field}")
+            latitude = chart.get("latitude")
+            longitude = chart.get("longitude")
+            if latitude is not None and (isinstance(latitude, bool) or not isinstance(latitude, (int, float)) or not -90 <= latitude <= 90):
+                invalid.append("chart.latitude must be a number in [-90, 90]")
+            if longitude is not None and (isinstance(longitude, bool) or not isinstance(longitude, (int, float)) or not -180 <= longitude <= 180):
+                invalid.append("chart.longitude must be a number in [-180, 180]")
+        question_text = request.get("questionText")
+        if not isinstance(question_text, str) or not question_text.strip():
+            missing.append("questionText")
+        aspect_orb = request.get("aspectOrb", 3.0)
+        if isinstance(aspect_orb, bool) or not isinstance(aspect_orb, (int, float)) or not 0 <= aspect_orb <= 10:
+            invalid.append("aspectOrb must be a number in [0, 10]")
     _PERSON_MOMENT_FIELDS = ("year", "month", "day", "hour", "minute", "timezone")
     if mode in ("synastry", "composite", "davison"):
         for side in ("person_a", "person_b"):
@@ -661,8 +684,19 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             for f in ref_fields:
                 if f not in ref:
                     missing.append(f"reference.{f}")
-    if missing:
-        return {"error": f"缺少必需字段：{', '.join(missing)}", "missing": missing, "mode": mode}
+    missing = list(dict.fromkeys(missing))
+    if missing or invalid:
+        parts: list[str] = []
+        if missing:
+            parts.append(f"缺少必需字段：{', '.join(missing)}")
+        if invalid:
+            parts.append(f"字段无效：{'; '.join(invalid)}")
+        response: dict[str, Any] = {"error": "；".join(parts), "mode": mode}
+        if missing:
+            response["missing"] = missing
+        if invalid:
+            response["invalid"] = invalid
+        return response
     return None
 
 

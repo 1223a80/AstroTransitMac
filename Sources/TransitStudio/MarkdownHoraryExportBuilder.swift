@@ -2,6 +2,7 @@ import Foundation
 
 extension MarkdownExportBuilder {
     static func horary(_ result: HoraryResult) -> String {
+        let aspectOrbText = result.meta.aspectOrb.map { String(format: "%.1f°", $0) } ?? "unknown"
         var lines: [String] = [
             "# Horary Data Packet",
             "",
@@ -11,7 +12,8 @@ extension MarkdownExportBuilder {
             "- Asked: \(result.meta.askedLocal)",
             "- UTC: \(result.meta.askedUTC)",
             "- Place: \(result.meta.placeName) (\(String(format: "%.4f", result.meta.latitude)), \(String(format: "%.4f", result.meta.longitude)))",
-            "- Chart: \(result.meta.houseSystem) / \(result.meta.sect)",
+            "- Chart: \(result.meta.houseSystem) / \(result.meta.zodiac) / \(result.meta.boundsSystem) bounds / \(result.meta.triplicitySystem) triplicity / \(result.meta.sect)",
+            "- Aspect orb: \(aspectOrbText)",
             "- Sun position: \(result.meta.sunHorizonStatus) / \(result.planets.first(where: { $0.id == "SUN" })?.degreeText ?? "") / H\(result.planets.first(where: { $0.id == "SUN" })?.house ?? 0)",
             ""
         ]
@@ -153,7 +155,9 @@ extension MarkdownExportBuilder {
             "",
         ]
         lines += result.advancedCandidates.map {
-            "- \($0.type) [\($0.status)]: \($0.details)"
+            let exact = ($0.exactTime?.isEmpty == false) ? " / exact: \($0.exactTime!)" : ""
+            let frustrating = ($0.frustratingPlanet?.isEmpty == false) ? " / frustrating: \($0.frustratingPlanet!)" : ""
+            return "- \($0.type) [\($0.status)]: \($0.details)\(exact)\(frustrating)"
         }
         lines += [
             "",

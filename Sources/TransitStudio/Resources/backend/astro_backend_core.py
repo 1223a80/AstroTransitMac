@@ -34,6 +34,17 @@ SIGNS = [
     "双鱼",
 ]
 
+SIDEREAL_ZODIAC_LABELS = {
+    "sidereal_lahiri": "Lahiri Sidereal",
+    "sidereal_raman": "Raman Sidereal",
+    "sidereal_krishnamurti": "Krishnamurti Sidereal",
+    "sidereal_yukteshwar": "Yukteshwar Sidereal",
+}
+
+
+def zodiac_mode_label(zodiac: str) -> str:
+    return SIDEREAL_ZODIAC_LABELS.get(zodiac, zodiac) if zodiac.startswith("sidereal") else "Tropical"
+
 SIGN_ALIASES = {
     "aries": 0,
     "白羊": 0,

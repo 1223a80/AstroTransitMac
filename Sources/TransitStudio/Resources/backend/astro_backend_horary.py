@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from astro_backend_classical import EXALTATION_RULERS, SIGN_RULERS, aspect_offsets_for_angle, classical_aspect_signature, classical_snapshot
-from astro_backend_core import BODY_REGISTRY, SIGNS, angular_separation, format_local, moment_to_jd, moment_to_local_datetime, sign_degree, signed_orb, zodiac_sign_index
+from astro_backend_core import BODY_REGISTRY, SIGNS, angular_separation, format_local, moment_to_jd, moment_to_local_datetime, sign_degree, signed_orb, zodiac_mode_label, zodiac_sign_index
 from astro_backend_ephemeris import body_longitude_at, house_for_longitude
 
 CLASSICAL_ANGLES = {
@@ -16,6 +16,21 @@ CLASSICAL_ANGLES = {
 }
 
 CROSSING_EPSILON = 1e-7
+
+UTC_ZERO = timezone.utc
+
+
+def _to_utc_for_search(dt: datetime) -> tuple[datetime, bool]:
+    if dt.tzinfo is not None:
+        return dt.astimezone(UTC_ZERO), True
+    return dt, False
+
+
+def _from_utc_result(dt: datetime, was_aware: bool, original_dt: datetime) -> datetime:
+    if not was_aware:
+        return dt.replace(tzinfo=None)
+    return dt.astimezone(original_dt.tzinfo)
+
 
 MEAN_DAILY_SPEED_BY_BODY = {
     "MERCURY": 1.383,
@@ -120,23 +135,25 @@ def refine_pair_crossing(
     branch_offset: float,
     sidereal: bool = False,
 ) -> datetime:
-    left = relative_orb_for_pair_at(start, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
+    start_utc, was_aware = _to_utc_for_search(start)
+    end_utc, _ = _to_utc_for_search(end)
+    left = relative_orb_for_pair_at(start_utc, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
     if left is None:
-        return start + (end - start) / 2
+        return start
 
     for _ in range(40):
-        middle = start + (end - start) / 2
+        middle = start_utc + (end_utc - start_utc) / 2
         value = relative_orb_for_pair_at(middle, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
         if value is None:
-            return middle
+            return _from_utc_result(middle, was_aware, start)
         if abs(value) < 1e-6:
-            return middle
+            return _from_utc_result(middle, was_aware, start)
         if crosses_zero(left, value):
-            end = middle
+            end_utc = middle
         else:
-            start = middle
+            start_utc = middle
             left = value
-    return start + (end - start) / 2
+    return _from_utc_result(start_utc + (end_utc - start_utc) / 2, was_aware, start)
 
 
 def next_exact_for_pair_branch(
@@ -151,21 +168,23 @@ def next_exact_for_pair_branch(
     branch_offset: float,
     sidereal: bool = False,
 ) -> datetime | None:
-    previous = relative_orb_for_pair_at(chart_dt, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
+    search_dt, was_aware = _to_utc_for_search(chart_dt)
+    previous = relative_orb_for_pair_at(search_dt, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
     if previous is None:
         return None
     if abs(previous) < CROSSING_EPSILON:
         return chart_dt
 
-    t = chart_dt
-    end = chart_dt + timedelta(days=max_days)
+    t = search_dt
+    end = search_dt + timedelta(days=max_days)
     while t < end:
         next_t = min(t + timedelta(hours=step_hours), end)
         next_value = relative_orb_for_pair_at(next_t, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
         if next_value is None:
             return None
         if crosses_zero(previous, next_value):
-            return refine_pair_crossing(t, next_t, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
+            result = refine_pair_crossing(t, next_t, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
+            return _from_utc_result(result, was_aware, chart_dt) if result is not None else None
         t = next_t
         previous = next_value
     return None
@@ -213,21 +232,23 @@ def previous_exact_for_pair_branch(
     branch_offset: float,
     sidereal: bool = False,
 ) -> datetime | None:
-    previous = relative_orb_for_pair_at(chart_dt, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
+    search_dt, was_aware = _to_utc_for_search(chart_dt)
+    previous = relative_orb_for_pair_at(search_dt, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
     if previous is None:
         return None
     if abs(previous) < CROSSING_EPSILON:
         return chart_dt
 
-    t = chart_dt
-    end = chart_dt - timedelta(days=max_days)
+    t = search_dt
+    end = search_dt - timedelta(days=max_days)
     while t > end:
         next_t = max(t - timedelta(hours=step_hours), end)
         next_value = relative_orb_for_pair_at(next_t, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
         if next_value is None:
             return None
         if crosses_zero(previous, next_value):
-            return refine_pair_crossing(next_t, t, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
+            result = refine_pair_crossing(next_t, t, left_id, right_id, angle, warnings, warning_keys, branch_offset, sidereal)
+            return _from_utc_result(result, was_aware, chart_dt) if result is not None else None
         t = next_t
         previous = next_value
     return None
@@ -282,25 +303,27 @@ def refine_body_longitude_crossing(
     warning_keys: set[str],
     sidereal: bool = False,
 ) -> datetime:
-    calculated = body_longitude_at(start, BODY_REGISTRY[body_id], warnings, warning_keys, sidereal=sidereal)
+    start_utc, was_aware = _to_utc_for_search(start)
+    end_utc, _ = _to_utc_for_search(end)
+    calculated = body_longitude_at(start_utc, BODY_REGISTRY[body_id], warnings, warning_keys, sidereal=sidereal)
     if calculated is None:
-        return start + (end - start) / 2
+        return start
     left = signed_orb(calculated[0], exact_longitude)
 
     for _ in range(40):
-        middle = start + (end - start) / 2
+        middle = start_utc + (end_utc - start_utc) / 2
         middle_result = body_longitude_at(middle, BODY_REGISTRY[body_id], warnings, warning_keys, sidereal=sidereal)
         if middle_result is None:
-            return middle
+            return _from_utc_result(middle, was_aware, start)
         value = signed_orb(middle_result[0], exact_longitude)
         if abs(value) < 1e-6:
-            return middle
+            return _from_utc_result(middle, was_aware, start)
         if crosses_zero(left, value):
-            end = middle
+            end_utc = middle
         else:
-            start = middle
+            start_utc = middle
             left = value
-    return start + (end - start) / 2
+    return _from_utc_result(start_utc + (end_utc - start_utc) / 2, was_aware, start)
 
 
 def next_sign_exit_for_body(
@@ -312,13 +335,14 @@ def next_sign_exit_for_body(
     step_hours: int,
     sidereal: bool = False,
 ) -> datetime | None:
-    start_result = body_longitude_at(chart_dt, BODY_REGISTRY[body_id], warnings, warning_keys, sidereal=sidereal)
+    search_dt, was_aware = _to_utc_for_search(chart_dt)
+    start_result = body_longitude_at(search_dt, BODY_REGISTRY[body_id], warnings, warning_keys, sidereal=sidereal)
     if start_result is None:
         return None
     start_sign = zodiac_sign_index(start_result[0])
 
-    t = chart_dt
-    end = chart_dt + timedelta(days=max_days)
+    t = search_dt
+    end = search_dt + timedelta(days=max_days)
     while t < end:
         next_t = min(t + timedelta(hours=step_hours), end)
         next_result = body_longitude_at(next_t, BODY_REGISTRY[body_id], warnings, warning_keys, sidereal=sidereal)
@@ -327,7 +351,8 @@ def next_sign_exit_for_body(
         next_sign = zodiac_sign_index(next_result[0])
         if next_sign != start_sign:
             boundary = sign_exit_boundary(start_sign, next_sign)
-            return refine_body_longitude_crossing(t, next_t, body_id, boundary, warnings, warning_keys, sidereal)
+            result = refine_body_longitude_crossing(t, next_t, body_id, boundary, warnings, warning_keys, sidereal)
+            return _from_utc_result(result, was_aware, chart_dt) if result is not None else None
         t = next_t
     return None
 
@@ -498,7 +523,7 @@ def moon_storyline(
     previous_events.sort(key=lambda item: item[0], reverse=True)
     previous_rows = [event for _exact, event in previous_events]
 
-    after_ingress_start = sign_exit_dt + timedelta(minutes=1)
+    after_ingress_start = sign_exit_dt + timedelta(microseconds=1)
     after_ingress_events: list[tuple[datetime, dict[str, Any]]] = []
     for target_id in ["SUN", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"]:
         target = planet_by_id[target_id]
@@ -723,17 +748,40 @@ def exact_datetime_for_signature(
     warnings: list[str],
     sidereal: bool = False,
 ) -> datetime | None:
+    exact, _reason = exact_datetime_result_for_signature(
+        chart_dt, left_row, right_row, signature, warnings, sidereal=sidereal,
+    )
+    return exact
+
+
+def exact_datetime_result_for_signature(
+    chart_dt: datetime,
+    left_row: dict[str, Any],
+    right_row: dict[str, Any],
+    signature: tuple[str, str, float | None, str | None, str | None] | None,
+    warnings: list[str],
+    sidereal: bool = False,
+) -> tuple[datetime | None, str]:
+    """Resolve the current application only and explain why it cannot perfect."""
     if signature is None:
-        return None
+        return None, "no degree aspect"
     if same_body(left_row, right_row):
-        return None
+        return None, "same significator"
     aspect_name, aspect_type, _orb, applying, _ = signature
     if aspect_type != "degree" or applying != "入相":
-        return None
+        return None, "separating or sign-based only"
     warning_keys: set[str] = set()
     aspect_id = next((key for key, name in ASPECT_NAMES.items() if name == aspect_name), None)
     if aspect_id is None:
-        return None
+        return None, "unknown aspect"
+    angle = CLASSICAL_ANGLES[aspect_id]
+    branch_offset = min(
+        aspect_offsets_for_angle(angle),
+        key=lambda offset: abs(relative_orb_for_pair_at(
+            chart_dt, left_row["id"], right_row["id"], angle,
+            warnings, warning_keys, offset, sidereal,
+        ) or 0.0),
+    )
     deadline = perfection_deadline_for_pair(
         chart_dt,
         left_row["id"],
@@ -742,26 +790,54 @@ def exact_datetime_for_signature(
         warning_keys,
         sidereal=sidereal,
     )
-    exact = next_exact_for_pair(
+    exact = next_exact_for_pair_branch(
         chart_dt,
         left_row["id"],
         right_row["id"],
-        CLASSICAL_ANGLES[aspect_id],
+        angle,
         warnings,
         warning_keys,
         max_days=exact_search_days_until(chart_dt, deadline),
         step_hours=6,
+        branch_offset=branch_offset,
         sidereal=sidereal,
     )
     if exact is None:
-        return None
+        return None, "no exact perfection found"
     if deadline is not None and exact > deadline:
-        return None
+        return None, "perfection occurs after sign exit"
     if body_exits_sign_before(chart_dt, exact, left_row["id"], warnings, warning_keys, sidereal=sidereal):
-        return None
+        return None, f"{left_row['name']} changes sign before perfection"
     if body_exits_sign_before(chart_dt, exact, right_row["id"], warnings, warning_keys, sidereal=sidereal):
-        return None
-    return exact
+        return None, f"{right_row['name']} changes sign before perfection"
+
+    # The future root may belong to a new application after a station.  Follow
+    # the selected signed-orb branch on the UTC timeline and reject the root as
+    # soon as the currently converging orb genuinely turns away.
+    start_utc, _ = _to_utc_for_search(chart_dt)
+    exact_utc, _ = _to_utc_for_search(exact)
+    span_seconds = max((exact_utc - start_utc).total_seconds(), 0.0)
+    sample_count = max(2, min(2048, int(span_seconds / 21600.0) + 1))
+    previous_abs: float | None = None
+    converged = False
+    tolerance = 1e-4
+    for index in range(sample_count + 1):
+        sample_dt = start_utc + (exact_utc - start_utc) * (index / sample_count)
+        value = relative_orb_for_pair_at(
+            sample_dt, left_row["id"], right_row["id"], angle,
+            warnings, warning_keys, branch_offset, sidereal,
+        )
+        if value is None:
+            return None, "ephemeris unavailable while checking application continuity"
+        current_abs = abs(value)
+        if previous_abs is not None:
+            if current_abs < previous_abs - tolerance:
+                converged = True
+            elif converged and current_abs > previous_abs + tolerance:
+                return None, "refranation: application interrupted before perfection"
+        previous_abs = current_abs
+
+    return exact, "degree perfection"
 
 
 def key_significator_links(
@@ -820,9 +896,11 @@ def key_significator_links(
                 perfection_reason = "separating"
             else:
                 perfection_reason = "degree aspect applies"
-        if left_row["id"] == "MOON" and right_row["id"] != "MOON":
+        moon_in_pair = left_row["id"] == "MOON" or right_row["id"] == "MOON"
+        if moon_in_pair and left_row["id"] != right_row["id"]:
+            moon_target_id = right_row["id"] if left_row["id"] == "MOON" else left_row["id"]
             moon_exact = next(
-                (row for row in moon_story["before_sign_exit_aspects"] if row["target_id"] == right_row["id"]),
+                (row for row in moon_story["before_sign_exit_aspects"] if row["target_id"] == moon_target_id),
                 None,
             )
             if moon_exact is not None:
@@ -846,9 +924,13 @@ def key_significator_links(
                     }
                 )
                 continue
-        perfects, exact_time = exact_time_for_signature(chart_dt, left_row, right_row, signature, warnings, sidereal=sidereal)
-        if perfects:
-            perfection_reason = "degree perfection"
+        exact, result_reason = exact_datetime_result_for_signature(
+            chart_dt, left_row, right_row, signature, warnings, sidereal=sidereal,
+        )
+        perfects = exact is not None
+        exact_time = format_local(exact) if exact is not None else ""
+        if applying == "入相":
+            perfection_reason = result_reason
         rows.append(
             {
                 "id": f"{left_row['id']}|{right_row['id']}|link",
@@ -985,28 +1067,29 @@ def negative_receptions(
             if receiver_id == received_id:
                 continue
             sign_idx = zodiac_sign_index(received_row["longitude"])
-            debility = ""
+            debilities: list[str] = []
             if SIGN_RULERS[(sign_idx + 6) % 12] == receiver_id:
-                debility = "detriment"
-            elif EXALTATION_RULERS.get((sign_idx + 6) % 12) == receiver_id:
-                debility = "fall"
-            if not debility:
+                debilities.append("detriment")
+            if EXALTATION_RULERS.get((sign_idx + 6) % 12) == receiver_id:
+                debilities.append("fall")
+            if not debilities:
                 continue
             signature = classical_aspect_signature(receiver_row, received_row, aspect_orb)
             if signature is None:
                 continue
             aspect_name, _aspect_type, _orb, applying, _ = signature
-            strength = "强" if debility == "detriment" and aspect_name in {"合相", "冲相", "刑相"} else "中" if debility == "detriment" else "弱"
-            rows.append(
-                {
-                    "id": f"{receiver_id}|negative|{received_id}|{debility}",
-                    "receiver": receiver_row["name"],
-                    "received": received_row["name"],
-                    "debility": debility,
-                    "via_aspect": aspect_name,
-                    "strength": strength,
-                }
-            )
+            for debility in debilities:
+                strength = "强" if debility == "detriment" and aspect_name in {"合相", "冲相", "刑相"} else "中" if debility == "detriment" else "弱"
+                rows.append(
+                    {
+                        "id": f"{receiver_id}|negative|{received_id}|{debility}",
+                        "receiver": receiver_row["name"],
+                        "received": received_row["name"],
+                        "debility": debility,
+                        "via_aspect": aspect_name,
+                        "strength": strength,
+                    }
+                )
 
     rows.sort(key=lambda row: (row["receiver"], row["received"], row["debility"]))
     return rows
@@ -1040,6 +1123,44 @@ def degree_signature(
     return signature
 
 
+def build_advanced_aspect_events(
+    planet_rows: list[dict[str, Any]],
+    chart_dt: datetime | None,
+    warnings: list[str],
+    aspect_orb: float,
+    sidereal: bool = False,
+) -> dict[tuple[str, str], dict[str, Any]]:
+    """Build one shared fact table consumed by all advanced detectors."""
+    events: dict[tuple[str, str], dict[str, Any]] = {}
+    for index, left_row in enumerate(planet_rows):
+        for right_row in planet_rows[index + 1:]:
+            signature = degree_signature(left_row, right_row, aspect_orb)
+            if signature is None:
+                continue
+            exact: datetime | None = None
+            if chart_dt is not None and signature[3] == "入相":
+                exact = exact_datetime_for_signature(
+                    chart_dt, left_row, right_row, signature, warnings, sidereal=sidereal,
+                )
+            key = tuple(sorted((left_row["id"], right_row["id"])))
+            events[key] = {
+                "body_ids": key,
+                "signature": signature,
+                "applying": signature[3],
+                "exact": exact,
+                "exact_time": format_local(exact) if exact is not None else None,
+            }
+    return events
+
+
+def advanced_aspect_event(
+    events: dict[tuple[str, str], dict[str, Any]],
+    left_row: dict[str, Any],
+    right_row: dict[str, Any],
+) -> dict[str, Any] | None:
+    return events.get(tuple(sorted((left_row["id"], right_row["id"]))))
+
+
 def _detect_translation(
     candidates: list[dict[str, Any]],
     key_links: list[dict[str, Any]],
@@ -1049,6 +1170,7 @@ def _detect_translation(
     warnings: list[str] | None = None,
     aspect_orb: float = 8.0,
     sidereal: bool = False,
+    event_facts: dict[tuple[str, str], dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     querent_row, matter_row, moon_row = significator_rows(candidates, planet_rows)
 
@@ -1056,6 +1178,9 @@ def _detect_translation(
         return {"id": "translation", "type": "Translation of Light", "status": "not detected", "details": "缺少关键象征星", "planets": [], "exact_time": None}
 
     warning_list = warnings if warnings is not None else []
+    facts = event_facts if event_facts is not None else build_advanced_aspect_events(
+        planet_rows, chart_dt, warning_list, aspect_orb, sidereal,
+    )
     translators = [moon_row] + [
         row
         for row in planet_rows
@@ -1065,18 +1190,24 @@ def _detect_translation(
         for separated_row, applying_row in [(querent_row, matter_row), (matter_row, querent_row)]:
             if translator["id"] in {separated_row["id"], applying_row["id"]}:
                 continue
-            separated_signature = degree_signature(translator, separated_row, aspect_orb)
-            applying_signature = degree_signature(translator, applying_row, aspect_orb)
-            if not (separated_signature and applying_signature):
+            # Translator must be faster than both significators (Lilly type-1 Translation)
+            trans_speed = abs(float(translator.get("speed", 0.0)))
+            if trans_speed <= abs(float(separated_row.get("speed", 0.0))):
                 continue
-            if separated_signature[3] != "离相" or applying_signature[3] != "入相":
+            if trans_speed <= abs(float(applying_row.get("speed", 0.0))):
+                continue
+            separated_event = advanced_aspect_event(facts, translator, separated_row)
+            applying_event = advanced_aspect_event(facts, translator, applying_row)
+            if not (separated_event and applying_event):
+                continue
+            if separated_event["applying"] != "离相" or applying_event["applying"] != "入相":
                 continue
             exact_time = None
             if chart_dt is not None:
-                exact = exact_datetime_for_signature(chart_dt, translator, applying_row, applying_signature, warning_list, sidereal=sidereal)
+                exact = applying_event["exact"]
                 if exact is None:
                     continue
-                exact_time = format_local(exact)
+                exact_time = applying_event["exact_time"]
             return {
                 "id": "translation",
                 "type": "Translation of Light",
@@ -1100,6 +1231,7 @@ def _detect_collection(
     warnings: list[str] | None = None,
     aspect_orb: float = 8.0,
     sidereal: bool = False,
+    event_facts: dict[tuple[str, str], dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     querent_row, matter_row, _moon_row = significator_rows(candidates, planet_rows)
     if not (querent_row and matter_row):
@@ -1108,6 +1240,9 @@ def _detect_collection(
         return {"id": "collection", "type": "Collection of Light", "status": "not detected", "details": "Querent 与 Matter 是同一征象星，无收集光线判定", "planets": [], "exact_time": None}
 
     warning_list = warnings if warnings is not None else []
+    facts = event_facts if event_facts is not None else build_advanced_aspect_events(
+        planet_rows, chart_dt, warning_list, aspect_orb, sidereal,
+    )
     for collector in planet_rows:
         if collector["id"] in {querent_row["id"], matter_row["id"]}:
             continue
@@ -1115,24 +1250,38 @@ def _detect_collection(
             continue
         if abs(float(collector.get("speed", 0.0))) >= abs(float(matter_row.get("speed", 0.0))):
             continue
-        querent_signature = degree_signature(querent_row, collector, aspect_orb)
-        matter_signature = degree_signature(matter_row, collector, aspect_orb)
-        if not (querent_signature and matter_signature):
+        querent_event = advanced_aspect_event(facts, querent_row, collector)
+        matter_event = advanced_aspect_event(facts, matter_row, collector)
+        if not (querent_event and matter_event):
             continue
-        if querent_signature[3] != "入相" or matter_signature[3] != "入相":
+        if querent_event["applying"] != "入相" or matter_event["applying"] != "入相":
             continue
 
         exact_times: list[datetime] = []
         if chart_dt is not None:
-            for source_row, signature in [(querent_row, querent_signature), (matter_row, matter_signature)]:
-                exact = exact_datetime_for_signature(chart_dt, source_row, collector, signature, warning_list, sidereal=sidereal)
+            for event in (querent_event, matter_event):
+                exact = event["exact"]
                 if exact is None:
                     break
                 exact_times.append(exact)
             if len(exact_times) != 2:
                 continue
 
-        completion_time = format_local(max(exact_times)) if exact_times else None
+        # Collection must complete BEFORE the main querent-matter aspect.
+        # A collection that finishes after the main aspect already perfected
+        # cannot be said to "collect" light for something already done.
+        main_exact = None
+        if chart_dt is not None:
+            main_event = advanced_aspect_event(facts, querent_row, matter_row)
+            if main_event is not None and main_event["applying"] == "入相":
+                main_exact = main_event["exact"]
+
+        collection_completion = max(exact_times) if exact_times else None
+        if main_exact is not None and collection_completion is not None:
+            if collection_completion >= main_exact:
+                continue  # collection completes after main aspect → not valid
+
+        completion_time = format_local(collection_completion) if collection_completion else None
         return {
             "id": "collection",
             "type": "Collection of Light",
@@ -1158,6 +1307,7 @@ def _detect_prohibition(
     warnings: list[str] | None = None,
     aspect_orb: float = 8.0,
     sidereal: bool = False,
+    event_facts: dict[tuple[str, str], dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     querent_row, matter_row, _moon_row = significator_rows(candidates, planet_rows)
     if not (querent_row and matter_row):
@@ -1166,13 +1316,16 @@ def _detect_prohibition(
         return {"id": "prohibition", "type": "Prohibition", "status": "not detected", "details": "Querent 与 Matter 是同一征象星，无主相位可比较", "planets": [], "exact_time": None}
 
     warning_list = warnings if warnings is not None else []
-    main_signature = degree_signature(querent_row, matter_row, aspect_orb)
-    if main_signature is None or main_signature[3] != "入相":
+    facts = event_facts if event_facts is not None else build_advanced_aspect_events(
+        planet_rows, chart_dt, warning_list, aspect_orb, sidereal,
+    )
+    main_event = advanced_aspect_event(facts, querent_row, matter_row)
+    if main_event is None or main_event["applying"] != "入相":
         return {"id": "prohibition", "type": "Prohibition", "status": "not detected", "details": "Querent 与 Matter 没有正在入相的主相位", "planets": [], "exact_time": None}
 
     main_exact: datetime | None = None
     if chart_dt is not None:
-        main_exact = exact_datetime_for_signature(chart_dt, querent_row, matter_row, main_signature, warning_list, sidereal=sidereal)
+        main_exact = main_event["exact"]
         if main_exact is None:
             return {"id": "prohibition", "type": "Prohibition", "status": "not detected", "details": "主相位未在换座前完成，无法比较禁止顺序", "planets": [], "exact_time": None}
 
@@ -1180,11 +1333,11 @@ def _detect_prohibition(
         if third_row["id"] in {querent_row["id"], matter_row["id"]}:
             continue
         for target_row in [querent_row, matter_row]:
-            signature = degree_signature(third_row, target_row, aspect_orb)
-            if signature is None or signature[3] != "入相":
+            third_event = advanced_aspect_event(facts, third_row, target_row)
+            if third_event is None or third_event["applying"] != "入相":
                 continue
             if chart_dt is not None and main_exact is not None:
-                third_exact = exact_datetime_for_signature(chart_dt, third_row, target_row, signature, warning_list, sidereal=sidereal)
+                third_exact = third_event["exact"]
                 if third_exact is None or third_exact >= main_exact:
                     continue
                 return {
@@ -1210,6 +1363,7 @@ def _detect_frustration(
     warnings: list[str] | None = None,
     aspect_orb: float = 8.0,
     sidereal: bool = False,
+    event_facts: dict[tuple[str, str], dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     querent_row, matter_row, _moon_row = significator_rows(candidates, planet_rows)
     if not (querent_row and matter_row):
@@ -1217,15 +1371,18 @@ def _detect_frustration(
     if same_body(querent_row, matter_row):
         return {"id": "frustration", "type": "Frustration", "status": "not detected", "details": "Querent 与 Matter 是同一征象星，无受挫判定", "planets": [], "exact_time": None}
 
-    main_signature = degree_signature(querent_row, matter_row, aspect_orb)
-    if main_signature is None or main_signature[3] != "入相":
+    warning_list = warnings if warnings is not None else []
+    facts = event_facts if event_facts is not None else build_advanced_aspect_events(
+        planet_rows, chart_dt, warning_list, aspect_orb, sidereal,
+    )
+    main_event = advanced_aspect_event(facts, querent_row, matter_row)
+    if main_event is None or main_event["applying"] != "入相":
         return {"id": "frustration", "type": "Frustration", "status": "not detected", "details": "Querent 与 Matter 没有正在入相的主相位", "planets": [], "exact_time": None}
 
     if chart_dt is None:
         return {"id": "frustration", "type": "Frustration", "status": "not evaluated", "details": "缺少成相时间，无法比较受挫顺序", "planets": [], "exact_time": None}
 
-    warning_list = warnings if warnings is not None else []
-    main_exact = exact_datetime_for_signature(chart_dt, querent_row, matter_row, main_signature, warning_list, sidereal=sidereal)
+    main_exact = main_event["exact"]
     if main_exact is None:
         return {"id": "frustration", "type": "Frustration", "status": "not detected", "details": "主相位未在换座前完成，无法形成受挫", "planets": [], "exact_time": None}
 
@@ -1241,10 +1398,10 @@ def _detect_frustration(
             continue
         if abs(float(third_row.get("speed", 0.0))) > slower_speed:
             continue
-        third_signature = degree_signature(slower_row, third_row, aspect_orb)
-        if third_signature is None or third_signature[3] != "入相":
+        third_event = advanced_aspect_event(facts, slower_row, third_row)
+        if third_event is None or third_event["applying"] != "入相":
             continue
-        third_exact = exact_datetime_for_signature(chart_dt, slower_row, third_row, third_signature, warning_list, sidereal=sidereal)
+        third_exact = third_event["exact"]
         if third_exact is None or third_exact >= main_exact:
             continue
         return {
@@ -1272,11 +1429,34 @@ def advanced_candidates(
     aspect_orb: float,
     sidereal: bool = False,
 ) -> list[dict[str, Any]]:
-    translation = _detect_translation(candidates, key_links, moon_story, planet_rows, chart_dt, warnings, aspect_orb, sidereal)
-    collection = _detect_collection(candidates, key_aspects, planet_rows, chart_dt, warnings, aspect_orb, sidereal)
-    prohibition = _detect_prohibition(candidates, key_links, key_aspects, moon_story, planet_rows, chart_dt, warnings, aspect_orb, sidereal)
-    frustration = _detect_frustration(candidates, key_links, key_aspects, moon_story, planet_rows, chart_dt, warnings, aspect_orb, sidereal)
-    return [translation, collection, prohibition, frustration]
+    event_facts = build_advanced_aspect_events(planet_rows, chart_dt, warnings, aspect_orb, sidereal)
+    translation = _detect_translation(candidates, key_links, moon_story, planet_rows, chart_dt, warnings, aspect_orb, sidereal, event_facts)
+    collection = _detect_collection(candidates, key_aspects, planet_rows, chart_dt, warnings, aspect_orb, sidereal, event_facts)
+    prohibition = _detect_prohibition(candidates, key_links, key_aspects, moon_story, planet_rows, chart_dt, warnings, aspect_orb, sidereal, event_facts)
+    frustration = _detect_frustration(candidates, key_links, key_aspects, moon_story, planet_rows, chart_dt, warnings, aspect_orb, sidereal, event_facts)
+
+    # Dedup: if Prohibition and Frustration detect the same event (same exact_time
+    # and same third planet), keep only Frustration as the more specific subtype.
+    # The other is marked "not detected" with an explanation.
+    results = [translation, collection, prohibition, frustration]
+    if (
+        prohibition["status"] == "detected"
+        and frustration["status"] == "detected"
+        and prohibition.get("exact_time")
+        and prohibition["exact_time"] == frustration.get("exact_time")
+        and prohibition.get("prohibitor") == frustration.get("frustrating_planet")
+    ):
+        prohibition = {
+            "id": "prohibition",
+            "type": "Prohibition",
+            "status": "not detected",
+            "details": "同一第三方事件已归类为 Frustration，不再重复报告 Prohibition",
+            "planets": [],
+            "exact_time": None,
+        }
+        results[2] = prohibition
+
+    return results
 
 
 def calculate_horary(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
@@ -1338,9 +1518,10 @@ def calculate_horary(request: dict[str, Any], warnings: list[str]) -> dict[str, 
             "sect": "night chart" if not snapshot["is_day"] else "day chart",
             "sun_horizon_status": snapshot["sun_horizon_status"],
             "house_system": snapshot["house_label"],
-            "zodiac": "Lahiri Sidereal" if sidereal else "Tropical",
+            "zodiac": zodiac_mode_label(zodiac),
             "bounds_system": "Ptolemaic" if bounds_system == "ptolemaic" else "Egyptian",
             "triplicity_system": "Ptolemaic" if triplicity_system == "ptolemaic" else "Dorothean",
+            "aspect_orb": aspect_orb,
             "ephemeris": ", ".join(sorted(snapshot["ephemerides"])) if snapshot["ephemerides"] else "unknown",
         },
         "question_text": question_text,

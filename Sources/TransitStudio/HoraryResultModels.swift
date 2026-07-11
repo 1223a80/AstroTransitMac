@@ -270,6 +270,7 @@ struct HoraryAdvancedCandidate: Codable, Identifiable {
     let collector: String?
     let prohibitor: String?
     let frustratedPlanet: String?
+    let frustratingPlanet: String?
     let from: String?
     let to: String?
     let reason: String?
@@ -285,6 +286,7 @@ struct HoraryAdvancedCandidate: Codable, Identifiable {
         case collector
         case prohibitor
         case frustratedPlanet = "frustrated_planet"
+        case frustratingPlanet = "frustrating_planet"
         case from
         case to
         case reason

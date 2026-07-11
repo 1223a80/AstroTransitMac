@@ -105,8 +105,8 @@ reg("nemesis",    "复仇点",   "Nemesis",     "ASC + Fortune - Saturn", "ASC +
 
 # ----- Life areas (25 lots) -----
 reg("basis",      "基础点",   "Basis",       "ASC + Fortune - Spirit",  "ASC + Spirit - Fortune", "life", "Paulus", "fortune", "spirit", confidence="high")
-reg("marriage",   "婚姻点",   "Marriage",    "ASC + Venus - Saturn",    "ASC + Saturn - Venus",   "life", "Bonatti", "planet:VENUS", "planet:SATURN",
-    confidence="medium", night_p1="planet:SATURN", night_p2="planet:VENUS")
+reg("marriage",   "婚姻点",   "Marriage",    "ASC + Saturn - Venus",    "ASC + Venus - Saturn",   "life", "Bonatti", "planet:SATURN", "planet:VENUS",
+    night_p1="planet:VENUS", night_p2="planet:SATURN", confidence="medium")
 reg("father",     "父亲点",   "Father",      "ASC + Saturn - Sun",      "ASC + Sun - Saturn",     "life", "Lilly", "planet:SATURN", "planet:SUN")
 reg("mother",     "母亲点",   "Mother",      "ASC + Moon - Venus",      "ASC + Venus - Moon",     "life", "Lilly", "planet:MOON", "planet:VENUS")
 reg("siblings",   "兄弟点",   "Siblings",    "ASC + Jupiter - Saturn",  "ASC + Saturn - Jupiter", "life", "Bonatti", "planet:JUPITER", "planet:SATURN")
@@ -115,16 +115,16 @@ reg("enemies",    "敌人点",   "Enemies",     "ASC + Saturn - Mercury",  "ASC 
 reg("death",      "死亡点",   "Death",       "ASC + house:8 - Moon",    "ASC + Moon - house:8",   "life", "Bonatti", "house:8", "planet:MOON")
 reg("illness",    "疾病点",   "Illness",     "ASC + Mars - Saturn",     "ASC + Saturn - Mars",    "life", "Bonatti", "planet:MARS", "planet:SATURN")
 reg("acute_illness", "急病点", "Acute Illness", "ASC + Mars - Moon",   "ASC + Moon - Mars",      "life", "Lilly", "planet:MARS", "planet:MOON")
-reg("travel",     "旅行点",   "Travel",      "ASC + house:9 - Jupiter", "ASC + Jupiter - house:9","life", "Bonatti", "house:9", "planet:JUPITER")
+reg("travel",     "旅行点",   "Travel",      "ASC + house:9 - house_ruler:9", "ASC + house_ruler:9 - house:9","life", "Bonatti", "house:9", "house_ruler:9")
 reg("captivity",  "牢狱点",   "Captivity",   "ASC + house:12 - Saturn", "ASC + Saturn - house:12","life", "Bonatti", "house:12", "planet:SATURN")
 reg("debt",       "债务点",   "Debt",        "ASC + Saturn - Mercury",  "ASC + Mercury - Saturn", "life", "Lilly", "planet:SATURN", "planet:MERCURY")
 reg("property",   "不动产点", "Property",    "ASC + house:4 - Saturn",  "ASC + Saturn - house:4",  "life", "Bonatti", "house:4", "planet:SATURN")
 reg("inheritance","遗产点",   "Inheritance", "ASC + Moon - Saturn",     "ASC + Saturn - Moon",    "life", "Bonatti", "planet:MOON", "planet:SATURN")
 reg("danger",     "危险点",   "Danger",      "ASC + Mercury - Saturn",  "ASC + Saturn - Mercury", "life", "Lilly", "planet:MERCURY", "planet:SATURN")
 reg("peril",      "劫难点",   "Peril",       "ASC + house:8 - Saturn",  "ASC + Saturn - house:8",  "life", "Bonatti", "house:8", "planet:SATURN")
-reg("lost_objects","失物点",  "Lost Objects","ASC + Moon - Mercury",    "ASC + Mercury - Moon",   "life", "Lilly", "planet:MOON", "planet:MERCURY")
+reg("lost_objects","失物点",  "Lost Objects","ASC + Moon - house_ruler:2",    "ASC + house_ruler:2 - Moon",   "life", "Lilly", "planet:MOON", "house_ruler:2")
 reg("theft",      "盗窃点",   "Theft",       "ASC + Mars - Mercury",    "ASC + Mercury - Mars",   "life", "Bonatti", "planet:MARS", "planet:MERCURY")
-reg("murder",     "谋杀点",   "Murder",      "ASC + Mercury - Saturn",  "ASC + Saturn - Mercury", "life", "Bonatti", "planet:MERCURY", "planet:SATURN")
+reg("murder",     "谋杀点",   "Murder",      "ASC + house_ruler:12 - Saturn",  "ASC + Saturn - house_ruler:12", "life", "Bonatti", "house_ruler:12", "planet:SATURN")
 reg("servants",   "仆役点",   "Servants",    "ASC + Mercury - Moon",    "ASC + Moon - Mercury",   "life", "Bonatti", "planet:MERCURY", "planet:MOON")
 reg("return",     "归返点",   "Return",      "ASC + Mercury - Saturn",  "ASC + Saturn - Mercury", "life", "AbuMa'shar","planet:MERCURY","planet:SATURN")
 reg("water_travel","水路旅行","Water Travel","ASC + lon:105 - Saturn",  "ASC + Saturn - lon:105",  "life", "Bonatti", "lon:105", "planet:SATURN")
@@ -183,6 +183,14 @@ def _resolve_lot_ref(
         if cusps is not None and len(cusps) == 12 and 1 <= h <= 12:
             return norm360(cusps[h - 1])
         return house_cusp_lon(h)
+    if ref.startswith("house_ruler:"):
+        h = int(ref.split(":", 1)[1])
+        if cusps is not None and len(cusps) == 12 and 1 <= h <= 12:
+            sign_idx = zodiac_sign_index(cusps[h - 1])
+        else:
+            sign_idx = zodiac_sign_index(house_cusp_lon(h))
+        ruler_id = SIGN_RULERS[sign_idx]
+        return positions[ruler_id]["longitude"]
     if ref.startswith("lon:"):
         return float(ref.split(":", 1)[1])
     if ref.startswith("exalt:"):
@@ -200,6 +208,8 @@ def _formula_text(day_p1: str, day_p2: str, night_p1: str, night_p2: str) -> tup
             return "MC"
         if spec.startswith("house:"):
             return f"House{spec.split(':',1)[1]}"
+        if spec.startswith("house_ruler:"):
+            return f"H{spec.split(':',1)[1]}Ruler"
         if spec.startswith("lon:"):
             return f"{spec.split(':',1)[1]}°"
         if spec.startswith("exalt:"):
@@ -274,7 +284,7 @@ def calculate_lots(
         if lid == "basis":
             row["formula_notes"] = "Paulus Basis: ASC+Fortune-Spirit(day), ASC+Spirit-Fortune(night)"
         elif lid == "marriage":
-            row["formula_notes"] = "Day ASC+Venus-Saturn, night ASC+Saturn-Venus (Bonatti)"
+            row["formula_notes"] = "Day ASC+Saturn-Venus, night ASC+Venus-Saturn (Bonatti)"
 
         rows.append(row)
 

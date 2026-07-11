@@ -336,6 +336,11 @@ enum TextExportBuilder {
 
         rows.append(["question", result.questionText, "", "", "", "", "", "", ""])
         rows.append(["sun_horizon_status", result.meta.sunHorizonStatus, "", "", "", "", "", "", ""])
+        rows.append(["calculation_setting", "house_system", result.meta.houseSystem, "", "", "", "", "", ""])
+        rows.append(["calculation_setting", "zodiac", result.meta.zodiac, "", "", "", "", "", ""])
+        rows.append(["calculation_setting", "bounds_system", result.meta.boundsSystem, "", "", "", "", "", ""])
+        rows.append(["calculation_setting", "triplicity_system", result.meta.triplicitySystem, "", "", "", "", "", ""])
+        rows.append(["calculation_setting", "aspect_orb", result.meta.aspectOrb.map(number) ?? "", "", "", "", "", "", ""])
         rows += result.houseRulers.map {
             ["house_ruler", "\($0.house)", $0.sign, "", "\($0.house)", $0.ruler, "", "", ""]
         }
@@ -368,7 +373,7 @@ enum TextExportBuilder {
             ["lot_summary", $0.lot, $0.position, "", "\($0.house)", $0.ruler, $0.rulerCondition, $0.keyNotes, ""]
         }
         rows += result.advancedCandidates.map {
-            ["advanced_candidate", $0.type, $0.status, "", "", $0.details, $0.planets.joined(separator: ";"), "", ""]
+            ["advanced_candidate", $0.type, $0.status, $0.exactTime ?? "", "", $0.details, $0.planets.joined(separator: ";"), $0.frustratingPlanet ?? "", $0.frustratedPlanet ?? ""]
         }
         rows += result.moonStoryline.beforeSignExitAspects.map {
             ["moon_before_sign_exit", $0.targetName, $0.exactLocal, number($0.targetLongitude), "\($0.targetHouse)", $0.aspectName, number($0.moonLongitude), "\($0.moonHouse)", ""]
@@ -383,7 +388,7 @@ enum TextExportBuilder {
             ["planet", $0.name, $0.degreeText, number($0.longitude), "\($0.house)", $0.motion, $0.sectStatus, [$0.domicile, $0.exaltation, $0.triplicity].filter { !$0.isEmpty }.joined(separator: " "), ($0.notes ?? []).joined(separator: "、")]
         }
         rows += result.lots.map {
-            ["lot", $0.name, $0.degreeText, number($0.longitude), "\($0.house)", $0.ruler, $0.formula ?? "", "", ""]
+            ["lot", $0.name, $0.degreeText, number($0.longitude), "\($0.house)", $0.ruler, $0.formula ?? "", $0.lotGroup ?? "", $0.confidence ?? ""]
         }
         rows += result.aspects.map {
             ["aspect", $0.bodyA, "", "", "", $0.aspect, $0.bodyB, $0.orb.map(number) ?? "", $0.applying ?? ""]
