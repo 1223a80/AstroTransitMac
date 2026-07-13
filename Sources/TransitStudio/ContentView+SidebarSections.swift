@@ -65,22 +65,39 @@ extension ContentView {
             })
         case .scan:
             return AnyView(VStack(alignment: .leading, spacing: TS.Spacing.xl) {
-                collapsible("窗口") { scanWindowSection }
-                collapsible("当前本命盘") { natalSummarySection }
-                collapsible("扫描模板") {
-                    scanPresetTemplateSection(
-                        title: "扫描模板",
-                        template: scanConfigTemplateJSON,
-                        text: $scanConfigText,
-                        apply: applyScanConfigTemplate
-                    )
+                if practiceMode == .modern {
+                    Picker("工作区", selection: $scanWorkspaceMode) {
+                        Text("精确扫描").tag("exact_scan")
+                        Text("综合时间线").tag("modern_timing")
+                    }
+                    .pickerStyle(.segmented)
                 }
-                collapsible("扫描行运体") { bodySection(title: "扫描行运体", selection: $selectedTransitBodies) }
-                if selectedScanKind == "aspect" {
-                    collapsible("目标点") { targetSection }
-                    collapsible("相位") { aspectSection }
+
+                if isModernTimingWorkspace {
+                    collapsible("窗口与时区") { modernTimingWindowSection }
+                    collapsible("精确出生资料") { natalSummarySection }
+                    collapsible("本命目标点集") { modernTimingTargetSection }
+                    collapsible("行运技法") { modernTimingTransitSection }
+                    collapsible("次限推进技法") { modernTimingProgressionSection }
+                    collapsible("太阳弧技法") { modernTimingSolarArcSection }
+                } else {
+                    collapsible("窗口") { scanWindowSection }
+                    collapsible("当前本命盘") { natalSummarySection }
+                    collapsible("扫描模板") {
+                        scanPresetTemplateSection(
+                            title: "扫描模板",
+                            template: scanConfigTemplateJSON,
+                            text: $scanConfigText,
+                            apply: applyScanConfigTemplate
+                        )
+                    }
+                    collapsible("扫描行运体") { bodySection(title: "扫描行运体", selection: $selectedTransitBodies) }
+                    if selectedScanKind == "aspect" {
+                        collapsible("目标点") { targetSection }
+                        collapsible("相位") { aspectSection }
+                    }
+                    collapsible("自定义小行星") { customAsteroidSection }
                 }
-                collapsible("自定义小行星") { customAsteroidSection }
             })
         case .rectify:
             return AnyView(rectifySidebar)
@@ -248,6 +265,181 @@ extension ContentView {
                 Text("结束").foregroundStyle(.secondary)
                 DateTimeInput(date: $scanEndDate, timeZone: selectedTimeZone)
             }
+        }
+    }
+
+    var modernTimingWindowSection: some View {
+        Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
+            GridRow {
+                Text("开始").foregroundStyle(.secondary)
+                DateTimeInput(date: $scanStartDate, timeZone: selectedTimeZone)
+            }
+            GridRow {
+                Text("结束").foregroundStyle(.secondary)
+                DateTimeInput(date: $scanEndDate, timeZone: selectedTimeZone)
+            }
+            GridRow {
+                Text("展示时区").foregroundStyle(.secondary)
+                TextField("Asia/Shanghai", text: $timingDisplayTimezone)
+                    .textFieldStyle(.roundedBorder)
+            }
+            GridRow {
+                Text("窗口输入时区").foregroundStyle(.secondary)
+                Text(timezoneLabel).monospacedDigit()
+            }
+        }
+    }
+
+    var modernTimingTargetSection: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Text("综合时间线只接受精确出生时间；不提供模糊时间、未知时间或正午兜底。")
+                .font(TS.Font.label)
+                .foregroundStyle(.secondary)
+            bodySection(title: "本命实体", selection: $timingTargetBodies)
+            selectionHeader(
+                "本命轴点",
+                selectAll: { timingTargetAngles = Set(Self.modernTimingAngleOptions.map(\.id)) },
+                selectNone: { timingTargetAngles.removeAll() }
+            )
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: TS.Spacing.md)], alignment: .leading, spacing: TS.Spacing.md) {
+                ForEach(Self.modernTimingAngleOptions) { option in
+                    Toggle(option.title, isOn: toggleBinding(for: option.id, in: $timingTargetAngles))
+                        .toggleStyle(.checkbox)
+                }
+            }
+            selectionHeader(
+                "本命宫头",
+                selectAll: { timingTargetHouseCusps = Set(1...12) },
+                selectNone: { timingTargetHouseCusps.removeAll() }
+            )
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: TS.Spacing.md)], alignment: .leading, spacing: TS.Spacing.md) {
+                ForEach(1...12, id: \.self) { house in
+                    Toggle("\(house) 宫", isOn: Binding(
+                        get: { timingTargetHouseCusps.contains(house) },
+                        set: { selected in
+                            if selected { timingTargetHouseCusps.insert(house) }
+                            else { timingTargetHouseCusps.remove(house) }
+                        }
+                    ))
+                    .toggleStyle(.checkbox)
+                }
+            }
+            selectionHeader(
+                "本命阿拉伯点",
+                selectAll: { timingTargetLots = Set(targetLotOptions.map(\.id)) },
+                selectNone: { timingTargetLots.removeAll() }
+            )
+            if targetLotOptions.isEmpty {
+                Text("先计算现代本命盘后，可在这里复用其有效 Lots 作为时间线目标。")
+                    .font(TS.Font.label)
+                    .foregroundStyle(.secondary)
+            } else {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: TS.Spacing.md)], alignment: .leading, spacing: TS.Spacing.md) {
+                    ForEach(targetLotOptions) { option in
+                        Toggle(option.name, isOn: toggleBinding(for: option.id, in: $timingTargetLots))
+                            .toggleStyle(.checkbox)
+                    }
+                }
+            }
+            customAsteroidSection
+        }
+    }
+
+    var modernTimingTransitSection: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Toggle("启用 Transit", isOn: toggleBinding(for: "transit", in: $timingEnabledTechniques))
+                .toggleStyle(.checkbox)
+            if timingEnabledTechniques.contains("transit") {
+                bodySection(title: "移动天体", selection: $timingTransitBodies)
+                modernTimingEventTypeSection(
+                    options: [
+                        PickerOption(id: "aspect", title: "对本命精确相位"),
+                        PickerOption(id: "ingress", title: "入座"),
+                        PickerOption(id: "station", title: "留逆")
+                    ],
+                    selection: $timingTransitEventTypes
+                )
+                modernTimingAspectSection(selection: $timingTransitAspects, orb: $timingTransitOrb)
+            }
+        }
+    }
+
+    var modernTimingProgressionSection: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Toggle("启用 Secondary Progression", isOn: toggleBinding(for: "secondary_progression", in: $timingEnabledTechniques))
+                .toggleStyle(.checkbox)
+            if timingEnabledTechniques.contains("secondary_progression") {
+                bodySection(title: "推进天体", selection: $timingProgressionBodies)
+                modernTimingEventTypeSection(
+                    options: [
+                        PickerOption(id: "aspect", title: "对本命精确相位"),
+                        PickerOption(id: "moon_ingress", title: "推进月亮入座"),
+                        PickerOption(id: "lunation", title: "推进月相")
+                    ],
+                    selection: $timingProgressionEventTypes
+                )
+                modernTimingAspectSection(selection: $timingProgressionAspects, orb: $timingProgressionOrb)
+            }
+        }
+    }
+
+    var modernTimingSolarArcSection: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Toggle("启用 Solar Arc", isOn: toggleBinding(for: "solar_arc", in: $timingEnabledTechniques))
+                .toggleStyle(.checkbox)
+            if timingEnabledTechniques.contains("solar_arc") {
+                bodySection(title: "太阳弧实体", selection: $timingSolarArcPoints)
+                selectionHeader(
+                    "太阳弧轴点",
+                    selectAll: { timingSolarArcPoints.formUnion(Self.modernTimingAngleOptions.map(\.id)) },
+                    selectNone: { timingSolarArcPoints.subtract(Self.modernTimingAngleOptions.map(\.id)) }
+                )
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: TS.Spacing.md)], alignment: .leading, spacing: TS.Spacing.md) {
+                    ForEach(Self.modernTimingAngleOptions) { option in
+                        Toggle(option.title, isOn: toggleBinding(for: option.id, in: $timingSolarArcPoints))
+                            .toggleStyle(.checkbox)
+                    }
+                }
+                modernTimingAspectSection(selection: $timingSolarArcAspects, orb: $timingSolarArcOrb)
+            }
+        }
+    }
+
+    func modernTimingEventTypeSection(
+        options: [PickerOption],
+        selection: Binding<Set<String>>
+    ) -> some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+            Text("事件类型").font(TS.Font.label).foregroundStyle(.secondary)
+            ForEach(options) { option in
+                Toggle(option.title, isOn: toggleBinding(for: option.id, in: selection))
+                    .toggleStyle(.checkbox)
+            }
+        }
+    }
+
+    func modernTimingAspectSection(
+        selection: Binding<Set<String>>,
+        orb: Binding<Double>
+    ) -> some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+            selectionHeader(
+                "技法相位",
+                selectAll: { selection.wrappedValue = Set(aspectOptions.map(\.id)) },
+                selectNone: { selection.wrappedValue.removeAll() }
+            )
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: TS.Spacing.md)], alignment: .leading, spacing: TS.Spacing.md) {
+                ForEach(aspectOptions) { aspect in
+                    Toggle("\(aspect.name) \(Int(aspect.angle))°", isOn: toggleBinding(for: aspect.id, in: selection))
+                        .toggleStyle(.checkbox)
+                }
+            }
+            HStack {
+                Text("容许度").foregroundStyle(.secondary)
+                Spacer()
+                Text("\(orb.wrappedValue, specifier: "%.1f")°").monospacedDigit()
+            }
+            Slider(value: orb, in: 0...10, step: 0.1)
         }
     }
 

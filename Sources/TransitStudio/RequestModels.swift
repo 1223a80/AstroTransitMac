@@ -154,6 +154,79 @@ struct ScanRequest: Codable {
     let zodiac: String
 }
 
+/// One independently configured technique in a modern timing request.
+/// Aspect/orb settings deliberately live here rather than at request level.
+struct ModernTimingTechniqueRequest: Codable {
+    let id: String
+    let movingBodyIDs: [String]
+    let eventTypes: [String]
+    let aspects: [AspectRequest]
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case movingBodyIDs = "moving_body_ids"
+        case eventTypes = "event_types"
+        case aspects
+    }
+}
+
+/// Request contract for the independent `modern_timing` backend mode.
+/// Birth/start/end remain exact chart moments for B3; uncertain birth-time
+/// degradation is intentionally outside this batch.
+struct ModernTimingRequest: Codable {
+    let mode: String
+    let birth: BirthSettings
+    let start: ChartMoment
+    let end: ChartMoment
+    let displayTimezone: String
+    let targetPointSet: ModernPointSet
+    let techniques: [ModernTimingTechniqueRequest]
+    let confirmedHeavyScan: Bool
+    let ephemerisPath: String?
+    let noAsteroids: Bool
+    let requireEphemeris: String
+
+    init(
+        mode: String = "modern_timing",
+        birth: BirthSettings,
+        start: ChartMoment,
+        end: ChartMoment,
+        displayTimezone: String,
+        targetPointSet: ModernPointSet,
+        techniques: [ModernTimingTechniqueRequest],
+        confirmedHeavyScan: Bool = false,
+        ephemerisPath: String? = nil,
+        noAsteroids: Bool = false,
+        requireEphemeris: String = "warn"
+    ) {
+        self.mode = mode
+        self.birth = birth
+        self.start = start
+        self.end = end
+        self.displayTimezone = displayTimezone
+        self.targetPointSet = targetPointSet
+        self.techniques = techniques
+        self.confirmedHeavyScan = confirmedHeavyScan
+        self.ephemerisPath = ephemerisPath
+        self.noAsteroids = noAsteroids
+        self.requireEphemeris = requireEphemeris
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case mode
+        case birth
+        case start
+        case end
+        case displayTimezone = "display_timezone"
+        case targetPointSet = "target_point_set"
+        case techniques
+        case confirmedHeavyScan = "confirmed_heavy_scan"
+        case ephemerisPath = "ephemeris_path"
+        case noAsteroids = "no_asteroids"
+        case requireEphemeris = "require_ephemeris"
+    }
+}
+
 struct BirthSettings: Codable {
     let moment: ChartMoment
     let latitude: Double

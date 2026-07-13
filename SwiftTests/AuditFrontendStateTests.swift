@@ -43,6 +43,17 @@ struct AuditFrontendStateTests {
         #expect(buffer.append(Data("5}\nnot-json\n{\"progress\":1.0}\n".utf8)) == [0.5, 1.0])
     }
 
+    @Test func sharedBackendProgressParserKeepsLabelsAndClampsRange() {
+        let buffer = BackendProgressLineBuffer()
+        #expect(buffer.append(Data("{\"progress\":0.2,\"label\":\"transit:".utf8)).isEmpty)
+        let updates = buffer.append(Data("SATURN\"}\n{\"progress\":1.2}\nnoise\n".utf8))
+        #expect(updates == [
+            BackendProgressUpdate(progress: 0.2, label: "transit:SATURN"),
+            BackendProgressUpdate(progress: 1.0, label: nil),
+        ])
+        #expect(String(data: buffer.allData(), encoding: .utf8)?.contains("noise") == true)
+    }
+
     @MainActor
     @Test func invalidatingRectifyCancelsChildTasksAndAdvancesGenerations() async {
         let model = CalculationViewModel()

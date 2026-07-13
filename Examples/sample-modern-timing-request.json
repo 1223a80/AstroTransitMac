@@ -1,0 +1,87 @@
+{
+  "mode": "modern_timing",
+  "birth": {
+    "moment": {
+      "year": 1990,
+      "month": 1,
+      "day": 1,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "houseSystem": "placidus",
+    "zodiac": "tropical",
+    "boundsSystem": "egyptian",
+    "triplicitySystem": "dorothean"
+  },
+  "start": {
+    "year": 2026,
+    "month": 1,
+    "day": 1,
+    "hour": 0,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "end": {
+    "year": 2026,
+    "month": 12,
+    "day": 31,
+    "hour": 23,
+    "minute": 59,
+    "timezone": "Asia/Shanghai"
+  },
+  "display_timezone": "Asia/Shanghai",
+  "target_point_set": {
+    "body_ids": ["SUN", "MOON", "MERCURY", "VENUS", "MARS"],
+    "include_nodes": false,
+    "node_mode": "true_node",
+    "custom_asteroids": [],
+    "angle_ids": ["ASC", "MC"],
+    "house_cusps": [],
+    "lot_ids": []
+  },
+  "techniques": [
+    {
+      "id": "transit",
+      "moving_body_ids": ["JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"],
+      "event_types": ["aspect", "ingress", "station"],
+      "aspects": [
+        {"id": "conjunction", "name": "合相", "angle": 0.0, "orb": 1.0},
+        {"id": "semisquare", "name": "半刑", "angle": 45.0, "orb": 1.0},
+        {"id": "sextile", "name": "六合", "angle": 60.0, "orb": 1.0},
+        {"id": "square", "name": "刑相", "angle": 90.0, "orb": 1.0},
+        {"id": "opposition", "name": "冲相", "angle": 180.0, "orb": 1.0}
+      ]
+    },
+    {
+      "id": "secondary_progression",
+      "moving_body_ids": ["SUN", "MOON", "MERCURY", "VENUS", "MARS"],
+      "event_types": ["aspect", "moon_ingress", "lunation"],
+      "aspects": [
+        {"id": "conjunction", "name": "合相", "angle": 0.0, "orb": 1.0},
+        {"id": "semisquare", "name": "半刑", "angle": 45.0, "orb": 1.0},
+        {"id": "sextile", "name": "六合", "angle": 60.0, "orb": 1.0},
+        {"id": "square", "name": "刑相", "angle": 90.0, "orb": 1.0},
+        {"id": "opposition", "name": "冲相", "angle": 180.0, "orb": 1.0}
+      ]
+    },
+    {
+      "id": "solar_arc",
+      "moving_body_ids": ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "ASC", "MC"],
+      "event_types": ["aspect"],
+      "aspects": [
+        {"id": "conjunction", "name": "合相", "angle": 0.0, "orb": 1.0},
+        {"id": "semisquare", "name": "半刑", "angle": 45.0, "orb": 1.0},
+        {"id": "sextile", "name": "六合", "angle": 60.0, "orb": 1.0},
+        {"id": "square", "name": "刑相", "angle": 90.0, "orb": 1.0},
+        {"id": "opposition", "name": "冲相", "angle": 180.0, "orb": 1.0}
+      ]
+    }
+  ],
+  "confirmed_heavy_scan": false,
+  "ephemeris_path": null,
+  "no_asteroids": false,
+  "require_ephemeris": "warn"
+}

@@ -36,6 +36,14 @@ final class CalculationViewModel: ObservableObject {
         currentRunIsStoppable = false
     }
 
+    @discardableResult
+    func commitModernTimingResult(_ result: ModernTimingResult, generation: Int) -> Bool {
+        guard isCurrentRun(generation) else { return false }
+        modernTimingResult = result
+        modernTimingSelectedTab = "timeline"
+        return true
+    }
+
     /// Cancel-path invalidation: drop task ownership and stoppability without
     /// waiting for the cancelled task's defer cleanup.
     func invalidateActiveRun() {
@@ -49,6 +57,7 @@ final class CalculationViewModel: ObservableObject {
     @Published var momentResult: TransitResult?
     @Published var fullNatalResult: TransitResult?
     @Published var scanResult: ScanResult?
+    @Published var modernTimingResult: ModernTimingResult?
     @Published var classicalResult: ClassicalResult?
     @Published var horaryResult: HoraryResult?
     @Published var rectifyResponse: RectifyResponse?
@@ -88,6 +97,7 @@ final class CalculationViewModel: ObservableObject {
     @Published var modernNatalSelectedTab = "natal_positions"
     @Published var momentSelectedTab = "aspects"
     @Published var scanSelectedTab = "timeline"
+    @Published var modernTimingSelectedTab = "timeline"
     @Published var vedicSelectedTab = "overview"
     @Published var modernSelectedTab = ModernSubMode.synastry.defaultResultTab
 

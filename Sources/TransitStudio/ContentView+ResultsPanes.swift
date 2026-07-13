@@ -48,7 +48,7 @@ extension ContentView {
         case .moment:
             return "计算时间点"
         case .scan:
-            return "扫描窗口"
+            return isModernTimingWorkspace ? "计算综合时间线" : "扫描窗口"
         case .rectify:
             return "计算生时矫正"
         }
@@ -108,6 +108,21 @@ extension ContentView {
         case .moment:
             return selectedNatalBodies.isEmpty || selectedTransitBodies.isEmpty || selectedAspectRequests(orb: globalOrb).isEmpty
         case .scan:
+            if isModernTimingWorkspace {
+                let techniques = timingTechniqueRequests()
+                let pointSet = timingTargetPointSet()
+                return scanEndDate <= scanStartDate
+                    || parseDouble(birthLatitude) == nil
+                    || parseDouble(birthLongitude) == nil
+                    || TimeZone(identifier: timingDisplayTimezone.trimmingCharacters(in: .whitespacesAndNewlines)) == nil
+                    || techniques.isEmpty
+                    || techniques.contains(where: {
+                        $0.movingBodyIDs.isEmpty
+                            || $0.eventTypes.isEmpty
+                            || ($0.eventTypes.contains("aspect") && $0.aspects.isEmpty)
+                    })
+                    || ModernTimingWorkEstimator.targetCount(for: pointSet) == 0
+            }
             return scanTransitBodyIDs().isEmpty && parseAsteroids(customAsteroids).isEmpty
                 || (selectedScanKind == "aspect" && selectedAspectRequests(orb: 0).isEmpty)
                 || (selectedScanKind == "aspect" && resolvedScanTargetText().trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -177,7 +192,9 @@ extension ContentView {
         case .moment:
             return AnyView(momentResultsPane)
         case .scan:
-            return AnyView(scanResultsPane)
+            return isModernTimingWorkspace
+                ? AnyView(modernTimingResultsPane)
+                : AnyView(scanResultsPane)
         case .rectify:
             return AnyView(rectifyResultsPane)
         }
@@ -307,6 +324,20 @@ extension ContentView {
     }
 
     // MARK: - Scan Results Pane
+    var modernTimingResultsPane: some View {
+        Group {
+            if let result = calcVM.modernTimingResult {
+                ModernTimingResultPane(result: result, selectedTab: $calcVM.modernTimingSelectedTab)
+            } else {
+                EmptyStateView(
+                    title: "等待综合时间线",
+                    systemImage: "calendar.day.timeline.leading",
+                    description: "配置三种技法、目标点和时间窗口后开始计算。"
+                )
+            }
+        }
+    }
+
     var scanResultsPane: some View {
         Group {
             if calcVM.scanResult != nil {

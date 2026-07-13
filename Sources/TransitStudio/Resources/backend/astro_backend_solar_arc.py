@@ -32,6 +32,11 @@ ANGLE_NAMES = {
 }
 
 
+def true_solar_arc_value(natal_sun_longitude: float, progressed_sun_longitude: float) -> float:
+    """Return the direct true-solar-arc value used by static and timing modes."""
+    return norm360(progressed_sun_longitude - natal_sun_longitude)
+
+
 def _resolve_solar_arc_specs(
     point_set: dict[str, Any],
     warnings: list[str],
@@ -116,7 +121,7 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     # Solar arc = progressed_sun - natal_sun
     natal_sun_lon = natal_by_id.get("SUN", {}).get("longitude", 0.0)
     prog_sun_lon = prog_by_id.get("SUN", {}).get("longitude", 0.0)
-    arc = norm360(prog_sun_lon - natal_sun_lon)
+    arc = true_solar_arc_value(natal_sun_lon, prog_sun_lon)
 
     # Build natal chart
     natal_cusps, natal_angles, _ = build_houses(

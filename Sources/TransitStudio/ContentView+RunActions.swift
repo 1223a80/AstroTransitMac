@@ -74,7 +74,11 @@ extension ContentView {
         case .moment:
             await runCalculation()
         case .scan:
-            await runScan(confirmedHeavyScan: confirmedHeavyScan)
+            if isModernTimingWorkspace {
+                await runModernTiming(confirmedHeavyScan: confirmedHeavyScan)
+            } else {
+                await runScan(confirmedHeavyScan: confirmedHeavyScan)
+            }
         case .rectify:
             await runRectify()
         }
@@ -89,7 +93,10 @@ extension ContentView {
             else { aiVM.clear(modeKey: modernSubMode == .natal ? "natal" : modernSubMode.rawValue) }
         case .horary: aiVM.clear(modeKey: "horary")
         case .moment: aiVM.clear(modeKey: "moment")
-        case .scan: aiVM.clear(modeKey: "scan")
+        case .scan:
+            if !isModernTimingWorkspace {
+                aiVM.clear(modeKey: "scan")
+            }
         case .rectify: break
         }
     }
@@ -104,6 +111,7 @@ extension ContentView {
         progressWork: Int? = nil,
         progressLabel: String = "",
         preRunWarning: String? = nil,
+        liveProgress: Bool = false,
         _ operation: () async throws -> Void
     ) async {
         let generation = calcVM.runGeneration
@@ -112,13 +120,16 @@ extension ContentView {
         calcVM.warningMessage = preRunWarning
         calcVM.asteroidPreparationMessage = ""
         var wasCancelled = false
-        if let progressWork {
+        if liveProgress {
+            calcVM.calculationProgress = 0
+            calcVM.calculationProgressText = "\(progressLabel) 0%"
+        } else if let progressWork {
             startEstimatedProgress(totalWork: progressWork, label: progressLabel)
         }
         defer {
             if calcVM.isCurrentRun(generation) {
                 calcVM.isRunning = false
-                if progressWork != nil {
+                if progressWork != nil || liveProgress {
                     finishProgress(cancelled: wasCancelled || Task.isCancelled)
                 }
             }
@@ -465,7 +476,7 @@ extension ContentView {
             return
         }
         if estimate.requiresConfirmation && !confirmedHeavyScan {
-            pendingScanConfirmation = ScanWorkConfirmation(estimate: estimate)
+            pendingHeavyWorkConfirmation = .scan(estimate)
             return
         }
 
@@ -494,6 +505,101 @@ extension ContentView {
                 zodiac: practiceMode == .vedic ? "sidereal_\(vedicAyanamsha)" : selectedZodiac
             )
             calcVM.scanResult = try await BackendClient.scan(request: request, pythonPath: appState.pythonPath)
+        }
+    }
+
+    @MainActor
+    func runModernTiming(confirmedHeavyScan: Bool = false) async {
+        guard scanEndDate > scanStartDate else {
+            calcVM.errorMessage = "结束时间必须晚于开始时间。"
+            return
+        }
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        let displayTimezone = timingDisplayTimezone.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !displayTimezone.isEmpty, TimeZone(identifier: displayTimezone) != nil else {
+            calcVM.errorMessage = "综合时间线展示时区必须是有效 IANA 时区，例如 Asia/Shanghai。"
+            return
+        }
+
+        let asteroidIDs = parseAsteroids(customAsteroids)
+        let targetPointSet = timingTargetPointSet(asteroidIDs: asteroidIDs)
+        let techniques = timingTechniqueRequests()
+        guard !techniques.isEmpty else {
+            calcVM.errorMessage = "请至少启用一种综合时间线技法。"
+            return
+        }
+        for technique in techniques {
+            guard !technique.movingBodyIDs.isEmpty else {
+                calcVM.errorMessage = "\(technique.id) 至少需要一个移动点。"
+                return
+            }
+            guard !technique.eventTypes.isEmpty else {
+                calcVM.errorMessage = "\(technique.id) 至少需要一种事件类型。"
+                return
+            }
+            if technique.eventTypes.contains("aspect") && technique.aspects.isEmpty {
+                calcVM.errorMessage = "\(technique.id) 启用相位事件时必须选择至少一个相位。"
+                return
+            }
+            if technique.id == "secondary_progression" {
+                if technique.eventTypes.contains("moon_ingress") && !technique.movingBodyIDs.contains("MOON") {
+                    calcVM.errorMessage = "推进月亮入座要求移动点包含月亮。"
+                    return
+                }
+                if technique.eventTypes.contains("lunation")
+                    && !(technique.movingBodyIDs.contains("SUN") && technique.movingBodyIDs.contains("MOON")) {
+                    calcVM.errorMessage = "推进月相要求移动点同时包含太阳和月亮。"
+                    return
+                }
+            }
+        }
+
+        let estimate = timingWorkEstimate(techniques: techniques, targetPointSet: targetPointSet)
+        guard estimate.targetCount > 0 else {
+            calcVM.errorMessage = "综合时间线至少需要一个本命目标点。"
+            return
+        }
+        if estimate.isBlocked {
+            calcVM.errorMessage = estimate.blockedText
+            return
+        }
+        if estimate.requiresConfirmation && !confirmedHeavyScan {
+            pendingHeavyWorkConfirmation = .modernTiming(estimate)
+            return
+        }
+
+        let generation = calcVM.runGeneration
+        await performRun(
+            progressLabel: "综合时间线",
+            preRunWarning: estimate.warningText,
+            liveProgress: true
+        ) {
+            let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
+            let request = ModernTimingRequest(
+                birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: displayTimezone,
+                targetPointSet: targetPointSet,
+                techniques: techniques,
+                confirmedHeavyScan: confirmedHeavyScan,
+                ephemerisPath: effectiveEphemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.modernTiming(
+                request: request,
+                pythonPath: appState.pythonPath
+            ) { update in
+                Task { @MainActor in
+                    guard calcVM.isCurrentRun(generation), !Task.isCancelled else { return }
+                    calcVM.calculationProgress = update.progress
+                    let label = update.label.map { " · \($0)" } ?? ""
+                    calcVM.calculationProgressText = "综合时间线 \(Int(update.progress * 100))%\(label)"
+                }
+            }
+            guard calcVM.isCurrentRun(generation), !Task.isCancelled else { return }
+            calcVM.commitModernTimingResult(result, generation: generation)
         }
     }
 

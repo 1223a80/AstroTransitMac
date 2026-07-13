@@ -149,6 +149,9 @@ extension ContentView {
                 hasResult: calcVM.momentResult != nil
             ) { Task { await analyzeMomentResult() } }
         case .scan:
+            if isModernTimingWorkspace {
+                return nil
+            }
             return AIPanelContext(
                 streamKey: "scan",
                 title: "窗口扫描",

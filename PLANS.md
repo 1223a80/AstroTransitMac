@@ -806,3 +806,41 @@
 - 同一请求只切换返照地点时 exact UTC 与行星黄经不变，角点/宫位可变；local ISO 保留 timezone offset。
 - tropical/sidereal、DST、本地地点、invalid body/location/timezone/precession 均有测试；无命中返回 null occurrence + warning/suggested window，不伪造空盘。
 - Swift 默认 tab 有明确 list/case；Return occurrence、exact UTC/local、house system、误差和地点在 Markdown/CSV/JSON 中可复核。
+
+---
+
+# 现代占星扩展实际施工 — 第 3 批 Modern Timing（2026-07-13）
+
+## 分支与边界
+
+- 继续在 `codex/feature-modern-completeness` 上形成独立 B3 commit；B2 已提交为 `d2a9644`。
+- 新增独立 `mode=modern_timing` 与事件合同，不改变旧 `mode=scan`、`ScanHit`、Examples 或阈值语义。
+- D02 继续生效：birth/start/end/display timezone 均要求完整明确时间，不增加模糊生时降级。
+- v1 注册 Transit→Natal aspect、Transit ingress/station、Secondary Progression→Natal aspect、Progressed Moon ingress/lunation、Solar Arc→Natal aspect；Return/食相后续注册。
+- 每个 technique 自带 aspects/orb；第一版不接 AI。
+
+## 工作包与并行边界
+
+| 工作包 | 内容 | 写集 | 状态 |
+|---|---|---|---|
+| 3A 事件核心 | TargetPoint、adapter、UTC bracket/refine、entering/exact/leaving、clipped、多 pass、dedupe | 新 `astro_backend_modern_timing.py` + focused tests | ✅ |
+| 3B Technique adapters | Transit、secondary progression、solar arc；复用既有 progression/solar arc 方法 | timing 模块 + 既有 helper 的只读复用 | ✅ |
+| 3C API/估算/进度 | mode 校验、work units、1.5M/2.5M/5M 阈值、stderr progress、Examples/fixture | API/timing/client | ✅ |
+| 3D Swift/UI/导出 | request/result、独立 submode、sidebar、timeline/grouped/calendar、filters、CSV/Markdown/JSON | Swift modern/result/export 文件 | ✅ |
+| 3E 验收 | Python/Swift contract、旧 scan 不漂移、取消/迟到结果、完整 gate、缓存清理与提交 | tests/PLANS/CHANGELOG | ✅ |
+
+## B3 当前验证记录
+
+- `python_tests/test_modern_timing.py`：34 passed；Timing + 旧 Scan +现代 timebased 联合回归：98 passed。
+- 全量 `python_tests/`：668 passed；classical/moment/scan/horary/vedic/harmonic/rectify/modern_timing 入口 smoke 均通过。
+- `swift build`、`swift build --build-tests` 与 `swift test` 通过；Swift 共 65 tests / 17 suites，包含真实 fixture、导出、tab、estimator 和 stale generation 契约。
+- 真实一年 fixture 返回 Transit / Secondary Progression / Solar Arc 三种来源、34 条事件、5 条合法边界截断；`technique_configs` 与 Example 完全一致，estimated work units 为 152244。
+- `bash check_vibe_changes.sh` 完整门禁通过：Python 668、Swift 65、classical/moment/scan/horary/vedic/harmonic/rectify smokes 全部成功。
+
+## B3 验收口径
+
+- 每个 aspect event 表示完整 pass，entering/exact/leaving 由独立根求得；边界截断使用 `null + clipped`，不伪造边界时间。
+- 0°/180° 单分支和 60/90/120/150° 双分支均可复算；逆行多次命中按稳定 group/index/count 呈现。
+- Progression 与 Solar Arc adapter 在同 reference 与单点模式位置一致；Transit ingress/station 不重复。
+- estimator 前后端同口径，2.5M 要确认、5M 拒绝；进度/取消复用现有子进程与 generation 保护。
+- timeline/grouped/calendar 的 tab list 与 case 齐全；事件专用 Markdown/CSV/JSON 和真实 fixture/contract tests 同批交付。

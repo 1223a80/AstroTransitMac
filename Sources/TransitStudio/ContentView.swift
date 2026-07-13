@@ -24,6 +24,7 @@ struct ContentView: View {
     @State var classicalReferenceDate = Date()
     @State var scanWindowLabel = "May-Jun 2026"
     @State var selectedScanKind = "aspect"
+    @State var scanWorkspaceMode = "exact_scan"
     @State var natalProfileName = "我的本命盘"
     @State var selectedNatalProfileID = ""
     @State var targetSource = "natal"
@@ -74,7 +75,25 @@ struct ContentView: View {
 
     @State var isParamDrawerPinned = false
     @State var isAIPanelOpen = false
-    @State var pendingScanConfirmation: ScanWorkConfirmation?
+    @State var pendingHeavyWorkConfirmation: HeavyWorkConfirmation?
+
+    @State var timingDisplayTimezone = "Asia/Shanghai"
+    @State var timingEnabledTechniques: Set<String> = ["transit", "secondary_progression", "solar_arc"]
+    @State var timingTransitBodies: Set<String> = ["JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"]
+    @State var timingProgressionBodies: Set<String> = ["SUN", "MOON", "MERCURY", "VENUS", "MARS"]
+    @State var timingSolarArcPoints: Set<String> = ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN", "ASC", "MC"]
+    @State var timingTargetBodies: Set<String> = ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"]
+    @State var timingTargetAngles: Set<String> = ["ASC", "MC", "DSC", "IC", "VERTEX", "EQUATORIAL_ASCENDANT"]
+    @State var timingTargetHouseCusps: Set<Int> = []
+    @State var timingTargetLots: Set<String> = []
+    @State var timingTransitEventTypes: Set<String> = ["aspect", "ingress", "station"]
+    @State var timingProgressionEventTypes: Set<String> = ["aspect", "moon_ingress", "lunation"]
+    @State var timingTransitAspects = Set(aspectOptions.filter(\.isDefault).map(\.id))
+    @State var timingProgressionAspects = Set(aspectOptions.filter(\.isDefault).map(\.id))
+    @State var timingSolarArcAspects = Set(aspectOptions.filter(\.isDefault).map(\.id))
+    @State var timingTransitOrb = 1.0
+    @State var timingProgressionOrb = 1.0
+    @State var timingSolarArcOrb = 1.0
 
     @State var modernSubMode = ModernSubMode.natal
     @State var modernPersonBDate = Self.fixedDate(year: 1992, month: 6, day: 15, hour: 8, minute: 30, gmtOffset: -5)
@@ -151,6 +170,16 @@ struct ContentView: View {
     static let nodeModeOptions = [
         PickerOption(id: "true_node", title: "真节点"),
         PickerOption(id: "mean_node", title: "平节点"),
+    ]
+
+    static let modernTimingAngleOptions = [
+        PickerOption(id: "ASC", title: "ASC"),
+        PickerOption(id: "MC", title: "MC"),
+        PickerOption(id: "DSC", title: "DSC"),
+        PickerOption(id: "IC", title: "IC"),
+        PickerOption(id: "VERTEX", title: "Vertex"),
+        PickerOption(id: "ANTIVERTEX", title: "Antivertex"),
+        PickerOption(id: "EQUATORIAL_ASCENDANT", title: "East Point")
     ]
 
     static func fixedDate(year: Int, month: Int, day: Int, hour: Int, minute: Int, gmtOffset: Double? = nil) -> Date {
@@ -238,12 +267,12 @@ struct ContentView: View {
             }
             calcVM.invalidateRectifyResults()
         }
-        .alert(item: $pendingScanConfirmation) { confirmation in
+        .alert(item: $pendingHeavyWorkConfirmation) { confirmation in
             Alert(
-                title: Text("扫描计算量较大"),
-                message: Text(confirmation.estimate.confirmationText),
+                title: Text(confirmation.title),
+                message: Text(confirmation.confirmationText),
                 primaryButton: .destructive(Text("仍然计算")) {
-                    pendingScanConfirmation = nil
+                    pendingHeavyWorkConfirmation = nil
                     startRunTask(confirmedHeavyScan: true)
                 },
                 secondaryButton: .cancel(Text("取消"))

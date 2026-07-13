@@ -88,4 +88,20 @@ struct ModernExportTests {
         expectCSVTable(csv, header: modernHeader, minRows: 2 + planets.count)
         #expect(csv.contains("harmonic_order,H5"))
     }
+
+    @Test func modernTimingExportsUseDedicatedLifecycleContract() throws {
+        let result = try fixture("modern-timing-result", as: ModernTimingResult.self)
+        let markdown = MarkdownExportBuilder.modernTiming(result)
+        let csv = TextExportBuilder.csv(result)
+        let json = TextExportBuilder.json(result)
+
+        #expect(markdown.contains("# 综合预测时间线"))
+        #expect(markdown.contains("显示时区：Asia/Shanghai"))
+        #expect(markdown.contains("secondary_progression"))
+        #expect(markdown.contains("solar_arc"))
+        #expect(markdown.contains("square 90° / orb 1.00°"))
+        #expect(csv.hasPrefix("source_type,event_type,moving_point,target_point,target_kind,aspect,orb_limit"))
+        #expect(csv.contains("true_solar_arc_bisection"))
+        #expect(json.contains("\"pass_count_in_window\""))
+    }
 }

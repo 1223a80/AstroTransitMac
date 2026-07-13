@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+import math
 import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from backend_runtime import apply_runtime_options
 
@@ -49,6 +51,7 @@ from astro_backend_fixed_stars import compute_star_positions, find_star_conjunct
 from astro_backend_modern_points import (
     DEFAULT_MODERN_BODY_IDS,
     NODE_BODY_IDS,
+    SUPPORTED_ANGLE_IDS,
     finalize_point_set,
     resolve_point_set,
     validate_point_set,
@@ -732,7 +735,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
     supported_modes = {
         "moment", "classical", "vedic", "horary", "scan", "rectify",
         "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
-        "modern_return",
+        "modern_return", "modern_timing",
     }
     if mode not in supported_modes:
         return {"error": f"不支持的 mode：{mode or '<empty>'}", "mode": mode}
@@ -749,21 +752,25 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "solar_arc": ["birth", "reference"],
         "harmonic": ["birth"],
         "modern_return": ["birth", "reference"],
+        "modern_timing": ["birth", "start", "end", "display_timezone", "target_point_set", "techniques"],
     }
     default_required = ["natal", "transit"]
     required = required_by_mode.get(mode, default_required)
     missing = [f for f in required if f not in request]
+    invalid: list[str] = []
     if "birth" in request:
         birth = request["birth"]
-        for f in ("latitude", "longitude"):
-            if f not in birth:
-                missing.append(f"birth.{f}")
+        if not isinstance(birth, dict):
+            invalid.append("birth must be an object")
+        else:
+            for f in ("latitude", "longitude"):
+                if f not in birth:
+                    missing.append(f"birth.{f}")
     if mode == "classical" and "reference" in request:
         ref = request["reference"]
         for f in ("year", "month", "day"):
             if f not in ref:
                 missing.append(f"reference.{f}")
-    invalid: list[str] = []
     if mode == "moment":
         for field in ("natal", "transit"):
             moment = request.get(field)
@@ -823,26 +830,188 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             for f in ("latitude", "longitude"):
                 if f not in p:
                     missing.append(f"{side}.{f}")
-    if mode in ("progression", "solar_arc", "harmonic", "vedic", "modern_return"):
+    if mode in ("progression", "solar_arc", "harmonic", "vedic", "modern_return", "modern_timing"):
         if "birth" in request:
             b = request["birth"]
-            if "moment" not in b:
-                missing.append("birth.moment")
-            else:
-                required_fields = ("year", "month", "day", "hour", "minute")
-                if mode != "vedic":
-                    required_fields = _PERSON_MOMENT_FIELDS
-                for f in required_fields:
-                    if f not in b["moment"]:
-                        missing.append(f"birth.moment.{f}")
-        if "reference" in request:
-            ref = request["reference"]
+            if isinstance(b, dict):
+                moment = b.get("moment")
+                if not isinstance(moment, dict):
+                    missing.append("birth.moment")
+                else:
+                    required_fields = ("year", "month", "day", "hour", "minute")
+                    if mode != "vedic":
+                        required_fields = _PERSON_MOMENT_FIELDS
+                    for f in required_fields:
+                        if f not in moment:
+                            missing.append(f"birth.moment.{f}")
+        reference_field = "reference" if "reference" in request else None
+        if reference_field is not None:
+            ref = request[reference_field]
             ref_fields = ("year", "month", "day", "hour", "minute")
             if mode != "vedic":
                 ref_fields = ("year", "month", "day", "hour", "minute", "timezone")
             for f in ref_fields:
                 if f not in ref:
                     missing.append(f"reference.{f}")
+    if mode == "modern_timing":
+        birth = request.get("birth")
+        if isinstance(birth, dict):
+            latitude = birth.get("latitude")
+            longitude = birth.get("longitude")
+            if isinstance(latitude, bool) or not isinstance(latitude, (int, float)) or not math.isfinite(float(latitude)) or not -90 <= float(latitude) <= 90:
+                invalid.append("birth.latitude must be a finite number in [-90, 90]")
+            if isinstance(longitude, bool) or not isinstance(longitude, (int, float)) or not math.isfinite(float(longitude)) or not -180 <= float(longitude) <= 180:
+                invalid.append("birth.longitude must be a finite number in [-180, 180]")
+            birth_moment = birth.get("moment")
+            if isinstance(birth_moment, dict) and all(key in birth_moment for key in _PERSON_MOMENT_FIELDS):
+                try:
+                    parsed_birth = moment_to_local_datetime(birth_moment)
+                    if not 1800 <= parsed_birth.year <= 2100:
+                        invalid.append("birth.moment.year must be in [1800, 2100]")
+                except Exception as exc:
+                    invalid.append(f"birth.moment is invalid: {exc}")
+
+        parsed_moments: dict[str, datetime] = {}
+        for field in ("start", "end"):
+            moment = request.get(field)
+            if not isinstance(moment, dict):
+                invalid.append(f"{field} must be an object with an exact moment")
+                continue
+            for key in _PERSON_MOMENT_FIELDS:
+                if key not in moment:
+                    missing.append(f"{field}.{key}")
+            if all(key in moment for key in _PERSON_MOMENT_FIELDS):
+                try:
+                    parsed_moments[field] = moment_to_local_datetime(moment)
+                except Exception as exc:
+                    invalid.append(f"{field} is invalid: {exc}")
+        if "start" in parsed_moments and "end" in parsed_moments:
+            if parsed_moments["end"] <= parsed_moments["start"]:
+                invalid.append("end must be later than start")
+            for field, value in parsed_moments.items():
+                if not 1800 <= value.year <= 2100:
+                    invalid.append(f"{field}.year must be in [1800, 2100]")
+
+        display_timezone = request.get("display_timezone")
+        if not isinstance(display_timezone, str) or not display_timezone.strip():
+            invalid.append("display_timezone must be a non-empty IANA timezone")
+        else:
+            try:
+                ZoneInfo(display_timezone)
+            except (ZoneInfoNotFoundError, ValueError) as exc:
+                invalid.append(f"display_timezone is invalid: {exc}")
+
+        confirmed = request.get("confirmed_heavy_scan", False)
+        if not isinstance(confirmed, bool):
+            invalid.append("confirmed_heavy_scan must be a boolean")
+
+        target_point_set = request.get("target_point_set")
+        target_node_mode = (
+            str(target_point_set.get("node_mode", request.get("node_mode", "true_node")))
+            if isinstance(target_point_set, dict)
+            else str(request.get("node_mode", "true_node"))
+        )
+        invalid.extend(
+            f"target_point_set: {error}"
+            for error in validate_point_set(target_point_set, node_mode=target_node_mode)
+        )
+
+        allowed_event_types = {
+            "transit": {"aspect", "ingress", "station"},
+            "secondary_progression": {"aspect", "moon_ingress", "lunation"},
+            "solar_arc": {"aspect"},
+        }
+        techniques = request.get("techniques")
+        seen_techniques: set[str] = set()
+        if not isinstance(techniques, list) or not techniques:
+            invalid.append("techniques must be a non-empty array")
+        else:
+            for index, technique in enumerate(techniques):
+                prefix = f"techniques[{index}]"
+                if not isinstance(technique, dict):
+                    invalid.append(f"{prefix} must be an object")
+                    continue
+                technique_id = technique.get("id")
+                if not isinstance(technique_id, str) or technique_id not in allowed_event_types:
+                    invalid.append(f"{prefix}.id is unsupported: {technique_id}")
+                    continue
+                if technique_id in seen_techniques:
+                    invalid.append(f"{prefix}.id is duplicated: {technique_id}")
+                seen_techniques.add(technique_id)
+
+                moving_ids = technique.get("moving_body_ids")
+                if not isinstance(moving_ids, list) or not moving_ids:
+                    invalid.append(f"{prefix}.moving_body_ids must be a non-empty array")
+                    moving_ids = []
+                valid_moving_ids: set[str] = set()
+                for moving_index, point_id in enumerate(moving_ids):
+                    valid_body = isinstance(point_id, str) and (
+                        point_id in BODY_REGISTRY
+                        or (
+                            point_id.startswith("AST:")
+                            and point_id.split(":", 1)[1].isdigit()
+                            and int(point_id.split(":", 1)[1]) > 0
+                        )
+                    )
+                    valid_solar_angle = (
+                        technique_id == "solar_arc"
+                        and isinstance(point_id, str)
+                        and point_id in SUPPORTED_ANGLE_IDS
+                    )
+                    if not valid_body and not valid_solar_angle:
+                        invalid.append(f"{prefix}.moving_body_ids[{moving_index}] is unknown: {point_id}")
+                    elif isinstance(point_id, str):
+                        valid_moving_ids.add(point_id)
+
+                event_types = technique.get("event_types")
+                if not isinstance(event_types, list) or not event_types:
+                    invalid.append(f"{prefix}.event_types must be a non-empty array")
+                    event_types = []
+                seen_event_types: set[str] = set()
+                for event_index, event_type in enumerate(event_types):
+                    if not isinstance(event_type, str):
+                        invalid.append(f"{prefix}.event_types[{event_index}] must be a string")
+                    elif event_type not in allowed_event_types[technique_id]:
+                        invalid.append(f"{prefix}.event_types contains unsupported value: {event_type}")
+                    elif event_type in seen_event_types:
+                        invalid.append(f"{prefix}.event_types must not contain duplicates")
+                    else:
+                        seen_event_types.add(event_type)
+
+                aspects = technique.get("aspects")
+                if not isinstance(aspects, list):
+                    invalid.append(f"{prefix}.aspects must be an array")
+                    aspects = []
+                if "aspect" in event_types and not aspects:
+                    invalid.append(f"{prefix}.aspects must be non-empty when event_types contains aspect")
+                seen_aspect_ids: set[str] = set()
+                for aspect_index, aspect in enumerate(aspects):
+                    aspect_prefix = f"{prefix}.aspects[{aspect_index}]"
+                    if not isinstance(aspect, dict):
+                        invalid.append(f"{aspect_prefix} must be an object")
+                        continue
+                    aspect_id = aspect.get("id")
+                    name = aspect.get("name")
+                    angle = aspect.get("angle")
+                    orb = aspect.get("orb")
+                    if not isinstance(aspect_id, str) or not aspect_id.strip():
+                        invalid.append(f"{aspect_prefix}.id must be a non-empty string")
+                    elif aspect_id in seen_aspect_ids:
+                        invalid.append(f"{aspect_prefix}.id is duplicated: {aspect_id}")
+                    else:
+                        seen_aspect_ids.add(aspect_id)
+                    if not isinstance(name, str) or not name.strip():
+                        invalid.append(f"{aspect_prefix}.name must be a non-empty string")
+                    if isinstance(angle, bool) or not isinstance(angle, (int, float)) or not math.isfinite(float(angle)) or not 0 <= float(angle) <= 180:
+                        invalid.append(f"{aspect_prefix}.angle must be a finite number in [0, 180]")
+                    if isinstance(orb, bool) or not isinstance(orb, (int, float)) or not math.isfinite(float(orb)) or not 0 <= float(orb) <= 15:
+                        invalid.append(f"{aspect_prefix}.orb must be a finite number in [0, 15]")
+
+                if technique_id == "secondary_progression":
+                    if "moon_ingress" in seen_event_types and "MOON" not in valid_moving_ids:
+                        invalid.append(f"{prefix}.moving_body_ids must include MOON for moon_ingress")
+                    if "lunation" in seen_event_types and not {"SUN", "MOON"}.issubset(valid_moving_ids):
+                        invalid.append(f"{prefix}.moving_body_ids must include SUN and MOON for lunation")
     if mode == "modern_return":
         def validate_timezone_text(value: Any, label: str) -> None:
             if not isinstance(value, str) or not value.strip():
@@ -980,6 +1149,9 @@ def main() -> None:
         elif mode == "modern_return":
             from astro_backend_modern_return import calculate_modern_return
             response = calculate_modern_return(request, warnings)
+        elif mode == "modern_timing":
+            from astro_backend_modern_timing import calculate_modern_timing
+            response = calculate_modern_timing(request, warnings)
         else:
             response = calculate_moment(request, warnings)
 

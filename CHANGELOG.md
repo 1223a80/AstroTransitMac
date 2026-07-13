@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-07-13 — 现代占星第 3 批综合预测时间线
+
+- Timing 筛选条改为窄窗口可横向滚动；Calendar 按显示时区做“月 / ISO 周”分组，并在周内保留当地日期时间，补充周键测试。
+- B3 完整门禁通过：Python 668、Swift 65，classical/moment/scan/horary/vedic/harmonic/rectify smoke 全部成功。
+- 同步 Swift/Python `ALL_MODES`，登记已交付的 `modern_return` 与新增 `modern_timing`，修复全量 constants contract 门禁。
+- 补齐 B3 测试矩阵：0° 跨界、step 边界去重、双分支值、共享 lifecycle、推进月亮入座/月相、Lots target、逐事件 adapter 复算，以及 Swift/后端真实 fixture estimator 一致性。
+- `ModernTimingMeta` 保留完整 `technique_configs`，Markdown 现在列出所有已配置 moving/event/aspect/orb（包括零命中的相位），保证导出可复算。
+- 收紧 stderr 进度文件 monitor 的并发锁范围，避免终止回调与轮询任务在快照大小交错时重复消费或回退 offset。
+- 将 Timing 工作区严格限定为现代 practice；运行路由、结果 pane、AI 可见性与按钮禁用统一复用同一条件，古典/吠陀继续固定走旧 Scan。
+- Timing tab 契约测试显式导入 SwiftUI，以在独立测试 target 中构造受控 Binding。
+- Timing 目标点侧栏复用已计算现代本命盘的有效 Lots，可显式写入 `target_point_set.lot_ids`；补充 Lot 编码与五个结果 tab 声明测试。
+- 强化 `modern_timing` 顶层 failure-path 校验：畸形 birth/moment、technique、moving/event 数组现在返回 validation error，不再泄漏 `TypeError` / `KeyError`；补充共享 lifecycle 与 malformed payload 回归测试。
+- 新增独立 `mode=modern_timing` 的后端事件引擎骨架，按完整 pass 组装 exact/lifecycle、稳定分组、窗口截断标记和技法级 provenance；旧 `mode=scan` 契约保持不变。
+- Transit、Secondary Progression 与 true Solar Arc adapter 分别复用现有星历、`_calc_progressed_dt()` 和共享太阳弧值函数；工作量阈值继续沿用 1.5M/2.5M/5M。
+- API 增加精确出生/窗口时间、IANA 展示时区、目标点集、技法/事件/相位和有限数值校验；模糊或未知出生时间仍不接受。
+- Swift 正在接入独立请求/结果模型、估算器、事件视图及 Markdown/CSV 导出基础，尚待真实 fixture、运行入口和全量门禁收口。
+- 增加覆盖三种技法的一年窗口真实示例请求，作为后端 smoke 与真实 Swift fixture 的唯一生成源。
+- 一年示例为三种技法分别携带完整相位与 orb，并覆盖 Solar Arc 的半刑/六合命中，避免用空相位表制造“技法已运行”的假象。
+- 新增 Modern Timing 聚焦测试，覆盖线性 lifecycle、边界截断、三次 pass、相位分支、估算阈值、严格输入校验、三技法真实一年窗口、时区事实不变以及 Progression/Solar Arc adapter 一致性。
+- 修正新事件引擎 type alias 在项目 Python 3.9 运行时的兼容性，避免 `X | None` 在模块导入阶段求值失败。
+- 由一年期真实示例生成 `modern-timing-result.json`，用于 Swift 解码、展示与导出契约测试；fixture 包含三种 technique 的实际事件。
+- 抽取通用 stderr JSONL 进度缓冲器，保留跨 chunk 拼行与完整错误流；生时矫正改为复用该解析器，为综合时间线实时进度接线提供同一实现。
+- 通用后端客户端增加可选实时进度回调：运行期间轮询正在写入的 stderr 文件、增量解析 JSONL，并在完成/超时/取消时停止 monitor；既有调用继续使用原默认行为。
+- Scan 顶层新增“精确扫描 / 综合时间线”工作区状态，并为三种 timing 技法、各自事件/相位/orb、移动点、目标点集和 IANA 显示时区建立独立 Swift 状态；重任务确认统一为同一个 alert 契约。
+- 新增 Swift timing 请求构造与前置估算 helper：技法按固定顺序编码、相位表互相独立、节点按 node mode 解析，目标 bodies/angles/宫头/小行星形成可审计 point set。
+- Scan 侧栏按蓝图加入分段工作区；综合时间线可配置窗口/IANA 展示时区、严格出生资料、目标实体/轴点/宫头，以及 Transit、Progression、Solar Arc 各自的移动点、事件类型、相位和 orb。
+- 新增 `runModernTiming()`：前端验证技法完整性、推进月亮/月相依赖、IANA 时区、目标点与工作量阈值；后台进度实时更新，完成前再次检查 run generation 与取消状态后才提交结果。
+- 顶部运行按钮、禁用条件和结果路由按 Scan 工作区切换到独立 Modern Timing pane；第一版明确不显示或调用 AI，旧精确扫描结果、tabs 和 AI 保持原路径。
+- Modern Timing pane 增加技法、事件类型、移动点、目标类型、相位和 lifecycle 截断筛选；筛选派生新视图数据，不修改原始 result，三种导出继续默认使用完整事实集。
+- Swift 真实 fixture 契约覆盖三种技法、非相位事件、完整/截断 lifecycle、pass 分组和时区；结果提交封装 generation guard，并新增陈旧任务不能覆盖新请求的回归测试。
+- 通用进度 parser 增加分片标签、非法行、完整错误流和 0...1 边界回归；既有 Rectify 分片测试继续通过同一底层实现。
+
 ## 2026-07-13 — 现代占星第 1 批共享点集与轴点基础
 
 - 新增现代 point-set 校验/解析，统一实体、交点、角点、宫头、Lots 和自定义小行星的有效点集记录；未知点与模糊配置直接拒绝。

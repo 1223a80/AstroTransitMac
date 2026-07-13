@@ -43,6 +43,7 @@ private final class ProcessSharedState: @unchecked Sendable {
     var terminationError: Data?
     var continuation: CheckedContinuation<Void, Error>?
     var watchdog: Task<Void, Never>?
+    var progressMonitor: Task<Void, Never>?
     init() {}
 
     @discardableResult
@@ -70,9 +71,11 @@ private final class ProcessSharedState: @unchecked Sendable {
         lock.lock()
         let continuationToResume: CheckedContinuation<Void, Error>?
         let watchdogToCancel: Task<Void, Never>?
+        let progressMonitorToCancel: Task<Void, Never>?
         if resumed {
             continuationToResume = nil
             watchdogToCancel = nil
+            progressMonitorToCancel = nil
         } else {
             resumed = true
             terminationData = outData
@@ -81,10 +84,13 @@ private final class ProcessSharedState: @unchecked Sendable {
             continuation = nil
             watchdogToCancel = watchdog
             watchdog = nil
+            progressMonitorToCancel = progressMonitor
+            progressMonitor = nil
         }
         lock.unlock()
 
         watchdogToCancel?.cancel()
+        progressMonitorToCancel?.cancel()
         continuationToResume?.resume()
     }
 
@@ -99,9 +105,12 @@ private final class ProcessSharedState: @unchecked Sendable {
         continuation = nil
         let watchdog = watchdog
         self.watchdog = nil
+        let progressMonitor = progressMonitor
+        self.progressMonitor = nil
         lock.unlock()
 
         watchdog?.cancel()
+        progressMonitor?.cancel()
         continuationToResume?.resume(throwing: error)
     }
 
@@ -116,13 +125,26 @@ private final class ProcessSharedState: @unchecked Sendable {
         }
     }
 
+    func setProgressMonitor(_ task: Task<Void, Never>) {
+        lock.lock()
+        if resumed {
+            lock.unlock()
+            task.cancel()
+        } else {
+            progressMonitor = task
+            lock.unlock()
+        }
+    }
+
     func finishTimeout() -> Bool {
         lock.lock()
         let continuationToResume: CheckedContinuation<Void, Error>?
         let watchdogToCancel: Task<Void, Never>?
+        let progressMonitorToCancel: Task<Void, Never>?
         if resumed {
             continuationToResume = nil
             watchdogToCancel = nil
+            progressMonitorToCancel = nil
         } else {
             resumed = true
             terminatedByTimeout = true
@@ -130,10 +152,13 @@ private final class ProcessSharedState: @unchecked Sendable {
             continuation = nil
             watchdogToCancel = watchdog
             watchdog = nil
+            progressMonitorToCancel = progressMonitor
+            progressMonitor = nil
         }
         lock.unlock()
 
         watchdogToCancel?.cancel()
+        progressMonitorToCancel?.cancel()
         continuationToResume?.resume()
         return continuationToResume != nil
     }
@@ -142,9 +167,11 @@ private final class ProcessSharedState: @unchecked Sendable {
         lock.lock()
         let continuationToResume: CheckedContinuation<Void, Error>?
         let watchdogToCancel: Task<Void, Never>?
+        let progressMonitorToCancel: Task<Void, Never>?
         if resumed {
             continuationToResume = nil
             watchdogToCancel = nil
+            progressMonitorToCancel = nil
         } else {
             resumed = true
             terminatedByCancellation = true
@@ -152,12 +179,34 @@ private final class ProcessSharedState: @unchecked Sendable {
             continuation = nil
             watchdogToCancel = watchdog
             watchdog = nil
+            progressMonitorToCancel = progressMonitor
+            progressMonitor = nil
         }
         lock.unlock()
 
         watchdogToCancel?.cancel()
+        progressMonitorToCancel?.cancel()
         continuationToResume?.resume(throwing: CancellationError())
         return continuationToResume != nil
+    }
+}
+
+private final class BackendProgressFileMonitor: @unchecked Sendable {
+    private let lock = NSLock()
+    private let buffer = BackendProgressLineBuffer()
+    private var consumedBytes = 0
+
+    func consume(url: URL) -> [BackendProgressUpdate] {
+        lock.lock()
+        defer { lock.unlock() }
+        guard let snapshot = try? Data(contentsOf: url) else { return [] }
+        if snapshot.count < consumedBytes {
+            consumedBytes = 0
+        }
+        guard snapshot.count > consumedBytes else { return [] }
+        let newData = snapshot.subdata(in: consumedBytes..<snapshot.count)
+        consumedBytes = snapshot.count
+        return buffer.append(newData)
     }
 }
 
@@ -232,6 +281,14 @@ struct BackendClient {
         try await run(request: request, pythonPath: pythonPath)
     }
 
+    static func modernTiming(
+        request: ModernTimingRequest,
+        pythonPath: String,
+        progressCallback: (@Sendable (BackendProgressUpdate) -> Void)? = nil
+    ) async throws -> ModernTimingResult {
+        try await run(request: request, pythonPath: pythonPath, progressCallback: progressCallback)
+    }
+
     static func classical(request: ClassicalRequest, pythonPath: String) async throws -> ClassicalResult {
         try await run(request: request, pythonPath: pythonPath)
     }
@@ -246,7 +303,8 @@ struct BackendClient {
 
     static func run<Request: Encodable, Response: Decodable>(
         request: Request,
-        pythonPath: String
+        pythonPath: String,
+        progressCallback: (@Sendable (BackendProgressUpdate) -> Void)? = nil
     ) async throws -> Response {
         let backendTask = Task.detached(priority: .userInitiated) { () async throws -> Response in
             let reqType = type(of: request)
@@ -273,6 +331,7 @@ struct BackendClient {
             _ = FileManager.default.createFile(atPath: stderrURL.path, contents: nil)
             let stdout = try FileHandle(forWritingTo: stdoutURL)
             let stderr = try FileHandle(forWritingTo: stderrURL)
+            let progressFileMonitor = BackendProgressFileMonitor()
 
             let trimmedPath = pythonPath.trimmingCharacters(in: .whitespacesAndNewlines)
             if trimmedPath.contains("/") {
@@ -297,6 +356,11 @@ struct BackendClient {
             try? stderr.close()
             let outData = try? Data(contentsOf: stdoutURL)
             let errData = try? Data(contentsOf: stderrURL)
+            if let progressCallback {
+                for update in progressFileMonitor.consume(url: stderrURL) {
+                    progressCallback(update)
+                }
+            }
             Logger.backend.debug("terminationHandler: exitCode=\(process.terminationStatus, privacy: .public) outSize=\(outData?.count ?? 0, privacy: .public) errSize=\(errData?.count ?? 0, privacy: .public)")
             try? FileManager.default.removeItem(at: stdoutURL)
             try? FileManager.default.removeItem(at: stderrURL)
@@ -312,6 +376,21 @@ struct BackendClient {
                     do {
                         Logger.backend.debug("run(\(reqType)): starting process")
                         try process.run()
+                        if let progressCallback {
+                            let progressTask = Task.detached(priority: .utility) {
+                                while !Task.isCancelled {
+                                    for update in progressFileMonitor.consume(url: stderrURL) {
+                                        progressCallback(update)
+                                    }
+                                    do {
+                                        try await Task.sleep(nanoseconds: 100_000_000)
+                                    } catch {
+                                        return
+                                    }
+                                }
+                            }
+                            state.setProgressMonitor(progressTask)
+                        }
                         Logger.backend.debug("run(\(reqType)): process started, writing stdin (\(payload.count) bytes)")
                         stdin.fileHandleForWriting.write(payload)
                         stdin.fileHandleForWriting.closeFile()

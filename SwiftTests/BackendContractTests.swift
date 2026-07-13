@@ -82,6 +82,30 @@ struct BackendContractTests {
         #expect(result.patterns?.isEmpty == false)
     }
 
+    @Test func decodeModernTimingResult() throws {
+        let result = try JSONDecoder().decode(
+            ModernTimingResult.self,
+            from: fixtureData("modern-timing-result")
+        )
+
+        #expect(result.meta.schemaVersion == 1)
+        #expect(result.meta.techniqueIDs == ["transit", "secondary_progression", "solar_arc"])
+        #expect(result.meta.techniqueConfigs.map(\.id) == result.meta.techniqueIDs)
+        #expect(result.meta.techniqueConfigs.allSatisfy { !$0.aspects.isEmpty })
+        #expect(Set(result.events.map(\.sourceType)) == Set(result.meta.techniqueIDs))
+        #expect(result.events.contains(where: { $0.eventType == "station" }))
+        #expect(result.events.contains(where: { $0.eventType == "ingress" }))
+        let aspects = result.events.filter { $0.eventType == "aspect" }
+        #expect(!aspects.isEmpty)
+        #expect(aspects.allSatisfy {
+            ($0.windowClippedStart ? $0.enteringUTC == nil : $0.enteringUTC != nil)
+                && ($0.windowClippedEnd ? $0.leavingUTC == nil : $0.leavingUTC != nil)
+        })
+        #expect(result.events.allSatisfy { $0.exactUTC.contains("Z") })
+        #expect(result.events.allSatisfy { $0.exactLocal.contains("+08:00") })
+        #expect(result.events.contains(where: { $0.passCountInWindow > 1 }))
+    }
+
     @Test func decodeHarmonicResult() throws {
         let result = try JSONDecoder().decode(HarmonicResult.self, from: fixtureData("harmonic-result"))
         #expect(result.harmonicOrder == 4)

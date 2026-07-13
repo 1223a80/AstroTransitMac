@@ -197,35 +197,13 @@ private final class RectifyProcessResources: @unchecked Sendable {
 }
 
 final class RectifyStderrBuffer: @unchecked Sendable {
-    private let lock = NSLock()
-    private var accumulated = Data()
-    private var pending = Data()
+    private let sharedBuffer = BackendProgressLineBuffer()
 
     func append(_ data: Data) -> [Double] {
-        lock.lock()
-        accumulated.append(data)
-        pending.append(data)
-        var lines: [Data] = []
-        while let newline = pending.firstIndex(of: 0x0A) {
-            lines.append(pending[..<newline])
-            pending.removeSubrange(...newline)
-        }
-        lock.unlock()
-
-        return lines.compactMap { line in
-            guard !line.isEmpty,
-                  let object = try? JSONSerialization.jsonObject(with: line),
-                  let dictionary = object as? [String: Any],
-                  let progress = dictionary["progress"] as? Double
-            else { return nil }
-            return progress
-        }
+        sharedBuffer.append(data).map(\.progress)
     }
 
     func allData() -> Data {
-        lock.lock()
-        let data = accumulated
-        lock.unlock()
-        return data
+        sharedBuffer.allData()
     }
 }

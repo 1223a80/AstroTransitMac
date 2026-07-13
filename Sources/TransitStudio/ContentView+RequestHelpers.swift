@@ -1,6 +1,10 @@
 import SwiftUI
 
 extension ContentView {
+    var isModernTimingWorkspace: Bool {
+        practiceMode == .modern && scanWorkspaceMode == "modern_timing"
+    }
+
 func selectedAspectRequests(orb: Double) -> [AspectRequest] {
         let builtinRequests = aspectOptions
             .filter { selectedAspects.contains($0.id) }
@@ -138,6 +142,75 @@ func selectedAspectRequests(orb: Double) -> [AspectRequest] {
             scanKind: selectedScanKind,
             aspects: aspects ?? selectedAspectRequests(orb: 0),
             targetText: targetText ?? resolvedScanTargetText()
+        )
+    }
+
+    func timingAspectRequests(selection: Set<String>, orb: Double) -> [AspectRequest] {
+        aspectOptions
+            .filter { selection.contains($0.id) }
+            .map { AspectRequest(id: $0.id, name: $0.name, angle: $0.angle, orb: orb) }
+    }
+
+    func timingTargetPointSet(asteroidIDs: [Int]? = nil) -> ModernPointSet {
+        let nodeIDs: Set<String> = ["MEAN_NODE", "TRUE_NODE", "SOUTH_MEAN_NODE", "SOUTH_TRUE_NODE"]
+        let orderedBodies = sortedBodyIDs(timingTargetBodies)
+        let angleOrder = ["ASC", "MC", "DSC", "IC", "VERTEX", "ANTIVERTEX", "EQUATORIAL_ASCENDANT"]
+        return ModernPointSet(
+            bodyIDs: orderedBodies.filter { !nodeIDs.contains($0) },
+            includeNodes: orderedBodies.contains(where: nodeIDs.contains),
+            nodeMode: modernNodeMode,
+            customAsteroids: asteroidIDs ?? parseAsteroids(customAsteroids),
+            angleIDs: angleOrder.filter { timingTargetAngles.contains($0) },
+            houseCusps: timingTargetHouseCusps.sorted(),
+            lotIDs: timingTargetLots.sorted()
+        )
+    }
+
+    func timingTechniqueRequests() -> [ModernTimingTechniqueRequest] {
+        var techniques: [ModernTimingTechniqueRequest] = []
+        if timingEnabledTechniques.contains("transit") {
+            techniques.append(
+                ModernTimingTechniqueRequest(
+                    id: "transit",
+                    movingBodyIDs: sortedBodyIDs(timingTransitBodies),
+                    eventTypes: ["aspect", "ingress", "station"].filter { timingTransitEventTypes.contains($0) },
+                    aspects: timingAspectRequests(selection: timingTransitAspects, orb: timingTransitOrb)
+                )
+            )
+        }
+        if timingEnabledTechniques.contains("secondary_progression") {
+            techniques.append(
+                ModernTimingTechniqueRequest(
+                    id: "secondary_progression",
+                    movingBodyIDs: sortedBodyIDs(timingProgressionBodies),
+                    eventTypes: ["aspect", "moon_ingress", "lunation"].filter { timingProgressionEventTypes.contains($0) },
+                    aspects: timingAspectRequests(selection: timingProgressionAspects, orb: timingProgressionOrb)
+                )
+            )
+        }
+        if timingEnabledTechniques.contains("solar_arc") {
+            let angleOrder = ["ASC", "MC", "DSC", "IC", "VERTEX", "ANTIVERTEX", "EQUATORIAL_ASCENDANT"]
+            techniques.append(
+                ModernTimingTechniqueRequest(
+                    id: "solar_arc",
+                    movingBodyIDs: sortedBodyIDs(timingSolarArcPoints) + angleOrder.filter { timingSolarArcPoints.contains($0) },
+                    eventTypes: ["aspect"],
+                    aspects: timingAspectRequests(selection: timingSolarArcAspects, orb: timingSolarArcOrb)
+                )
+            )
+        }
+        return techniques
+    }
+
+    func timingWorkEstimate(
+        techniques: [ModernTimingTechniqueRequest]? = nil,
+        targetPointSet: ModernPointSet? = nil
+    ) -> ModernTimingWorkEstimate {
+        ModernTimingWorkEstimator.estimate(
+            start: scanStartDate,
+            end: scanEndDate,
+            techniques: techniques ?? timingTechniqueRequests(),
+            targetPointSet: targetPointSet ?? timingTargetPointSet()
         )
     }
     func parseAsteroids(_ text: String) -> [Int] {
