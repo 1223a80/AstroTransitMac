@@ -60,11 +60,12 @@ def _resolve_prog_bodies(node_mode: str, warnings: list[str]) -> list[Any]:
 
 def _calc_lunation(prog_sun_lon: float, prog_moon_lon: float) -> dict[str, Any]:
     sep = angular_separation(prog_sun_lon, prog_moon_lon)
+    directed_phase = norm360(prog_moon_lon - prog_sun_lon)
     best_angle = 0
     best_name = "新月"
     best_dist = 999.0
     for angle, name in LUNATION_PHASES:
-        dist = abs(sep - angle)
+        dist = abs((directed_phase - angle + 180.0) % 360.0 - 180.0)
         if dist < best_dist:
             best_dist = dist
             best_angle = angle

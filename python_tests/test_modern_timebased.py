@@ -76,6 +76,29 @@ class TestLunation:
         l = _calc_lunation(10.0, 50.0)
         assert l["phase_angle"] in (0, 45, 90, 135, 180, 225, 270, 315)
 
+    @pytest.mark.parametrize(
+        ("sun_lon", "moon_lon", "expected_phase", "expected_angle", "expected_separation"),
+        [
+            (0.0, 90.0, "上弦月", 90, 90.0),
+            (0.0, 270.0, "下弦月", 270, 90.0),
+            (10.0, 235.0, "亏凸月", 225, 135.0),
+            (350.0, 349.0, "新月", 0, 1.0),
+        ],
+    )
+    def test_directed_phase_preserves_lunation_direction(
+        self,
+        sun_lon: float,
+        moon_lon: float,
+        expected_phase: str,
+        expected_angle: int,
+        expected_separation: float,
+    ) -> None:
+        lunation = _calc_lunation(sun_lon, moon_lon)
+
+        assert lunation["phase_name"] == expected_phase
+        assert lunation["phase_angle"] == expected_angle
+        assert lunation["sun_moon_separation"] == expected_separation
+
 
 class TestProgressions:
     def test_returns_keys(self) -> None:

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — 现代占星第 0 批基线正确性修复
+
+- 修复 Composite 非 Whole Sign 宫位重建对 `build_houses()` 三元返回值的错误 unpack；保持现有 MC-shift、Whole Sign 与真实 fallback warning 语义，并增加 Placidus/Equal/Porphyry 回归。
+- 修复推进月相使用无方向最短夹角的问题，改用有向 `Moon - Sun` 周期角区分八相；保留 `sun_moon_separation` 与原响应字段，增加盈亏月相和跨 0° 回归。
+- 本批不新增 mode、不改变现有 JSON shape，也不涉及模糊出生时间降级。
+
 ## 2026-07-11 — Horary 审计全量修复发布 1.3.1 (41)
 
 - 完成 Horary 审计 16 项 REQUIRED 修复及既有 A–C 改动复审；P3-02 仍按产品决策边界保留，不擅自增加宫位选择器或扩展问题推断规则。

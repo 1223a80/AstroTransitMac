@@ -685,3 +685,50 @@
 | 02 project-structure.md | ✅ | 同步拆分后的文件结构、状态对象、Fixtures、CI |
 | 03 validation.md | ✅ | 补 BackendContractTests、fixture 再生成、CI、check_vibe |
 | 04 AGENTS.md | ✅ | 验证清单与 Source of Truth 更新，新增 AI 流式与 tab 约定 |
+
+---
+
+# 现代占星扩展实际施工 — 第 0 批（2026-07-13）
+
+## 分支
+
+`codex/fix-modern-baseline-correctness`（从已推送的 `main` 新建）
+
+## 已确认的产品边界
+
+- D02：原则上不接受模糊出生时间输入；本轮不新增 `time_accuracy`，不引入 unknown/approximate 的静默降级路径。
+- 现代扩展继续要求明确出生日期、时间、时区和地点；后续依赖角点/宫位的功能不得假装支持模糊生时。
+- 当前先完成第 0 批基线正确性修复；D05、D10、D12 在各自批次前逐次确认。
+
+## 七批工作拆分与依赖
+
+| 批次 | 具体工作 | 前置 | 并行安排 |
+|---|---|---|---|
+| 0 | B0-01 Composite 非整宫 unpack/fallback 回归；B0-02 推进月相有向周期角修复 | 无 | 两项分属不同后端模块，可由两个 sub-agent 并行；主 Agent 负责契约复核、整合和门禁 |
+| 1 | shared point set/chart snapshot、Vertex/East Point/Antivertex、结构统计、赤纬/OOB、Synastry 高级点集、六个高级现代 mode 的 optional point set、Swift 展示与三种导出 | 0、D02 | 后端共享 helper、Swift 模型/结果页、测试/fixture 可在接口稳定后并行；不得先猜字段 |
+| 2 | Solar/Lunar Return、地点与 exact solver、Return snapshot/overlay、Swift 与导出 | 0、1；D05 | solver、现代 Return 后端契约、Swift pane/导出可分工；古典 schema 回归独立验证 |
+| 3 | 独立 `modern_timing`、Transit/Progression/Solar Arc adapter、lifecycle、多次命中、估算/取消、timeline UI/导出 | 0、1 | technique adapter、事件模型/UI、性能与取消测试可并行；共用动态事件契约后整合 |
+| 4 | 360° midpoint axis/tree、静态激活、对时间线 target 的接入和导出 | 1、3 | midpoint 数学/后端与 UI/导出可并行；事件引擎接入必须等第 3 批契约 |
+| 5A | Transit→Composite/Davison、`progressed_composite` 行星/相位与独立 submode | 0、1、3 | 关系 target adapter 与 progressed composite 可并行；不实现 5B 争议方法 |
+| 5B | Progression/SA→Composite/Davison、关系盘角点/宫位变体、Davison reference place | D10、D12 确认 | 暂不施工 |
+| 6A | Relocation：同一 birth UTC、重算地点宫位/角点、overlay、导出 | 1 | 可独立于 6B；地图不与本批混做 |
+| 6B | 朔望/日月食 exact 周期、global/local visibility、可选本命点 contacts | 1；可选接 3 | 周期计算与独立导出可并行；接入 timing 需等第 3 批 |
+| 6C | A*C*G/Local Space 方法 spike、Swiss binding/MapKit 验证，之后再定正式 API | 方法 spike；不阻塞 6A/6B | 独立 epic，先只读验证 |
+
+## 第 0 批执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 分支与计划 | ✅ | 当前分支已从已推送的 `main` 新建；本计划已写入 |
+| 02 现状核对 | ✅ | 已核对实现、所有 `build_houses()` 调用点、入口校验、现代测试和 sample |
+| 03 B0-01 Composite 修复 | ✅ | 按 `(cusps, angles, system_label)` 接收 `build_houses()`；保持当前 MC-shift 方法，不重定义宫位算法 |
+| 04 B0-02 推进月相修复 | ✅ | 使用有向 `Moon - Sun` 周期角选择八相；保留旧字段语义 |
+| 05 聚焦与跨模式验证 | ✅ | 现代关系/时基 52 项、全量 Python 587 项、Swift 50 项、六个 modern sample 与项目 smoke 全部通过 |
+| 06 记录与交付 | ✅ | `CHANGELOG.md` 已同步；完整 diff/stat 已复核；`.build`、pytest cache、`__pycache__`、`.pyc` 已清理；本批不打包、不 push |
+
+## 第 0 批验收口径
+
+- Composite Placidus/Equal/Porphyry 不再因 unpack 错误进入 fallback；真实 fallback 仍显式 warning；Whole Sign 不漂移。
+- 推进月相正确区分 0/45/90/135/180/225/270/315°，跨 0° 采用圆周距离；现有 `sun_moon_separation` 和字段兼容。
+- 不改变古典 `planetary_returns`、Horary、Vedic、现有 `scan` 契约；不新增现代功能字段。
+- 聚焦测试、必要跨模式测试和 `bash check_vibe_changes.sh` 通过；生成的 `.build`、pytest cache、`__pycache__`、`.pyc` 清理。

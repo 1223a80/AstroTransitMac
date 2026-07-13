@@ -260,6 +260,31 @@ class TestComposite:
         result = calculate_composite(request, warnings)
         assert len(result["houses"]) == 12
 
+    @pytest.mark.parametrize("house_system", ("placidus", "equal", "porphyry"))
+    def test_non_whole_sign_house_rebuild_uses_three_value_contract(
+        self,
+        person_a: dict[str, Any],
+        person_b: dict[str, Any],
+        aspect_specs: list[dict[str, Any]],
+        house_system: str,
+    ) -> None:
+        request = {
+            "mode": "composite",
+            "person_a": person_a,
+            "person_b": person_b,
+            "house_system": house_system,
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": aspect_specs,
+        }
+        warnings: list[str] = []
+        result = calculate_composite(request, warnings)
+
+        assert len(result["houses"]) == 12
+        assert len({round(house["cusp_longitude"], 8) for house in result["houses"]}) > 1
+        assert not any("Composite 宫位重建失败" in warning for warning in warnings)
+        assert not any("too many values to unpack" in warning for warning in warnings)
+
     def test_house_rebuild_failure_warns(
         self,
         person_a: dict[str, Any],
@@ -292,7 +317,8 @@ class TestComposite:
         warnings: list[str] = []
         result = calculate_composite(request, warnings)
         assert len(result["houses"]) == 12
-        assert any("宫位重建失败" in w for w in warnings)
+        assert any("宫位重建失败" in w and "house rebuild exploded" in w for w in warnings)
+        assert not any("too many values to unpack" in w for w in warnings)
 
 
 class TestDavison:

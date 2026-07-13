@@ -83,7 +83,7 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
         comp_cusps = [norm360(first_cusp + 30.0 * i) for i in range(12)]
     else:
         try:
-            raw_cusps, _ = build_houses(a_jd, asc_lat, asc_lon, house_system, sidereal, warnings)
+            raw_cusps, _, _ = build_houses(a_jd, asc_lat, asc_lon, house_system, sidereal, warnings)
             mc_delta = norm360(comp_mc - a_angles["MC"])
             comp_cusps = [norm360(c + mc_delta) for c in raw_cusps]
         except Exception as exc:
