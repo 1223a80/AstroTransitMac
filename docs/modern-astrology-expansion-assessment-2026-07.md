@@ -1,5 +1,7 @@
 # 现代占星扩展能力评估（2026-07-13）
 
+> 详细施工拆分、契约草案、测试矩阵和决策门见 [`modern-astrology-expansion-implementation-blueprint-2026-07.md`](modern-astrology-expansion-implementation-blueprint-2026-07.md)。
+
 ## 结论
 
 进一步扩展的可行性高。项目已经具备稳定的 Swiss Ephemeris 位置/宫位计算、JSON 模式分发、精确过境求根、关系盘、次限、太阳弧、调和盘、图形识别、Swift Codable/导出和回归测试。下一阶段不需要重写架构，重点是把现有原语组合成完整工作流，并把方法选择显式写入请求与 `meta`。
