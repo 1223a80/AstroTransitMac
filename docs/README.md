@@ -9,6 +9,7 @@ Use these files before changing the project:
 - `validation.md` - local setup, test commands, and smoke checks.
 - `product-decisions.md` - intentional product constraints that audits and future changes must preserve.
 - `project-audit-2026-07-06.md` - current folder hygiene notes, technical debt, potential hidden bugs, and next-step recommendations.
+- `modern-astrology-expansion-assessment-2026-07.md` - current modern-astrology baseline, missing techniques, feasibility, priorities, and recommended implementation sequence.
 - `opencode-next-step-requirements.md` - scoped product requirement for config preset management.
 - `frontend-refactor/` - 2026-06 frontend refactor module specs and handoff notes (completed, kept for reference).
 - `archive/` - completed planning documents (vedic AI port plan, classical roadmap, finished PLANS batches).
