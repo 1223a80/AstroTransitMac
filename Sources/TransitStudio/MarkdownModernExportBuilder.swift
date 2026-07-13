@@ -157,6 +157,70 @@ enum MarkdownModernExportBuilder {
         return lines.joined(separator: "\n")
     }
 
+    static func modernReturn(_ result: ModernReturnResult) -> String {
+        var lines: [String] = ["# \(result.meta.returnBodyID == "MOON" ? "Lunar Return" : "Solar Return")"]
+        lines.append(contentsOf: metaLines(result.meta))
+        if let zodiac = result.meta.zodiac {
+            lines.append("- 黄道：\(zodiac)")
+        }
+        if let requested = result.meta.houseSystemRequested {
+            lines.append("- 宫制 requested：\(requested)")
+        }
+        if let effective = result.meta.houseSystemEffective {
+            lines.append("- 宫制 effective：\(effective)")
+        }
+        if let precession = result.meta.precessionCorrection {
+            lines.append("- 岁差修正：\(precession)")
+        }
+        if let birthUTC = result.meta.birthUTC {
+            lines.append("- 本命 UTC：\(birthUTC)")
+        }
+        if let referenceUTC = result.meta.referenceUTC {
+            lines.append("- 参考 UTC：\(referenceUTC)")
+        }
+        if let bodyID = result.meta.returnBodyID {
+            lines.append("- 返回天体：\(bodyID)")
+        }
+        if let target = result.meta.targetLongitude {
+            lines.append("- 目标黄经：\(MarkdownExportBuilder.degree(target, digits: 8))")
+        }
+        if let source = result.meta.locationSource {
+            lines.append("- 返照地点来源：\(source)")
+        }
+        if let location = result.meta.location {
+            lines.append("- 返照地点：\(location.name)（\(location.latitude), \(location.longitude), \(location.timezone)）")
+        }
+        lines.append("")
+        lines.append("## 返照序列")
+        lines.append(contentsOf: returnOccurrenceLines("上一次", result.previousReturn))
+        lines.append(contentsOf: returnOccurrenceLines("当前周期", result.currentCycleReturn))
+        lines.append(contentsOf: returnOccurrenceLines("下一次", result.nextReturn))
+        if let occurrence = result.currentCycleReturn {
+            lines.append("")
+            lines.append("## 当前返照行星")
+            if let chart = occurrence.chart {
+                lines.append(contentsOf: MarkdownExportBuilder.positionSection("返照", chart.planets))
+            } else {
+                lines.append("无快照。")
+            }
+            lines.append("")
+            lines.append("## 返照→本命相位")
+            lines.append(contentsOf: returnAspectLines(occurrence.returnToNatalAspects))
+            lines.append("")
+            lines.append("## 宫位落点")
+            lines.append(contentsOf: returnOverlayLines(occurrence.houseOverlay))
+            if let patterns = occurrence.chart?.patterns, !patterns.isEmpty {
+                lines.append("")
+                lines.append("## 图形模式")
+                for pattern in patterns {
+                    lines.append("- **\(pattern.typeName)**（\(pattern.confidence)）：\(pattern.members.joined(separator: ", "))")
+                }
+            }
+        }
+        lines.append(contentsOf: MarkdownExportBuilder.warnings(result.warnings))
+        return lines.joined(separator: "\n")
+    }
+
     // MARK: - Helpers
 
     static func metaLines(_ meta: ModernMeta) -> [String] {
@@ -171,6 +235,34 @@ enum MarkdownModernExportBuilder {
         var lines: [String] = ["| 天体 | 宫位 |", "|------|------|"]
         for p in placements {
             lines.append("| \(p.bodyName) | \(p.house) |")
+        }
+        return lines
+    }
+
+    private static func returnOccurrenceLines(_ title: String, _ occurrence: ModernReturnOccurrence?) -> [String] {
+        guard let occurrence else { return ["- \(title)：未找到"] }
+        return [
+            "- \(title)：\(occurrence.exactLocal)",
+            "  - UTC：\(occurrence.exactUTC)",
+            "  - 返回黄经：\(MarkdownExportBuilder.degree(occurrence.returnLongitude, digits: 8))",
+            "  - 求根误差：\(String(format: "%.3e", occurrence.exactError))°",
+        ]
+    }
+
+    private static func returnAspectLines(_ aspects: [AspectHit]) -> [String] {
+        if aspects.isEmpty { return ["无返照→本命相位。"] }
+        var lines = ["| 返照天体 | 相位 | 本命天体 | 分隔角 | 容许度 |", "|----------|------|----------|--------|--------|"]
+        for aspect in aspects {
+            lines.append("| \(aspect.transitBodyName) | \(aspect.aspectName) | \(aspect.natalBodyName) | \(MarkdownExportBuilder.degree(aspect.separation, digits: 2)) | \(MarkdownExportBuilder.degree(aspect.orb, digits: 2)) |")
+        }
+        return lines
+    }
+
+    private static func returnOverlayLines(_ overlays: [ReturnHouseOverlay]) -> [String] {
+        if overlays.isEmpty { return ["无宫位落点。"] }
+        var lines = ["| 天体 | 返照宫 | 本命宫 |", "|------|--------|--------|"]
+        for overlay in overlays {
+            lines.append("| \(overlay.bodyName) | \(overlay.returnHouse) | \(overlay.natalHouse) |")
         }
         return lines
     }

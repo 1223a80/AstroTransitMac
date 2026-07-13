@@ -212,6 +212,80 @@ extension ChartWheelData {
         self.unresolvedAspectEndpoints = []
     }
 
+    /// Builds a biwheel from explicit return/natal body IDs.  Return aspects
+    /// are resolved against the prefixed IDs rather than display names so a
+    /// missing endpoint remains visible in diagnostics instead of silently
+    /// producing a misleading line.
+    init(modernReturnChart chart: ModernReturnChartSnapshot, returnToNatalAspects: [AspectHit]) {
+        func point(_ position: PositionRow, prefix: String, isTransit: Bool) -> WheelPoint {
+            let signIndex = max(0, min(11, Int(position.longitude / 30)))
+            return WheelPoint(
+                id: "\(prefix)-\(position.bodyID)",
+                name: position.name,
+                shortLabel: planetShortLabels[position.bodyID] ?? String(position.name.prefix(1)),
+                longitude: position.longitude,
+                house: position.house ?? 0,
+                sign: position.sign,
+                signIndex: signIndex,
+                degreeText: position.degreeText,
+                element: elementForSign(index: signIndex),
+                type: .planet,
+                isTransit: isTransit
+            )
+        }
+
+        var points: [WheelPoint] = []
+        for position in chart.natalPlanets ?? [] {
+            points.append(point(position, prefix: "natal", isTransit: false))
+        }
+        for angle in chart.natalAngles ?? [] {
+            let signIndex = max(0, min(11, Int(angle.longitude / 30)))
+            points.append(WheelPoint(
+                id: "natal-\(angle.id)", name: angle.name,
+                shortLabel: angleShortLabels[angle.id] ?? String(angle.name.prefix(1)),
+                longitude: angle.longitude, house: angle.house, sign: angle.sign,
+                signIndex: signIndex, degreeText: angle.degreeText,
+                element: elementForSign(index: signIndex), type: .angle, isTransit: false
+            ))
+        }
+        for position in chart.planets {
+            points.append(point(position, prefix: "return", isTransit: true))
+        }
+        for angle in chart.angles {
+            let signIndex = max(0, min(11, Int(angle.longitude / 30)))
+            points.append(WheelPoint(
+                id: "return-\(angle.id)", name: angle.name,
+                shortLabel: angleShortLabels[angle.id] ?? String(angle.name.prefix(1)),
+                longitude: angle.longitude, house: angle.house, sign: angle.sign,
+                signIndex: signIndex, degreeText: angle.degreeText,
+                element: elementForSign(index: signIndex), type: .angle, isTransit: true
+            ))
+        }
+
+        let endpointIDs = Set(points.map(\.id))
+        var unresolved: [String] = []
+        let wheelAspects = returnToNatalAspects.compactMap { aspect -> WheelAspect? in
+            let left = "return-\(aspect.transitBodyID)"
+            let right = "natal-\(aspect.natalBodyID)"
+            guard endpointIDs.contains(left), endpointIDs.contains(right) else {
+                unresolved.append("\(aspect.transitBodyName) \(aspect.aspectName) \(aspect.natalBodyName)")
+                return nil
+            }
+            return WheelAspect(
+                id: aspect.id,
+                pointAID: left,
+                pointBID: right,
+                type: aspect.aspectName
+            )
+        }
+        let houseCusps = chart.houses.map(\.cuspLongitude)
+        self.points = points
+        self.houseCusps = houseCusps.isEmpty ? (0..<12).map { Double($0 * 30) } : houseCusps
+        self.axisLongitudes = chart.angles.map(\.longitude)
+        self.aspects = wheelAspects
+        self.unresolvedAspectEndpoints = unresolved
+    }
+
     init(horaryResult: HoraryResult) {
         var pts: [WheelPoint] = []
         for p in horaryResult.planets {

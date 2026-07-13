@@ -769,7 +769,7 @@
 | 04 现代本命结构/轴点/赤纬 | ✅ | 完成本命 `chart_profile`、patterns、轴点、赤纬/OOB 与固定星结果入口；D02 无降级 |
 | 05 高级现代 mode 点集迁移 | ✅ | Synastry、Composite、Davison、Progression、Solar Arc、Harmonic 支持 optional point set，旧默认保持 |
 | 06 Swift 展示、导出、fixture | ✅ | 新增请求/结果字段、结构/赤纬/固定星/关系赤纬 tab，三种导出和六个真实 fixture 已同步 |
-| 07 门禁与交付 | 🔄 | 聚焦 Python、Swift build 与六个 modern smoke 已通过；待全量门禁、缓存清理、diff 复核和提交 |
+| 07 门禁与交付 | ✅ | 聚焦与全量门禁通过；Python 634、Swift 52、六个 modern smoke 已通过；缓存清理、diff 复核与 B1 提交均已完成 |
 
 ## B1 验收口径
 
@@ -779,3 +779,30 @@
 - declination position、OOB、declination aspects 分区输出；declination orb 独立默认 1°；Synastry 跨盘 ID 不歧义。
 - 现有 moment/synastry/composite/davison/progression/solar_arc/harmonic 默认 sample 与旧 schema 不漂移。
 - Swift 默认 tab、每个 tab case、Markdown/CSV/JSON、真实 fixture 和 `BackendContractTests` 同批通过；不接 AI。
+
+---
+
+# 现代占星扩展实际施工 — 第 2 批 Return（2026-07-13）
+
+## 分支与边界
+
+- 继续在 `codex/feature-modern-completeness` 上按独立提交推进；B1 已提交，B2 不回改已确认的 point-set 语义。
+- 新增独立 `mode=modern_return`，只开放 `return_body_id=SUN|MOON`；不扩展 Mercury/Venus/Mars/Jupiter/Saturn Return。
+- D02 继续生效：birth/reference/location timezone 必须是完整、明确的 exact moment/地点；不增加 approximate/unknown/noon convention。
+- `precession_correction` v1 只允许 `none`；地点只改变返照 snapshot 的角点/宫位，不改变 exact UTC。
+
+## 工作包与写集
+
+| 工作包 | 内容 | 写集 | 状态 |
+|---|---|---|---|
+| 2A solver/backend | UTC 精确求根、previous/current/next、现代 snapshot、return→natal、house overlay、effective point set | 新 `astro_backend_modern_return.py` + Python tests | ✅ |
+| 2B Swift 契约/UI | Request/Result、ModernSubMode、运行入口、sidebar、tabs、Markdown/CSV/JSON | Swift modern/request/result/pane/export 文件 | ✅ |
+| 2C API/Examples | mode 注册、结构化校验、两个 sample、真实 fixture、contract tests | API、Examples、Fixtures、Swift tests | ✅ |
+| 2D 门禁 | exact longitude、地点不改 UTC、DST local offset、古典回归、全量 gate、缓存清理 | PLANS/CHANGELOG/验证输出 | ✅ |
+
+## B2 验收口径
+
+- Solar target 与 natal Sun exact longitude error ≤ 1e-5°；Lunar previous/current/next 时间严格排序，current 为 reference 前最近命中、next 为其后首个命中。
+- 同一请求只切换返照地点时 exact UTC 与行星黄经不变，角点/宫位可变；local ISO 保留 timezone offset。
+- tropical/sidereal、DST、本地地点、invalid body/location/timezone/precession 均有测试；无命中返回 null occurrence + warning/suggested window，不伪造空盘。
+- Swift 默认 tab 有明确 list/case；Return occurrence、exact UTC/local、house system、误差和地点在 Markdown/CSV/JSON 中可复核。

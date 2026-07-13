@@ -8,6 +8,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
     case progression = "progression"
     case solarArc = "solar_arc"
     case harmonic = "harmonic"
+    case returnChart = "return"
 
     var id: String { rawValue }
 
@@ -20,6 +21,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .progression: return "次限推进"
         case .solarArc: return "太阳弧"
         case .harmonic: return "调和盘"
+        case .returnChart: return "返照盘"
         }
     }
 
@@ -32,6 +34,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .progression: return "forward.fill"
         case .solarArc: return "sun.max"
         case .harmonic: return "music.note.list"
+        case .returnChart: return "arrow.clockwise.circle"
         }
     }
 
@@ -45,6 +48,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .composite, .davison, .harmonic: return "planets"
         case .progression: return "progressed_planets"
         case .solarArc: return "sa_planets"
+        case .returnChart: return "current_return"
         }
     }
 }
@@ -56,6 +60,7 @@ enum ModernResultData {
     case progression(ProgressionResult)
     case solarArc(SolarArcResult)
     case harmonic(HarmonicResult)
+    case returnChart(ModernReturnResult)
 }
 
 struct PatternResult: Codable, Identifiable {
@@ -104,6 +109,8 @@ struct ModernMeta: Codable {
     let personBUTC: String?
     let natalUTC: String?
     let progressedUTC: String?
+    let birthUTC: String?
+    let referenceUTC: String?
     let ephemeris: String?
     let schemaVersion: Int?
     let zodiac: String?
@@ -113,6 +120,11 @@ struct ModernMeta: Codable {
     let displayTimezone: String?
     let effectivePointSet: ModernPointSet?
     let calculationAssumptions: [String: String]?
+    let returnBodyID: String?
+    let targetLongitude: Double?
+    let locationSource: String?
+    let location: ModernReturnLocation?
+    let precessionCorrection: String?
 
     init(
         method: String,
@@ -120,6 +132,8 @@ struct ModernMeta: Codable {
         personBUTC: String?,
         natalUTC: String?,
         progressedUTC: String?,
+        birthUTC: String? = nil,
+        referenceUTC: String? = nil,
         ephemeris: String?,
         schemaVersion: Int? = nil,
         zodiac: String? = nil,
@@ -128,13 +142,20 @@ struct ModernMeta: Codable {
         nodeMode: String? = nil,
         displayTimezone: String? = nil,
         effectivePointSet: ModernPointSet? = nil,
-        calculationAssumptions: [String: String]? = nil
+        calculationAssumptions: [String: String]? = nil,
+        returnBodyID: String? = nil,
+        targetLongitude: Double? = nil,
+        locationSource: String? = nil,
+        location: ModernReturnLocation? = nil,
+        precessionCorrection: String? = nil
     ) {
         self.method = method
         self.personAUTC = personAUTC
         self.personBUTC = personBUTC
         self.natalUTC = natalUTC
         self.progressedUTC = progressedUTC
+        self.birthUTC = birthUTC
+        self.referenceUTC = referenceUTC
         self.ephemeris = ephemeris
         self.schemaVersion = schemaVersion
         self.zodiac = zodiac
@@ -144,6 +165,11 @@ struct ModernMeta: Codable {
         self.displayTimezone = displayTimezone
         self.effectivePointSet = effectivePointSet
         self.calculationAssumptions = calculationAssumptions
+        self.returnBodyID = returnBodyID
+        self.targetLongitude = targetLongitude
+        self.locationSource = locationSource
+        self.location = location
+        self.precessionCorrection = precessionCorrection
     }
 
     enum CodingKeys: String, CodingKey {
@@ -152,6 +178,8 @@ struct ModernMeta: Codable {
         case personBUTC = "person_b_utc"
         case natalUTC = "natal_utc"
         case progressedUTC = "progressed_utc"
+        case birthUTC = "birth_utc"
+        case referenceUTC = "reference_utc"
         case ephemeris
         case schemaVersion = "schema_version"
         case zodiac
@@ -161,6 +189,285 @@ struct ModernMeta: Codable {
         case displayTimezone = "display_timezone"
         case effectivePointSet = "effective_point_set"
         case calculationAssumptions = "calculation_assumptions"
+        case returnBodyID = "return_body_id"
+        case targetLongitude = "target_longitude"
+        case locationSource = "location_source"
+        case location
+        case precessionCorrection = "precession_correction"
+    }
+}
+
+/// Return responses use the same common meta envelope as the other modern
+/// modes, with return-specific fields carried as optional additions.
+typealias ModernReturnMeta = ModernMeta
+
+struct ModernReturnChartSnapshot: Codable {
+    let planets: [PositionRow]
+    let angles: [ClassicalPoint]
+    let houses: [HouseRow]
+    let natalPlanets: [PositionRow]?
+    let natalAngles: [ClassicalPoint]?
+    let natalHouses: [HouseRow]?
+    let aspects: [AspectHit]
+    let declinationAspects: [DeclinationAspect]?
+    let fixedStarConjunctions: [FixedStarConjunction]?
+    let patterns: [PatternResult]?
+    let chartProfile: ChartProfile?
+    let warnings: [String]?
+    let sectionErrors: [String: String]?
+    let houseSystem: String?
+    let zodiac: String?
+
+    /// Compatibility alias for callers that describe the same rows as
+    /// positions. The wire contract remains `planets`.
+    var positions: [PositionRow] { planets }
+
+    init(
+        planets: [PositionRow] = [],
+        angles: [ClassicalPoint] = [],
+        houses: [HouseRow] = [],
+        natalPlanets: [PositionRow]? = nil,
+        natalAngles: [ClassicalPoint]? = nil,
+        natalHouses: [HouseRow]? = nil,
+        aspects: [AspectHit] = [],
+        declinationAspects: [DeclinationAspect]? = nil,
+        fixedStarConjunctions: [FixedStarConjunction]? = nil,
+        patterns: [PatternResult]? = nil,
+        chartProfile: ChartProfile? = nil,
+        warnings: [String]? = nil,
+        sectionErrors: [String: String]? = nil,
+        houseSystem: String? = nil,
+        zodiac: String? = nil
+    ) {
+        self.planets = planets
+        self.angles = angles
+        self.houses = houses
+        self.natalPlanets = natalPlanets
+        self.natalAngles = natalAngles
+        self.natalHouses = natalHouses
+        self.aspects = aspects
+        self.declinationAspects = declinationAspects
+        self.fixedStarConjunctions = fixedStarConjunctions
+        self.patterns = patterns
+        self.chartProfile = chartProfile
+        self.warnings = warnings
+        self.sectionErrors = sectionErrors
+        self.houseSystem = houseSystem
+        self.zodiac = zodiac
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case planets
+        case positions
+        case angles
+        case houses
+        case natalPlanets = "natal_planets"
+        case natalAngles = "natal_angles"
+        case natalHouses = "natal_houses"
+        case aspects
+        case declinationAspects = "declination_aspects"
+        case fixedStarConjunctions = "fixed_star_conjunctions"
+        case patterns
+        case chartProfile = "chart_profile"
+        case warnings
+        case sectionErrors = "section_errors"
+        case houseSystem = "house_system"
+        case zodiac
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        planets = try container.decodeIfPresent([PositionRow].self, forKey: .planets)
+            ?? container.decodeIfPresent([PositionRow].self, forKey: .positions)
+            ?? []
+        angles = try container.decodeIfPresent([ClassicalPoint].self, forKey: .angles) ?? []
+        houses = try container.decodeIfPresent([HouseRow].self, forKey: .houses) ?? []
+        natalPlanets = try container.decodeIfPresent([PositionRow].self, forKey: .natalPlanets)
+        natalAngles = try container.decodeIfPresent([ClassicalPoint].self, forKey: .natalAngles)
+        natalHouses = try container.decodeIfPresent([HouseRow].self, forKey: .natalHouses)
+        aspects = try container.decodeIfPresent([AspectHit].self, forKey: .aspects) ?? []
+        declinationAspects = try container.decodeIfPresent([DeclinationAspect].self, forKey: .declinationAspects)
+        fixedStarConjunctions = try container.decodeIfPresent([FixedStarConjunction].self, forKey: .fixedStarConjunctions)
+        patterns = try container.decodeIfPresent([PatternResult].self, forKey: .patterns)
+        chartProfile = try container.decodeIfPresent(ChartProfile.self, forKey: .chartProfile)
+        warnings = try container.decodeIfPresent([String].self, forKey: .warnings)
+        sectionErrors = try container.decodeIfPresent([String: String].self, forKey: .sectionErrors)
+        houseSystem = try container.decodeIfPresent(String.self, forKey: .houseSystem)
+        zodiac = try container.decodeIfPresent(String.self, forKey: .zodiac)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(planets, forKey: .planets)
+        try container.encode(angles, forKey: .angles)
+        try container.encode(houses, forKey: .houses)
+        try container.encodeIfPresent(natalPlanets, forKey: .natalPlanets)
+        try container.encodeIfPresent(natalAngles, forKey: .natalAngles)
+        try container.encodeIfPresent(natalHouses, forKey: .natalHouses)
+        try container.encode(aspects, forKey: .aspects)
+        try container.encodeIfPresent(declinationAspects, forKey: .declinationAspects)
+        try container.encodeIfPresent(fixedStarConjunctions, forKey: .fixedStarConjunctions)
+        try container.encodeIfPresent(patterns, forKey: .patterns)
+        try container.encodeIfPresent(chartProfile, forKey: .chartProfile)
+        try container.encodeIfPresent(warnings, forKey: .warnings)
+        try container.encodeIfPresent(sectionErrors, forKey: .sectionErrors)
+        try container.encodeIfPresent(houseSystem, forKey: .houseSystem)
+        try container.encodeIfPresent(zodiac, forKey: .zodiac)
+    }
+}
+
+struct ReturnHouseOverlay: Codable, Identifiable {
+    let id: String
+    let bodyID: String
+    let bodyName: String
+    let returnHouse: Int
+    let natalHouse: Int
+
+    /// Compatibility label for code that uses the classical overlay naming.
+    var planet: String { bodyName }
+
+    init(
+        id: String,
+        bodyID: String,
+        bodyName: String,
+        returnHouse: Int,
+        natalHouse: Int
+    ) {
+        self.id = id
+        self.bodyID = bodyID
+        self.bodyName = bodyName
+        self.returnHouse = returnHouse
+        self.natalHouse = natalHouse
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case bodyID = "body_id"
+        case bodyName = "body_name"
+        case planet
+        case returnHouse = "return_house"
+        case natalHouse = "natal_house"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let decodedBodyID = try container.decodeIfPresent(String.self, forKey: .bodyID)
+        let decodedPlanet = try container.decodeIfPresent(String.self, forKey: .planet)
+        let decodedID = try container.decodeIfPresent(String.self, forKey: .id)
+        bodyID = decodedBodyID ?? decodedPlanet ?? decodedID ?? ""
+        bodyName = try container.decodeIfPresent(String.self, forKey: .bodyName)
+            ?? decodedPlanet
+            ?? bodyID
+        returnHouse = try container.decode(Int.self, forKey: .returnHouse)
+        natalHouse = try container.decode(Int.self, forKey: .natalHouse)
+        id = decodedID ?? "(bodyID):(returnHouse):(natalHouse)"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(bodyID, forKey: .bodyID)
+        try container.encode(bodyName, forKey: .bodyName)
+        try container.encode(returnHouse, forKey: .returnHouse)
+        try container.encode(natalHouse, forKey: .natalHouse)
+    }
+}
+
+struct ModernReturnOccurrence: Codable, Identifiable {
+    let label: String
+    let exactUTC: String
+    let exactLocal: String
+    let returnLongitude: Double
+    let exactError: Double
+    let chart: ModernReturnChartSnapshot?
+    let returnToNatalAspects: [AspectHit]
+    let houseOverlay: [ReturnHouseOverlay]
+    let error: String?
+
+    var id: String { "(label):(exactUTC)" }
+
+    init(
+        label: String,
+        exactUTC: String,
+        exactLocal: String,
+        returnLongitude: Double,
+        exactError: Double,
+        chart: ModernReturnChartSnapshot? = nil,
+        returnToNatalAspects: [AspectHit] = [],
+        houseOverlay: [ReturnHouseOverlay] = [],
+        error: String? = nil
+    ) {
+        self.label = label
+        self.exactUTC = exactUTC
+        self.exactLocal = exactLocal
+        self.returnLongitude = returnLongitude
+        self.exactError = exactError
+        self.chart = chart
+        self.returnToNatalAspects = returnToNatalAspects
+        self.houseOverlay = houseOverlay
+        self.error = error
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case label
+        case exactUTC = "exact_utc"
+        case exactLocal = "exact_local"
+        case returnLongitude = "return_longitude"
+        case exactError = "exact_error"
+        case chart
+        case returnToNatalAspects = "return_to_natal_aspects"
+        case houseOverlay = "house_overlay"
+        case error
+    }
+}
+
+struct ModernReturnResult: Codable {
+    let meta: ModernReturnMeta
+    let previousReturn: ModernReturnOccurrence?
+    let currentCycleReturn: ModernReturnOccurrence?
+    let nextReturn: ModernReturnOccurrence?
+    let noHitInUserWindow: Bool?
+    let suggestedWindow: String?
+    let searchStartLocal: String?
+    let searchEndLocal: String?
+    let warnings: [String]
+    let sectionErrors: [String: String]?
+
+    init(
+        meta: ModernReturnMeta,
+        previousReturn: ModernReturnOccurrence? = nil,
+        currentCycleReturn: ModernReturnOccurrence? = nil,
+        nextReturn: ModernReturnOccurrence? = nil,
+        noHitInUserWindow: Bool? = nil,
+        suggestedWindow: String? = nil,
+        searchStartLocal: String? = nil,
+        searchEndLocal: String? = nil,
+        warnings: [String] = [],
+        sectionErrors: [String: String]? = nil
+    ) {
+        self.meta = meta
+        self.previousReturn = previousReturn
+        self.currentCycleReturn = currentCycleReturn
+        self.nextReturn = nextReturn
+        self.noHitInUserWindow = noHitInUserWindow
+        self.suggestedWindow = suggestedWindow
+        self.searchStartLocal = searchStartLocal
+        self.searchEndLocal = searchEndLocal
+        self.warnings = warnings
+        self.sectionErrors = sectionErrors
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case meta
+        case previousReturn = "previous_return"
+        case currentCycleReturn = "current_cycle_return"
+        case nextReturn = "next_return"
+        case noHitInUserWindow = "no_hit_in_user_window"
+        case suggestedWindow = "suggested_window"
+        case searchStartLocal = "search_start_local"
+        case searchEndLocal = "search_end_local"
+        case warnings
+        case sectionErrors = "section_errors"
     }
 }
 

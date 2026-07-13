@@ -164,6 +164,94 @@ struct BirthSettings: Codable {
     let triplicitySystem: String
 }
 
+/// Optional location used to build the return chart's houses and angles.
+/// The exact return instant is always solved independently from this location.
+struct ModernReturnLocation: Codable {
+    let name: String
+    let latitude: Double
+    let longitude: Double
+    let timezone: String
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case latitude
+        case longitude
+        case timezone
+    }
+}
+
+/// Request contract for the modern solar/lunar return backend mode.
+/// `location` is sent only when `locationSource` is `custom`.
+struct ModernReturnRequest: Codable {
+    let mode: String
+    let returnBodyID: String
+    let birth: BirthSettings
+    let reference: ChartMoment
+    let locationSource: String
+    let location: ModernReturnLocation?
+    let houseSystem: String
+    let zodiac: String
+    let nodeMode: String
+    let pointSet: ModernPointSet?
+    let aspects: [AspectRequest]
+    let precessionCorrection: String
+    let ephemerisPath: String?
+    let noAsteroids: Bool
+    let requireEphemeris: String
+
+    init(
+        mode: String = "modern_return",
+        returnBodyID: String,
+        birth: BirthSettings,
+        reference: ChartMoment,
+        locationSource: String,
+        location: ModernReturnLocation? = nil,
+        houseSystem: String,
+        zodiac: String,
+        nodeMode: String,
+        pointSet: ModernPointSet? = nil,
+        aspects: [AspectRequest],
+        precessionCorrection: String = "none",
+        ephemerisPath: String?,
+        noAsteroids: Bool,
+        requireEphemeris: String
+    ) {
+        self.mode = mode
+        self.returnBodyID = returnBodyID
+        self.birth = birth
+        self.reference = reference
+        self.locationSource = locationSource
+        self.location = location
+        self.houseSystem = houseSystem
+        self.zodiac = zodiac
+        self.nodeMode = nodeMode
+        self.pointSet = pointSet
+        self.aspects = aspects
+        self.precessionCorrection = precessionCorrection
+        self.ephemerisPath = ephemerisPath
+        self.noAsteroids = noAsteroids
+        self.requireEphemeris = requireEphemeris
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case mode
+        case returnBodyID = "return_body_id"
+        case birth
+        case reference
+        case locationSource = "location_source"
+        case location
+        case houseSystem = "house_system"
+        case zodiac
+        case nodeMode = "node_mode"
+        case pointSet = "point_set"
+        case aspects
+        case precessionCorrection = "precession_correction"
+        case ephemerisPath = "ephemeris_path"
+        case noAsteroids = "no_asteroids"
+        case requireEphemeris = "require_ephemeris"
+    }
+}
+
 struct HoraryChartSettings: Codable {
     let moment: ChartMoment
     let latitude: Double

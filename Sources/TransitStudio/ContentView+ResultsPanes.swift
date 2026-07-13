@@ -41,6 +41,7 @@ extension ContentView {
             case .progression: return "计算次限推进"
             case .solarArc: return "计算太阳弧"
             case .harmonic: return "计算调和盘"
+            case .returnChart: return "计算返照盘"
             }
         case .horary:
             return "Horary 起盘"
@@ -91,6 +92,14 @@ extension ContentView {
                     || parseDouble(modernPersonBLatitude) == nil || parseDouble(modernPersonBLongitude) == nil
             case .progression, .solarArc:
                 return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+            case .returnChart:
+                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+                    || (modernReturnLocationSource == "custom" && (
+                        parseDouble(modernReturnLocationLatitude) == nil
+                        || parseDouble(modernReturnLocationLongitude) == nil
+                        || modernReturnLocationName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        || modernReturnLocationTimezone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    ))
             }
         case .horary:
             return parseDouble(horaryLatitude) == nil
@@ -161,6 +170,7 @@ extension ContentView {
             case .progression: return AnyView(progressionResultsPane)
             case .solarArc: return AnyView(solarArcResultsPane)
             case .harmonic: return AnyView(harmonicResultsPane)
+            case .returnChart: return AnyView(modernReturnResultsPane)
             }
         case .horary:
             return AnyView(horaryResultsPane)

@@ -1,0 +1,2481 @@
+{
+  "meta": {
+    "method": "planetary_return_longitude_bisection",
+    "return_body_id": "MOON",
+    "target_longitude": 328.7886292810519,
+    "location_source": "birth",
+    "location": {
+      "name": "Birth place",
+      "latitude": 31.2304,
+      "longitude": 121.4737,
+      "timezone": "Asia/Shanghai"
+    },
+    "zodiac": "tropical",
+    "house_system_requested": "placidus",
+    "house_system_effective": "placidus",
+    "display_timezone": "Asia/Shanghai",
+    "birth_utc": "1990-01-01T04:00:00+00:00",
+    "reference_utc": "2026-05-05T04:00:00Z",
+    "precession_correction": "none",
+    "ephemeris": "Swiss Ephemeris",
+    "effective_point_set": {
+      "body_ids": [
+        "SUN",
+        "MOON",
+        "MERCURY",
+        "VENUS",
+        "MARS",
+        "JUPITER",
+        "SATURN",
+        "URANUS",
+        "NEPTUNE",
+        "PLUTO"
+      ],
+      "include_nodes": true,
+      "node_mode": "true_node",
+      "custom_asteroids": [],
+      "angle_ids": [
+        "ASC",
+        "MC",
+        "DSC",
+        "IC"
+      ],
+      "house_cusps": [],
+      "lot_ids": [],
+      "resolved_body_ids": [
+        "SUN",
+        "MOON",
+        "MERCURY",
+        "VENUS",
+        "MARS",
+        "JUPITER",
+        "SATURN",
+        "URANUS",
+        "NEPTUNE",
+        "PLUTO",
+        "TRUE_NODE",
+        "SOUTH_TRUE_NODE"
+      ]
+    }
+  },
+  "previous_return": {
+    "label": "previous_return",
+    "exact_utc": "2026-03-16T21:03:52.941698Z",
+    "exact_local": "2026-03-17T05:03:52.941698+08:00",
+    "return_longitude": 328.7886292783659,
+    "exact_error": 2.686022071429761e-09,
+    "chart": {
+      "angles": [
+        {
+          "id": "ASC",
+          "name": "ASC",
+          "longitude": 333.7966878450342,
+          "sign": "双鱼",
+          "degree_text": "03°47'48\" 双鱼",
+          "house": 1,
+          "ruler": "木星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "MC",
+          "name": "MC",
+          "longitude": 253.31617027069103,
+          "sign": "射手",
+          "degree_text": "13°18'58\" 射手",
+          "house": 10,
+          "ruler": "木星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "DSC",
+          "name": "DSC",
+          "longitude": 153.79668784503428,
+          "sign": "处女",
+          "degree_text": "03°47'48\" 处女",
+          "house": 7,
+          "ruler": "水星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "IC",
+          "name": "IC",
+          "longitude": 73.31617027069103,
+          "sign": "双子",
+          "degree_text": "13°18'58\" 双子",
+          "house": 4,
+          "ruler": "水星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        }
+      ],
+      "houses": [
+        {
+          "house": 1,
+          "sign": "双鱼",
+          "cusp_longitude": 333.7966878450342,
+          "cusp_text": "03°47'48\" 双鱼",
+          "ruler": "木星"
+        },
+        {
+          "house": 2,
+          "sign": "白羊",
+          "cusp_longitude": 15.64544687472211,
+          "cusp_text": "15°38'44\" 白羊",
+          "ruler": "火星"
+        },
+        {
+          "house": 3,
+          "sign": "金牛",
+          "cusp_longitude": 47.97453949342343,
+          "cusp_text": "17°58'28\" 金牛",
+          "ruler": "金星"
+        },
+        {
+          "house": 4,
+          "sign": "双子",
+          "cusp_longitude": 73.31617027069103,
+          "cusp_text": "13°18'58\" 双子",
+          "ruler": "水星"
+        },
+        {
+          "house": 5,
+          "sign": "巨蟹",
+          "cusp_longitude": 96.30513860521933,
+          "cusp_text": "06°18'18\" 巨蟹",
+          "ruler": "月亮"
+        },
+        {
+          "house": 6,
+          "sign": "狮子",
+          "cusp_longitude": 121.2351945225422,
+          "cusp_text": "01°14'07\" 狮子",
+          "ruler": "太阳"
+        },
+        {
+          "house": 7,
+          "sign": "处女",
+          "cusp_longitude": 153.79668784503428,
+          "cusp_text": "03°47'48\" 处女",
+          "ruler": "水星"
+        },
+        {
+          "house": 8,
+          "sign": "天秤",
+          "cusp_longitude": 195.6454468747221,
+          "cusp_text": "15°38'44\" 天秤",
+          "ruler": "金星"
+        },
+        {
+          "house": 9,
+          "sign": "天蝎",
+          "cusp_longitude": 227.97453949342344,
+          "cusp_text": "17°58'28\" 天蝎",
+          "ruler": "火星"
+        },
+        {
+          "house": 10,
+          "sign": "射手",
+          "cusp_longitude": 253.31617027069103,
+          "cusp_text": "13°18'58\" 射手",
+          "ruler": "木星"
+        },
+        {
+          "house": 11,
+          "sign": "摩羯",
+          "cusp_longitude": 276.3051386052193,
+          "cusp_text": "06°18'18\" 摩羯",
+          "ruler": "土星"
+        },
+        {
+          "house": 12,
+          "sign": "水瓶",
+          "cusp_longitude": 301.2351945225422,
+          "cusp_text": "01°14'07\" 水瓶",
+          "ruler": "土星"
+        }
+      ],
+      "planets": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "longitude": 356.28098930221694,
+          "latitude": -4.24982035978019e-05,
+          "declination": -1.4784,
+          "out_of_bounds": false,
+          "speed": 0.9960491927414121,
+          "sign": "双鱼",
+          "degree_text": "26°16'52\" 双鱼",
+          "house": 1
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "longitude": 328.7886292783659,
+          "latitude": -0.9328458764956172,
+          "declination": -12.7695,
+          "out_of_bounds": false,
+          "speed": 13.22173813993934,
+          "sign": "水瓶",
+          "degree_text": "28°47'19\" 水瓶",
+          "house": 12
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "longitude": 339.2858011223369,
+          "latitude": 1.9621501854845182,
+          "declination": -6.2689,
+          "out_of_bounds": false,
+          "speed": -0.4086023875578521,
+          "sign": "双鱼",
+          "degree_text": "09°17'09\" 双鱼",
+          "house": 1
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "longitude": 12.95432388540331,
+          "latitude": -0.9911893655905832,
+          "declination": 4.2026,
+          "out_of_bounds": false,
+          "speed": 1.23981467736625,
+          "sign": "白羊",
+          "degree_text": "12°57'16\" 白羊",
+          "house": 1
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "longitude": 341.2496977018059,
+          "latitude": -1.0831402922289437,
+          "declination": -8.3477,
+          "out_of_bounds": false,
+          "speed": 0.7868519485800621,
+          "sign": "双鱼",
+          "degree_text": "11°14'59\" 双鱼",
+          "house": 1
+        },
+        {
+          "body_id": "JUPITER",
+          "name": "木星",
+          "longitude": 105.14068250746011,
+          "latitude": 0.359696898844236,
+          "declination": 22.9363,
+          "out_of_bounds": false,
+          "speed": 0.01857946098800616,
+          "sign": "巨蟹",
+          "degree_text": "15°08'26\" 巨蟹",
+          "house": 5
+        },
+        {
+          "body_id": "SATURN",
+          "name": "土星",
+          "longitude": 3.6623019058321993,
+          "latitude": -2.1235789854169553,
+          "declination": -0.4932,
+          "out_of_bounds": false,
+          "speed": 0.12418589390358586,
+          "sign": "白羊",
+          "degree_text": "03°39'44\" 白羊",
+          "house": 1
+        },
+        {
+          "body_id": "URANUS",
+          "name": "天王星",
+          "longitude": 58.173992081098675,
+          "latitude": -0.1749239942103106,
+          "declination": 19.5821,
+          "out_of_bounds": false,
+          "speed": 0.03376021062780203,
+          "sign": "金牛",
+          "degree_text": "28°10'26\" 金牛",
+          "house": 3
+        },
+        {
+          "body_id": "NEPTUNE",
+          "name": "海王星",
+          "longitude": 1.6320510000146917,
+          "latitude": -1.305837416566989,
+          "declination": -0.5491,
+          "out_of_bounds": false,
+          "speed": 0.03778645812613701,
+          "sign": "白羊",
+          "degree_text": "01°37'55\" 白羊",
+          "house": 1
+        },
+        {
+          "body_id": "PLUTO",
+          "name": "冥王星",
+          "longitude": 304.9255008303945,
+          "latitude": -3.9023985842477895,
+          "declination": -22.8183,
+          "out_of_bounds": false,
+          "speed": 0.022091219961192347,
+          "sign": "水瓶",
+          "degree_text": "04°55'32\" 水瓶",
+          "house": 12
+        },
+        {
+          "body_id": "TRUE_NODE",
+          "name": "北交点 真",
+          "longitude": 338.97700949661925,
+          "latitude": 0.0,
+          "declination": -8.2038,
+          "out_of_bounds": false,
+          "speed": 0.010503771305553787,
+          "sign": "双鱼",
+          "degree_text": "08°58'37\" 双鱼",
+          "house": 1
+        },
+        {
+          "body_id": "SOUTH_TRUE_NODE",
+          "name": "南交点 真",
+          "longitude": 158.9770094966193,
+          "latitude": 0.0,
+          "declination": 8.2038,
+          "out_of_bounds": false,
+          "speed": 0.010503771305553787,
+          "sign": "处女",
+          "degree_text": "08°58'37\" 处女",
+          "house": 7
+        }
+      ],
+      "natal_houses": [
+        {
+          "house": 1,
+          "sign": "白羊",
+          "cusp_longitude": 17.616017304424563,
+          "cusp_text": "17°36'58\" 白羊",
+          "ruler": "火星"
+        },
+        {
+          "house": 2,
+          "sign": "金牛",
+          "cusp_longitude": 52.1551463666867,
+          "cusp_text": "22°09'19\" 金牛",
+          "ruler": "金星"
+        },
+        {
+          "house": 3,
+          "sign": "双子",
+          "cusp_longitude": 78.0148574404115,
+          "cusp_text": "18°00'53\" 双子",
+          "ruler": "水星"
+        },
+        {
+          "house": 4,
+          "sign": "巨蟹",
+          "cusp_longitude": 101.05763211034173,
+          "cusp_text": "11°03'27\" 巨蟹",
+          "ruler": "月亮"
+        },
+        {
+          "house": 5,
+          "sign": "狮子",
+          "cusp_longitude": 125.67299337651428,
+          "cusp_text": "05°40'23\" 狮子",
+          "ruler": "太阳"
+        },
+        {
+          "house": 6,
+          "sign": "处女",
+          "cusp_longitude": 156.5581132257255,
+          "cusp_text": "06°33'29\" 处女",
+          "ruler": "水星"
+        },
+        {
+          "house": 7,
+          "sign": "天秤",
+          "cusp_longitude": 197.61601730442456,
+          "cusp_text": "17°36'58\" 天秤",
+          "ruler": "金星"
+        },
+        {
+          "house": 8,
+          "sign": "天蝎",
+          "cusp_longitude": 232.1551463666867,
+          "cusp_text": "22°09'19\" 天蝎",
+          "ruler": "火星"
+        },
+        {
+          "house": 9,
+          "sign": "射手",
+          "cusp_longitude": 258.0148574404115,
+          "cusp_text": "18°00'53\" 射手",
+          "ruler": "木星"
+        },
+        {
+          "house": 10,
+          "sign": "摩羯",
+          "cusp_longitude": 281.05763211034173,
+          "cusp_text": "11°03'27\" 摩羯",
+          "ruler": "土星"
+        },
+        {
+          "house": 11,
+          "sign": "水瓶",
+          "cusp_longitude": 305.6729933765143,
+          "cusp_text": "05°40'23\" 水瓶",
+          "ruler": "土星"
+        },
+        {
+          "house": 12,
+          "sign": "双鱼",
+          "cusp_longitude": 336.5581132257255,
+          "cusp_text": "06°33'29\" 双鱼",
+          "ruler": "木星"
+        }
+      ],
+      "natal_planets": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "longitude": 280.47443215639436,
+          "latitude": -1.4456373208462643e-07,
+          "declination": -23.029,
+          "out_of_bounds": false,
+          "speed": 1.0194945783077702,
+          "sign": "摩羯",
+          "degree_text": "10°28'28\" 摩羯",
+          "house": 9
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "longitude": 328.7886292810519,
+          "latitude": 1.0760957094851988,
+          "declination": -10.8878,
+          "out_of_bounds": false,
+          "speed": 13.404180913740246,
+          "sign": "水瓶",
+          "degree_text": "28°47'19\" 水瓶",
+          "house": 11
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "longitude": 295.76004331432523,
+          "latitude": 0.5264157494465413,
+          "declination": -20.4779,
+          "out_of_bounds": false,
+          "speed": -0.22880361192425597,
+          "sign": "摩羯",
+          "degree_text": "25°45'36\" 摩羯",
+          "house": 10
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "longitude": 306.263052404424,
+          "latitude": 1.819410982703759,
+          "declination": -16.9466,
+          "out_of_bounds": false,
+          "speed": -0.11626876496077103,
+          "sign": "水瓶",
+          "degree_text": "06°15'47\" 水瓶",
+          "house": 11
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "longitude": 249.76552957456767,
+          "latitude": -0.02927884615672335,
+          "declination": -21.9467,
+          "out_of_bounds": false,
+          "speed": 0.7035767154001349,
+          "sign": "射手",
+          "degree_text": "09°45'56\" 射手",
+          "house": 8
+        },
+        {
+          "body_id": "JUPITER",
+          "name": "木星",
+          "longitude": 95.19365033765915,
+          "latitude": -0.11779759643045594,
+          "declination": 23.2227,
+          "out_of_bounds": false,
+          "speed": -0.13465584572111175,
+          "sign": "巨蟹",
+          "degree_text": "05°11'37\" 巨蟹",
+          "house": 3
+        },
+        {
+          "body_id": "SATURN",
+          "name": "土星",
+          "longitude": 285.61807955515644,
+          "latitude": 0.29371553637827535,
+          "declination": -22.2364,
+          "out_of_bounds": false,
+          "speed": 0.11824040929465734,
+          "sign": "摩羯",
+          "degree_text": "15°37'05\" 摩羯",
+          "house": 10
+        },
+        {
+          "body_id": "URANUS",
+          "name": "天王星",
+          "longitude": 275.76543300290143,
+          "latitude": -0.27004982406245664,
+          "declination": -23.5865,
+          "out_of_bounds": true,
+          "speed": 0.06003554729504816,
+          "sign": "摩羯",
+          "degree_text": "05°45'56\" 摩羯",
+          "house": 9
+        },
+        {
+          "body_id": "NEPTUNE",
+          "name": "海王星",
+          "longitude": 282.0254688963013,
+          "latitude": 0.8473821364872266,
+          "declination": -22.0543,
+          "out_of_bounds": false,
+          "speed": 0.03791285289990218,
+          "sign": "摩羯",
+          "degree_text": "12°01'32\" 摩羯",
+          "house": 10
+        },
+        {
+          "body_id": "PLUTO",
+          "name": "冥王星",
+          "longitude": 227.0839844255524,
+          "latitude": 15.282379187055618,
+          "declination": -2.248,
+          "out_of_bounds": false,
+          "speed": 0.02748125944571269,
+          "sign": "天蝎",
+          "degree_text": "17°05'02\" 天蝎",
+          "house": 7
+        },
+        {
+          "body_id": "TRUE_NODE",
+          "name": "北交点 真",
+          "longitude": 316.86334323207967,
+          "latitude": 0.0,
+          "declination": -15.7839,
+          "out_of_bounds": false,
+          "speed": 0.018731438738383413,
+          "sign": "水瓶",
+          "degree_text": "16°51'48\" 水瓶",
+          "house": 11
+        },
+        {
+          "body_id": "SOUTH_TRUE_NODE",
+          "name": "南交点 真",
+          "longitude": 136.86334323207967,
+          "latitude": 0.0,
+          "declination": 15.7839,
+          "out_of_bounds": false,
+          "speed": 0.018731438738383413,
+          "sign": "狮子",
+          "degree_text": "16°51'48\" 狮子",
+          "house": 5
+        }
+      ],
+      "natal_angles": [
+        {
+          "id": "ASC",
+          "name": "ASC",
+          "longitude": 17.616017304424563,
+          "sign": "白羊",
+          "degree_text": "17°36'58\" 白羊",
+          "house": 1,
+          "ruler": "火星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "MC",
+          "name": "MC",
+          "longitude": 281.05763211034173,
+          "sign": "摩羯",
+          "degree_text": "11°03'27\" 摩羯",
+          "house": 10,
+          "ruler": "土星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "DSC",
+          "name": "DSC",
+          "longitude": 197.61601730442456,
+          "sign": "天秤",
+          "degree_text": "17°36'58\" 天秤",
+          "house": 7,
+          "ruler": "金星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "IC",
+          "name": "IC",
+          "longitude": 101.05763211034173,
+          "sign": "巨蟹",
+          "degree_text": "11°03'27\" 巨蟹",
+          "house": 4,
+          "ruler": "月亮",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        }
+      ],
+      "aspects": [],
+      "declination_aspects": [
+        {
+          "body1": "TRUE_NODE",
+          "body2": "SOUTH_TRUE_NODE",
+          "type": "contraparallel",
+          "diff": 0.0,
+          "declination1": -8.2038,
+          "declination2": 8.2038
+        },
+        {
+          "body1": "SATURN",
+          "body2": "NEPTUNE",
+          "type": "parallel",
+          "diff": 0.0559,
+          "declination1": -0.4932,
+          "declination2": -0.5491
+        },
+        {
+          "body1": "JUPITER",
+          "body2": "PLUTO",
+          "type": "contraparallel",
+          "diff": 0.118,
+          "declination1": 22.9363,
+          "declination2": -22.8183
+        },
+        {
+          "body1": "MARS",
+          "body2": "TRUE_NODE",
+          "type": "parallel",
+          "diff": 0.1439,
+          "declination1": -8.3477,
+          "declination2": -8.2038
+        },
+        {
+          "body1": "MARS",
+          "body2": "SOUTH_TRUE_NODE",
+          "type": "contraparallel",
+          "diff": 0.1439,
+          "declination1": -8.3477,
+          "declination2": 8.2038
+        },
+        {
+          "body1": "SUN",
+          "body2": "NEPTUNE",
+          "type": "parallel",
+          "diff": 0.9293,
+          "declination1": -1.4784,
+          "declination2": -0.5491
+        },
+        {
+          "body1": "SUN",
+          "body2": "SATURN",
+          "type": "parallel",
+          "diff": 0.9852,
+          "declination1": -1.4784,
+          "declination2": -0.4932
+        }
+      ],
+      "fixed_star_conjunctions": [
+        {
+          "planet": "JUPITER",
+          "star": "Canopus",
+          "star_mag": -0.62,
+          "star_nature": "土/木星",
+          "star_keyword": "航行, 学术",
+          "orb": 0.1916
+        },
+        {
+          "planet": "JUPITER",
+          "star": "Sirius",
+          "star_mag": -1.44,
+          "star_nature": "木/火星",
+          "star_keyword": "天狼星, 名声",
+          "orb": 0.6937
+        }
+      ],
+      "patterns": [
+        {
+          "id": "splay",
+          "type": "splay",
+          "type_name": "不规则",
+          "members": [
+            "JUPITER",
+            "MARS",
+            "MERCURY",
+            "MOON",
+            "NEPTUNE",
+            "PLUTO",
+            "SATURN",
+            "SUN",
+            "URANUS",
+            "VENUS"
+          ],
+          "aspect_types": [],
+          "orb_summary": "",
+          "confidence": "medium"
+        },
+        {
+          "id": "stellium_sign_0",
+          "type": "stellium",
+          "type_name": "星群",
+          "members": [
+            "NEPTUNE",
+            "SATURN",
+            "VENUS"
+          ],
+          "aspect_types": [],
+          "orb_summary": "stellium",
+          "confidence": "high",
+          "stellium_sign": 0,
+          "stellium_house": null
+        },
+        {
+          "id": "stellium_sign_11",
+          "type": "stellium",
+          "type_name": "星群",
+          "members": [
+            "MARS",
+            "MERCURY",
+            "SUN"
+          ],
+          "aspect_types": [],
+          "orb_summary": "stellium",
+          "confidence": "high",
+          "stellium_sign": 11,
+          "stellium_house": null
+        }
+      ]
+    },
+    "return_to_natal_aspects": [],
+    "house_overlay": [
+      {
+        "id": "SUN|return|1|natal|12",
+        "body_id": "SUN",
+        "body_name": "太阳",
+        "return_house": 1,
+        "natal_house": 12
+      },
+      {
+        "id": "MOON|return|12|natal|11",
+        "body_id": "MOON",
+        "body_name": "月亮",
+        "return_house": 12,
+        "natal_house": 11
+      },
+      {
+        "id": "MERCURY|return|1|natal|12",
+        "body_id": "MERCURY",
+        "body_name": "水星",
+        "return_house": 1,
+        "natal_house": 12
+      },
+      {
+        "id": "VENUS|return|1|natal|12",
+        "body_id": "VENUS",
+        "body_name": "金星",
+        "return_house": 1,
+        "natal_house": 12
+      },
+      {
+        "id": "MARS|return|1|natal|12",
+        "body_id": "MARS",
+        "body_name": "火星",
+        "return_house": 1,
+        "natal_house": 12
+      },
+      {
+        "id": "JUPITER|return|5|natal|4",
+        "body_id": "JUPITER",
+        "body_name": "木星",
+        "return_house": 5,
+        "natal_house": 4
+      },
+      {
+        "id": "SATURN|return|1|natal|12",
+        "body_id": "SATURN",
+        "body_name": "土星",
+        "return_house": 1,
+        "natal_house": 12
+      },
+      {
+        "id": "URANUS|return|3|natal|2",
+        "body_id": "URANUS",
+        "body_name": "天王星",
+        "return_house": 3,
+        "natal_house": 2
+      },
+      {
+        "id": "NEPTUNE|return|1|natal|12",
+        "body_id": "NEPTUNE",
+        "body_name": "海王星",
+        "return_house": 1,
+        "natal_house": 12
+      },
+      {
+        "id": "PLUTO|return|12|natal|10",
+        "body_id": "PLUTO",
+        "body_name": "冥王星",
+        "return_house": 12,
+        "natal_house": 10
+      },
+      {
+        "id": "TRUE_NODE|return|1|natal|12",
+        "body_id": "TRUE_NODE",
+        "body_name": "北交点 真",
+        "return_house": 1,
+        "natal_house": 12
+      },
+      {
+        "id": "SOUTH_TRUE_NODE|return|7|natal|6",
+        "body_id": "SOUTH_TRUE_NODE",
+        "body_name": "南交点 真",
+        "return_house": 7,
+        "natal_house": 6
+      }
+    ]
+  },
+  "current_cycle_return": {
+    "label": "current_cycle_return",
+    "exact_utc": "2026-04-13T06:41:53.037157Z",
+    "exact_local": "2026-04-13T14:41:53.037157+08:00",
+    "return_longitude": 328.78862928518055,
+    "exact_error": 4.128651198698208e-09,
+    "chart": {
+      "angles": [
+        {
+          "id": "ASC",
+          "name": "ASC",
+          "longitude": 157.14577093793548,
+          "sign": "处女",
+          "degree_text": "07°08'45\" 处女",
+          "house": 1,
+          "ruler": "水星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "MC",
+          "name": "MC",
+          "longitude": 65.34107450355025,
+          "sign": "双子",
+          "degree_text": "05°20'28\" 双子",
+          "house": 10,
+          "ruler": "水星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "DSC",
+          "name": "DSC",
+          "longitude": 337.1457709379355,
+          "sign": "双鱼",
+          "degree_text": "07°08'45\" 双鱼",
+          "house": 7,
+          "ruler": "木星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "IC",
+          "name": "IC",
+          "longitude": 245.34107450355026,
+          "sign": "射手",
+          "degree_text": "05°20'28\" 射手",
+          "house": 4,
+          "ruler": "木星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        }
+      ],
+      "houses": [
+        {
+          "house": 1,
+          "sign": "处女",
+          "cusp_longitude": 157.14577093793548,
+          "cusp_text": "07°08'45\" 处女",
+          "ruler": "水星"
+        },
+        {
+          "house": 2,
+          "sign": "天秤",
+          "cusp_longitude": 183.16970627178725,
+          "cusp_text": "03°10'11\" 天秤",
+          "ruler": "金星"
+        },
+        {
+          "house": 3,
+          "sign": "天蝎",
+          "cusp_longitude": 213.05124631253955,
+          "cusp_text": "03°03'04\" 天蝎",
+          "ruler": "火星"
+        },
+        {
+          "house": 4,
+          "sign": "射手",
+          "cusp_longitude": 245.34107450355026,
+          "cusp_text": "05°20'28\" 射手",
+          "ruler": "木星"
+        },
+        {
+          "house": 5,
+          "sign": "摩羯",
+          "cusp_longitude": 277.75426940484846,
+          "cusp_text": "07°45'15\" 摩羯",
+          "ruler": "土星"
+        },
+        {
+          "house": 6,
+          "sign": "水瓶",
+          "cusp_longitude": 308.6157119589384,
+          "cusp_text": "08°36'57\" 水瓶",
+          "ruler": "土星"
+        },
+        {
+          "house": 7,
+          "sign": "双鱼",
+          "cusp_longitude": 337.1457709379355,
+          "cusp_text": "07°08'45\" 双鱼",
+          "ruler": "木星"
+        },
+        {
+          "house": 8,
+          "sign": "白羊",
+          "cusp_longitude": 3.169706271787277,
+          "cusp_text": "03°10'11\" 白羊",
+          "ruler": "火星"
+        },
+        {
+          "house": 9,
+          "sign": "金牛",
+          "cusp_longitude": 33.05124631253955,
+          "cusp_text": "03°03'04\" 金牛",
+          "ruler": "金星"
+        },
+        {
+          "house": 10,
+          "sign": "双子",
+          "cusp_longitude": 65.34107450355025,
+          "cusp_text": "05°20'28\" 双子",
+          "ruler": "水星"
+        },
+        {
+          "house": 11,
+          "sign": "巨蟹",
+          "cusp_longitude": 97.75426940484846,
+          "cusp_text": "07°45'15\" 巨蟹",
+          "ruler": "月亮"
+        },
+        {
+          "house": 12,
+          "sign": "狮子",
+          "cusp_longitude": 128.61571195893836,
+          "cusp_text": "08°36'57\" 狮子",
+          "ruler": "太阳"
+        }
+      ],
+      "planets": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "longitude": 23.353945929107347,
+          "latitude": -4.4634308146853425e-05,
+          "declination": 9.072,
+          "out_of_bounds": false,
+          "speed": 0.9805699015746157,
+          "sign": "白羊",
+          "degree_text": "23°21'14\" 白羊",
+          "house": 8
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "longitude": 328.78862928518055,
+          "latitude": -0.8382067404257589,
+          "declination": -12.6808,
+          "out_of_bounds": false,
+          "speed": 13.030090006619535,
+          "sign": "水瓶",
+          "degree_text": "28°47'19\" 水瓶",
+          "house": 6
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "longitude": 357.43674412400264,
+          "latitude": -2.526589867482189,
+          "declination": -3.3375,
+          "out_of_bounds": false,
+          "speed": 1.3480513702561627,
+          "sign": "双鱼",
+          "degree_text": "27°26'12\" 双鱼",
+          "house": 7
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "longitude": 46.713184406434344,
+          "latitude": 0.09261291350815615,
+          "declination": 16.9194,
+          "out_of_bounds": false,
+          "speed": 1.2236895113110733,
+          "sign": "金牛",
+          "degree_text": "16°42'47\" 金牛",
+          "house": 9
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "longitude": 2.693607483742817,
+          "latitude": -0.991829918912232,
+          "declination": 0.1609,
+          "out_of_bounds": false,
+          "speed": 0.7771436288257304,
+          "sign": "白羊",
+          "degree_text": "02°41'37\" 白羊",
+          "house": 7
+        },
+        {
+          "body_id": "JUPITER",
+          "name": "木星",
+          "longitude": 106.79055862673438,
+          "latitude": 0.37933479328029607,
+          "declination": 22.7599,
+          "out_of_bounds": false,
+          "speed": 0.09865117629198446,
+          "sign": "巨蟹",
+          "degree_text": "16°47'26\" 巨蟹",
+          "house": 11
+        },
+        {
+          "body_id": "SATURN",
+          "name": "土星",
+          "longitude": 7.061260402185151,
+          "latitude": -2.140796039378796,
+          "declination": 0.836,
+          "out_of_bounds": false,
+          "speed": 0.12163811731592654,
+          "sign": "白羊",
+          "degree_text": "07°03'41\" 白羊",
+          "house": 8
+        },
+        {
+          "body_id": "URANUS",
+          "name": "天王星",
+          "longitude": 59.334020484086714,
+          "latitude": -0.16791731180589253,
+          "declination": 19.8431,
+          "out_of_bounds": false,
+          "speed": 0.04965339771598377,
+          "sign": "金牛",
+          "degree_text": "29°20'02\" 金牛",
+          "house": 9
+        },
+        {
+          "body_id": "NEPTUNE",
+          "name": "海王星",
+          "longitude": 2.656750636651609,
+          "latitude": -1.3112883126093613,
+          "declination": -0.1469,
+          "out_of_bounds": false,
+          "speed": 0.03596139379599203,
+          "sign": "白羊",
+          "degree_text": "02°39'24\" 白羊",
+          "house": 7
+        },
+        {
+          "body_id": "PLUTO",
+          "name": "冥王星",
+          "longitude": 305.3828213147642,
+          "latitude": -3.985271504027592,
+          "declination": -22.7852,
+          "out_of_bounds": false,
+          "speed": 0.010827744685776028,
+          "sign": "水瓶",
+          "degree_text": "05°22'58\" 水瓶",
+          "house": 5
+        },
+        {
+          "body_id": "TRUE_NODE",
+          "name": "北交点 真",
+          "longitude": 338.12238086515276,
+          "latitude": 0.0,
+          "declination": -8.5236,
+          "out_of_bounds": false,
+          "speed": 0.014848441695758306,
+          "sign": "双鱼",
+          "degree_text": "08°07'21\" 双鱼",
+          "house": 7
+        },
+        {
+          "body_id": "SOUTH_TRUE_NODE",
+          "name": "南交点 真",
+          "longitude": 158.12238086515276,
+          "latitude": 0.0,
+          "declination": 8.5236,
+          "out_of_bounds": false,
+          "speed": 0.014848441695758306,
+          "sign": "处女",
+          "degree_text": "08°07'21\" 处女",
+          "house": 1
+        }
+      ],
+      "natal_houses": [
+        {
+          "house": 1,
+          "sign": "白羊",
+          "cusp_longitude": 17.616017304424563,
+          "cusp_text": "17°36'58\" 白羊",
+          "ruler": "火星"
+        },
+        {
+          "house": 2,
+          "sign": "金牛",
+          "cusp_longitude": 52.1551463666867,
+          "cusp_text": "22°09'19\" 金牛",
+          "ruler": "金星"
+        },
+        {
+          "house": 3,
+          "sign": "双子",
+          "cusp_longitude": 78.0148574404115,
+          "cusp_text": "18°00'53\" 双子",
+          "ruler": "水星"
+        },
+        {
+          "house": 4,
+          "sign": "巨蟹",
+          "cusp_longitude": 101.05763211034173,
+          "cusp_text": "11°03'27\" 巨蟹",
+          "ruler": "月亮"
+        },
+        {
+          "house": 5,
+          "sign": "狮子",
+          "cusp_longitude": 125.67299337651428,
+          "cusp_text": "05°40'23\" 狮子",
+          "ruler": "太阳"
+        },
+        {
+          "house": 6,
+          "sign": "处女",
+          "cusp_longitude": 156.5581132257255,
+          "cusp_text": "06°33'29\" 处女",
+          "ruler": "水星"
+        },
+        {
+          "house": 7,
+          "sign": "天秤",
+          "cusp_longitude": 197.61601730442456,
+          "cusp_text": "17°36'58\" 天秤",
+          "ruler": "金星"
+        },
+        {
+          "house": 8,
+          "sign": "天蝎",
+          "cusp_longitude": 232.1551463666867,
+          "cusp_text": "22°09'19\" 天蝎",
+          "ruler": "火星"
+        },
+        {
+          "house": 9,
+          "sign": "射手",
+          "cusp_longitude": 258.0148574404115,
+          "cusp_text": "18°00'53\" 射手",
+          "ruler": "木星"
+        },
+        {
+          "house": 10,
+          "sign": "摩羯",
+          "cusp_longitude": 281.05763211034173,
+          "cusp_text": "11°03'27\" 摩羯",
+          "ruler": "土星"
+        },
+        {
+          "house": 11,
+          "sign": "水瓶",
+          "cusp_longitude": 305.6729933765143,
+          "cusp_text": "05°40'23\" 水瓶",
+          "ruler": "土星"
+        },
+        {
+          "house": 12,
+          "sign": "双鱼",
+          "cusp_longitude": 336.5581132257255,
+          "cusp_text": "06°33'29\" 双鱼",
+          "ruler": "木星"
+        }
+      ],
+      "natal_planets": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "longitude": 280.47443215639436,
+          "latitude": -1.4456373208462643e-07,
+          "declination": -23.029,
+          "out_of_bounds": false,
+          "speed": 1.0194945783077702,
+          "sign": "摩羯",
+          "degree_text": "10°28'28\" 摩羯",
+          "house": 9
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "longitude": 328.7886292810519,
+          "latitude": 1.0760957094851988,
+          "declination": -10.8878,
+          "out_of_bounds": false,
+          "speed": 13.404180913740246,
+          "sign": "水瓶",
+          "degree_text": "28°47'19\" 水瓶",
+          "house": 11
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "longitude": 295.76004331432523,
+          "latitude": 0.5264157494465413,
+          "declination": -20.4779,
+          "out_of_bounds": false,
+          "speed": -0.22880361192425597,
+          "sign": "摩羯",
+          "degree_text": "25°45'36\" 摩羯",
+          "house": 10
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "longitude": 306.263052404424,
+          "latitude": 1.819410982703759,
+          "declination": -16.9466,
+          "out_of_bounds": false,
+          "speed": -0.11626876496077103,
+          "sign": "水瓶",
+          "degree_text": "06°15'47\" 水瓶",
+          "house": 11
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "longitude": 249.76552957456767,
+          "latitude": -0.02927884615672335,
+          "declination": -21.9467,
+          "out_of_bounds": false,
+          "speed": 0.7035767154001349,
+          "sign": "射手",
+          "degree_text": "09°45'56\" 射手",
+          "house": 8
+        },
+        {
+          "body_id": "JUPITER",
+          "name": "木星",
+          "longitude": 95.19365033765915,
+          "latitude": -0.11779759643045594,
+          "declination": 23.2227,
+          "out_of_bounds": false,
+          "speed": -0.13465584572111175,
+          "sign": "巨蟹",
+          "degree_text": "05°11'37\" 巨蟹",
+          "house": 3
+        },
+        {
+          "body_id": "SATURN",
+          "name": "土星",
+          "longitude": 285.61807955515644,
+          "latitude": 0.29371553637827535,
+          "declination": -22.2364,
+          "out_of_bounds": false,
+          "speed": 0.11824040929465734,
+          "sign": "摩羯",
+          "degree_text": "15°37'05\" 摩羯",
+          "house": 10
+        },
+        {
+          "body_id": "URANUS",
+          "name": "天王星",
+          "longitude": 275.76543300290143,
+          "latitude": -0.27004982406245664,
+          "declination": -23.5865,
+          "out_of_bounds": true,
+          "speed": 0.06003554729504816,
+          "sign": "摩羯",
+          "degree_text": "05°45'56\" 摩羯",
+          "house": 9
+        },
+        {
+          "body_id": "NEPTUNE",
+          "name": "海王星",
+          "longitude": 282.0254688963013,
+          "latitude": 0.8473821364872266,
+          "declination": -22.0543,
+          "out_of_bounds": false,
+          "speed": 0.03791285289990218,
+          "sign": "摩羯",
+          "degree_text": "12°01'32\" 摩羯",
+          "house": 10
+        },
+        {
+          "body_id": "PLUTO",
+          "name": "冥王星",
+          "longitude": 227.0839844255524,
+          "latitude": 15.282379187055618,
+          "declination": -2.248,
+          "out_of_bounds": false,
+          "speed": 0.02748125944571269,
+          "sign": "天蝎",
+          "degree_text": "17°05'02\" 天蝎",
+          "house": 7
+        },
+        {
+          "body_id": "TRUE_NODE",
+          "name": "北交点 真",
+          "longitude": 316.86334323207967,
+          "latitude": 0.0,
+          "declination": -15.7839,
+          "out_of_bounds": false,
+          "speed": 0.018731438738383413,
+          "sign": "水瓶",
+          "degree_text": "16°51'48\" 水瓶",
+          "house": 11
+        },
+        {
+          "body_id": "SOUTH_TRUE_NODE",
+          "name": "南交点 真",
+          "longitude": 136.86334323207967,
+          "latitude": 0.0,
+          "declination": 15.7839,
+          "out_of_bounds": false,
+          "speed": 0.018731438738383413,
+          "sign": "狮子",
+          "degree_text": "16°51'48\" 狮子",
+          "house": 5
+        }
+      ],
+      "natal_angles": [
+        {
+          "id": "ASC",
+          "name": "ASC",
+          "longitude": 17.616017304424563,
+          "sign": "白羊",
+          "degree_text": "17°36'58\" 白羊",
+          "house": 1,
+          "ruler": "火星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "MC",
+          "name": "MC",
+          "longitude": 281.05763211034173,
+          "sign": "摩羯",
+          "degree_text": "11°03'27\" 摩羯",
+          "house": 10,
+          "ruler": "土星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "DSC",
+          "name": "DSC",
+          "longitude": 197.61601730442456,
+          "sign": "天秤",
+          "degree_text": "17°36'58\" 天秤",
+          "house": 7,
+          "ruler": "金星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "IC",
+          "name": "IC",
+          "longitude": 101.05763211034173,
+          "sign": "巨蟹",
+          "degree_text": "11°03'27\" 巨蟹",
+          "house": 4,
+          "ruler": "月亮",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        }
+      ],
+      "aspects": [],
+      "declination_aspects": [
+        {
+          "body1": "TRUE_NODE",
+          "body2": "SOUTH_TRUE_NODE",
+          "type": "contraparallel",
+          "diff": 0.0,
+          "declination1": -8.5236,
+          "declination2": 8.5236
+        },
+        {
+          "body1": "MARS",
+          "body2": "NEPTUNE",
+          "type": "contraparallel",
+          "diff": 0.014,
+          "declination1": 0.1609,
+          "declination2": -0.1469
+        },
+        {
+          "body1": "JUPITER",
+          "body2": "PLUTO",
+          "type": "contraparallel",
+          "diff": 0.0253,
+          "declination1": 22.7599,
+          "declination2": -22.7852
+        },
+        {
+          "body1": "SUN",
+          "body2": "TRUE_NODE",
+          "type": "contraparallel",
+          "diff": 0.5484,
+          "declination1": 9.072,
+          "declination2": -8.5236
+        },
+        {
+          "body1": "SUN",
+          "body2": "SOUTH_TRUE_NODE",
+          "type": "parallel",
+          "diff": 0.5484,
+          "declination1": 9.072,
+          "declination2": 8.5236
+        },
+        {
+          "body1": "MARS",
+          "body2": "SATURN",
+          "type": "parallel",
+          "diff": 0.6751,
+          "declination1": 0.1609,
+          "declination2": 0.836
+        },
+        {
+          "body1": "SATURN",
+          "body2": "NEPTUNE",
+          "type": "contraparallel",
+          "diff": 0.6891,
+          "declination1": 0.836,
+          "declination2": -0.1469
+        }
+      ],
+      "fixed_star_conjunctions": [
+        {
+          "planet": "JUPITER",
+          "star": "Canopus",
+          "star_mag": -0.62,
+          "star_nature": "土/木星",
+          "star_keyword": "航行, 学术",
+          "orb": 1.4684
+        }
+      ],
+      "patterns": [
+        {
+          "id": "seesaw",
+          "type": "seesaw",
+          "type_name": "跷跷板",
+          "members": [
+            "JUPITER",
+            "MARS",
+            "MERCURY",
+            "MOON",
+            "NEPTUNE",
+            "PLUTO",
+            "SATURN",
+            "SUN",
+            "URANUS",
+            "VENUS"
+          ],
+          "aspect_types": [],
+          "orb_summary": "聚类间距171.3°",
+          "confidence": "high",
+          "cluster_a": [
+            "MARS",
+            "NEPTUNE",
+            "SATURN"
+          ],
+          "cluster_b": [
+            "JUPITER",
+            "MERCURY",
+            "MOON",
+            "PLUTO",
+            "SUN",
+            "URANUS",
+            "VENUS"
+          ]
+        },
+        {
+          "id": "splay",
+          "type": "splay",
+          "type_name": "不规则",
+          "members": [
+            "JUPITER",
+            "MARS",
+            "MERCURY",
+            "MOON",
+            "NEPTUNE",
+            "PLUTO",
+            "SATURN",
+            "SUN",
+            "URANUS",
+            "VENUS"
+          ],
+          "aspect_types": [],
+          "orb_summary": "",
+          "confidence": "medium"
+        },
+        {
+          "id": "stellium_sign_0",
+          "type": "stellium",
+          "type_name": "星群",
+          "members": [
+            "MARS",
+            "NEPTUNE",
+            "SATURN",
+            "SUN"
+          ],
+          "aspect_types": [],
+          "orb_summary": "stellium",
+          "confidence": "high",
+          "stellium_sign": 0,
+          "stellium_house": null
+        }
+      ]
+    },
+    "return_to_natal_aspects": [],
+    "house_overlay": [
+      {
+        "id": "SUN|return|8|natal|1",
+        "body_id": "SUN",
+        "body_name": "太阳",
+        "return_house": 8,
+        "natal_house": 1
+      },
+      {
+        "id": "MOON|return|6|natal|11",
+        "body_id": "MOON",
+        "body_name": "月亮",
+        "return_house": 6,
+        "natal_house": 11
+      },
+      {
+        "id": "MERCURY|return|7|natal|12",
+        "body_id": "MERCURY",
+        "body_name": "水星",
+        "return_house": 7,
+        "natal_house": 12
+      },
+      {
+        "id": "VENUS|return|9|natal|1",
+        "body_id": "VENUS",
+        "body_name": "金星",
+        "return_house": 9,
+        "natal_house": 1
+      },
+      {
+        "id": "MARS|return|7|natal|12",
+        "body_id": "MARS",
+        "body_name": "火星",
+        "return_house": 7,
+        "natal_house": 12
+      },
+      {
+        "id": "JUPITER|return|11|natal|4",
+        "body_id": "JUPITER",
+        "body_name": "木星",
+        "return_house": 11,
+        "natal_house": 4
+      },
+      {
+        "id": "SATURN|return|8|natal|12",
+        "body_id": "SATURN",
+        "body_name": "土星",
+        "return_house": 8,
+        "natal_house": 12
+      },
+      {
+        "id": "URANUS|return|9|natal|2",
+        "body_id": "URANUS",
+        "body_name": "天王星",
+        "return_house": 9,
+        "natal_house": 2
+      },
+      {
+        "id": "NEPTUNE|return|7|natal|12",
+        "body_id": "NEPTUNE",
+        "body_name": "海王星",
+        "return_house": 7,
+        "natal_house": 12
+      },
+      {
+        "id": "PLUTO|return|5|natal|10",
+        "body_id": "PLUTO",
+        "body_name": "冥王星",
+        "return_house": 5,
+        "natal_house": 10
+      },
+      {
+        "id": "TRUE_NODE|return|7|natal|12",
+        "body_id": "TRUE_NODE",
+        "body_name": "北交点 真",
+        "return_house": 7,
+        "natal_house": 12
+      },
+      {
+        "id": "SOUTH_TRUE_NODE|return|1|natal|6",
+        "body_id": "SOUTH_TRUE_NODE",
+        "body_name": "南交点 真",
+        "return_house": 1,
+        "natal_house": 6
+      }
+    ]
+  },
+  "next_return": {
+    "label": "next_return",
+    "exact_utc": "2026-05-10T15:22:25.541095Z",
+    "exact_local": "2026-05-10T23:22:25.541095+08:00",
+    "return_longitude": 328.78862927146037,
+    "exact_error": 9.591531124897301e-09,
+    "chart": {
+      "angles": [
+        {
+          "id": "ASC",
+          "name": "ASC",
+          "longitude": 295.0303220866032,
+          "sign": "摩羯",
+          "degree_text": "25°01'49\" 摩羯",
+          "house": 1,
+          "ruler": "土星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "MC",
+          "name": "MC",
+          "longitude": 222.97270690566862,
+          "sign": "天蝎",
+          "degree_text": "12°58'22\" 天蝎",
+          "house": 10,
+          "ruler": "火星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "DSC",
+          "name": "DSC",
+          "longitude": 115.03032208660318,
+          "sign": "巨蟹",
+          "degree_text": "25°01'49\" 巨蟹",
+          "house": 7,
+          "ruler": "月亮",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "IC",
+          "name": "IC",
+          "longitude": 42.97270690566859,
+          "sign": "金牛",
+          "degree_text": "12°58'22\" 金牛",
+          "house": 4,
+          "ruler": "金星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        }
+      ],
+      "houses": [
+        {
+          "house": 1,
+          "sign": "摩羯",
+          "cusp_longitude": 295.0303220866032,
+          "cusp_text": "25°01'49\" 摩羯",
+          "ruler": "土星"
+        },
+        {
+          "house": 2,
+          "sign": "双鱼",
+          "cusp_longitude": 334.6571932284703,
+          "cusp_text": "04°39'26\" 双鱼",
+          "ruler": "木星"
+        },
+        {
+          "house": 3,
+          "sign": "白羊",
+          "cusp_longitude": 12.531071602696834,
+          "cusp_text": "12°31'52\" 白羊",
+          "ruler": "火星"
+        },
+        {
+          "house": 4,
+          "sign": "金牛",
+          "cusp_longitude": 42.97270690566859,
+          "cusp_text": "12°58'22\" 金牛",
+          "ruler": "金星"
+        },
+        {
+          "house": 5,
+          "sign": "双子",
+          "cusp_longitude": 67.6810218789488,
+          "cusp_text": "07°40'52\" 双子",
+          "ruler": "水星"
+        },
+        {
+          "house": 6,
+          "sign": "巨蟹",
+          "cusp_longitude": 90.33244067872437,
+          "cusp_text": "00°19'57\" 巨蟹",
+          "ruler": "月亮"
+        },
+        {
+          "house": 7,
+          "sign": "巨蟹",
+          "cusp_longitude": 115.03032208660318,
+          "cusp_text": "25°01'49\" 巨蟹",
+          "ruler": "月亮"
+        },
+        {
+          "house": 8,
+          "sign": "处女",
+          "cusp_longitude": 154.6571932284703,
+          "cusp_text": "04°39'26\" 处女",
+          "ruler": "水星"
+        },
+        {
+          "house": 9,
+          "sign": "天秤",
+          "cusp_longitude": 192.53107160269684,
+          "cusp_text": "12°31'52\" 天秤",
+          "ruler": "金星"
+        },
+        {
+          "house": 10,
+          "sign": "天蝎",
+          "cusp_longitude": 222.97270690566862,
+          "cusp_text": "12°58'22\" 天蝎",
+          "ruler": "火星"
+        },
+        {
+          "house": 11,
+          "sign": "射手",
+          "cusp_longitude": 247.6810218789488,
+          "cusp_text": "07°40'52\" 射手",
+          "ruler": "木星"
+        },
+        {
+          "house": 12,
+          "sign": "摩羯",
+          "cusp_longitude": 270.33244067872437,
+          "cusp_text": "00°19'57\" 摩羯",
+          "ruler": "土星"
+        }
+      ],
+      "planets": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "longitude": 49.9816726063068,
+          "latitude": -3.264980788974906e-05,
+          "declination": 17.7352,
+          "out_of_bounds": false,
+          "speed": 0.9666201372986821,
+          "sign": "金牛",
+          "degree_text": "19°58'54\" 金牛",
+          "house": 4
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "longitude": 328.78862927146037,
+          "latitude": -0.6231359074391303,
+          "declination": -12.4791,
+          "out_of_bounds": false,
+          "speed": 12.713587067227559,
+          "sign": "水瓶",
+          "degree_text": "28°47'19\" 水瓶",
+          "house": 1
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "longitude": 45.26826022480437,
+          "latitude": -0.5401026723601025,
+          "declination": 15.8971,
+          "out_of_bounds": false,
+          "speed": 2.1235535460349597,
+          "sign": "金牛",
+          "degree_text": "15°16'06\" 金牛",
+          "house": 4
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "longitude": 79.92153894847385,
+          "latitude": 1.2995881361720856,
+          "declination": 24.3512,
+          "out_of_bounds": true,
+          "speed": 1.202704885157455,
+          "sign": "双子",
+          "degree_text": "19°55'18\" 双子",
+          "house": 5
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "longitude": 23.7280589748414,
+          "latitude": -0.8151347107778818,
+          "declination": 8.4524,
+          "out_of_bounds": false,
+          "speed": 0.7594352658753487,
+          "sign": "白羊",
+          "degree_text": "23°43'41\" 白羊",
+          "house": 3
+        },
+        {
+          "body_id": "JUPITER",
+          "name": "木星",
+          "longitude": 110.34740052869643,
+          "latitude": 0.39675032627057594,
+          "declination": 22.2893,
+          "out_of_bounds": false,
+          "speed": 0.15748310639879612,
+          "sign": "巨蟹",
+          "degree_text": "20°20'51\" 巨蟹",
+          "house": 6
+        },
+        {
+          "body_id": "SATURN",
+          "name": "土星",
+          "longitude": 10.200776790872645,
+          "latitude": -2.1948190088178436,
+          "declination": 2.0203,
+          "out_of_bounds": false,
+          "speed": 0.10570488464955298,
+          "sign": "白羊",
+          "degree_text": "10°12'03\" 白羊",
+          "house": 2
+        },
+        {
+          "body_id": "URANUS",
+          "name": "天王星",
+          "longitude": 60.82068677982511,
+          "latitude": -0.1624467834227921,
+          "declination": 20.1623,
+          "out_of_bounds": false,
+          "speed": 0.05759016833885903,
+          "sign": "双子",
+          "degree_text": "00°49'14\" 双子",
+          "house": 4
+        },
+        {
+          "body_id": "NEPTUNE",
+          "name": "海王星",
+          "longitude": 3.5486845095072095,
+          "latitude": -1.3251262258980898,
+          "declination": 0.1946,
+          "out_of_bounds": false,
+          "speed": 0.02834489215922908,
+          "sign": "白羊",
+          "degree_text": "03°32'55\" 白羊",
+          "house": 2
+        },
+        {
+          "body_id": "PLUTO",
+          "name": "冥王星",
+          "longitude": 305.50576865113106,
+          "latitude": -4.075082567856831,
+          "declination": -22.8413,
+          "out_of_bounds": false,
+          "speed": -0.0018847635599289316,
+          "sign": "水瓶",
+          "degree_text": "05°30'21\" 水瓶",
+          "house": 1
+        },
+        {
+          "body_id": "TRUE_NODE",
+          "name": "北交点 真",
+          "longitude": 335.8517610565886,
+          "latitude": 0.0,
+          "declination": -9.365,
+          "out_of_bounds": false,
+          "speed": 0.004024237137742747,
+          "sign": "双鱼",
+          "degree_text": "05°51'06\" 双鱼",
+          "house": 2
+        },
+        {
+          "body_id": "SOUTH_TRUE_NODE",
+          "name": "南交点 真",
+          "longitude": 155.85176105658866,
+          "latitude": 0.0,
+          "declination": 9.365,
+          "out_of_bounds": false,
+          "speed": 0.004024237137742747,
+          "sign": "处女",
+          "degree_text": "05°51'06\" 处女",
+          "house": 8
+        }
+      ],
+      "natal_houses": [
+        {
+          "house": 1,
+          "sign": "白羊",
+          "cusp_longitude": 17.616017304424563,
+          "cusp_text": "17°36'58\" 白羊",
+          "ruler": "火星"
+        },
+        {
+          "house": 2,
+          "sign": "金牛",
+          "cusp_longitude": 52.1551463666867,
+          "cusp_text": "22°09'19\" 金牛",
+          "ruler": "金星"
+        },
+        {
+          "house": 3,
+          "sign": "双子",
+          "cusp_longitude": 78.0148574404115,
+          "cusp_text": "18°00'53\" 双子",
+          "ruler": "水星"
+        },
+        {
+          "house": 4,
+          "sign": "巨蟹",
+          "cusp_longitude": 101.05763211034173,
+          "cusp_text": "11°03'27\" 巨蟹",
+          "ruler": "月亮"
+        },
+        {
+          "house": 5,
+          "sign": "狮子",
+          "cusp_longitude": 125.67299337651428,
+          "cusp_text": "05°40'23\" 狮子",
+          "ruler": "太阳"
+        },
+        {
+          "house": 6,
+          "sign": "处女",
+          "cusp_longitude": 156.5581132257255,
+          "cusp_text": "06°33'29\" 处女",
+          "ruler": "水星"
+        },
+        {
+          "house": 7,
+          "sign": "天秤",
+          "cusp_longitude": 197.61601730442456,
+          "cusp_text": "17°36'58\" 天秤",
+          "ruler": "金星"
+        },
+        {
+          "house": 8,
+          "sign": "天蝎",
+          "cusp_longitude": 232.1551463666867,
+          "cusp_text": "22°09'19\" 天蝎",
+          "ruler": "火星"
+        },
+        {
+          "house": 9,
+          "sign": "射手",
+          "cusp_longitude": 258.0148574404115,
+          "cusp_text": "18°00'53\" 射手",
+          "ruler": "木星"
+        },
+        {
+          "house": 10,
+          "sign": "摩羯",
+          "cusp_longitude": 281.05763211034173,
+          "cusp_text": "11°03'27\" 摩羯",
+          "ruler": "土星"
+        },
+        {
+          "house": 11,
+          "sign": "水瓶",
+          "cusp_longitude": 305.6729933765143,
+          "cusp_text": "05°40'23\" 水瓶",
+          "ruler": "土星"
+        },
+        {
+          "house": 12,
+          "sign": "双鱼",
+          "cusp_longitude": 336.5581132257255,
+          "cusp_text": "06°33'29\" 双鱼",
+          "ruler": "木星"
+        }
+      ],
+      "natal_planets": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "longitude": 280.47443215639436,
+          "latitude": -1.4456373208462643e-07,
+          "declination": -23.029,
+          "out_of_bounds": false,
+          "speed": 1.0194945783077702,
+          "sign": "摩羯",
+          "degree_text": "10°28'28\" 摩羯",
+          "house": 9
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "longitude": 328.7886292810519,
+          "latitude": 1.0760957094851988,
+          "declination": -10.8878,
+          "out_of_bounds": false,
+          "speed": 13.404180913740246,
+          "sign": "水瓶",
+          "degree_text": "28°47'19\" 水瓶",
+          "house": 11
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "longitude": 295.76004331432523,
+          "latitude": 0.5264157494465413,
+          "declination": -20.4779,
+          "out_of_bounds": false,
+          "speed": -0.22880361192425597,
+          "sign": "摩羯",
+          "degree_text": "25°45'36\" 摩羯",
+          "house": 10
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "longitude": 306.263052404424,
+          "latitude": 1.819410982703759,
+          "declination": -16.9466,
+          "out_of_bounds": false,
+          "speed": -0.11626876496077103,
+          "sign": "水瓶",
+          "degree_text": "06°15'47\" 水瓶",
+          "house": 11
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "longitude": 249.76552957456767,
+          "latitude": -0.02927884615672335,
+          "declination": -21.9467,
+          "out_of_bounds": false,
+          "speed": 0.7035767154001349,
+          "sign": "射手",
+          "degree_text": "09°45'56\" 射手",
+          "house": 8
+        },
+        {
+          "body_id": "JUPITER",
+          "name": "木星",
+          "longitude": 95.19365033765915,
+          "latitude": -0.11779759643045594,
+          "declination": 23.2227,
+          "out_of_bounds": false,
+          "speed": -0.13465584572111175,
+          "sign": "巨蟹",
+          "degree_text": "05°11'37\" 巨蟹",
+          "house": 3
+        },
+        {
+          "body_id": "SATURN",
+          "name": "土星",
+          "longitude": 285.61807955515644,
+          "latitude": 0.29371553637827535,
+          "declination": -22.2364,
+          "out_of_bounds": false,
+          "speed": 0.11824040929465734,
+          "sign": "摩羯",
+          "degree_text": "15°37'05\" 摩羯",
+          "house": 10
+        },
+        {
+          "body_id": "URANUS",
+          "name": "天王星",
+          "longitude": 275.76543300290143,
+          "latitude": -0.27004982406245664,
+          "declination": -23.5865,
+          "out_of_bounds": true,
+          "speed": 0.06003554729504816,
+          "sign": "摩羯",
+          "degree_text": "05°45'56\" 摩羯",
+          "house": 9
+        },
+        {
+          "body_id": "NEPTUNE",
+          "name": "海王星",
+          "longitude": 282.0254688963013,
+          "latitude": 0.8473821364872266,
+          "declination": -22.0543,
+          "out_of_bounds": false,
+          "speed": 0.03791285289990218,
+          "sign": "摩羯",
+          "degree_text": "12°01'32\" 摩羯",
+          "house": 10
+        },
+        {
+          "body_id": "PLUTO",
+          "name": "冥王星",
+          "longitude": 227.0839844255524,
+          "latitude": 15.282379187055618,
+          "declination": -2.248,
+          "out_of_bounds": false,
+          "speed": 0.02748125944571269,
+          "sign": "天蝎",
+          "degree_text": "17°05'02\" 天蝎",
+          "house": 7
+        },
+        {
+          "body_id": "TRUE_NODE",
+          "name": "北交点 真",
+          "longitude": 316.86334323207967,
+          "latitude": 0.0,
+          "declination": -15.7839,
+          "out_of_bounds": false,
+          "speed": 0.018731438738383413,
+          "sign": "水瓶",
+          "degree_text": "16°51'48\" 水瓶",
+          "house": 11
+        },
+        {
+          "body_id": "SOUTH_TRUE_NODE",
+          "name": "南交点 真",
+          "longitude": 136.86334323207967,
+          "latitude": 0.0,
+          "declination": 15.7839,
+          "out_of_bounds": false,
+          "speed": 0.018731438738383413,
+          "sign": "狮子",
+          "degree_text": "16°51'48\" 狮子",
+          "house": 5
+        }
+      ],
+      "natal_angles": [
+        {
+          "id": "ASC",
+          "name": "ASC",
+          "longitude": 17.616017304424563,
+          "sign": "白羊",
+          "degree_text": "17°36'58\" 白羊",
+          "house": 1,
+          "ruler": "火星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "MC",
+          "name": "MC",
+          "longitude": 281.05763211034173,
+          "sign": "摩羯",
+          "degree_text": "11°03'27\" 摩羯",
+          "house": 10,
+          "ruler": "土星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "DSC",
+          "name": "DSC",
+          "longitude": 197.61601730442456,
+          "sign": "天秤",
+          "degree_text": "17°36'58\" 天秤",
+          "house": 7,
+          "ruler": "金星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "IC",
+          "name": "IC",
+          "longitude": 101.05763211034173,
+          "sign": "巨蟹",
+          "degree_text": "11°03'27\" 巨蟹",
+          "house": 4,
+          "ruler": "月亮",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        }
+      ],
+      "aspects": [],
+      "declination_aspects": [
+        {
+          "body1": "TRUE_NODE",
+          "body2": "SOUTH_TRUE_NODE",
+          "type": "contraparallel",
+          "diff": 0.0,
+          "declination1": -9.365,
+          "declination2": 9.365
+        },
+        {
+          "body1": "JUPITER",
+          "body2": "PLUTO",
+          "type": "contraparallel",
+          "diff": 0.552,
+          "declination1": 22.2893,
+          "declination2": -22.8413
+        },
+        {
+          "body1": "MARS",
+          "body2": "TRUE_NODE",
+          "type": "contraparallel",
+          "diff": 0.9126,
+          "declination1": 8.4524,
+          "declination2": -9.365
+        },
+        {
+          "body1": "MARS",
+          "body2": "SOUTH_TRUE_NODE",
+          "type": "parallel",
+          "diff": 0.9126,
+          "declination1": 8.4524,
+          "declination2": 9.365
+        }
+      ],
+      "fixed_star_conjunctions": [
+        {
+          "planet": "TRUE_NODE",
+          "star": "Deneb",
+          "star_mag": 1.25,
+          "star_nature": "金/水星",
+          "star_keyword": "学问",
+          "orb": 0.1615
+        },
+        {
+          "planet": "JUPITER",
+          "star": "Castor",
+          "star_mag": 1.58,
+          "star_nature": "水星",
+          "star_keyword": "才智",
+          "orb": 0.2589
+        },
+        {
+          "planet": "MERCURY",
+          "star": "Almach",
+          "star_mag": 2.1,
+          "star_nature": "金星",
+          "star_keyword": "艺术, 荣誉",
+          "orb": 0.6804
+        },
+        {
+          "planet": "TRUE_NODE",
+          "star": "Fomalhaut",
+          "star_mag": 1.17,
+          "star_nature": "金/水星",
+          "star_keyword": "南方守护者, 灵性",
+          "orb": 1.6202
+        }
+      ],
+      "patterns": [
+        {
+          "id": "seesaw",
+          "type": "seesaw",
+          "type_name": "跷跷板",
+          "members": [
+            "JUPITER",
+            "MARS",
+            "MERCURY",
+            "MOON",
+            "NEPTUNE",
+            "PLUTO",
+            "SATURN",
+            "SUN",
+            "URANUS",
+            "VENUS"
+          ],
+          "aspect_types": [],
+          "orb_summary": "聚类间距173.9°",
+          "confidence": "high",
+          "cluster_a": [
+            "MARS",
+            "MERCURY",
+            "NEPTUNE",
+            "SATURN",
+            "SUN",
+            "URANUS"
+          ],
+          "cluster_b": [
+            "JUPITER",
+            "MOON",
+            "PLUTO",
+            "VENUS"
+          ]
+        },
+        {
+          "id": "splay",
+          "type": "splay",
+          "type_name": "不规则",
+          "members": [
+            "JUPITER",
+            "MARS",
+            "MERCURY",
+            "MOON",
+            "NEPTUNE",
+            "PLUTO",
+            "SATURN",
+            "SUN",
+            "URANUS",
+            "VENUS"
+          ],
+          "aspect_types": [],
+          "orb_summary": "",
+          "confidence": "medium"
+        },
+        {
+          "id": "stellium_sign_0",
+          "type": "stellium",
+          "type_name": "星群",
+          "members": [
+            "MARS",
+            "NEPTUNE",
+            "SATURN"
+          ],
+          "aspect_types": [],
+          "orb_summary": "stellium",
+          "confidence": "high",
+          "stellium_sign": 0,
+          "stellium_house": null
+        }
+      ]
+    },
+    "return_to_natal_aspects": [],
+    "house_overlay": [
+      {
+        "id": "SUN|return|4|natal|1",
+        "body_id": "SUN",
+        "body_name": "太阳",
+        "return_house": 4,
+        "natal_house": 1
+      },
+      {
+        "id": "MOON|return|1|natal|11",
+        "body_id": "MOON",
+        "body_name": "月亮",
+        "return_house": 1,
+        "natal_house": 11
+      },
+      {
+        "id": "MERCURY|return|4|natal|1",
+        "body_id": "MERCURY",
+        "body_name": "水星",
+        "return_house": 4,
+        "natal_house": 1
+      },
+      {
+        "id": "VENUS|return|5|natal|3",
+        "body_id": "VENUS",
+        "body_name": "金星",
+        "return_house": 5,
+        "natal_house": 3
+      },
+      {
+        "id": "MARS|return|3|natal|1",
+        "body_id": "MARS",
+        "body_name": "火星",
+        "return_house": 3,
+        "natal_house": 1
+      },
+      {
+        "id": "JUPITER|return|6|natal|4",
+        "body_id": "JUPITER",
+        "body_name": "木星",
+        "return_house": 6,
+        "natal_house": 4
+      },
+      {
+        "id": "SATURN|return|2|natal|12",
+        "body_id": "SATURN",
+        "body_name": "土星",
+        "return_house": 2,
+        "natal_house": 12
+      },
+      {
+        "id": "URANUS|return|4|natal|2",
+        "body_id": "URANUS",
+        "body_name": "天王星",
+        "return_house": 4,
+        "natal_house": 2
+      },
+      {
+        "id": "NEPTUNE|return|2|natal|12",
+        "body_id": "NEPTUNE",
+        "body_name": "海王星",
+        "return_house": 2,
+        "natal_house": 12
+      },
+      {
+        "id": "PLUTO|return|1|natal|10",
+        "body_id": "PLUTO",
+        "body_name": "冥王星",
+        "return_house": 1,
+        "natal_house": 10
+      },
+      {
+        "id": "TRUE_NODE|return|2|natal|11",
+        "body_id": "TRUE_NODE",
+        "body_name": "北交点 真",
+        "return_house": 2,
+        "natal_house": 11
+      },
+      {
+        "id": "SOUTH_TRUE_NODE|return|8|natal|5",
+        "body_id": "SOUTH_TRUE_NODE",
+        "body_name": "南交点 真",
+        "return_house": 8,
+        "natal_house": 5
+      }
+    ]
+  },
+  "no_hit_in_user_window": false,
+  "suggested_window": null,
+  "search_start_local": "2026-01-25T12:00:00+08:00",
+  "search_end_local": "2026-08-13T12:00:00+08:00",
+  "warnings": [],
+  "section_errors": null
+}

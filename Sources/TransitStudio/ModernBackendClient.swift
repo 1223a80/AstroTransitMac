@@ -24,4 +24,8 @@ extension BackendClient {
     static func harmonic(request: HarmonicRequest, pythonPath: String) async throws -> HarmonicResult {
         try await run(request: request, pythonPath: pythonPath)
     }
+
+    static func modernReturn(request: ModernReturnRequest, pythonPath: String) async throws -> ModernReturnResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
 }

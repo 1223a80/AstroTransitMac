@@ -193,6 +193,59 @@ enum TextExportBuilder {
         return csv(rows)
     }
 
+    static func csv(_ result: ModernReturnResult) -> String {
+        let header = [
+            "section", "occurrence", "label", "exact_utc", "exact_local",
+            "return_longitude", "exact_error", "body", "aspect_or_house", "other", "separation", "orb",
+            "meta_key", "meta_value"
+        ]
+        var rows: [[String]] = [header]
+        func appendMeta(_ key: String, _ value: String?) {
+            guard let value else { return }
+            rows.append(["meta", "", "", "", "", "", "", "", "", "", "", "", key, value])
+        }
+        appendMeta("return_body_id", result.meta.returnBodyID)
+        appendMeta("target_longitude", result.meta.targetLongitude.map(number))
+        appendMeta("location_source", result.meta.locationSource)
+        if let location = result.meta.location {
+            appendMeta("location", "\(location.name) (\(location.latitude), \(location.longitude), \(location.timezone))")
+        }
+        appendMeta("zodiac", result.meta.zodiac)
+        appendMeta("house_system_requested", result.meta.houseSystemRequested)
+        appendMeta("house_system_effective", result.meta.houseSystemEffective)
+        appendMeta("precession_correction", result.meta.precessionCorrection)
+        appendMeta("ephemeris", result.meta.ephemeris)
+        for (section, occurrence) in [
+            ("previous_return", result.previousReturn),
+            ("current_return", result.currentCycleReturn),
+            ("next_return", result.nextReturn),
+        ] as [(String, ModernReturnOccurrence?)] {
+            guard let occurrence else { continue }
+            let base = [
+                section,
+                section,
+                occurrence.label,
+                occurrence.exactUTC,
+                occurrence.exactLocal,
+                number(occurrence.returnLongitude),
+                number(occurrence.exactError),
+            ]
+            rows.append(base + ["", "", "", "", "", "", ""])
+            rows += occurrence.returnToNatalAspects.map {
+                base + [$0.transitBodyName, $0.aspectName, $0.natalBodyName, number($0.separation), number($0.orb), "", ""]
+            }
+            rows += occurrence.houseOverlay.map {
+                base + [$0.bodyName, "return_house \($0.returnHouse)", "natal_house \($0.natalHouse)", "", "", "", ""]
+            }
+            if let patterns = occurrence.chart?.patterns {
+                rows += patterns.map {
+                    base + ["pattern", $0.typeName, $0.members.joined(separator: ";"), "", $0.confidence, "", ""]
+                }
+            }
+        }
+        return csv(rows)
+    }
+
     private static let sectionErrorLabels: [String: String] = [
         "primary_directions": "主限法",
         "circumambulations": "沿界推进",

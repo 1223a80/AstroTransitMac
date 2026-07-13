@@ -70,4 +70,14 @@ extension ContentView {
             }
         }
     }
+
+    var modernReturnResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .returnChart(let r) = result {
+                ModernReturnResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(title: "等待返照盘计算", systemImage: "arrow.clockwise.circle", description: "填写本命盘和参考时间后开始计算。")
+            }
+        }
+    }
 }

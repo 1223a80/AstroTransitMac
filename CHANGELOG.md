@@ -8,6 +8,25 @@
 - Synastry 增加可配置关系点集与带 A/B 前缀的跨盘赤纬相位；Composite、Davison、Progression、Solar Arc、Harmonic 接受 optional point set，并在星历未提供点时写 warning 后移除有效点。
 - 现代请求模型为自定义小行星调用既有准备流程；本批不引入模糊出生时间或 noon convention。
 - `mode=moment` 现在在入口拒绝缺少小时、分钟或时区的出生/行运 moment；现代 node_mode 也在入口做结构化枚举校验。
+- B2 增加 Solar/Lunar Return 的可复现实例请求，作为 exact UTC 求根、地点快照与真实 fixture 的输入基线。
+- B2 后端新增独立 Solar/Lunar Return 求根模块和 exact occurrence 测试；古典 return schema 保持独立不变。
+- Solar Return 搜索窗口覆盖至少两个年度周期，确保 previous/current/next 语义在年中 reference 下不丢失 previous occurrence。
+- 接入返照模式的 Swift 状态、运行入口、侧栏参数和结果路由；保持太阳/月亮返照均使用完整出生与参考时间。
+- 返照快照 Swift 模型保留后端赤纬相位与固定星字段，避免结构化结果在解码时丢失。
+- 新增返照结果页，展示当前/前后返照、返照对本命相位、宫位落点、图形、诊断及 JSON/CSV/Markdown 导出入口。
+- 返照 Markdown 导出记录目标黄经、精确 UTC/当地时间、求根误差、返照快照及本命落点。
+- 返照 CSV 导出采用独立字段契约，逐 occurrence 保留时间、黄经、求根误差、相位和宫位落点。
+- 修正返照 Markdown 导出复用既有角度格式化 helper，确保 Swift 编译与导出格式一致。
+- 新增 Solar/Lunar Return 真实输出 fixture、Swift 解码契约、请求编码和默认结果页 tab 测试。
+- 返照侧栏补齐 birth/custom 地点来源与名称、经纬度、时区字段；自定义地点在运行前做必填校验。
+- 返照快照补充本命行星、角点和宫头，供双盘展示使用；返回时刻仍只由目标天体黄经求根决定。
+- 返照结果页加入双盘 tab，并用显式 `return-/natal-` 点 ID 校验相位端点，未解析端点进入诊断而不静默画线。
+- Swift 真实返照契约测试增加双盘端点和未解析相位检查。
+- modern_return API 现在在入口拒绝无效 IANA/固定偏移时区、DST 不存在的时刻和无效自定义地点时区；新增 DST 与 sidereal 自洽回归。
+- 抽出共享 `astro_backend_return_solver.py`，让现代 Return 与古典 `planetary_returns` 共用 UTC bracket/精确求根；两种响应 schema 仍保持独立。
+- Return Markdown/CSV 补齐 zodiac、requested/effective house system、岁差、出生/参考 UTC 与地点 provenance；meta 时间字段加入 `birth_utc`/`reference_utc` 解码。
+- 真实 fixture 契约测试增加 Return Markdown/CSV provenance 字段断言。
+- 共享 Return solver 的搜索步进显式归一化到 UTC，避免跨 DST 窗口按墙上时间迭代引入伪根；返回值再恢复调用方时区。
 
 ## 2026-07-13 — 现代占星第 0 批基线正确性修复
 

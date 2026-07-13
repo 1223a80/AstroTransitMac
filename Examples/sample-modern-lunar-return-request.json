@@ -1,0 +1,34 @@
+{
+  "mode": "modern_return",
+  "return_body_id": "MOON",
+  "birth": {
+    "moment": {
+      "year": 1990,
+      "month": 1,
+      "day": 1,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737
+  },
+  "reference": {
+    "year": 2026,
+    "month": 5,
+    "day": 5,
+    "hour": 12,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "location_source": "birth",
+  "house_system": "placidus",
+  "zodiac": "tropical",
+  "node_mode": "true_node",
+  "point_set": {},
+  "aspects": [],
+  "precession_correction": "none",
+  "ephemeris_path": null,
+  "no_asteroids": false,
+  "require_ephemeris": "warn"
+}

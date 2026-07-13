@@ -89,6 +89,34 @@ struct BackendContractTests {
         #expect(!result.houses.isEmpty)
     }
 
+    @Test func decodeModernReturnFixtures() throws {
+        let solar = try JSONDecoder().decode(ModernReturnResult.self, from: fixtureData("modern-solar-return-result"))
+        #expect(solar.meta.returnBodyID == "SUN")
+        #expect(solar.currentCycleReturn != nil)
+        #expect(solar.previousReturn != nil)
+        #expect(solar.nextReturn != nil)
+        #expect(solar.currentCycleReturn?.chart?.planets.isEmpty == false)
+        #expect(solar.currentCycleReturn?.chart?.declinationAspects != nil)
+        if let chart = solar.currentCycleReturn?.chart {
+            let wheel = ChartWheelData(modernReturnChart: chart, returnToNatalAspects: solar.currentCycleReturn?.returnToNatalAspects ?? [])
+            #expect(wheel.points.contains { $0.id == "return-SUN" })
+            #expect(wheel.points.contains { $0.id == "natal-SUN" })
+            #expect(wheel.unresolvedAspectEndpoints.isEmpty)
+        }
+        let markdown = MarkdownModernExportBuilder.modernReturn(solar)
+        #expect(markdown.contains("宫制 requested"))
+        #expect(markdown.contains("Asia/Shanghai"))
+        #expect(markdown.contains("求根误差"))
+        let csv = TextExportBuilder.csv(solar)
+        #expect(csv.contains("house_system_requested"))
+        #expect(csv.contains("current_return"))
+
+        let lunar = try JSONDecoder().decode(ModernReturnResult.self, from: fixtureData("modern-lunar-return-result"))
+        #expect(lunar.meta.returnBodyID == "MOON")
+        #expect(lunar.currentCycleReturn != nil)
+        #expect(lunar.currentCycleReturn?.exactLocal.contains("+08:00") == true)
+    }
+
     @Test func decodeHoraryResultFromRealOutput() throws {
         let result = try JSONDecoder().decode(HoraryResult.self, from: fixtureData("horary-result"))
 

@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 struct ModernDiagnosticsView: View {
@@ -525,6 +526,207 @@ struct HarmonicResultPane: View {
     var markdown: String { MarkdownModernExportBuilder.harmonic(result) }
     var json: String { TextExportBuilder.json(result) }
     var csv: String { TextExportBuilder.csv(result) }
+}
+
+// MARK: - Return Views
+
+struct ModernReturnResultPane: View {
+    let result: ModernReturnResult
+    @Binding var selectedTab: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            ResultPaneToolbar(
+                selection: $selectedTab,
+                tabs: tabs,
+                moreTabs: moreTabs,
+                currentTabTitle: tabTitle,
+                markdownProvider: { markdown },
+                jsonProvider: { json },
+                csvProvider: { csv },
+                basename: "modern_return"
+            )
+            selectedResultView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .padding(TS.Padding.resultContent)
+    }
+
+    var tabs: [(String, String)] {
+        [
+            ("current_return", "当前返照"),
+            ("biwheel", "双盘"),
+            ("previous_next", "前后返照"),
+            ("return_to_natal", "返照→本命"),
+            ("house_overlay", "宫位落点"),
+            ("patterns", "图形"),
+        ]
+    }
+
+    var moreTabs: [(String, String)] {
+        [("diagnostics", "诊断"), ("json", "JSON")]
+    }
+
+    var tabTitle: String {
+        resultTabTitle(selectedTab, in: tabs, moreTabs)
+    }
+
+    @ViewBuilder
+    var selectedResultView: some View {
+        switch selectedTab {
+        case "current_return":
+            if let occurrence = result.currentCycleReturn {
+                ModernReturnOccurrenceView(title: "当前返照", occurrence: occurrence)
+            } else {
+                EmptyStateView(title: "未找到当前返照", systemImage: "calendar.badge.exclamationmark", description: result.suggestedWindow ?? "请检查参考时间和星历设置。")
+            }
+        case "biwheel":
+            if let occurrence = result.currentCycleReturn,
+               let chart = occurrence.chart {
+                ChartWheelView(data: ChartWheelData(modernReturnChart: chart, returnToNatalAspects: occurrence.returnToNatalAspects))
+            } else {
+                EmptyStateView(title: "无法构建双盘", systemImage: "circle.grid.2x2", description: "当前返照快照缺少本命或返照端点。")
+            }
+        case "previous_next":
+            ModernReturnCycleView(result: result)
+        case "return_to_natal":
+            if let occurrence = result.currentCycleReturn {
+                AspectTableView(
+                    title: "返照→本命相位",
+                    leftColumnTitle: "返照天体",
+                    rightColumnTitle: "本命天体",
+                    aspects: occurrence.returnToNatalAspects
+                )
+            } else {
+                EmptyStateView(title: "无返照相位", systemImage: "arrow.left.arrow.right", description: "当前返照快照不可用。")
+            }
+        case "house_overlay":
+            if let occurrence = result.currentCycleReturn {
+                ReturnHouseOverlayView(overlays: occurrence.houseOverlay)
+            } else {
+                EmptyStateView(title: "无宫位落点", systemImage: "house", description: "当前返照快照不可用。")
+            }
+        case "patterns":
+            PatternListView(patterns: result.currentCycleReturn?.chart?.patterns ?? [])
+        case "diagnostics":
+            ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
+        case "json":
+            RawJSONView(value: result)
+        default:
+            if let occurrence = result.currentCycleReturn {
+                ModernReturnOccurrenceView(title: "当前返照", occurrence: occurrence)
+            } else {
+                EmptyStateView(title: "等待返照盘计算", systemImage: "arrow.clockwise.circle")
+            }
+        }
+    }
+
+    var markdown: String { MarkdownModernExportBuilder.modernReturn(result) }
+    var json: String { TextExportBuilder.json(result) }
+    var csv: String { TextExportBuilder.csv(result) }
+}
+
+struct ModernReturnOccurrenceView: View {
+    let title: String
+    let occurrence: ModernReturnOccurrence
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                Text(title).font(TS.Font.sectionTitle)
+                Grid(alignment: .leading, horizontalSpacing: TS.Spacing.xl, verticalSpacing: TS.Spacing.sm) {
+                    GridRow { Text("精确 UTC").foregroundStyle(.secondary); Text(occurrence.exactUTC).monospacedDigit() }
+                    GridRow { Text("当地时间").foregroundStyle(.secondary); Text(occurrence.exactLocal).monospacedDigit() }
+                    GridRow { Text("返照黄经").foregroundStyle(.secondary); Text(String(format: "%.8f°", occurrence.returnLongitude)).monospacedDigit() }
+                    GridRow { Text("求根误差").foregroundStyle(.secondary); Text(String(format: "%.3e°", occurrence.exactError)).monospacedDigit() }
+                }
+                if let error = occurrence.error {
+                    Text(error).foregroundStyle(TS.SemanticColor.warning)
+                }
+                if let chart = occurrence.chart {
+                    PositionTableView(title: "返照行星", positions: chart.planets)
+                    if !chart.angles.isEmpty {
+                        Table(chart.angles) {
+                            TableColumn("角点", value: \.name)
+                            TableColumn("黄经") { Text(String(format: "%.4f°", $0.longitude)).monospacedDigit() }
+                            TableColumn("宫位") { Text("\($0.house)").monospacedDigit() }
+                        }
+                        .tsTableStyle()
+                    }
+                    if !chart.houses.isEmpty {
+                        Table(chart.houses) {
+                            TableColumn("宫位") { Text("\($0.house)") }
+                            TableColumn("宫头") { Text($0.cuspText) }
+                            TableColumn("主星", value: \.ruler)
+                        }
+                        .tsTableStyle()
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+struct ModernReturnCycleView: View {
+    let result: ModernReturnResult
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                Text("返照序列").font(TS.Font.sectionTitle)
+                occurrenceRow("上一次", result.previousReturn)
+                occurrenceRow("当前周期", result.currentCycleReturn)
+                occurrenceRow("下一次", result.nextReturn)
+                if let start = result.searchStartLocal, let end = result.searchEndLocal {
+                    Text("搜索范围：\(start) 至 \(end)")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    @ViewBuilder
+    private func occurrenceRow(_ title: String, _ occurrence: ModernReturnOccurrence?) -> some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.sm) {
+            Text(title).font(TS.Font.label).foregroundStyle(.secondary)
+            if let occurrence {
+                HStack(spacing: TS.Spacing.lg) {
+                    Text(occurrence.exactLocal).monospacedDigit()
+                    Text(String(format: "%.8f°", occurrence.returnLongitude)).monospacedDigit()
+                    Text("误差 \(String(format: "%.2e", occurrence.exactError))°")
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+            } else {
+                Text("未找到").foregroundStyle(.secondary)
+            }
+        }
+        .padding(TS.Padding.cardInner)
+        .background(TS.SemanticColor.cardBackground, in: RoundedRectangle(cornerRadius: TS.Radius.card))
+    }
+}
+
+struct ReturnHouseOverlayView: View {
+    let overlays: [ReturnHouseOverlay]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Text("返照行星落入本命宫位").font(TS.Font.sectionTitle)
+            if overlays.isEmpty {
+                EmptyStateView(title: "无宫位落点", systemImage: "house")
+            } else {
+                Table(overlays) {
+                    TableColumn("天体", value: \.bodyName)
+                    TableColumn("返照宫") { Text("\($0.returnHouse)") }
+                    TableColumn("本命宫") { Text("\($0.natalHouse)") }
+                }
+                .tsTableStyle()
+            }
+        }
+    }
 }
 
 struct PatternListView: View {

@@ -129,6 +129,8 @@ extension ContentView {
                 }
             case .harmonic:
                 return nil
+            case .returnChart:
+                return nil
             }
         case .horary:
             return AIPanelContext(

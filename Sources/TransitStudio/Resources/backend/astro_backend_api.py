@@ -732,6 +732,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
     supported_modes = {
         "moment", "classical", "vedic", "horary", "scan", "rectify",
         "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
+        "modern_return",
     }
     if mode not in supported_modes:
         return {"error": f"不支持的 mode：{mode or '<empty>'}", "mode": mode}
@@ -747,6 +748,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "progression": ["birth", "reference"],
         "solar_arc": ["birth", "reference"],
         "harmonic": ["birth"],
+        "modern_return": ["birth", "reference"],
     }
     default_required = ["natal", "transit"]
     required = required_by_mode.get(mode, default_required)
@@ -821,7 +823,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             for f in ("latitude", "longitude"):
                 if f not in p:
                     missing.append(f"{side}.{f}")
-    if mode in ("progression", "solar_arc", "harmonic", "vedic"):
+    if mode in ("progression", "solar_arc", "harmonic", "vedic", "modern_return"):
         if "birth" in request:
             b = request["birth"]
             if "moment" not in b:
@@ -841,8 +843,61 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             for f in ref_fields:
                 if f not in ref:
                     missing.append(f"reference.{f}")
+    if mode == "modern_return":
+        def validate_timezone_text(value: Any, label: str) -> None:
+            if not isinstance(value, str) or not value.strip():
+                invalid.append(f"{label} must be a non-empty timezone")
+                return
+            try:
+                moment_to_local_datetime({
+                    "year": 2026, "month": 1, "day": 15,
+                    "hour": 12, "minute": 0, "timezone": value,
+                })
+            except Exception as exc:
+                invalid.append(f"{label} is invalid: {exc}")
+
+        return_body_id = request.get("return_body_id")
+        if return_body_id not in {"SUN", "MOON"}:
+            invalid.append("return_body_id must be SUN or MOON")
+        location_source = request.get("location_source", "birth")
+        if location_source not in {"birth", "custom"}:
+            invalid.append("location_source must be birth or custom")
+        precession = request.get("precession_correction", "none")
+        if precession != "none":
+            invalid.append("precession_correction currently only supports none")
+        birth_moment = request.get("birth", {}).get("moment") if isinstance(request.get("birth"), dict) else None
+        reference_moment = request.get("reference")
+        if isinstance(birth_moment, dict):
+            validate_timezone_text(birth_moment.get("timezone"), "birth.moment.timezone")
+            if all(field in birth_moment for field in ("year", "month", "day", "hour", "minute", "timezone")):
+                try:
+                    moment_to_local_datetime(birth_moment)
+                except Exception as exc:
+                    invalid.append(f"birth.moment is invalid: {exc}")
+        if isinstance(reference_moment, dict):
+            validate_timezone_text(reference_moment.get("timezone"), "reference.timezone")
+            if all(field in reference_moment for field in ("year", "month", "day", "hour", "minute", "timezone")):
+                try:
+                    moment_to_local_datetime(reference_moment)
+                except Exception as exc:
+                    invalid.append(f"reference is invalid: {exc}")
+        if location_source == "custom":
+            location = request.get("location")
+            if not isinstance(location, dict):
+                missing.append("location")
+            else:
+                for field in ("name", "latitude", "longitude", "timezone"):
+                    if field not in location:
+                        missing.append(f"location.{field}")
+                latitude = location.get("latitude")
+                longitude = location.get("longitude")
+                if isinstance(latitude, bool) or not isinstance(latitude, (int, float)) or not -90 <= latitude <= 90:
+                    invalid.append("location.latitude must be a number in [-90, 90]")
+                if isinstance(longitude, bool) or not isinstance(longitude, (int, float)) or not -180 <= longitude <= 180:
+                    invalid.append("location.longitude must be a number in [-180, 180]")
+                validate_timezone_text(location.get("timezone"), "location.timezone")
     modern_point_modes = {
-        "moment", "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
+        "moment", "synastry", "composite", "davison", "progression", "solar_arc", "harmonic", "modern_return",
     }
     if mode in modern_point_modes and "point_set" in request:
         node_mode = str(request.get("node_mode", "true_node"))
@@ -922,6 +977,9 @@ def main() -> None:
         elif mode == "harmonic":
             from astro_backend_harmonic import calculate_harmonic
             response = calculate_harmonic(request, warnings)
+        elif mode == "modern_return":
+            from astro_backend_modern_return import calculate_modern_return
+            response = calculate_modern_return(request, warnings)
         else:
             response = calculate_moment(request, warnings)
 

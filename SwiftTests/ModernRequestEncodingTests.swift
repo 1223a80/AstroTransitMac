@@ -79,6 +79,38 @@ struct ModernRequestEncodingTests {
         #expect(dict["zodiac"] as? String == "sidereal_lahiri")
     }
 
+    @Test func modernReturnRequestEncodesExactReturnContract() throws {
+        let request = ModernReturnRequest(
+            returnBodyID: "MOON",
+            birth: birth,
+            reference: reference,
+            locationSource: "birth",
+            houseSystem: "placidus",
+            zodiac: "sidereal_lahiri",
+            nodeMode: "true_node",
+            pointSet: ModernPointSet(
+                bodyIDs: ["SUN", "MOON"],
+                includeNodes: true,
+                nodeMode: "true_node",
+                customAsteroids: [],
+                angleIDs: ["ASC", "MC"]
+            ),
+            aspects: aspects,
+            precessionCorrection: "none",
+            ephemerisPath: nil,
+            noAsteroids: false,
+            requireEphemeris: "warn"
+        )
+
+        let dict = try encodedDictionary(request)
+
+        #expect(dict["mode"] as? String == "modern_return")
+        #expect(dict["return_body_id"] as? String == "MOON")
+        #expect(dict["location_source"] as? String == "birth")
+        #expect(dict["precession_correction"] as? String == "none")
+        #expect(dict["reference"] is [String: Any])
+    }
+
     private func encodedDictionary<T: Encodable>(_ value: T) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         return try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])

@@ -369,6 +369,8 @@ extension ContentView {
                 timeBasedSidebar
             case .harmonic:
                 harmonicSidebar
+            case .returnChart:
+                returnSidebar
             }
         }
     }
@@ -411,6 +413,61 @@ extension ContentView {
                     }
                 }
             }
+        }
+    }
+
+    private var returnSidebar: some View {
+        Group {
+            collapsible("本命盘") { natalSettingsSection }
+            collapsible("返照参数") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    Picker("类型", selection: $modernReturnBodyID) {
+                        Text("Solar Return").tag("SUN")
+                        Text("Lunar Return").tag("MOON")
+                    }
+                    .pickerStyle(.segmented)
+                    Picker("地点来源", selection: $modernReturnLocationSource) {
+                        Text("出生地").tag("birth")
+                        Text("自定义地点").tag("custom")
+                    }
+                    .pickerStyle(.segmented)
+                    if modernReturnLocationSource == "custom" {
+                        Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.sm) {
+                            GridRow {
+                                Text("名称").foregroundStyle(.secondary)
+                                TextField("地点名称", text: $modernReturnLocationName)
+                                    .textFieldStyle(.roundedBorder)
+                            }
+                            GridRow {
+                                Text("纬度").foregroundStyle(.secondary)
+                                TextField("31.2304", text: $modernReturnLocationLatitude)
+                                    .textFieldStyle(.roundedBorder)
+                            }
+                            GridRow {
+                                Text("经度").foregroundStyle(.secondary)
+                                TextField("121.4737", text: $modernReturnLocationLongitude)
+                                    .textFieldStyle(.roundedBorder)
+                            }
+                            GridRow {
+                                Text("时区").foregroundStyle(.secondary)
+                                TextField("Asia/Shanghai", text: $modernReturnLocationTimezone)
+                                    .textFieldStyle(.roundedBorder)
+                            }
+                        }
+                    }
+                    Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
+                        GridRow {
+                            Text("参考").foregroundStyle(.secondary)
+                            DateTimeInput(date: $classicalReferenceDate, timeZone: selectedTimeZone)
+                        }
+                    }
+                    Text("以本命太阳或月亮的黄经回归点为返照时刻；时间输入必须完整。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            collapsible("占星参数") { modernParameterSection }
+            collapsible("自定义小行星") { customAsteroidSection }
         }
     }
 

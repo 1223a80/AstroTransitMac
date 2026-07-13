@@ -12,6 +12,7 @@ struct ModernTabStateTests {
         #expect(ModernSubMode.progression.defaultResultTab == "progressed_planets")
         #expect(ModernSubMode.solarArc.defaultResultTab == "sa_planets")
         #expect(ModernSubMode.harmonic.defaultResultTab == "planets")
+        #expect(ModernSubMode.returnChart.defaultResultTab == "current_return")
     }
 
     @Test func resetModernSelectedTabUsesSubModeDefault() {

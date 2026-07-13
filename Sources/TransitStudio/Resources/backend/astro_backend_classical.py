@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Any
 
 from astro_backend_core import (
@@ -29,7 +29,7 @@ from astro_backend_ephemeris import (
     longitude_in_interval,
     point_row,
 )
-from astro_backend_scan import orb_at, refine_crossing
+from astro_backend_return_solver import search_return_exacts
 from astro_backend_classical_audit import (
     calculate_almuten_figuris,
     calculate_hyleg_alcocoden,
@@ -602,36 +602,21 @@ def return_summary(
     config = RETURN_CONFIG[body_id]
     spec = BODY_REGISTRY[body_id]
     start, end = return_search_bounds(body_id, birth_dt, reference_dt)
-    warning_keys: set[str] = set()
-
-    t1 = start
-    first = orb_at(t1, spec, natal_longitude, warnings, warning_keys, sidereal=sidereal)
-    previous_exact: datetime | None = None      # Most recent return before reference → current_cycle
-    prev_previous_exact: datetime | None = None # Return before that → previous_return
-    next_exact: datetime | None = None
-    max_iterations = 20000
-    iterations = 0
-    while t1 < end and first is not None:
-        iterations += 1
-        if iterations > max_iterations:
-            warnings.append(f"{config['title']} 搜索迭代次数超过限制（{max_iterations}），结果可能不完整。")
-            break
-        t2 = min(t1 + timedelta(hours=config["step_hours"]), end)
-        second = orb_at(t2, spec, natal_longitude, warnings, warning_keys, sidereal=sidereal)
-        if second is None:
-            break
-        f1, _ = first
-        f2, _ = second
-        if abs(f1 - f2) < 20 and ((f1 <= 0 <= f2) or (f1 >= 0 >= f2)):
-            exact = refine_crossing(t1, t2, spec, natal_longitude, warnings, warning_keys, sidereal=sidereal)
-            if exact <= reference_dt:
-                prev_previous_exact = previous_exact
-                previous_exact = exact
-            else:
-                next_exact = exact
-                break
-        t1 = t2
-        first = second
+    exacts = search_return_exacts(
+        body_spec=spec,
+        target_longitude=natal_longitude,
+        start=start,
+        end=end,
+        step_hours=config["step_hours"],
+        sidereal=sidereal,
+        warnings=warnings,
+        title=config["title"],
+    )
+    before = [exact for exact in exacts if exact <= reference_dt]
+    after = [exact for exact in exacts if exact > reference_dt]
+    previous_exact: datetime | None = before[-1] if before else None
+    prev_previous_exact: datetime | None = before[-2] if len(before) >= 2 else None
+    next_exact: datetime | None = after[0] if after else None
 
     if previous_exact is None and next_exact is None:
         warnings.append(f"未能在搜索窗口内找到{config['title']}精确时间（窗口 {format_local(start)} 至 {format_local(end)}）。建议扩大搜索窗口。")

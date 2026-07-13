@@ -83,6 +83,12 @@ struct ContentView: View {
     @State var modernPersonBGmtOffset = -5.0
     @State var modernNodeMode = "true_node"
     @State var modernHarmonicOrder = 4
+    @State var modernReturnBodyID = "SUN"
+    @State var modernReturnLocationSource = "birth"
+    @State var modernReturnLocationName = "Shanghai"
+    @State var modernReturnLocationLatitude = "31.2304"
+    @State var modernReturnLocationLongitude = "121.4737"
+    @State var modernReturnLocationTimezone = "Asia/Shanghai"
 
     // Vedic astrology state
     @State var vedicAyanamsha = "lahiri"

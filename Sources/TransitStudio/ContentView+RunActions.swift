@@ -66,6 +66,7 @@ extension ContentView {
                 case .progression: await runProgressions()
                 case .solarArc: await runSolarArc()
                 case .harmonic: await runHarmonic()
+                case .returnChart: await runModernReturn()
                 }
             }
         case .horary:
@@ -360,6 +361,50 @@ extension ContentView {
             )
             let result = try await BackendClient.harmonic(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .harmonic(result)
+        }
+    }
+
+    @MainActor
+    func runModernReturn() async {
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        let returnLocation: ModernReturnLocation?
+        if modernReturnLocationSource == "custom" {
+            guard let latitude = parseDouble(modernReturnLocationLatitude),
+                  let longitude = parseDouble(modernReturnLocationLongitude) else {
+                calcVM.errorMessage = "自定义返照地点的经纬度需要是数字。"
+                return
+            }
+            let name = modernReturnLocationName.trimmingCharacters(in: .whitespacesAndNewlines)
+            let timezone = modernReturnLocationTimezone.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !name.isEmpty, !timezone.isEmpty else {
+                calcVM.errorMessage = "自定义返照地点必须填写名称和时区。"
+                return
+            }
+            returnLocation = ModernReturnLocation(name: name, latitude: latitude, longitude: longitude, timezone: timezone)
+        } else {
+            returnLocation = nil
+        }
+        await performRun {
+            let asteroidIDs = parseAsteroids(customAsteroids)
+            let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
+            let request = ModernReturnRequest(
+                returnBodyID: modernReturnBodyID,
+                birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
+                reference: makeMoment(from: classicalReferenceDate),
+                locationSource: modernReturnLocationSource,
+                location: returnLocation,
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                nodeMode: modernNodeMode,
+                pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs),
+                aspects: selectedAspectRequests(orb: globalOrb),
+                precessionCorrection: "none",
+                ephemerisPath: effectiveEphemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.modernReturn(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .returnChart(result)
         }
     }
 
