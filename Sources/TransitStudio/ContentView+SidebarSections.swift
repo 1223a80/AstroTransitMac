@@ -75,11 +75,19 @@ extension ContentView {
 
                 if isModernTimingWorkspace {
                     collapsible("窗口与时区") { modernTimingWindowSection }
-                    collapsible("精确出生资料") { natalSummarySection }
-                    collapsible("本命目标点集") { modernTimingTargetSection }
-                    collapsible("行运技法") { modernTimingTransitSection }
-                    collapsible("次限推进技法") { modernTimingProgressionSection }
-                    collapsible("太阳弧技法") { modernTimingSolarArcSection }
+                    if modernTimingTargetChart != nil {
+                        collapsible("关系目标") { modernTimingRelationshipTargetSection }
+                    } else {
+                        collapsible("精确出生资料") { natalSummarySection }
+                        collapsible("本命目标点集") { modernTimingTargetSection }
+                    }
+                    if modernTimingTargetChart != nil {
+                        collapsible("关系盘 Timing 技法") { modernTimingRelationshipTechniqueSection }
+                    } else {
+                        collapsible("行运技法") { modernTimingTransitSection }
+                        collapsible("次限推进技法") { modernTimingProgressionSection }
+                        collapsible("太阳弧技法") { modernTimingSolarArcSection }
+                    }
                 } else {
                     collapsible("窗口") { scanWindowSection }
                     collapsible("当前本命盘") { natalSummarySection }
@@ -378,6 +386,41 @@ extension ContentView {
         }
     }
 
+    var modernTimingRelationshipTargetSection: some View {
+        Group {
+            if let target = modernTimingTargetChart {
+                let personA = target.personA
+                let personB = target.personB
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                    LabeledContent("类型", value: target.type)
+                    LabeledContent("方法", value: modernTimingTargetMethod.isEmpty ? "—" : modernTimingTargetMethod)
+                    LabeledContent("宫制", value: target.houseSystem ?? "—")
+                    LabeledContent("黄道", value: target.zodiac ?? "—")
+                    Divider()
+                    Text("人物 A · \(personA.name)").font(TS.Font.label).foregroundStyle(.secondary)
+                    Text(exactMomentText(personA.moment)).monospacedDigit()
+                    Text("纬度 \(personA.latitude) / 经度 \(personA.longitude)")
+                        .foregroundStyle(.secondary)
+                    Text("人物 B · \(personB.name)").font(TS.Font.label).foregroundStyle(.secondary)
+                    Text(exactMomentText(personB.moment)).monospacedDigit()
+                    Text("纬度 \(personB.latitude) / 经度 \(personB.longitude)")
+                        .foregroundStyle(.secondary)
+                    Divider()
+                    Text("effective point set").font(TS.Font.label).foregroundStyle(.secondary)
+                    Text(pointSetSummary(target.pointSet))
+                        .font(TS.Font.monoSmall)
+                        .textSelection(.enabled)
+                    Text("nested target_chart.point_set 是本次 Timing 的权威点集；不会发送 target_point_set。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                    Button("清回本命") { clearRelationshipTimingTarget() }
+                        .buttonStyle(.bordered)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+    }
+
     var modernTimingTransitSection: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             Toggle("启用 Transit", isOn: toggleBinding(for: "transit", in: $timingEnabledTechniques))
@@ -394,6 +437,16 @@ extension ContentView {
                 )
                 modernTimingAspectSection(selection: $timingTransitAspects, orb: $timingTransitOrb)
             }
+        }
+    }
+
+    var modernTimingRelationshipTechniqueSection: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Text("关系 target v1 仅支持 Transit 对关系盘目标点的精确相位；不会发送入座、留逆、Secondary Progression 或 Solar Arc。")
+                .font(TS.Font.label)
+                .foregroundStyle(.secondary)
+            bodySection(title: "移动天体", selection: $timingTransitBodies)
+            modernTimingAspectSection(selection: $timingTransitAspects, orb: $timingTransitOrb)
         }
     }
 
@@ -590,6 +643,8 @@ extension ContentView {
                 collapsible("本命天体") { bodySection(title: "本命天体", selection: $selectedNatalBodies) }
             case .synastry, .composite, .davison:
                 relationChartSidebar
+            case .progressedComposite:
+                progressedCompositeSidebar
             case .progression, .solarArc:
                 timeBasedSidebar
             case .harmonic:
@@ -741,6 +796,51 @@ extension ContentView {
             collapsible("人物A") { personASection }
             collapsible("人物B") { personBSection }
             collapsible("占星参数") { modernParameterSection }
+        }
+    }
+
+    private var progressedCompositeSidebar: some View {
+        Group {
+            collapsible("人物A") { personASection }
+            collapsible("人物B") { personBSection }
+            collapsible("参考时间") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
+                        GridRow {
+                            Text("参考").foregroundStyle(.secondary)
+                            DateTimeInput(
+                                date: $classicalReferenceDate,
+                                timeZone: timeZone(for: progressedCompositeReferenceGmtOffset)
+                            )
+                        }
+                        GridRow {
+                            Text("时区").foregroundStyle(.secondary)
+                            gmtOffsetControl($progressedCompositeReferenceGmtOffset)
+                        }
+                    }
+                    Text("A、B 分别按各自出生 UTC 计算 secondary progressed UTC，再对同名行星取 circular midpoint。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            collapsible("推进关系盘点集") { progressedCompositePointSetSection }
+            collapsible("现代参数") { modernParameterSection }
+        }
+    }
+
+    private var progressedCompositePointSetSection: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Text("v1 仅接受行星、节点和自定义小行星；不计算角点、宫头、Lots 或中点轴。")
+                .font(TS.Font.label)
+                .foregroundStyle(.secondary)
+            bodySection(title: "行星与节点", selection: $progressedCompositeBodies)
+            Toggle("包含节点", isOn: $progressedCompositeIncludeNodes)
+                .toggleStyle(.checkbox)
+            Toggle("包含自定义小行星", isOn: $progressedCompositeUseCustomAsteroids)
+                .toggleStyle(.checkbox)
+            customAsteroidSection
+                .disabled(!progressedCompositeUseCustomAsteroids)
+                .opacity(progressedCompositeUseCustomAsteroids ? 1 : 0.55)
         }
     }
 

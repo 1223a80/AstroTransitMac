@@ -1,0 +1,74 @@
+{
+  "mode": "modern_timing",
+  "birth": {
+    "moment": {
+      "year": 1990,
+      "month": 1,
+      "day": 1,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "houseSystem": "whole_sign",
+    "zodiac": "tropical"
+  },
+  "start": {
+    "year": 2026,
+    "month": 1,
+    "day": 1,
+    "hour": 0,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "end": {
+    "year": 2026,
+    "month": 12,
+    "day": 31,
+    "hour": 23,
+    "minute": 59,
+    "timezone": "Asia/Shanghai"
+  },
+  "display_timezone": "Asia/Shanghai",
+  "target_chart": {
+    "type": "davison",
+    "house_system": "whole_sign",
+    "zodiac": "tropical",
+    "person_a": {
+      "name": "Person A",
+      "moment": {"year": 1990, "month": 1, "day": 1, "hour": 12, "minute": 0, "timezone": "Asia/Shanghai"},
+      "latitude": 31.2304,
+      "longitude": 121.4737
+    },
+    "person_b": {
+      "name": "Person B",
+      "moment": {"year": 1992, "month": 6, "day": 15, "hour": 8, "minute": 30, "timezone": "America/New_York"},
+      "latitude": 40.7128,
+      "longitude": -74.006
+    },
+    "point_set": {
+      "body_ids": ["SUN", "MOON"],
+      "include_nodes": false,
+      "node_mode": "true_node",
+      "custom_asteroids": [],
+      "angle_ids": ["ASC"],
+      "house_cusps": [1],
+      "lot_ids": []
+    }
+  },
+  "techniques": [
+    {
+      "id": "transit",
+      "moving_body_ids": ["JUPITER"],
+      "event_types": ["aspect"],
+      "aspects": [
+        {"id": "conjunction", "name": "合相", "angle": 0.0, "orb": 1.0},
+        {"id": "square", "name": "刑相", "angle": 90.0, "orb": 1.0},
+        {"id": "opposition", "name": "冲相", "angle": 180.0, "orb": 1.0}
+      ]
+    }
+  ],
+  "confirmed_heavy_scan": false,
+  "require_ephemeris": "warn"
+}

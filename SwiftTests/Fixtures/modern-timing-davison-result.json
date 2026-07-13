@@ -1,0 +1,164 @@
+{
+  "meta": {
+    "schema_version": 1,
+    "start_utc": "2025-12-31T16:00:00.000Z",
+    "end_utc": "2026-12-31T15:59:00.000Z",
+    "display_timezone": "Asia/Shanghai",
+    "technique_ids": [
+      "transit"
+    ],
+    "technique_configs": [
+      {
+        "id": "transit",
+        "moving_body_ids": [
+          "JUPITER"
+        ],
+        "event_types": [
+          "aspect"
+        ],
+        "aspects": [
+          {
+            "id": "conjunction",
+            "name": "合相",
+            "angle": 0.0,
+            "orb": 1.0
+          },
+          {
+            "id": "square",
+            "name": "刑相",
+            "angle": 90.0,
+            "orb": 1.0
+          },
+          {
+            "id": "opposition",
+            "name": "冲相",
+            "angle": 180.0,
+            "orb": 1.0
+          }
+        ]
+      }
+    ],
+    "target_count": 4,
+    "estimated_work_units": 11680,
+    "ephemeris": "Swiss Ephemeris",
+    "effective_point_set": {
+      "body_ids": [
+        "SUN",
+        "MOON"
+      ],
+      "include_nodes": false,
+      "node_mode": "true_node",
+      "custom_asteroids": [],
+      "angle_ids": [
+        "ASC"
+      ],
+      "house_cusps": [
+        1
+      ],
+      "lot_ids": [],
+      "resolved_body_ids": [
+        "SUN",
+        "MOON"
+      ]
+    },
+    "target_chart_type": "davison",
+    "target_chart_method": "davison_midtime_midspace"
+  },
+  "events": [
+    {
+      "id": "transit|JUPITER|square|HOUSE_CUSP_1|20260630T055222Z",
+      "group_id": "transit|JUPITER|square|HOUSE_CUSP_1",
+      "source_type": "transit",
+      "event_type": "aspect",
+      "moving_point_id": "JUPITER",
+      "moving_point_name": "木星",
+      "target_point_id": "HOUSE_CUSP_1",
+      "target_point_name": "第 1 宫宫头",
+      "target_point_kind": "house_cusp",
+      "target_axis_branch": null,
+      "aspect_id": "square",
+      "aspect_name": "刑相",
+      "aspect_angle": 90.0,
+      "orb_limit": 1.0,
+      "entering_utc": "2026-06-25T12:54:05.031Z",
+      "exact_utc": "2026-06-30T05:52:22.110Z",
+      "leaving_utc": "2026-07-04T21:30:58.694Z",
+      "exact_local": "2026-06-30T13:52:22.110+08:00",
+      "motion": "direct",
+      "moving_longitude": 120.00000004,
+      "target_longitude": 210.0,
+      "exact_orb": 4.0361e-08,
+      "pass_index_in_window": 1,
+      "pass_count_in_window": 1,
+      "window_clipped_start": false,
+      "window_clipped_end": false,
+      "method_key": "transit_longitude_bisection",
+      "target_chart_type": "davison",
+      "target_chart_method": "davison_midtime_midspace"
+    },
+    {
+      "id": "transit|JUPITER|conjunction|MOON|20260707T013730Z",
+      "group_id": "transit|JUPITER|conjunction|MOON",
+      "source_type": "transit",
+      "event_type": "aspect",
+      "moving_point_id": "JUPITER",
+      "moving_point_name": "木星",
+      "target_point_id": "MOON",
+      "target_point_name": "月亮",
+      "target_point_kind": "body",
+      "target_axis_branch": null,
+      "aspect_id": "conjunction",
+      "aspect_name": "合相",
+      "aspect_angle": 0.0,
+      "orb_limit": 1.0,
+      "entering_utc": "2026-07-02T10:31:00.575Z",
+      "exact_utc": "2026-07-07T01:37:30.048Z",
+      "leaving_utc": "2026-07-11T15:43:29.953Z",
+      "exact_local": "2026-07-07T09:37:30.048+08:00",
+      "motion": "direct",
+      "moving_longitude": 121.470208787,
+      "target_longitude": 121.470208803,
+      "exact_orb": 1.5505e-08,
+      "pass_index_in_window": 1,
+      "pass_count_in_window": 1,
+      "window_clipped_start": false,
+      "window_clipped_end": false,
+      "method_key": "transit_longitude_bisection",
+      "target_chart_type": "davison",
+      "target_chart_method": "davison_midtime_midspace"
+    },
+    {
+      "id": "transit|JUPITER|square|ASC|20260927T205544Z",
+      "group_id": "transit|JUPITER|square|ASC",
+      "source_type": "transit",
+      "event_type": "aspect",
+      "moving_point_id": "JUPITER",
+      "moving_point_name": "木星",
+      "target_point_id": "ASC",
+      "target_point_name": "ASC",
+      "target_point_kind": "angle",
+      "target_axis_branch": null,
+      "aspect_id": "square",
+      "aspect_name": "刑相",
+      "aspect_angle": 90.0,
+      "orb_limit": 1.0,
+      "entering_utc": "2026-09-22T12:22:31.167Z",
+      "exact_utc": "2026-09-27T20:55:44.643Z",
+      "leaving_utc": "2026-10-03T10:36:32.390Z",
+      "exact_local": "2026-09-28T04:55:44.643+08:00",
+      "motion": "direct",
+      "moving_longitude": 139.024488584,
+      "target_longitude": 229.024488626,
+      "exact_orb": 4.2011e-08,
+      "pass_index_in_window": 1,
+      "pass_count_in_window": 1,
+      "window_clipped_start": false,
+      "window_clipped_end": false,
+      "method_key": "transit_longitude_bisection",
+      "target_chart_type": "davison",
+      "target_chart_method": "davison_midtime_midspace"
+    }
+  ],
+  "warnings": [],
+  "section_errors": null
+}

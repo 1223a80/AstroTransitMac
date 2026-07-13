@@ -358,6 +358,37 @@ class TestDavison:
         for bid in p1:
             assert abs(p1[bid] - p2[bid]) < 1e-6, f"Davison not stable for {bid}"
 
+    def test_ab_swap_is_symmetric_across_different_timezones(
+        self,
+        person_a: dict[str, Any],
+        person_b: dict[str, Any],
+        aspect_specs: list[dict[str, Any]],
+    ) -> None:
+        request = {
+            "mode": "davison",
+            "person_a": person_a,
+            "person_b": person_b,
+            "house_system": "placidus",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": aspect_specs,
+        }
+        swapped_request = {**request, "person_a": person_b, "person_b": person_a}
+
+        original = calculate_davison(request, [])
+        swapped = calculate_davison(swapped_request, [])
+
+        for section, id_key, longitude_key in (
+            ("planets", "body_id", "longitude"),
+            ("angles", "id", "longitude"),
+            ("houses", "house", "cusp_longitude"),
+        ):
+            original_rows = {row[id_key]: row[longitude_key] for row in original[section]}
+            swapped_rows = {row[id_key]: row[longitude_key] for row in swapped[section]}
+            assert original_rows.keys() == swapped_rows.keys()
+            for row_id in original_rows:
+                assert swapped_rows[row_id] == pytest.approx(original_rows[row_id], abs=1e-9)
+
     def test_planets_present(self, person_a: dict[str, Any], person_b: dict[str, Any], aspect_specs: list[dict[str, Any]]) -> None:
         request = {
             "mode": "davison",

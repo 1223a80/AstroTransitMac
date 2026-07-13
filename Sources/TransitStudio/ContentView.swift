@@ -96,6 +96,15 @@ struct ContentView: View {
     @State var timingTransitOrb = 1.0
     @State var timingProgressionOrb = 1.0
     @State var timingSolarArcOrb = 1.0
+    /// A relationship target is created only from the last successful
+    /// Composite/Davison request. Its nested point set is authoritative for
+    /// the Timing request while this value is non-nil.
+    @State var modernTimingTargetChart: ModernTimingTargetChart?
+    @State var modernTimingTargetMethod = ""
+    @State var modernLastRelationshipPersonA: PersonSettings?
+    @State var modernLastRelationshipPersonB: PersonSettings?
+    @State var modernLastRelationshipHouseSystem: String?
+    @State var modernLastRelationshipZodiac: String?
 
     @State var modernSubMode = ModernSubMode.natal
     @State var modernPersonBDate = Self.fixedDate(year: 1992, month: 6, day: 15, hour: 8, minute: 30, gmtOffset: -5)
@@ -118,6 +127,12 @@ struct ContentView: View {
     @State var midpointActivationSources: Set<String> = ["natal", "transit", "secondary_progression", "solar_arc"]
     @State var midpointActivationOrb = 1.0
     @State var midpointIncludeReference = true
+    @State var progressedCompositeBodies: Set<String> = [
+        "SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"
+    ]
+    @State var progressedCompositeIncludeNodes = true
+    @State var progressedCompositeUseCustomAsteroids = true
+    @State var progressedCompositeReferenceGmtOffset = 8.0
 
     // Vedic astrology state
     @State var vedicAyanamsha = "lahiri"
@@ -267,6 +282,11 @@ struct ContentView: View {
         }
         .onChange(of: modernSubMode) { newValue in
             calcVM.resetModernSelectedTab(for: newValue)
+            if newValue == .progressedComposite {
+                // Progressed Composite is its own sub-mode; never render a
+                // stale Composite/Davison enum case as its result state.
+                calcVM.modernResultData = nil
+            }
         }
         .onChange(of: rectifyInputHash) { _ in
             if mode == .rectify, calcVM.isRunning {

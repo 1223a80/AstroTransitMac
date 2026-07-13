@@ -735,7 +735,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
     supported_modes = {
         "moment", "classical", "vedic", "horary", "scan", "rectify",
         "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
-        "modern_return", "modern_timing", "midpoint",
+        "modern_return", "modern_timing", "midpoint", "progressed_composite",
     }
     if mode not in supported_modes:
         return {"error": f"不支持的 mode：{mode or '<empty>'}", "mode": mode}
@@ -752,13 +752,90 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "solar_arc": ["birth", "reference"],
         "harmonic": ["birth"],
         "modern_return": ["birth", "reference"],
-        "modern_timing": ["birth", "start", "end", "display_timezone", "target_point_set", "techniques"],
+        "modern_timing": ["birth", "start", "end", "display_timezone", "techniques"],
         "midpoint": ["birth", "point_set", "focus_point_ids", "activation_sources"],
+        "progressed_composite": ["person_a", "person_b", "reference", "point_set"],
     }
     default_required = ["natal", "transit"]
     required = required_by_mode.get(mode, default_required)
     missing = [f for f in required if f not in request]
     invalid: list[str] = []
+
+    def validate_exact_person(value: Any, prefix: str) -> None:
+        if not isinstance(value, dict):
+            invalid.append(f"{prefix} must be an object")
+            return
+        moment = value.get("moment")
+        exact_fields = ("year", "month", "day", "hour", "minute", "timezone")
+        if not isinstance(moment, dict):
+            missing.append(f"{prefix}.moment")
+        else:
+            for field in exact_fields:
+                if field not in moment:
+                    missing.append(f"{prefix}.moment.{field}")
+            if all(field in moment for field in exact_fields):
+                try:
+                    parsed = moment_to_local_datetime(moment)
+                    if not 1800 <= parsed.year <= 2100:
+                        invalid.append(f"{prefix}.moment.year must be in [1800, 2100]")
+                except Exception as exc:
+                    invalid.append(f"{prefix}.moment is invalid: {exc}")
+        for field, lower, upper in (("latitude", -90.0, 90.0), ("longitude", -180.0, 180.0)):
+            if field not in value:
+                missing.append(f"{prefix}.{field}")
+                continue
+            coordinate = value.get(field)
+            if (
+                isinstance(coordinate, bool)
+                or not isinstance(coordinate, (int, float))
+                or not math.isfinite(float(coordinate))
+                or not lower <= float(coordinate) <= upper
+            ):
+                invalid.append(f"{prefix}.{field} must be a finite number in [{lower:g}, {upper:g}]")
+
+    def validate_aspect_specs(
+        value: Any,
+        prefix: str,
+        *,
+        require_nonempty: bool = False,
+    ) -> None:
+        if not isinstance(value, list):
+            invalid.append(f"{prefix} must be an array")
+            return
+        if require_nonempty and not value:
+            invalid.append(f"{prefix} must be non-empty when event_types contains aspect")
+        seen_aspect_ids: set[str] = set()
+        for aspect_index, aspect in enumerate(value):
+            aspect_prefix = f"{prefix}[{aspect_index}]"
+            if not isinstance(aspect, dict):
+                invalid.append(f"{aspect_prefix} must be an object")
+                continue
+            aspect_id = aspect.get("id")
+            name = aspect.get("name")
+            angle = aspect.get("angle")
+            orb = aspect.get("orb")
+            if not isinstance(aspect_id, str) or not aspect_id.strip():
+                invalid.append(f"{aspect_prefix}.id must be a non-empty string")
+            elif aspect_id in seen_aspect_ids:
+                invalid.append(f"{aspect_prefix}.id is duplicated: {aspect_id}")
+            else:
+                seen_aspect_ids.add(aspect_id)
+            if not isinstance(name, str) or not name.strip():
+                invalid.append(f"{aspect_prefix}.name must be a non-empty string")
+            if (
+                isinstance(angle, bool)
+                or not isinstance(angle, (int, float))
+                or not math.isfinite(float(angle))
+                or not 0 <= float(angle) <= 180
+            ):
+                invalid.append(f"{aspect_prefix}.angle must be a finite number in [0, 180]")
+            if (
+                isinstance(orb, bool)
+                or not isinstance(orb, (int, float))
+                or not math.isfinite(float(orb))
+                or not 0 <= float(orb) <= 15
+            ):
+                invalid.append(f"{aspect_prefix}.orb must be a finite number in [0, 15]")
     if "birth" in request:
         birth = request["birth"]
         if not isinstance(birth, dict):
@@ -817,20 +894,33 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         if isinstance(aspect_orb, bool) or not isinstance(aspect_orb, (int, float)) or not 0 <= aspect_orb <= 10:
             invalid.append("aspectOrb must be a number in [0, 10]")
     _PERSON_MOMENT_FIELDS = ("year", "month", "day", "hour", "minute", "timezone")
-    if mode in ("synastry", "composite", "davison"):
+    if mode in ("synastry", "composite", "davison", "progressed_composite"):
         for side in ("person_a", "person_b"):
-            if side not in request:
-                continue
-            p = request[side]
-            if "moment" not in p:
-                missing.append(f"{side}.moment")
-            else:
-                for f in _PERSON_MOMENT_FIELDS:
-                    if f not in p["moment"]:
-                        missing.append(f"{side}.moment.{f}")
-            for f in ("latitude", "longitude"):
-                if f not in p:
-                    missing.append(f"{side}.{f}")
+            if side in request:
+                validate_exact_person(request[side], side)
+    if mode == "progressed_composite":
+        reference = request.get("reference")
+        if isinstance(reference, dict):
+            for field in _PERSON_MOMENT_FIELDS:
+                if field not in reference:
+                    missing.append(f"reference.{field}")
+            if all(field in reference for field in _PERSON_MOMENT_FIELDS):
+                try:
+                    parsed_reference = moment_to_local_datetime(reference)
+                    if not 1800 <= parsed_reference.year <= 2100:
+                        invalid.append("reference.year must be in [1800, 2100]")
+                except Exception as exc:
+                    invalid.append(f"reference is invalid: {exc}")
+        elif "reference" in request:
+            invalid.append("reference must be an object with an exact moment")
+
+        progressed_point_set = request.get("point_set")
+        if isinstance(progressed_point_set, dict):
+            for field in ("angle_ids", "angles", "house_cusps", "lot_ids", "midpoint_pairs"):
+                value = progressed_point_set.get(field, [])
+                if value not in (None, []):
+                    invalid.append(f"point_set.{field} is not supported by progressed_composite v1")
+        validate_aspect_specs(request.get("aspects", []), "aspects")
     if mode in ("progression", "solar_arc", "harmonic", "vedic", "modern_return", "modern_timing", "midpoint"):
         if "birth" in request:
             b = request["birth"]
@@ -970,24 +1060,67 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         if not isinstance(confirmed, bool):
             invalid.append("confirmed_heavy_scan must be a boolean")
 
+        target_chart = request.get("target_chart")
+        target_chart_type: str | None = None
         target_point_set = request.get("target_point_set")
+        target_point_set_label = "target_point_set"
+        if target_chart is not None:
+            if not isinstance(target_chart, dict):
+                invalid.append("target_chart must be an object")
+                target_point_set = None
+            else:
+                raw_target_chart_type = target_chart.get("type")
+                if raw_target_chart_type not in {"natal", "composite", "davison"}:
+                    invalid.append(
+                        f"target_chart.type must be one of natal, composite, davison: {raw_target_chart_type}"
+                    )
+                else:
+                    target_chart_type = str(raw_target_chart_type)
+                if "target_point_set" in request:
+                    invalid.append("target_point_set and target_chart must not both be provided")
+                target_point_set = target_chart.get("point_set")
+                target_point_set_label = "target_chart.point_set"
+                if "point_set" not in target_chart:
+                    missing.append("target_chart.point_set")
+                if target_chart_type in {"composite", "davison"}:
+                    for side in ("person_a", "person_b"):
+                        if side not in target_chart:
+                            missing.append(f"target_chart.{side}")
+                        else:
+                            validate_exact_person(
+                                target_chart[side],
+                                f"target_chart.{side}",
+                            )
+                    if isinstance(target_point_set, dict):
+                        if target_point_set.get("lot_ids") not in (None, []):
+                            invalid.append(
+                                "target_chart.point_set.lot_ids is not supported for relationship timing v1"
+                            )
+                        if target_point_set.get("midpoint_pairs") not in (None, []):
+                            invalid.append(
+                                "target_chart.point_set.midpoint_pairs is not supported for relationship timing v1"
+                            )
+        elif "target_point_set" not in request:
+            missing.append("target_point_set")
+
         target_node_mode = (
             str(target_point_set.get("node_mode", request.get("node_mode", "true_node")))
             if isinstance(target_point_set, dict)
             else str(request.get("node_mode", "true_node"))
         )
-        invalid.extend(
-            f"target_point_set: {error}"
-            for error in validate_point_set(target_point_set, node_mode=target_node_mode)
-        )
+        if target_point_set is not None:
+            invalid.extend(
+                f"{target_point_set_label}: {error}"
+                for error in validate_point_set(target_point_set, node_mode=target_node_mode)
+            )
         if isinstance(target_point_set, dict):
             midpoint_pairs = target_point_set.get("midpoint_pairs", [])
             if not isinstance(midpoint_pairs, list):
-                invalid.append("target_point_set.midpoint_pairs must be an array")
+                invalid.append(f"{target_point_set_label}.midpoint_pairs must be an array")
             else:
                 seen_midpoint_pairs: set[tuple[str, str]] = set()
                 for pair_index, pair in enumerate(midpoint_pairs):
-                    pair_prefix = f"target_point_set.midpoint_pairs[{pair_index}]"
+                    pair_prefix = f"{target_point_set_label}.midpoint_pairs[{pair_index}]"
                     if not isinstance(pair, dict):
                         invalid.append(f"{pair_prefix} must be an object")
                         continue
@@ -1005,7 +1138,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                     canonical_pair = tuple(sorted((point_a_id, point_b_id)))
                     if canonical_pair in seen_midpoint_pairs:
                         invalid.append(
-                            f"target_point_set.midpoint_pairs contains duplicate pair: {canonical_pair[0]}|{canonical_pair[1]}"
+                            f"{target_point_set_label}.midpoint_pairs contains duplicate pair: {canonical_pair[0]}|{canonical_pair[1]}"
                         )
                     else:
                         seen_midpoint_pairs.add(canonical_pair)
@@ -1072,34 +1205,21 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                     else:
                         seen_event_types.add(event_type)
 
-                aspects = technique.get("aspects")
-                if not isinstance(aspects, list):
-                    invalid.append(f"{prefix}.aspects must be an array")
-                    aspects = []
-                if "aspect" in event_types and not aspects:
-                    invalid.append(f"{prefix}.aspects must be non-empty when event_types contains aspect")
-                seen_aspect_ids: set[str] = set()
-                for aspect_index, aspect in enumerate(aspects):
-                    aspect_prefix = f"{prefix}.aspects[{aspect_index}]"
-                    if not isinstance(aspect, dict):
-                        invalid.append(f"{aspect_prefix} must be an object")
-                        continue
-                    aspect_id = aspect.get("id")
-                    name = aspect.get("name")
-                    angle = aspect.get("angle")
-                    orb = aspect.get("orb")
-                    if not isinstance(aspect_id, str) or not aspect_id.strip():
-                        invalid.append(f"{aspect_prefix}.id must be a non-empty string")
-                    elif aspect_id in seen_aspect_ids:
-                        invalid.append(f"{aspect_prefix}.id is duplicated: {aspect_id}")
-                    else:
-                        seen_aspect_ids.add(aspect_id)
-                    if not isinstance(name, str) or not name.strip():
-                        invalid.append(f"{aspect_prefix}.name must be a non-empty string")
-                    if isinstance(angle, bool) or not isinstance(angle, (int, float)) or not math.isfinite(float(angle)) or not 0 <= float(angle) <= 180:
-                        invalid.append(f"{aspect_prefix}.angle must be a finite number in [0, 180]")
-                    if isinstance(orb, bool) or not isinstance(orb, (int, float)) or not math.isfinite(float(orb)) or not 0 <= float(orb) <= 15:
-                        invalid.append(f"{aspect_prefix}.orb must be a finite number in [0, 15]")
+                if target_chart_type in {"composite", "davison"}:
+                    if technique_id != "transit":
+                        invalid.append(
+                            f"{prefix}.id must be transit for relationship target_chart v1"
+                        )
+                    if seen_event_types != {"aspect"}:
+                        invalid.append(
+                            f"{prefix}.event_types must contain only aspect for relationship target_chart v1"
+                        )
+
+                validate_aspect_specs(
+                    technique.get("aspects"),
+                    f"{prefix}.aspects",
+                    require_nonempty="aspect" in event_types,
+                )
 
                 if technique_id == "secondary_progression":
                     if "moon_ingress" in seen_event_types and "MOON" not in valid_moving_ids:
@@ -1160,7 +1280,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                     invalid.append("location.longitude must be a number in [-180, 180]")
                 validate_timezone_text(location.get("timezone"), "location.timezone")
     modern_point_modes = {
-        "moment", "synastry", "composite", "davison", "progression", "solar_arc", "harmonic", "modern_return", "midpoint",
+        "moment", "synastry", "composite", "davison", "progression", "solar_arc", "harmonic", "modern_return", "midpoint", "progressed_composite",
     }
     if mode in modern_point_modes and "point_set" in request:
         point_set_value = request.get("point_set")
@@ -1254,6 +1374,9 @@ def main() -> None:
         elif mode == "midpoint":
             from astro_backend_midpoints import calculate_midpoints
             response = calculate_midpoints(request, warnings)
+        elif mode == "progressed_composite":
+            from astro_backend_progressed_composite import calculate_progressed_composite
+            response = calculate_progressed_composite(request, warnings)
         else:
             response = calculate_moment(request, warnings)
 

@@ -68,6 +68,7 @@ extension ContentView {
                 case .harmonic: await runHarmonic()
                 case .returnChart: await runModernReturn()
                 case .midpoint: await runMidpoint()
+                case .progressedComposite: await runProgressedComposite()
                 }
             }
         case .horary:
@@ -172,6 +173,22 @@ extension ContentView {
             latitude: latitude,
             longitude: longitude,
             houseSystem: selectedHouseSystem,
+            zodiac: zodiac ?? selectedZodiac,
+            boundsSystem: selectedBoundsSystem,
+            triplicitySystem: selectedTriplicitySystem
+        )
+    }
+
+    func makeBirthSettings(
+        from person: PersonSettings,
+        houseSystem: String? = nil,
+        zodiac: String? = nil
+    ) -> BirthSettings {
+        BirthSettings(
+            moment: person.moment,
+            latitude: person.latitude,
+            longitude: person.longitude,
+            houseSystem: houseSystem ?? selectedHouseSystem,
             zodiac: zodiac ?? selectedZodiac,
             boundsSystem: selectedBoundsSystem,
             triplicitySystem: selectedTriplicitySystem
@@ -285,6 +302,10 @@ extension ContentView {
                 pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.composite(request: request, pythonPath: appState.pythonPath)
+            modernLastRelationshipPersonA = pair.personA
+            modernLastRelationshipPersonB = pair.personB
+            modernLastRelationshipHouseSystem = request.houseSystem
+            modernLastRelationshipZodiac = request.zodiac
             calcVM.modernResultData = .composite(result)
         }
     }
@@ -307,7 +328,47 @@ extension ContentView {
                 pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.davison(request: request, pythonPath: appState.pythonPath)
+            modernLastRelationshipPersonA = pair.personA
+            modernLastRelationshipPersonB = pair.personB
+            modernLastRelationshipHouseSystem = request.houseSystem
+            modernLastRelationshipZodiac = request.zodiac
             calcVM.modernResultData = .davison(result)
+        }
+    }
+
+    @MainActor
+    func runProgressedComposite() async {
+        guard let a = requireCoordinates(birthLatitude, birthLongitude),
+              let b = requireCoordinates(modernPersonBLatitude, modernPersonBLongitude) else { return }
+        let asteroidIDs = progressedCompositeUseCustomAsteroids ? parseAsteroids(customAsteroids) : []
+        let pointSet = progressedCompositePointSet(asteroidIDs: asteroidIDs)
+        guard !pointSet.bodyIDs.isEmpty || pointSet.includeNodes || !pointSet.customAsteroids.isEmpty else {
+            calcVM.errorMessage = "推进组合盘至少需要一个行星、节点或自定义小行星。"
+            return
+        }
+        await performRun(progressLabel: "推进组合盘") {
+            let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
+            let pair = makePersonPair(latitudeA: a.latitude, longitudeA: a.longitude, latitudeB: b.latitude, longitudeB: b.longitude)
+            let request = ProgressedCompositeRequest(
+                personA: pair.personA,
+                personB: pair.personB,
+                reference: makeMoment(
+                    from: classicalReferenceDate,
+                    gmtOffset: progressedCompositeReferenceGmtOffset
+                ),
+                pointSet: pointSet,
+                zodiac: selectedZodiac,
+                nodeMode: modernNodeMode,
+                aspects: selectedAspectRequests(orb: globalOrb),
+                ephemerisPath: effectiveEphemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.progressedComposite(
+                request: request,
+                pythonPath: appState.pythonPath
+            )
+            calcVM.modernResultData = .progressedComposite(result)
         }
     }
 
@@ -554,15 +615,31 @@ extension ContentView {
             calcVM.errorMessage = "结束时间必须晚于开始时间。"
             return
         }
-        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        let targetChart = modernTimingTargetChart
+        let birthSettings: BirthSettings
+        if let targetChart {
+            let personA = targetChart.personA
+            birthSettings = makeBirthSettings(
+                from: personA,
+                houseSystem: targetChart.houseSystem,
+                zodiac: targetChart.zodiac
+            )
+        } else {
+            guard let natalCoords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+            birthSettings = makeBirthSettings(latitude: natalCoords.latitude, longitude: natalCoords.longitude)
+        }
         let displayTimezone = timingDisplayTimezone.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !displayTimezone.isEmpty, TimeZone(identifier: displayTimezone) != nil else {
             calcVM.errorMessage = "综合时间线展示时区必须是有效 IANA 时区，例如 Asia/Shanghai。"
             return
         }
 
-        let asteroidIDs = timingUseCustomAsteroids ? parseAsteroids(customAsteroids) : []
-        let targetPointSet = timingTargetPointSet(asteroidIDs: asteroidIDs)
+        // Nested relationship target data is authoritative. In particular,
+        // do not let the ordinary Timing sidebar's custom-asteroid toggle
+        // erase asteroids selected in the just-computed relationship snapshot.
+        let asteroidIDs = targetChart?.pointSet.customAsteroids
+            ?? (timingUseCustomAsteroids ? parseAsteroids(customAsteroids) : [])
+        let targetPointSet = timingEffectiveTargetPointSet(asteroidIDs: asteroidIDs)
         let techniques = timingTechniqueRequests()
         guard !techniques.isEmpty else {
             calcVM.errorMessage = "请至少启用一种综合时间线技法。"
@@ -616,11 +693,12 @@ extension ContentView {
         ) {
             let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
             let request = ModernTimingRequest(
-                birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
+                birth: birthSettings,
                 start: makeMoment(from: scanStartDate),
                 end: makeMoment(from: scanEndDate),
                 displayTimezone: displayTimezone,
-                targetPointSet: targetPointSet,
+                targetPointSet: targetChart == nil ? targetPointSet : nil,
+                targetChart: targetChart,
                 techniques: techniques,
                 confirmedHeavyScan: confirmedHeavyScan,
                 ephemerisPath: effectiveEphemerisPath,

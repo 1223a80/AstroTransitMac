@@ -1,0 +1,66 @@
+{
+  "mode": "progressed_composite",
+  "person_a": {
+    "name": "Person A",
+    "moment": {
+      "year": 1990,
+      "month": 1,
+      "day": 1,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737
+  },
+  "person_b": {
+    "name": "Person B",
+    "moment": {
+      "year": 1992,
+      "month": 6,
+      "day": 15,
+      "hour": 8,
+      "minute": 30,
+      "timezone": "America/New_York"
+    },
+    "latitude": 40.7128,
+    "longitude": -74.006
+  },
+  "reference": {
+    "year": 2026,
+    "month": 6,
+    "day": 2,
+    "hour": 12,
+    "minute": 0,
+    "timezone": "Pacific/Kiritimati"
+  },
+  "zodiac": "tropical",
+  "node_mode": "true_node",
+  "point_set": {
+    "body_ids": [
+      "SUN",
+      "MOON",
+      "MERCURY",
+      "VENUS",
+      "MARS",
+      "JUPITER",
+      "SATURN",
+      "URANUS",
+      "NEPTUNE",
+      "PLUTO"
+    ],
+    "include_nodes": true,
+    "node_mode": "true_node",
+    "custom_asteroids": [],
+    "angle_ids": [],
+    "house_cusps": [],
+    "lot_ids": []
+  },
+  "aspects": [
+    {"id": "conjunction", "name": "合相", "angle": 0, "orb": 8},
+    {"id": "opposition", "name": "冲相", "angle": 180, "orb": 8},
+    {"id": "trine", "name": "拱相", "angle": 120, "orb": 6},
+    {"id": "square", "name": "刑相", "angle": 90, "orb": 6},
+    {"id": "sextile", "name": "六合", "angle": 60, "orb": 6}
+  ]
+}

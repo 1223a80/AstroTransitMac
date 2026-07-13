@@ -66,6 +66,39 @@ struct ModernTimingContractTests {
         #expect(station.leavingUTC == nil)
         #expect(station.windowClippedStart)
         #expect(station.windowClippedEnd)
+        #expect(result.meta.targetChartType == nil)
+        #expect(aspect.targetChartType == nil)
+    }
+
+    @Test func timingExportsPreserveRelationshipTargetProvenance() throws {
+        let encoded = try JSONEncoder().encode(decodedResult())
+        var object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        var meta = try #require(object["meta"] as? [String: Any])
+        meta["target_chart_type"] = "composite"
+        meta["target_chart_method"] = "composite_midpoint"
+        object["meta"] = meta
+
+        var events = try #require(object["events"] as? [[String: Any]])
+        events[0]["target_chart_type"] = "composite"
+        events[0]["target_chart_method"] = "event_snapshot_method"
+        object["events"] = events
+
+        let data = try JSONSerialization.data(withJSONObject: object)
+        let result = try JSONDecoder().decode(ModernTimingResult.self, from: data)
+        let markdown = MarkdownExportBuilder.modernTiming(result)
+        let csv = TextExportBuilder.csv(result)
+        let json = TextExportBuilder.json(result)
+
+        #expect(result.meta.targetChartType == "composite")
+        #expect(result.meta.targetChartMethod == "composite_midpoint")
+        #expect(result.events[0].targetChartMethod == "event_snapshot_method")
+        #expect(markdown.contains("目标盘类型：composite"))
+        #expect(markdown.contains("event_snapshot_method"))
+        #expect(csv.contains("target_chart_type,target_chart_method"))
+        #expect(csv.contains("composite,composite_midpoint"))
+        #expect(csv.contains("composite,event_snapshot_method"))
+        #expect(json.contains("target_chart_type"))
+        #expect(json.contains("target_chart_method"))
     }
 
     @Test func estimatorMatchesTechniqueEventFormulaAndTargetDeduplication() {

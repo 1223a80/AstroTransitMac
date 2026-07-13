@@ -18,6 +18,88 @@ struct ModernRequestEncodingTests {
         AspectRequest(id: "conjunction", name: "合相", angle: 0, orb: 6)
     ]
 
+    @Test func modernTimingNatalRequestKeepsTopLevelTargetAndOmitsTargetChart() throws {
+        let pointSet = ModernPointSet(
+            bodyIDs: ["SUN", "MOON"],
+            includeNodes: false,
+            nodeMode: "true_node",
+            customAsteroids: [],
+            angleIDs: ["ASC"]
+        )
+        let request = ModernTimingRequest(
+            birth: birth,
+            start: reference,
+            end: ChartMoment(year: 2026, month: 7, day: 2, hour: 12, minute: 0, timezone: "Asia/Shanghai"),
+            displayTimezone: "Asia/Shanghai",
+            targetPointSet: pointSet,
+            techniques: [ModernTimingTechniqueRequest(id: "transit", movingBodyIDs: ["SATURN"], eventTypes: ["aspect"], aspects: aspects)]
+        )
+
+        let dict = try encodedDictionary(request)
+
+        #expect(dict["target_chart"] == nil)
+        #expect(dict["target_point_set"] is [String: Any])
+    }
+
+    @Test func modernTimingRelationshipUsesNestedPointSetAndPreservesChartSettings() throws {
+        let pointSet = ModernPointSet(
+            bodyIDs: ["SUN", "MOON"],
+            includeNodes: false,
+            nodeMode: "true_node",
+            customAsteroids: [],
+            angleIDs: ["ASC", "MC"]
+        )
+        let personA = PersonSettings(name: "A", moment: birth.moment, latitude: birth.latitude, longitude: birth.longitude)
+        let personB = PersonSettings(name: "B", moment: reference, latitude: 40.7128, longitude: -74.0060)
+        let targetChart = ModernTimingTargetChart(
+            type: "composite",
+            personA: personA,
+            personB: personB,
+            pointSet: pointSet,
+            houseSystem: "placidus",
+            zodiac: "sidereal_lahiri"
+        )
+        let request = ModernTimingRequest(
+            birth: birth,
+            start: reference,
+            end: ChartMoment(year: 2026, month: 7, day: 2, hour: 12, minute: 0, timezone: "Asia/Shanghai"),
+            displayTimezone: "Asia/Shanghai",
+            targetPointSet: nil,
+            targetChart: targetChart,
+            techniques: [ModernTimingTechniqueRequest(id: "transit", movingBodyIDs: ["SATURN"], eventTypes: ["aspect"], aspects: aspects)]
+        )
+
+        let dict = try encodedDictionary(request)
+        let encodedTarget = try #require(dict["target_chart"] as? [String: Any])
+
+        #expect(dict["target_point_set"] == nil)
+        #expect(encodedTarget["type"] as? String == "composite")
+        #expect(encodedTarget["person_a"] is [String: Any])
+        #expect(encodedTarget["person_b"] is [String: Any])
+        #expect(encodedTarget["house_system"] as? String == "placidus")
+        #expect(encodedTarget["zodiac"] as? String == "sidereal_lahiri")
+        #expect(encodedTarget["point_set"] is [String: Any])
+
+        let defaultTargetChart = ModernTimingTargetChart(
+            type: "davison",
+            personA: personA,
+            personB: personB,
+            pointSet: pointSet
+        )
+        let defaultRequest = ModernTimingRequest(
+            birth: birth,
+            start: reference,
+            end: reference,
+            displayTimezone: "Asia/Shanghai",
+            targetPointSet: nil,
+            targetChart: defaultTargetChart,
+            techniques: []
+        )
+        let defaultTarget = try #require(try encodedDictionary(defaultRequest)["target_chart"] as? [String: Any])
+        #expect(defaultTarget["house_system"] == nil)
+        #expect(defaultTarget["zodiac"] == nil)
+    }
+
     @Test func progressionRequestEncodesTopLevelChartSettings() throws {
         let request = ProgressionRequest(
             mode: "progression",

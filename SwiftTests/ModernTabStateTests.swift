@@ -14,6 +14,7 @@ struct ModernTabStateTests {
         #expect(ModernSubMode.harmonic.defaultResultTab == "planets")
         #expect(ModernSubMode.returnChart.defaultResultTab == "current_return")
         #expect(ModernSubMode.midpoint.defaultResultTab == "axes")
+        #expect(ModernSubMode.progressedComposite.defaultResultTab == "radix_composite_planets")
     }
 
     @Test func resetModernSelectedTabUsesSubModeDefault() {
@@ -25,5 +26,7 @@ struct ModernTabStateTests {
         #expect(vm.modernSelectedTab == "sa_planets")
         vm.resetModernSelectedTab(for: .midpoint)
         #expect(vm.modernSelectedTab == "axes")
+        vm.resetModernSelectedTab(for: .progressedComposite)
+        #expect(vm.modernSelectedTab == "radix_composite_planets")
     }
 }

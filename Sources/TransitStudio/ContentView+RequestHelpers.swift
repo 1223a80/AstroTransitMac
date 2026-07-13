@@ -170,6 +170,62 @@ func selectedAspectRequests(orb: Double) -> [AspectRequest] {
         )
     }
 
+    /// Relationship Timing uses the point set embedded in target_chart. The
+    /// ordinary sidebar point-set controls are intentionally ignored while a
+    /// relationship target is active.
+    func timingEffectiveTargetPointSet(asteroidIDs: [Int]? = nil) -> ModernPointSet {
+        timingEffectiveTargetPointSet(for: modernTimingTargetChart, asteroidIDs: asteroidIDs)
+    }
+
+    func timingEffectiveTargetPointSet(
+        for targetChart: ModernTimingTargetChart?,
+        asteroidIDs: [Int]? = nil
+    ) -> ModernPointSet {
+        targetChart?.pointSet ?? timingTargetPointSet(asteroidIDs: asteroidIDs)
+    }
+
+    /// Progressed Composite v1 is deliberately limited to planets, nodes and
+    /// custom asteroids. Angles, house cusps, Lots and midpoint pairs never
+    /// enter this request, even if another modern sub-mode selected them.
+    func progressedCompositePointSet(asteroidIDs: [Int]? = nil) -> ModernPointSet {
+        let nodeIDs: Set<String> = ["MEAN_NODE", "TRUE_NODE", "SOUTH_MEAN_NODE", "SOUTH_TRUE_NODE"]
+        let selectedBodies = sortedBodyIDs(progressedCompositeBodies)
+        return ModernPointSet(
+            bodyIDs: selectedBodies.filter { !nodeIDs.contains($0) },
+            includeNodes: progressedCompositeIncludeNodes || selectedBodies.contains(where: nodeIDs.contains),
+            nodeMode: modernNodeMode,
+            customAsteroids: progressedCompositeUseCustomAsteroids
+                ? (asteroidIDs ?? parseAsteroids(customAsteroids))
+                : [],
+            angleIDs: [],
+            houseCusps: [],
+            lotIDs: [],
+            midpointPairs: nil
+        )
+    }
+
+    func exactMomentText(_ moment: ChartMoment) -> String {
+        let date = String(format: "%04d-%02d-%02d %02d:%02d", moment.year, moment.month, moment.day, moment.hour, moment.minute)
+        return date + " · " + moment.timezone
+    }
+
+    func pointSetSummary(_ pointSet: ModernPointSet) -> String {
+        var sections: [String] = []
+        let bodies = (pointSet.resolvedBodyIDs ?? pointSet.bodyIDs).joined(separator: ", ")
+        if !bodies.isEmpty { sections.append("行星 \(bodies)") }
+        if pointSet.includeNodes { sections.append("节点 \(pointSet.nodeMode)") }
+        if !pointSet.customAsteroids.isEmpty {
+            sections.append("小行星 " + pointSet.customAsteroids.map(String.init).joined(separator: ", "))
+        }
+        if !pointSet.angleIDs.isEmpty { sections.append("轴点 " + pointSet.angleIDs.joined(separator: ", ")) }
+        if !pointSet.houseCusps.isEmpty { sections.append("宫头 " + pointSet.houseCusps.map(String.init).joined(separator: ", ")) }
+        if !pointSet.lotIDs.isEmpty { sections.append("Lots " + pointSet.lotIDs.joined(separator: ", ")) }
+        if let midpointPairs = pointSet.midpointPairs, !midpointPairs.isEmpty {
+            sections.append("中点轴 \(midpointPairs.count) 条")
+        }
+        return sections.isEmpty ? "（空点集）" : sections.joined(separator: "；")
+    }
+
     var midpointSelectedPointIDs: Set<String> {
         let nodeIDs: Set<String> = ["MEAN_NODE", "TRUE_NODE", "SOUTH_MEAN_NODE", "SOUTH_TRUE_NODE"]
         var pointIDs = midpointBodies.subtracting(nodeIDs)
@@ -207,6 +263,21 @@ func selectedAspectRequests(orb: Double) -> [AspectRequest] {
     }
 
     func timingTechniqueRequests() -> [ModernTimingTechniqueRequest] {
+        timingTechniqueRequests(for: modernTimingTargetChart)
+    }
+
+    func timingTechniqueRequests(for targetChart: ModernTimingTargetChart?) -> [ModernTimingTechniqueRequest] {
+        if targetChart != nil {
+            return [
+                ModernTimingTechniqueRequest(
+                    id: "transit",
+                    movingBodyIDs: sortedBodyIDs(timingTransitBodies),
+                    eventTypes: ["aspect"],
+                    aspects: timingAspectRequests(selection: timingTransitAspects, orb: timingTransitOrb)
+                )
+            ]
+        }
+
         var techniques: [ModernTimingTechniqueRequest] = []
         if timingEnabledTechniques.contains("transit") {
             techniques.append(

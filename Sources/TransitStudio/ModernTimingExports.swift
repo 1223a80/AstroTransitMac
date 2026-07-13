@@ -16,6 +16,13 @@ extension MarkdownExportBuilder {
             "- 星历：\(result.meta.ephemeris)",
         ]
 
+        if let targetChartType = result.meta.targetChartType {
+            lines.append("- 目标盘类型：\(targetChartType)")
+        }
+        if let targetChartMethod = result.meta.targetChartMethod {
+            lines.append("- 目标盘方法：\(targetChartMethod)")
+        }
+
         if !result.meta.techniqueConfigs.isEmpty {
             lines += ["", "## 技法与相位配置", ""]
             for technique in result.meta.techniqueConfigs {
@@ -53,8 +60,8 @@ extension MarkdownExportBuilder {
                         "",
                         "`\(first.groupID)`",
                         "",
-                        "| Event ID | Pass | 精确当地时间 | 进入 UTC | 精确 UTC | 离开 UTC | Motion | Exact orb | Clipped | 方法 |",
-                        "| --- | ---: | --- | --- | --- | --- | --- | ---: | --- | --- |",
+                        "| Event ID | Pass | 精确当地时间 | 进入 UTC | 精确 UTC | 离开 UTC | Motion | Exact orb | Target kind | Target longitude | Clipped | 方法 | 目标盘类型 | 目标盘方法 |",
+                        "| --- | ---: | --- | --- | --- | --- | --- | ---: | --- | ---: | --- | --- | --- | --- |",
                     ]
                     for event in group.sorted(by: { $0.exactUTC < $1.exactUTC }) {
                         let clipped = [
@@ -62,7 +69,7 @@ extension MarkdownExportBuilder {
                             event.windowClippedEnd ? "end" : nil,
                         ].compactMap { $0 }.joined(separator: "+")
                         lines.append(
-                            "| \(markdownCell(event.id)) | \(event.passIndexInWindow)/\(event.passCountInWindow) | \(markdownCell(event.exactLocal)) | \(markdownCell(event.enteringUTC ?? "")) | \(markdownCell(event.exactUTC)) | \(markdownCell(event.leavingUTC ?? "")) | \(markdownCell(event.motion)) | \(event.exactOrb.map { degree($0, digits: 6) } ?? "") | \(clipped) | \(markdownCell(event.methodKey)) |"
+                            "| \(markdownCell(event.id)) | \(event.passIndexInWindow)/\(event.passCountInWindow) | \(markdownCell(event.exactLocal)) | \(markdownCell(event.enteringUTC ?? "")) | \(markdownCell(event.exactUTC)) | \(markdownCell(event.leavingUTC ?? "")) | \(markdownCell(event.motion)) | \(event.exactOrb.map { degree($0, digits: 6) } ?? "") | \(markdownCell(event.targetPointKind ?? "")) | \(event.targetLongitude.map { degree($0, digits: 8) } ?? "") | \(clipped) | \(markdownCell(event.methodKey)) | \(markdownCell(event.targetChartType ?? result.meta.targetChartType ?? "")) | \(markdownCell(event.targetChartMethod ?? result.meta.targetChartMethod ?? "")) |"
                         )
                     }
                     lines.append("")
@@ -112,8 +119,18 @@ extension TextExportBuilder {
             "exact_orb", "method_key",
             "id", "group_id", "moving_point_id", "target_point_id", "target_axis_branch", "aspect_id", "aspect_angle",
             "moving_longitude", "target_longitude", "window_clipped_start", "window_clipped_end",
+            "target_chart_type", "target_chart_method",
         ]
-        let rows = [header] + result.events.map { event in
+        var rows = [header]
+        if result.meta.targetChartType != nil || result.meta.targetChartMethod != nil {
+            var provenanceRow = Array(repeating: "", count: header.count)
+            provenanceRow[0] = "meta"
+            provenanceRow[1] = "target_chart"
+            provenanceRow[header.count - 2] = result.meta.targetChartType ?? ""
+            provenanceRow[header.count - 1] = result.meta.targetChartMethod ?? ""
+            rows.append(provenanceRow)
+        }
+        rows += result.events.map { event in
             [
                 event.sourceType,
                 event.eventType,
@@ -142,6 +159,8 @@ extension TextExportBuilder {
                 event.targetLongitude.map(timingNumber) ?? "",
                 event.windowClippedStart ? "true" : "false",
                 event.windowClippedEnd ? "true" : "false",
+                event.targetChartType ?? result.meta.targetChartType ?? "",
+                event.targetChartMethod ?? result.meta.targetChartMethod ?? "",
             ]
         }
         return rows.map { row in

@@ -19,7 +19,8 @@ extension ContentView {
                 CompositeDavisonResultPane(
                     title: "Composite",
                     result: r,
-                    selectedTab: $calcVM.modernSelectedTab
+                    selectedTab: $calcVM.modernSelectedTab,
+                    onOpenTiming: { openRelationshipTiming(type: "composite", result: r) }
                 )
             } else {
                 EmptyStateView(title: "等待 Composite 计算", systemImage: "circle.hexagongrid", description: "填写两人出生信息后开始计算。")
@@ -33,7 +34,8 @@ extension ContentView {
                 CompositeDavisonResultPane(
                     title: "Davison",
                     result: r,
-                    selectedTab: $calcVM.modernSelectedTab
+                    selectedTab: $calcVM.modernSelectedTab,
+                    onOpenTiming: { openRelationshipTiming(type: "davison", result: r) }
                 )
             } else {
                 EmptyStateView(title: "等待 Davison 计算", systemImage: "arrow.triangle.merge", description: "填写两人出生信息后开始计算。")
@@ -47,6 +49,20 @@ extension ContentView {
                 ProgressionResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
                 EmptyStateView(title: "等待次限推进计算", systemImage: "forward.fill", description: "填写出生和参考时间后开始计算。")
+            }
+        }
+    }
+
+    var progressedCompositeResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .progressedComposite(let r) = result {
+                ProgressedCompositeResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(
+                    title: "等待推进组合盘计算",
+                    systemImage: "arrow.triangle.2.circlepath.circle",
+                    description: "填写人物 A、人物 B 和 reference 后开始计算。"
+                )
             }
         }
     }
@@ -118,5 +134,50 @@ extension ContentView {
         practiceMode = .modern
         mode = .scan
         scanWorkspaceMode = "modern_timing"
+    }
+
+    func openRelationshipTiming<T: ChartResultFields>(type: String, result: T) {
+        guard let personA = modernLastRelationshipPersonA,
+              let personB = modernLastRelationshipPersonB else {
+            calcVM.errorMessage = "当前关系盘没有可复用的精确人物时刻；请先重新计算该关系盘。"
+            return
+        }
+        guard let pointSet = result.meta.effectivePointSet else {
+            calcVM.errorMessage = "当前关系盘没有返回 effective point set，无法安全构造 target_chart。"
+            return
+        }
+        guard let houseSystem = modernLastRelationshipHouseSystem,
+              let zodiac = modernLastRelationshipZodiac else {
+            calcVM.errorMessage = "当前关系盘没有保存当次宫制/黄道，无法安全复现 target_chart。"
+            return
+        }
+
+        modernTimingTargetChart = ModernTimingTargetChart(
+            type: type,
+            personA: personA,
+            personB: personB,
+            pointSet: pointSet,
+            houseSystem: houseSystem,
+            zodiac: zodiac
+        )
+        modernTimingTargetMethod = result.meta.method
+
+        // Relationship Timing v1 is transit-aspect only. Clear the other
+        // techniques and transit lifecycle types so hidden previous settings
+        // cannot leak into the nested relationship target request.
+        timingEnabledTechniques = ["transit"]
+        timingTransitEventTypes = ["aspect"]
+        calcVM.modernTimingResult = nil
+        calcVM.modernTimingSelectedTab = "timeline"
+        practiceMode = .modern
+        mode = .scan
+        scanWorkspaceMode = "modern_timing"
+    }
+
+    func clearRelationshipTimingTarget() {
+        modernTimingTargetChart = nil
+        modernTimingTargetMethod = ""
+        calcVM.modernTimingResult = nil
+        calcVM.modernTimingSelectedTab = "timeline"
     }
 }

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import timedelta, timezone
+from datetime import timezone
 from typing import Any
 
 from astro_backend_core import (
@@ -77,14 +77,19 @@ def calculate_davison(request: dict[str, Any], warnings: list[str]) -> dict[str,
     b_lat = float(person_b["latitude"])
     b_lon = float(person_b["longitude"])
 
-    mid_dt = a_dt + (b_dt - a_dt) / 2
+    # Midtime is an absolute instant.  Adding a multi-year timedelta in the
+    # first person's local ZoneInfo can apply that zone's offset at the result
+    # date, making A/B order change the UTC instant across DST.  Normalize both
+    # endpoints to UTC before averaging so the Davison chart is symmetric.
+    a_utc = a_dt.astimezone(timezone.utc)
+    b_utc = b_dt.astimezone(timezone.utc)
+    mid_utc = a_utc + (b_utc - a_utc) / 2
     mid_lat = (a_lat + b_lat) / 2.0
     mid_lon = geographic_longitude_midpoint(a_lon, b_lon)
 
-    mid_utc = mid_dt.astimezone(timezone.utc)
     try:
         from astro_backend_core import jd_from_datetime
-        mid_jd = jd_from_datetime(mid_dt)
+        mid_jd = jd_from_datetime(mid_utc)
     except Exception as exc:
         raise ValueError(f"Davison 中间时刻儒略日计算失败：{exc}") from exc
 
@@ -144,8 +149,8 @@ def calculate_davison(request: dict[str, Any], warnings: list[str]) -> dict[str,
     return {
         "meta": {
             "method": "davison_midtime_midspace",
-            "person_a_utc": a_dt.astimezone(timezone.utc).isoformat() if a_dt.tzinfo else "",
-            "person_b_utc": b_dt.astimezone(timezone.utc).isoformat() if b_dt.tzinfo else "",
+            "person_a_utc": a_utc.isoformat() if a_dt.tzinfo else "",
+            "person_b_utc": b_utc.isoformat() if b_dt.tzinfo else "",
             "ephemeris": ", ".join(sorted(all_ephemerides)) if all_ephemerides else "unknown",
             "effective_point_set": effective_point_set,
         },

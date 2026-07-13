@@ -119,6 +119,9 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-timing-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-midpoint-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-timing-midpoint-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-timing-composite-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-timing-davison-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-progressed-composite-request.json
 ```
 
 For rectify mode smoke test:

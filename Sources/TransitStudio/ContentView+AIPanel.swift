@@ -133,6 +133,8 @@ extension ContentView {
                 return nil
             case .midpoint:
                 return nil
+            case .progressedComposite:
+                return nil
             }
         case .horary:
             return AIPanelContext(

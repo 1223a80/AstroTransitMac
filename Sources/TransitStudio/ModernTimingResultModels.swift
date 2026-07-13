@@ -12,6 +12,8 @@ struct ModernTimingMeta: Codable {
     let estimatedWorkUnits: Int
     let ephemeris: String
     let effectivePointSet: ModernPointSet
+    let targetChartType: String?
+    let targetChartMethod: String?
 
     enum CodingKeys: String, CodingKey {
         case schemaVersion = "schema_version"
@@ -24,6 +26,8 @@ struct ModernTimingMeta: Codable {
         case estimatedWorkUnits = "estimated_work_units"
         case ephemeris
         case effectivePointSet = "effective_point_set"
+        case targetChartType = "target_chart_type"
+        case targetChartMethod = "target_chart_method"
     }
 }
 
@@ -52,6 +56,8 @@ struct ModernTimingEvent: Codable, Identifiable {
     let motion: String
     let movingLongitude: Double
     let targetLongitude: Double?
+    let targetChartType: String?
+    let targetChartMethod: String?
     let exactOrb: Double?
     let passIndexInWindow: Int
     let passCountInWindow: Int
@@ -85,6 +91,8 @@ struct ModernTimingEvent: Codable, Identifiable {
         case motion
         case movingLongitude = "moving_longitude"
         case targetLongitude = "target_longitude"
+        case targetChartType = "target_chart_type"
+        case targetChartMethod = "target_chart_method"
         case exactOrb = "exact_orb"
         case passIndexInWindow = "pass_index_in_window"
         case passCountInWindow = "pass_count_in_window"

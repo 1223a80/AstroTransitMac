@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "schema_version": 1,
+    "start_utc": "2025-12-31T16:00:00.000Z",
+    "end_utc": "2026-12-31T15:59:00.000Z",
+    "display_timezone": "Asia/Shanghai",
+    "technique_ids": [
+      "transit"
+    ],
+    "technique_configs": [
+      {
+        "id": "transit",
+        "moving_body_ids": [
+          "JUPITER"
+        ],
+        "event_types": [
+          "aspect"
+        ],
+        "aspects": [
+          {
+            "id": "conjunction",
+            "name": "合相",
+            "angle": 0.0,
+            "orb": 1.0
+          },
+          {
+            "id": "square",
+            "name": "刑相",
+            "angle": 90.0,
+            "orb": 1.0
+          },
+          {
+            "id": "opposition",
+            "name": "冲相",
+            "angle": 180.0,
+            "orb": 1.0
+          }
+        ]
+      }
+    ],
+    "target_count": 4,
+    "estimated_work_units": 11680,
+    "ephemeris": "Swiss Ephemeris",
+    "effective_point_set": {
+      "body_ids": [
+        "SUN",
+        "MOON"
+      ],
+      "include_nodes": false,
+      "node_mode": "true_node",
+      "custom_asteroids": [],
+      "angle_ids": [
+        "ASC"
+      ],
+      "house_cusps": [
+        1
+      ],
+      "lot_ids": [],
+      "resolved_body_ids": [
+        "SUN",
+        "MOON"
+      ]
+    },
+    "target_chart_type": "composite",
+    "target_chart_method": "composite_midpoint"
+  },
+  "events": [
+    {
+      "id": "transit|JUPITER|opposition|MOON|20260623T082025Z",
+      "group_id": "transit|JUPITER|opposition|MOON",
+      "source_type": "transit",
+      "event_type": "aspect",
+      "moving_point_id": "JUPITER",
+      "moving_point_name": "木星",
+      "target_point_id": "MOON",
+      "target_point_name": "月亮",
+      "target_point_kind": "body",
+      "target_axis_branch": null,
+      "aspect_id": "opposition",
+      "aspect_name": "冲相",
+      "aspect_angle": 180.0,
+      "orb_limit": 1.0,
+      "entering_utc": "2026-06-18T12:52:40.903Z",
+      "exact_utc": "2026-06-23T08:20:25.463Z",
+      "leaving_utc": "2026-06-28T02:01:33.754Z",
+      "exact_local": "2026-06-23T16:20:25.463+08:00",
+      "motion": "direct",
+      "moving_longitude": 118.539443033,
+      "target_longitude": 298.539443082,
+      "exact_orb": 4.8881e-08,
+      "pass_index_in_window": 1,
+      "pass_count_in_window": 1,
+      "window_clipped_start": false,
+      "window_clipped_end": false,
+      "method_key": "transit_longitude_bisection",
+      "target_chart_type": "composite",
+      "target_chart_method": "composite_midpoint"
+    }
+  ],
+  "warnings": [],
+  "section_errors": null
+}

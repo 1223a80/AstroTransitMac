@@ -43,6 +43,7 @@ extension ContentView {
             case .harmonic: return "计算调和盘"
             case .returnChart: return "计算返照盘"
             case .midpoint: return "计算中点"
+            case .progressedComposite: return "计算推进组合盘"
             }
         case .horary:
             return "Horary 起盘"
@@ -91,6 +92,13 @@ extension ContentView {
             case .synastry, .composite, .davison:
                 return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
                     || parseDouble(modernPersonBLatitude) == nil || parseDouble(modernPersonBLongitude) == nil
+            case .progressedComposite:
+                let pointSet = progressedCompositePointSet()
+                return parseDouble(birthLatitude) == nil
+                    || parseDouble(birthLongitude) == nil
+                    || parseDouble(modernPersonBLatitude) == nil
+                    || parseDouble(modernPersonBLongitude) == nil
+                    || (pointSet.bodyIDs.isEmpty && !pointSet.includeNodes && pointSet.customAsteroids.isEmpty)
             case .progression, .solarArc:
                 return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
             case .returnChart:
@@ -116,10 +124,11 @@ extension ContentView {
         case .scan:
             if isModernTimingWorkspace {
                 let techniques = timingTechniqueRequests()
-                let pointSet = timingTargetPointSet()
+                let pointSet = timingEffectiveTargetPointSet()
+                let hasExactBirthCoordinates = modernTimingTargetChart != nil
+                    || (parseDouble(birthLatitude) != nil && parseDouble(birthLongitude) != nil)
                 return scanEndDate <= scanStartDate
-                    || parseDouble(birthLatitude) == nil
-                    || parseDouble(birthLongitude) == nil
+                    || !hasExactBirthCoordinates
                     || TimeZone(identifier: timingDisplayTimezone.trimmingCharacters(in: .whitespacesAndNewlines)) == nil
                     || techniques.isEmpty
                     || techniques.contains(where: {
@@ -188,6 +197,7 @@ extension ContentView {
             case .synastry: return AnyView(synastryResultsPane)
             case .composite: return AnyView(compositeResultsPane)
             case .davison: return AnyView(davisonResultsPane)
+            case .progressedComposite: return AnyView(progressedCompositeResultsPane)
             case .progression: return AnyView(progressionResultsPane)
             case .solarArc: return AnyView(solarArcResultsPane)
             case .harmonic: return AnyView(harmonicResultsPane)

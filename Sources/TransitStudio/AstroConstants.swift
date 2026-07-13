@@ -3,7 +3,8 @@ import Foundation
 enum AstroConstants {
     static let allModes: [String] = ["transit", "classical", "horary", "scan", "rectify",
                                      "synastry", "composite", "davison", "progression", "solar_arc",
-                                     "harmonic", "vedic", "modern_return", "modern_timing", "midpoint"]
+                                     "harmonic", "vedic", "modern_return", "modern_timing", "midpoint",
+                                     "progressed_composite"]
 
     static let allHouseSystems: [String] = [
         "whole_sign", "placidus", "porphyry", "regiomontanus", "alcabitius", "equal",

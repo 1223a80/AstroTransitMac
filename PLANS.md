@@ -892,3 +892,53 @@
 - Timing midpoint target 的估算、event/group ID、branch 字段及 CSV/Markdown/JSON 可复算；普通 natal target 与旧 `scan` 契约不漂移。
 - Swift axes 支持 A/B 搜索与度数排序，trees 可切 focus，activations 展示 source/reference；tabs 列表与 switch case 一致。
 - 聚焦测试、全量 `bash check_vibe_changes.sh`、backend smoke、完整 diff 审查与缓存清理通过后再独立提交 B4。
+
+---
+
+# 现代占星扩展实际施工 — 第 5A 批关系动态（2026-07-13）
+
+## 分支、决策与非目标
+
+- 继续在 `codex/feature-modern-completeness` 上形成独立 B5A commit；B4 已提交为 `bd8ed51`。
+- 只施工蓝图 5A：Transit→Composite/Davison 与 `progress_each_person_then_midpoint` 的 Progressed Composite；5B 的 SA/Progression→关系盘、推进关系盘宫位/角点、Composite method variants 与 Davison reference-place 变体全部排除。
+- D02 按用户确认执行：Person A、Person B、reference、Timing start/end 一律要求日期、小时、分钟、时区完整明确；不接受“时间不可靠”标记，也不实现模糊时间自动降级。关系盘角点/宫头只有在精确时间与现有计算实际可用时进入 target。
+- 复用现有 Composite/Davison、secondary progression、`modern_timing` lifecycle、point-set 与事件导出契约；不创建第三套事件 schema，不把 Composite 伪装成一个普通出生盘再推进。
+
+## 固定接口口径
+
+### Transit→关系盘
+
+- `modern_timing` 新增 optional `target_chart`；省略时保持 B3 natal target 完全兼容。
+- `target_chart.type` 接受 `natal|composite|davison`；关系类型必须携带精确 `person_a/person_b` 与 nested `point_set`，该 nested point set 是静态 target snapshot 的权威配置。
+- 关系盘请求只接受 `transit` 的 `aspect` lifecycle；secondary progression / solar arc→关系盘留给 5B，不在施工中拍板。
+- 静态 snapshot 必须调用现有 `calculate_composite()` / `calculate_davison()`，再把实际可用 planets、angles、显式 house cusps 归一化为 `TargetPoint`；不复制另一套关系盘算法。
+- response meta 与每条 target-related event 保留 `target_chart_type`、`target_chart_method`；snapshot warnings 原样保留，section errors 以 `target_chart.<section>` 合并，不能静默丢失。
+- A/B 交换后 target longitude、method 与对应 transit event 保持对称；Composite 非整宫沿用 B0 已锁定的 MC-shift baseline，不触碰 D10。
+- 集成实测确认既有 Davison 用首人的本地 ZoneInfo 跨年加 timedelta 会在 DST 下产生 A/B 顺序差；B5A 以“先转 UTC、再取绝对中间时刻”的最小修复恢复独立 snapshot 对称性，并加 planets/angles/houses 回归。
+
+### Progressed Composite
+
+- 新增独立 `mode=progressed_composite` / `ModernSubMode.progressedComposite`，方法 key 固定 `progress_each_person_then_midpoint`。
+- 对同一现实 reference，分别以 A/B 自己的 birth UTC 计算 day-for-year progressed UTC；在各自 progressed UTC 计算同名行星，再做 circular midpoint。
+- 同时输出 radix composite planets、progressed composite planets、progressed→radix aspects；每个行星 trace 至少保留 A/B birth/progressed UTC、A/B 输入经度和合成经度，能够逐点复算。
+- v1 响应模型不定义 `houses` 或 `angles`；point set 若请求 angles/house cusps/Lots 必须 validation error，而不是返回实验值或静默伪造。
+- UI/导出不接 AI；未来若接入必须使用独立 `progressed_composite` stream key。
+
+## 工作包与并行写集
+
+| 工作包 | 内容 | 写集 | 状态 |
+|---|---|---|---|
+| 5A-T 关系盘 Timing backend | target_chart snapshot、TargetPoint 归一化、provenance、错误合并、对称性与 lifecycle tests | `astro_backend_modern_timing.py` + 新 focused tests/sample | ✅；关系 target、权威设置、对称性、错误合并及真实 samples 已通过 |
+| 5A-P Progressed Composite backend | 双人独立 progressed UTC、同名行星 midpoint、trace、相位、无 houses/angles | 新 backend module + 新 focused tests/sample | ✅；32 项模块测试、真实 sample smoke 通过 |
+| 5A-S Swift/UI/导出 | target_chart 请求、独立 submode/result、关系盘动态跳转、sidebar、Markdown/CSV/JSON | Swift models/views/export/integration + tests | ✅；严格 trace/数组解码、独立 reference 时区与完整导出，85 tests / 20 suites 通过 |
+| 5A-I 主线集成 | API/constants/validation、fixture/CI/smoke、跨写集审查与冲突收口 | API、fixtures、scripts、docs | ✅；3 份真实 fixtures、CI/smoke 与 Codable contract 已对齐 |
+| 5A-V 验收 | DST/跨日期线、A/B 对称、trace 复算、无 5B 字段、旧 Timing 回归、完整 gate/缓存清理 | tests/PLANS/CHANGELOG | ✅；双路独立 review 已收口，最终 gate 为 Python 756 项、Swift 85 项 / 20 suites，全部 smokes 通过 |
+
+## 测试矩阵与 DoD
+
+- Transit→Composite/Davison 单点 target 与各自独立 snapshot 同输入复算一致；A/B swap 后 planets/angles/显式宫头与事件签名对称。
+- target snapshot warning/section error 有失败注入测试；旧 natal Timing fixture 的 type/method 与 event lifecycle 不漂移。
+- Person A/B 使用不同时区、DST 与跨日期线 reference 时，各自 progressed UTC 分别正确；所有 progressed composite longitude 可从 trace 按 `circular_midpoint()` 复算。
+- Progressed Composite JSON/Swift model/Markdown/CSV 明确只有行星、相位和 trace；不存在 houses/angles key 或 UI tab。
+- Composite/Davison 结果页“动态”只预填并导航，不自动运行；Progressed Composite 是独立 submode，不共享 Composite stale result state。
+- 聚焦 Python/Swift、真实 backend fixtures、`bash check_vibe_changes.sh`、新增 smokes、完整 diff 审查和缓存清理全部通过后，形成独立 B5A commit。

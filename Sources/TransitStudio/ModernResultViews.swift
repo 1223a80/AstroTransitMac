@@ -219,6 +219,7 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
     let title: String
     let result: T
     @Binding var selectedTab: String
+    let onOpenTiming: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
@@ -232,6 +233,19 @@ struct CompositeDavisonResultPane<T: ChartResultFields>: View {
                 csvProvider: { csv },
                 basename: title.lowercased()
             )
+            if let onOpenTiming {
+                HStack(spacing: TS.Spacing.md) {
+                    Label("Transit → \(title) 动态", systemImage: "calendar.badge.clock")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                    Spacer(minLength: 0)
+                    Button("动态") { onOpenTiming() }
+                        .buttonStyle(.borderedProminent)
+                        .tint(TS.SemanticColor.gold)
+                        .controlSize(.small)
+                }
+                .padding(.vertical, TS.Spacing.xs)
+            }
             selectedResultView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

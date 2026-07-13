@@ -32,4 +32,11 @@ extension BackendClient {
     static func midpoint(request: MidpointRequest, pythonPath: String) async throws -> MidpointResult {
         try await run(request: request, pythonPath: pythonPath)
     }
+
+    static func progressedComposite(
+        request: ProgressedCompositeRequest,
+        pythonPath: String
+    ) async throws -> ProgressedCompositeResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
 }

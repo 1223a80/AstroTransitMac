@@ -251,6 +251,43 @@ struct ModernTimingTechniqueRequest: Codable {
     }
 }
 
+/// Optional target chart for a `modern_timing` relationship query. Natal
+/// timing keeps its existing top-level `target_point_set`; relationship
+/// timing makes this nested point set authoritative.
+struct ModernTimingTargetChart: Codable {
+    let type: String
+    let personA: PersonSettings
+    let personB: PersonSettings
+    let pointSet: ModernPointSet
+    let houseSystem: String?
+    let zodiac: String?
+
+    init(
+        type: String,
+        personA: PersonSettings,
+        personB: PersonSettings,
+        pointSet: ModernPointSet,
+        houseSystem: String? = nil,
+        zodiac: String? = nil
+    ) {
+        self.type = type
+        self.personA = personA
+        self.personB = personB
+        self.pointSet = pointSet
+        self.houseSystem = houseSystem
+        self.zodiac = zodiac
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case personA = "person_a"
+        case personB = "person_b"
+        case pointSet = "point_set"
+        case houseSystem = "house_system"
+        case zodiac
+    }
+}
+
 /// Request contract for the independent `modern_timing` backend mode.
 /// Birth/start/end remain exact chart moments for B3; uncertain birth-time
 /// degradation is intentionally outside this batch.
@@ -260,7 +297,8 @@ struct ModernTimingRequest: Codable {
     let start: ChartMoment
     let end: ChartMoment
     let displayTimezone: String
-    let targetPointSet: ModernPointSet
+    let targetPointSet: ModernPointSet?
+    let targetChart: ModernTimingTargetChart?
     let techniques: [ModernTimingTechniqueRequest]
     let confirmedHeavyScan: Bool
     let ephemerisPath: String?
@@ -273,7 +311,8 @@ struct ModernTimingRequest: Codable {
         start: ChartMoment,
         end: ChartMoment,
         displayTimezone: String,
-        targetPointSet: ModernPointSet,
+        targetPointSet: ModernPointSet? = nil,
+        targetChart: ModernTimingTargetChart? = nil,
         techniques: [ModernTimingTechniqueRequest],
         confirmedHeavyScan: Bool = false,
         ephemerisPath: String? = nil,
@@ -286,6 +325,7 @@ struct ModernTimingRequest: Codable {
         self.end = end
         self.displayTimezone = displayTimezone
         self.targetPointSet = targetPointSet
+        self.targetChart = targetChart
         self.techniques = techniques
         self.confirmedHeavyScan = confirmedHeavyScan
         self.ephemerisPath = ephemerisPath
@@ -300,6 +340,7 @@ struct ModernTimingRequest: Codable {
         case end
         case displayTimezone = "display_timezone"
         case targetPointSet = "target_point_set"
+        case targetChart = "target_chart"
         case techniques
         case confirmedHeavyScan = "confirmed_heavy_scan"
         case ephemerisPath = "ephemeris_path"

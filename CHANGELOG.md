@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-13 — 现代占星第 5A 批关系动态
+
+- 按蓝图固定拆分 B5A：并行实施 Transit→Composite/Davison 与 `progress_each_person_then_midpoint` Progressed Composite；5B 的方法争议项保持排除。
+- D02 延续为硬约束：两人出生与所有 reference/window 时间必须完整明确，不新增模糊时间或“未知生时”降级接口。
+- 施工写集拆为关系盘 Timing backend、Progressed Composite backend、Swift/UI/导出和主线契约集成四路；sub agent 仅使用用户指定的 GPT-5.6 Sol / medium 与 GPT-5.6 Luna / xhigh。
+- 主线先落地 `progressed_composite` mode/常量与 API 边界：关系 target chart 只允许 transit aspect、nested point set 权威且不得与顶层 target 冲突；两人/reference 严格校验精确时间，Progressed Composite 拒绝 5B 的 angles/houses/Lots/midpoint sections。
+- 一键门禁、CI 与 AGENTS smoke 清单预先登记 Composite/Davison relationship timing 和 Progressed Composite 三个真实入口，样例由对应 backend 写集生成后统一验证。
+- Progressed Composite backend 已按 `progress_each_person_then_midpoint` 落地：A/B 分别计算 progressed UTC，同名行星再取 circular midpoint；radix/progressed/相位与逐点 trace 齐全，响应不含 houses/angles，32 项模块测试及真实 sample smoke 通过。
+- 修正 Davison 跨时区 A/B 顺序债务：中间时刻改为先把两人出生时刻转 UTC，再对绝对时间取中值，避免以首人 ZoneInfo 跨 DST 加 timedelta 造成约一小时漂移；新增 planets/angles/houses 对称回归。
+- 关系 Timing 以 nested `target_chart.house_system/zodiac` 为静态盘及移动 transit 的共同权威设置，避免顶层 birth 设置不同造成热带/恒星黄道混算；两个真实 sample 显式记录关系盘设置并新增冲突回归。
+- Progressed Composite Swift Codable/Markdown/CSV 保留 backend 的 A/B age years，避免 typed JSON 往返丢失 day-for-year 审计标量。
+- 三个 B5A sample 已经真实 backend 入口生成 fixture；Swift `BackendContractTests` 覆盖关系盘 provenance、target 数量/类型、Progressed Composite 逐点 trace、age years，以及顶层无 houses/angles。
+- Progressed Composite tab 状态使用独立 `radix_composite_planets` 默认 ID，避免与普通次限推进的 `progressed_planets` 语义混淆；关系 UI 契约不再构造 v1 禁止的 Lot target。
+- 独立 backend review 后修补三项契约：Progressed Composite zodiac 缺省固定 tropical 而不依赖 Person A；API 复用统一 aspect spec 校验并拒绝 `point_set.angles`；Progressed Composite 与关系 Timing 的 effective point set 按实际输出剔除不可用点并去重 warning。
+- 独立 Swift review 后将 Progressed Composite reference 改为独立 GMT offset；真实响应必须包含两组行星数组、相位数组、warnings 及每个行星的完整 trace，缺字段时 Codable 直接失败；backend meta 显式输出 schema/zodiac。
+- Progressed Composite Markdown/CSV 补齐 schema、zodiac、ephemeris、完整 effective point set 与 diagnostics，所有行保持固定列数；Modern Timing Markdown 逐事件输出 target kind/longitude，与既有 CSV/JSON 审计字段一致。
+- 最终一键门禁通过：Python 756 项、Swift 85 项 / 20 suites，全部 legacy、modern return/timing/midpoint、关系 Timing、Progressed Composite 与 rectify smoke 正常；两路独立 review 发现项已全部收口。
+
 ## 2026-07-13 — 现代占星第 4 批 Midpoints v1
 
 - 启动独立 `mode=midpoint`：入口要求精确出生时刻和显式 point set/focus/source 配置，modulus 第一版只接受 360°，activation orb 独立校验。

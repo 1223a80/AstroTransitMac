@@ -20,6 +20,8 @@ from astro_backend_core import (
     signed_orb,
     zodiac_sign_index,
 )
+from astro_backend_composite import calculate_composite
+from astro_backend_davison import calculate_davison
 from astro_backend_ephemeris import (
     body_longitude_at,
     body_speed_at,
@@ -60,6 +62,12 @@ TECHNIQUE_EVENT_TYPES = {
     "transit": {"aspect", "ingress", "station"},
     "secondary_progression": {"aspect", "moon_ingress", "lunation"},
     "solar_arc": {"aspect"},
+}
+
+RELATIONSHIP_TARGET_TYPES = {"composite", "davison"}
+RELATIONSHIP_TARGET_METHODS = {
+    "composite": "composite_midpoint",
+    "davison": "davison_midtime_midspace",
 }
 
 ANGLE_NAMES = {
@@ -560,6 +568,194 @@ def _build_targets(
     return targets, effective
 
 
+def _validate_relationship_target_request(
+    target_chart: dict[str, Any],
+    techniques: list[dict[str, Any]],
+) -> None:
+    point_set = target_chart.get("point_set")
+    if not isinstance(point_set, dict):
+        raise ValueError("relationship target_chart.point_set must be an object")
+    if point_set.get("lot_ids") not in (None, []):
+        raise ValueError(
+            "relationship target_chart.point_set does not support lot_ids in v1"
+        )
+    if point_set.get("midpoint_pairs") not in (None, []):
+        raise ValueError(
+            "relationship target_chart.point_set does not support midpoint_pairs in v1"
+        )
+    if not techniques:
+        raise ValueError("relationship target_chart requires a transit aspect technique")
+    for index, technique in enumerate(techniques):
+        if not isinstance(technique, dict) or technique.get("id") != "transit":
+            raise ValueError(
+                f"techniques[{index}] must be transit for relationship target_chart v1"
+            )
+        event_types = technique.get("event_types")
+        if not isinstance(event_types, list) or set(event_types) != {"aspect"}:
+            raise ValueError(
+                f"techniques[{index}].event_types must contain only aspect "
+                "for relationship target_chart v1"
+            )
+
+
+def _merge_snapshot_warnings(
+    warnings: list[str],
+    snapshot_warnings: Any,
+) -> None:
+    if snapshot_warnings is warnings or not isinstance(snapshot_warnings, list):
+        return
+    warnings.extend(str(warning) for warning in snapshot_warnings)
+
+
+def _canonical_relationship_people(
+    person_a: dict[str, Any],
+    person_b: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Give the existing relationship calculators a stable A/B order.
+
+    Planet/angle midpoint methods are conceptually symmetric, but some house
+    baselines and timezone-aware datetime arithmetic use the first operand.
+    Canonicalizing only the adapter inputs preserves those existing methods
+    while making a relationship target independent of UI-side A/B ordering.
+    """
+    people = [person_a, person_b]
+    people.sort(
+        key=lambda person: json.dumps(
+            person,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+    )
+    return people[0], people[1]
+
+
+def _build_relationship_targets(
+    request: dict[str, Any],
+    target_chart: dict[str, Any],
+    warnings: list[str],
+) -> tuple[list[TargetPoint], dict[str, Any], str, dict[str, str]]:
+    target_chart_type = str(target_chart.get("type", ""))
+    if target_chart_type not in RELATIONSHIP_TARGET_TYPES:
+        raise ValueError(
+            f"unsupported relationship target_chart.type: {target_chart_type}"
+        )
+
+    point_set = target_chart["point_set"]
+    birth = request["birth"]
+    node_mode = str(point_set.get("node_mode", request.get("node_mode", "true_node")))
+    person_a, person_b = _canonical_relationship_people(
+        target_chart["person_a"],
+        target_chart["person_b"],
+    )
+    snapshot_request = {
+        "mode": target_chart_type,
+        "person_a": person_a,
+        "person_b": person_b,
+        "point_set": point_set,
+        "house_system": target_chart.get(
+            "house_system",
+            birth.get("houseSystem", birth.get("house_system", "whole_sign")),
+        ),
+        "zodiac": target_chart.get(
+            "zodiac",
+            request.get("zodiac") or birth.get("zodiac", "tropical"),
+        ),
+        "node_mode": node_mode,
+        # Timing only consumes the static positions. Keeping this empty avoids
+        # doing unrelated relationship-aspect work while still exercising the
+        # existing snapshot implementation and its section error contract.
+        "aspects": [],
+    }
+    calculator = (
+        calculate_composite if target_chart_type == "composite" else calculate_davison
+    )
+    snapshot = calculator(snapshot_request, warnings)
+    _merge_snapshot_warnings(warnings, snapshot.get("warnings"))
+
+    targets: list[TargetPoint] = []
+    for row in snapshot.get("planets", []):
+        longitude = row.get("longitude")
+        if longitude is None or not math.isfinite(float(longitude)):
+            continue
+        targets.append(
+            TargetPoint(
+                str(row["body_id"]),
+                str(row.get("name") or row["body_id"]),
+                "body",
+                float(longitude),
+            )
+        )
+    for row in snapshot.get("angles", []):
+        longitude = row.get("longitude")
+        if longitude is None or not math.isfinite(float(longitude)):
+            continue
+        point_id = str(row["id"])
+        targets.append(
+            TargetPoint(
+                point_id,
+                str(row.get("name") or ANGLE_NAMES.get(point_id, point_id)),
+                "angle",
+                float(longitude),
+            )
+        )
+
+    requested_house_cusps = list(point_set.get("house_cusps", []))
+    houses_by_number = {
+        int(row["house"]): row
+        for row in snapshot.get("houses", [])
+        if isinstance(row, dict) and isinstance(row.get("house"), int)
+    }
+    available_house_cusps: list[int] = []
+    for house in requested_house_cusps:
+        row = houses_by_number.get(house)
+        if row is None:
+            continue
+        longitude = row.get("cusp_longitude")
+        if longitude is None or not math.isfinite(float(longitude)):
+            continue
+        targets.append(
+            TargetPoint(
+                f"HOUSE_CUSP_{house}",
+                f"第 {house} 宫宫头",
+                "house_cusp",
+                float(longitude),
+            )
+        )
+        available_house_cusps.append(house)
+
+    snapshot_meta = (
+        snapshot.get("meta") if isinstance(snapshot.get("meta"), dict) else {}
+    )
+    effective = snapshot_meta.get("effective_point_set")
+    snapshot_point_set = (
+        dict(effective) if isinstance(effective, dict) else dict(point_set)
+    )
+    effective_point_set = finalize_point_set(
+        snapshot_point_set,
+        [target.point_id for target in targets if target.kind == "body"],
+        available_angle_ids=[
+            target.point_id for target in targets if target.kind == "angle"
+        ],
+        warnings=warnings,
+    )
+    effective_point_set["house_cusps"] = available_house_cusps
+    effective_point_set["lot_ids"] = []
+    warnings[:] = list(dict.fromkeys(warnings))
+
+    method = str(snapshot_meta.get("method") or RELATIONSHIP_TARGET_METHODS[target_chart_type])
+    snapshot_errors = snapshot.get("section_errors")
+    section_errors = (
+        {
+            f"target_chart.{section}": str(message)
+            for section, message in snapshot_errors.items()
+        }
+        if isinstance(snapshot_errors, dict)
+        else {}
+    )
+    return targets, effective_point_set, method, section_errors
+
+
 def _canonical_midpoint_pairs(raw_pairs: Any) -> list[tuple[str, str]]:
     if raw_pairs is None:
         return []
@@ -967,14 +1163,52 @@ def calculate_modern_timing(request: dict[str, Any], warnings: list[str]) -> dic
     display_timezone = str(request["display_timezone"])
     display_zone = ZoneInfo(display_timezone)
     birth = request["birth"]
-    zodiac = request.get("zodiac") or birth.get("zodiac", "tropical")
-    sidereal = set_zodiac_mode(zodiac, warnings)
-    raw_point_set = request.get("target_point_set")
-    node_mode = str((raw_point_set or {}).get("node_mode", request.get("node_mode", "true_node")))
     techniques = list(request.get("techniques", []))
+    target_chart = request.get("target_chart")
+    if target_chart is not None and not isinstance(target_chart, dict):
+        raise ValueError("target_chart must be an object")
+
+    # Relationship targets carry their own chart settings.  The moving
+    # transit positions must use the same zodiac as the static snapshot;
+    # otherwise an unrelated top-level birth setting can mix tropical and
+    # sidereal longitudes in one aspect search.
+    zodiac = (
+        target_chart.get("zodiac")
+        if isinstance(target_chart, dict) and target_chart.get("zodiac")
+        else request.get("zodiac") or birth.get("zodiac", "tropical")
+    )
+    sidereal = set_zodiac_mode(str(zodiac), warnings)
+
+    raw_point_set = (
+        target_chart.get("point_set")
+        if isinstance(target_chart, dict)
+        else request.get("target_point_set")
+    )
+    node_mode = str(
+        (raw_point_set or {}).get("node_mode", request.get("node_mode", "true_node"))
+    )
 
     context = TimingContext(request, warnings, sidereal)
-    targets, effective_point_set = _build_targets(context, raw_point_set, node_mode)
+    target_chart_type: str | None = None
+    target_chart_method: str | None = None
+    target_section_errors: dict[str, str] = {}
+    if isinstance(target_chart, dict):
+        target_chart_type = str(target_chart.get("type", ""))
+        if target_chart_type in RELATIONSHIP_TARGET_TYPES:
+            _validate_relationship_target_request(target_chart, techniques)
+            (
+                targets,
+                effective_point_set,
+                target_chart_method,
+                target_section_errors,
+            ) = _build_relationship_targets(request, target_chart, warnings)
+        elif target_chart_type == "natal":
+            targets, effective_point_set = _build_targets(context, raw_point_set, node_mode)
+            target_chart_method = "natal"
+        else:
+            raise ValueError(f"unsupported target_chart.type: {target_chart_type}")
+    else:
+        targets, effective_point_set = _build_targets(context, raw_point_set, node_mode)
     estimated_work_units = estimate_modern_timing_work_units(
         start_utc, end_utc, techniques, len(targets)
     )
@@ -997,7 +1231,7 @@ def calculate_modern_timing(request: dict[str, Any], warnings: list[str]) -> dic
         sys.stderr.flush()
 
     events: list[dict[str, Any]] = []
-    section_errors: dict[str, str] = {}
+    section_errors: dict[str, str] = dict(target_section_errors)
     for technique in techniques:
         source_type = technique["id"]
         moving_ids = list(dict.fromkeys(technique.get("moving_body_ids", [])))
@@ -1070,20 +1304,32 @@ def calculate_modern_timing(request: dict[str, Any], warnings: list[str]) -> dic
         sys.stderr.flush()
 
     events = _dedupe_and_number_events(events)
-    ephemeris = ", ".join(sorted(context.ephemerides)) if context.ephemerides else "Swiss Ephemeris"
+    if target_chart_type is not None:
+        for event in events:
+            event["target_chart_type"] = target_chart_type
+            event["target_chart_method"] = target_chart_method
+    ephemeris = (
+        ", ".join(sorted(context.ephemerides))
+        if context.ephemerides
+        else "Swiss Ephemeris"
+    )
+    meta = {
+        "schema_version": 1,
+        "start_utc": _iso_utc(start_utc),
+        "end_utc": _iso_utc(end_utc),
+        "display_timezone": display_timezone,
+        "technique_ids": [technique["id"] for technique in techniques],
+        "technique_configs": techniques,
+        "target_count": len(targets),
+        "estimated_work_units": estimated_work_units,
+        "ephemeris": ephemeris,
+        "effective_point_set": effective_point_set,
+    }
+    if target_chart_type is not None:
+        meta["target_chart_type"] = target_chart_type
+        meta["target_chart_method"] = target_chart_method
     return {
-        "meta": {
-            "schema_version": 1,
-            "start_utc": _iso_utc(start_utc),
-            "end_utc": _iso_utc(end_utc),
-            "display_timezone": display_timezone,
-            "technique_ids": [technique["id"] for technique in techniques],
-            "technique_configs": techniques,
-            "target_count": len(targets),
-            "estimated_work_units": estimated_work_units,
-            "ephemeris": ephemeris,
-            "effective_point_set": effective_point_set,
-        },
+        "meta": meta,
         "events": events,
         "warnings": warnings,
         "section_errors": section_errors or None,

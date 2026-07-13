@@ -164,6 +164,72 @@ struct BackendContractTests {
         #expect(csv.contains("midpoint|MOON|SUN,opposite"))
     }
 
+    @Test func decodeRelationshipTimingFixturesFromRealOutput() throws {
+        let fixtures = [
+            ("modern-timing-composite-result", "composite", "composite_midpoint"),
+            ("modern-timing-davison-result", "davison", "davison_midtime_midspace"),
+        ]
+
+        for (fixtureName, targetType, method) in fixtures {
+            let result = try JSONDecoder().decode(
+                ModernTimingResult.self,
+                from: fixtureData(fixtureName)
+            )
+
+            #expect(result.meta.targetChartType == targetType)
+            #expect(result.meta.targetChartMethod == method)
+            #expect(result.meta.targetCount == 4)
+            #expect(result.meta.effectivePointSet.angleIDs == ["ASC"])
+            #expect(result.meta.effectivePointSet.houseCusps == [1])
+            #expect(!result.events.isEmpty)
+            #expect(result.events.allSatisfy { $0.targetChartType == targetType })
+            #expect(result.events.allSatisfy { $0.targetChartMethod == method })
+            #expect(result.sectionErrors == nil)
+
+            let markdown = MarkdownExportBuilder.modernTiming(result)
+            let csv = TextExportBuilder.csv(result)
+            #expect(markdown.contains("目标盘类型：\(targetType)"))
+            #expect(markdown.contains(method))
+            #expect(csv.contains("target_chart_type,target_chart_method"))
+            #expect(csv.contains("\(targetType),\(method)"))
+        }
+    }
+
+    @Test func decodeProgressedCompositeFixtureFromRealOutput() throws {
+        let data = try fixtureData("progressed-composite-result")
+        let raw = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        #expect(raw["houses"] == nil)
+        #expect(raw["angles"] == nil)
+
+        let result = try JSONDecoder().decode(ProgressedCompositeResult.self, from: data)
+        #expect(result.meta.method == "progress_each_person_then_midpoint")
+        #expect(result.meta.personAAgeYears != nil)
+        #expect(result.meta.personBAgeYears != nil)
+        #expect(result.radixCompositePlanets.count == 12)
+        #expect(result.progressedCompositePlanets.count == 12)
+        #expect(!result.progressedToRadixAspects.isEmpty)
+        #expect(result.progressedCompositePlanets.allSatisfy { planet in
+            let trace = planet.trace
+            return trace.phase == "progressed"
+                && trace.midpointMethod == "circular_midpoint"
+                && trace.compositeLongitude == planet.longitude
+        })
+        #expect(result.sectionErrors == nil)
+
+        let markdown = MarkdownExportBuilder.progressedComposite(result)
+        let csv = TextExportBuilder.csv(result)
+        let json = TextExportBuilder.progressedCompositeJSON(result)
+        #expect(markdown.contains("progress_each_person_then_midpoint"))
+        #expect(markdown.contains("A age years"))
+        #expect(markdown.contains("实际有效点"))
+        #expect(csv.contains("person_a_age_years,person_b_age_years"))
+        #expect(csv.contains("effective_point_ids"))
+        #expect(csv.contains("progressed_to_radix_aspect"))
+        #expect(json.contains("\"person_a_age_years\""))
+        #expect(!json.contains("\"houses\""))
+        #expect(!json.contains("\"angles\""))
+    }
+
     @Test func decodeHarmonicResult() throws {
         let result = try JSONDecoder().decode(HarmonicResult.self, from: fixtureData("harmonic-result"))
         #expect(result.harmonicOrder == 4)

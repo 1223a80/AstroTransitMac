@@ -10,6 +10,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
     case harmonic = "harmonic"
     case returnChart = "return"
     case midpoint = "midpoint"
+    case progressedComposite = "progressed_composite"
 
     var id: String { rawValue }
 
@@ -24,6 +25,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .harmonic: return "调和盘"
         case .returnChart: return "返照盘"
         case .midpoint: return "中点"
+        case .progressedComposite: return "推进组合盘"
         }
     }
 
@@ -38,6 +40,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .harmonic: return "music.note.list"
         case .returnChart: return "arrow.clockwise.circle"
         case .midpoint: return "circle.grid.cross"
+        case .progressedComposite: return "arrow.triangle.2.circlepath.circle"
         }
     }
 
@@ -53,6 +56,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .solarArc: return "sa_planets"
         case .returnChart: return "current_return"
         case .midpoint: return "axes"
+        case .progressedComposite: return "radix_composite_planets"
         }
     }
 }
@@ -66,6 +70,7 @@ enum ModernResultData {
     case harmonic(HarmonicResult)
     case returnChart(ModernReturnResult)
     case midpoint(MidpointResult)
+    case progressedComposite(ProgressedCompositeResult)
 }
 
 struct PatternResult: Codable, Identifiable {
@@ -937,5 +942,376 @@ struct SolarArcResult: Codable {
         case patterns
         case warnings
         case sectionErrors = "section_errors"
+    }
+}
+
+// MARK: - Progressed Composite
+
+/// Request for the v1 progressed-composite method. The backend requires an
+/// explicit planet point set and rejects angles, houses, Lots and midpoint
+/// pairs for this mode.
+struct ProgressedCompositeRequest: Codable {
+    let mode: String
+    let personA: PersonSettings
+    let personB: PersonSettings
+    let reference: ChartMoment
+    let pointSet: ModernPointSet
+    let zodiac: String
+    let nodeMode: String
+    let aspects: [AspectRequest]
+    let ephemerisPath: String?
+    let noAsteroids: Bool
+    let requireEphemeris: String
+
+    init(
+        mode: String = "progressed_composite",
+        personA: PersonSettings,
+        personB: PersonSettings,
+        reference: ChartMoment,
+        pointSet: ModernPointSet,
+        zodiac: String,
+        nodeMode: String,
+        aspects: [AspectRequest],
+        ephemerisPath: String? = nil,
+        noAsteroids: Bool = false,
+        requireEphemeris: String = "warn"
+    ) {
+        self.mode = mode
+        self.personA = personA
+        self.personB = personB
+        self.reference = reference
+        self.pointSet = pointSet
+        self.zodiac = zodiac
+        self.nodeMode = nodeMode
+        self.aspects = aspects
+        self.ephemerisPath = ephemerisPath
+        self.noAsteroids = noAsteroids
+        self.requireEphemeris = requireEphemeris
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case mode
+        case personA = "person_a"
+        case personB = "person_b"
+        case reference
+        case pointSet = "point_set"
+        case zodiac
+        case nodeMode = "node_mode"
+        case aspects
+        case ephemerisPath = "ephemeris_path"
+        case noAsteroids = "no_asteroids"
+        case requireEphemeris = "require_ephemeris"
+    }
+}
+
+struct ProgressedCompositeMeta: Codable {
+    let method: String
+    let personABirthUTC: String
+    let personBBirthUTC: String
+    let personAProgressedUTC: String
+    let personBProgressedUTC: String
+    let personAAgeYears: Double?
+    let personBAgeYears: Double?
+    let referenceUTC: String
+    let effectivePointSet: ModernPointSet
+    let ephemeris: String?
+    let schemaVersion: Int?
+    let zodiac: String?
+
+    init(
+        method: String = "progress_each_person_then_midpoint",
+        personABirthUTC: String,
+        personBBirthUTC: String,
+        personAProgressedUTC: String,
+        personBProgressedUTC: String,
+        personAAgeYears: Double? = nil,
+        personBAgeYears: Double? = nil,
+        referenceUTC: String,
+        effectivePointSet: ModernPointSet,
+        ephemeris: String? = nil,
+        schemaVersion: Int? = nil,
+        zodiac: String? = nil
+    ) {
+        self.method = method
+        self.personABirthUTC = personABirthUTC
+        self.personBBirthUTC = personBBirthUTC
+        self.personAProgressedUTC = personAProgressedUTC
+        self.personBProgressedUTC = personBProgressedUTC
+        self.personAAgeYears = personAAgeYears
+        self.personBAgeYears = personBAgeYears
+        self.referenceUTC = referenceUTC
+        self.effectivePointSet = effectivePointSet
+        self.ephemeris = ephemeris
+        self.schemaVersion = schemaVersion
+        self.zodiac = zodiac
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case method
+        case personABirthUTC = "person_a_birth_utc"
+        case personBBirthUTC = "person_b_birth_utc"
+        case personAProgressedUTC = "person_a_progressed_utc"
+        case personBProgressedUTC = "person_b_progressed_utc"
+        case personAAgeYears = "person_a_age_years"
+        case personBAgeYears = "person_b_age_years"
+        case referenceUTC = "reference_utc"
+        case effectivePointSet = "effective_point_set"
+        case ephemeris
+        case schemaVersion = "schema_version"
+        case zodiac
+    }
+}
+
+struct ProgressedCompositePersonTrace: Codable {
+    let birthUTC: String
+    let progressedUTC: String
+    let inputLongitude: Double
+
+    init(birthUTC: String, progressedUTC: String, inputLongitude: Double) {
+        self.birthUTC = birthUTC
+        self.progressedUTC = progressedUTC
+        self.inputLongitude = inputLongitude
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case birthUTC = "birth_utc"
+        case progressedUTC = "progressed_utc"
+        case inputLongitude = "input_longitude"
+    }
+}
+
+/// Per-planet audit trace. The nested person records mirror the backend
+/// contract; the scalar aliases make CSV/export call sites explicit.
+struct ProgressedCompositeTrace: Codable {
+    let phase: String
+    let midpointMethod: String
+    let referenceUTC: String
+    let personA: ProgressedCompositePersonTrace
+    let personB: ProgressedCompositePersonTrace
+    let compositeLongitude: Double
+
+    var personABirthUTC: String { personA.birthUTC }
+    var personBBirthUTC: String { personB.birthUTC }
+    var personAProgressedUTC: String { personA.progressedUTC }
+    var personBProgressedUTC: String { personB.progressedUTC }
+    var personAInputLongitude: Double { personA.inputLongitude }
+    var personBInputLongitude: Double { personB.inputLongitude }
+
+    init(
+        phase: String,
+        midpointMethod: String,
+        referenceUTC: String,
+        personA: ProgressedCompositePersonTrace,
+        personB: ProgressedCompositePersonTrace,
+        compositeLongitude: Double
+    ) {
+        self.phase = phase
+        self.midpointMethod = midpointMethod
+        self.referenceUTC = referenceUTC
+        self.personA = personA
+        self.personB = personB
+        self.compositeLongitude = compositeLongitude
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case phase
+        case midpointMethod = "midpoint_method"
+        case referenceUTC = "reference_utc"
+        case personA = "person_a"
+        case personB = "person_b"
+        case compositeLongitude = "composite_longitude"
+        case personABirthUTC = "person_a_birth_utc"
+        case personBBirthUTC = "person_b_birth_utc"
+        case personAProgressedUTC = "person_a_progressed_utc"
+        case personBProgressedUTC = "person_b_progressed_utc"
+        case personAInputLongitude = "person_a_input_longitude"
+        case personBInputLongitude = "person_b_input_longitude"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        phase = try container.decode(String.self, forKey: .phase)
+        midpointMethod = try container.decode(String.self, forKey: .midpointMethod)
+        referenceUTC = try container.decode(String.self, forKey: .referenceUTC)
+        compositeLongitude = try container.decode(Double.self, forKey: .compositeLongitude)
+
+        if let decodedA = try container.decodeIfPresent(ProgressedCompositePersonTrace.self, forKey: .personA),
+           let decodedB = try container.decodeIfPresent(ProgressedCompositePersonTrace.self, forKey: .personB) {
+            personA = decodedA
+            personB = decodedB
+        } else {
+            personA = try ProgressedCompositePersonTrace(
+                birthUTC: container.decode(String.self, forKey: .personABirthUTC),
+                progressedUTC: container.decode(String.self, forKey: .personAProgressedUTC),
+                inputLongitude: container.decode(Double.self, forKey: .personAInputLongitude)
+            )
+            personB = try ProgressedCompositePersonTrace(
+                birthUTC: container.decode(String.self, forKey: .personBBirthUTC),
+                progressedUTC: container.decode(String.self, forKey: .personBProgressedUTC),
+                inputLongitude: container.decode(Double.self, forKey: .personBInputLongitude)
+            )
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(phase, forKey: .phase)
+        try container.encode(midpointMethod, forKey: .midpointMethod)
+        try container.encode(referenceUTC, forKey: .referenceUTC)
+        try container.encode(personA, forKey: .personA)
+        try container.encode(personB, forKey: .personB)
+        try container.encode(compositeLongitude, forKey: .compositeLongitude)
+    }
+}
+
+struct ProgressedCompositePlanet: Codable, Identifiable {
+    let bodyID: String
+    let name: String
+    let longitude: Double
+    let latitude: Double
+    let declination: Double?
+    let outOfBounds: Bool?
+    let speed: Double
+    let sign: String
+    let degreeText: String
+    let trace: ProgressedCompositeTrace
+
+    var id: String { bodyID }
+
+    init(
+        bodyID: String,
+        name: String,
+        longitude: Double,
+        latitude: Double = 0,
+        declination: Double? = nil,
+        outOfBounds: Bool? = nil,
+        speed: Double = 0,
+        sign: String = "",
+        degreeText: String = "",
+        trace: ProgressedCompositeTrace
+    ) {
+        self.bodyID = bodyID
+        self.name = name
+        self.longitude = longitude
+        self.latitude = latitude
+        self.declination = declination
+        self.outOfBounds = outOfBounds
+        self.speed = speed
+        self.sign = sign
+        self.degreeText = degreeText
+        self.trace = trace
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case bodyID = "body_id"
+        case bodyName = "body_name"
+        case pointID = "point_id"
+        case id
+        case name
+        case longitude
+        case latitude
+        case declination
+        case outOfBounds = "out_of_bounds"
+        case speed
+        case sign
+        case degreeText = "degree_text"
+        case trace
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let bodyID = try container.decodeIfPresent(String.self, forKey: .bodyID)
+            ?? container.decodeIfPresent(String.self, forKey: .pointID)
+            ?? container.decodeIfPresent(String.self, forKey: .id)
+            ?? ""
+        guard !bodyID.isEmpty else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .bodyID,
+                in: container,
+                debugDescription: "Progressed composite planet requires body_id"
+            )
+        }
+        self.bodyID = bodyID
+        self.name = try container.decodeIfPresent(String.self, forKey: .name)
+            ?? container.decodeIfPresent(String.self, forKey: .bodyName)
+            ?? bodyID
+        self.longitude = try container.decode(Double.self, forKey: .longitude)
+        self.latitude = try container.decodeIfPresent(Double.self, forKey: .latitude) ?? 0
+        self.declination = try container.decodeIfPresent(Double.self, forKey: .declination)
+        self.outOfBounds = try container.decodeIfPresent(Bool.self, forKey: .outOfBounds)
+        self.speed = try container.decodeIfPresent(Double.self, forKey: .speed) ?? 0
+        self.sign = try container.decodeIfPresent(String.self, forKey: .sign) ?? ""
+        self.degreeText = try container.decodeIfPresent(String.self, forKey: .degreeText) ?? ""
+        self.trace = try container.decode(ProgressedCompositeTrace.self, forKey: .trace)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(bodyID, forKey: .bodyID)
+        try container.encode(name, forKey: .name)
+        try container.encode(longitude, forKey: .longitude)
+        try container.encode(latitude, forKey: .latitude)
+        try container.encodeIfPresent(declination, forKey: .declination)
+        try container.encodeIfPresent(outOfBounds, forKey: .outOfBounds)
+        try container.encode(speed, forKey: .speed)
+        try container.encode(sign, forKey: .sign)
+        try container.encode(degreeText, forKey: .degreeText)
+        try container.encode(trace, forKey: .trace)
+    }
+}
+
+struct ProgressedCompositeResult: Codable {
+    let meta: ProgressedCompositeMeta
+    let radixCompositePlanets: [ProgressedCompositePlanet]
+    let progressedCompositePlanets: [ProgressedCompositePlanet]
+    let progressedToRadixAspects: [AspectHit]
+    let warnings: [String]
+    let sectionErrors: [String: String]?
+
+    init(
+        meta: ProgressedCompositeMeta,
+        radixCompositePlanets: [ProgressedCompositePlanet],
+        progressedCompositePlanets: [ProgressedCompositePlanet],
+        progressedToRadixAspects: [AspectHit],
+        warnings: [String] = [],
+        sectionErrors: [String: String]? = nil
+    ) {
+        self.meta = meta
+        self.radixCompositePlanets = radixCompositePlanets
+        self.progressedCompositePlanets = progressedCompositePlanets
+        self.progressedToRadixAspects = progressedToRadixAspects
+        self.warnings = warnings
+        self.sectionErrors = sectionErrors
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case meta
+        case radixCompositePlanets = "radix_composite_planets"
+        case progressedCompositePlanets = "progressed_composite_planets"
+        case progressedToRadixAspects = "progressed_to_radix_aspects"
+        case warnings
+        case sectionErrors = "section_errors"
+        case errors
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        meta = try container.decode(ProgressedCompositeMeta.self, forKey: .meta)
+        radixCompositePlanets = try container.decode([ProgressedCompositePlanet].self, forKey: .radixCompositePlanets)
+        progressedCompositePlanets = try container.decode([ProgressedCompositePlanet].self, forKey: .progressedCompositePlanets)
+        progressedToRadixAspects = try container.decode([AspectHit].self, forKey: .progressedToRadixAspects)
+        warnings = try container.decode([String].self, forKey: .warnings)
+        sectionErrors = try container.decodeIfPresent([String: String].self, forKey: .sectionErrors)
+            ?? container.decodeIfPresent([String: String].self, forKey: .errors)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(meta, forKey: .meta)
+        try container.encode(radixCompositePlanets, forKey: .radixCompositePlanets)
+        try container.encode(progressedCompositePlanets, forKey: .progressedCompositePlanets)
+        try container.encode(progressedToRadixAspects, forKey: .progressedToRadixAspects)
+        try container.encode(warnings, forKey: .warnings)
+        try container.encodeIfPresent(sectionErrors, forKey: .sectionErrors)
     }
 }
