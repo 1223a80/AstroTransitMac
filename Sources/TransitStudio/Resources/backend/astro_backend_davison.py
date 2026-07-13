@@ -4,11 +4,9 @@ from datetime import timedelta, timezone
 from typing import Any
 
 from astro_backend_core import (
-    BODY_REGISTRY,
     moment_to_jd,
     moment_to_local_datetime,
     geographic_longitude_midpoint,
-    norm360,
     set_zodiac_mode,
 )
 from astro_backend_ephemeris import (
@@ -19,6 +17,7 @@ from astro_backend_ephemeris import (
     point_row,
     resolve_bodies,
 )
+from astro_backend_modern_points import resolve_point_set
 from astro_backend_scan import find_aspects
 
 
@@ -26,6 +25,30 @@ DAVISON_BODY_IDS = [
     "SUN", "MOON", "MERCURY", "VENUS", "MARS",
     "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO",
 ]
+
+
+def _requested_angle_values(
+    angle_ids: list[str],
+    angle_values: dict[str, float],
+) -> dict[str, float]:
+    """Return only requested axes that build_houses actually made available."""
+    return {
+        angle_id: angle_values[angle_id]
+        for angle_id in angle_ids
+        if angle_id in angle_values
+    }
+
+
+def _angle_rows(
+    angle_ids: list[str],
+    angle_values: dict[str, float],
+    cusps: list[float],
+) -> list[dict[str, Any]]:
+    return [
+        point_row(angle_id, angle_id, angle_values[angle_id], cusps)
+        for angle_id in angle_ids
+        if angle_id in angle_values
+    ]
 
 
 def _julian_day_to_datetime(jd: float) -> Any:
@@ -65,13 +88,19 @@ def calculate_davison(request: dict[str, Any], warnings: list[str]) -> dict[str,
     except Exception as exc:
         raise ValueError(f"Davison 中间时刻儒略日计算失败：{exc}") from exc
 
-    body_ids = list(DAVISON_BODY_IDS)
-    if node_mode == "true_node":
-        body_ids += ["TRUE_NODE", "SOUTH_TRUE_NODE"]
-    elif node_mode == "mean_node":
-        body_ids += ["MEAN_NODE", "SOUTH_MEAN_NODE"]
-
-    specs = resolve_bodies(body_ids, [], warnings)
+    effective_point_set = resolve_point_set(
+        request.get("point_set"),
+        default_body_ids=DAVISON_BODY_IDS,
+        default_include_nodes=True,
+        default_angle_ids=("ASC", "MC", "DSC", "IC"),
+        node_mode=node_mode,
+    )
+    body_ids = list(effective_point_set["resolved_body_ids"])
+    specs = resolve_bodies(
+        body_ids,
+        list(effective_point_set["custom_asteroids"]),
+        warnings,
+    )
     positions = calculate_positions(mid_jd, specs, warnings, sidereal=sidereal)
     cusps, angle_values, _ = build_houses(
         mid_jd, mid_lat, mid_lon, house_system, sidereal, warnings,
@@ -81,12 +110,16 @@ def calculate_davison(request: dict[str, Any], warnings: list[str]) -> dict[str,
         {**row, "house": house_for_longitude(row["longitude"], cusps)}
         for row in positions
     ]
-    angles = [
-        point_row("ASC", "ASC", angle_values["ASC"], cusps),
-        point_row("MC", "MC", angle_values["MC"], cusps),
-        point_row("DSC", "DSC", angle_values["DSC"], cusps),
-        point_row("IC", "IC", angle_values["IC"], cusps),
+    requested_angle_ids = list(effective_point_set["angle_ids"])
+    available_angle_values = _requested_angle_values(requested_angle_ids, angle_values)
+    effective_point_set["angle_ids"] = [
+        angle_id for angle_id in requested_angle_ids if angle_id in available_angle_values
     ]
+    angles = _angle_rows(
+        effective_point_set["angle_ids"],
+        available_angle_values,
+        cusps,
+    )
     house_rows_list = house_rows(cusps)
 
     all_ephemerides = {row.get("_ephemeris", "Swiss Ephemeris") for row in positions}
@@ -114,6 +147,7 @@ def calculate_davison(request: dict[str, Any], warnings: list[str]) -> dict[str,
             "person_a_utc": a_dt.astimezone(timezone.utc).isoformat() if a_dt.tzinfo else "",
             "person_b_utc": b_dt.astimezone(timezone.utc).isoformat() if b_dt.tzinfo else "",
             "ephemeris": ", ".join(sorted(all_ephemerides)) if all_ephemerides else "unknown",
+            "effective_point_set": effective_point_set,
         },
         "angles": angles,
         "houses": house_rows_list,

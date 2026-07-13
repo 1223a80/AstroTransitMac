@@ -14,10 +14,17 @@ enum TextExportBuilder {
         let payload = NatalChartExport(
             meta: NatalChartExport.Meta(
                 birthUTC: result.meta.natalUTC,
-                ephemeris: result.meta.ephemeris
+                ephemeris: result.meta.ephemeris,
+                effectivePointSet: result.meta.effectivePointSet
             ),
             positions: result.natalPositions,
+            angles: result.angles ?? [],
+            houses: result.houses ?? [],
             aspects: natalAspects(from: result),
+            declinationAspects: result.declinationAspects ?? [],
+            fixedStarConjunctions: result.natalStarConjunctions ?? [],
+            patterns: result.patterns ?? [],
+            chartProfile: result.chartProfile,
             warnings: result.warnings
         )
         return json(payload)
@@ -31,8 +38,29 @@ enum TextExportBuilder {
         rows += result.natalPositions.map {
             ["natal_position", $0.name, number($0.longitude), $0.degreeText, number($0.latitude), number($0.speed), $0.house.map(String.init) ?? "", "", "", ""]
         }
+        rows += (result.angles ?? []).map {
+            ["angle", $0.name, number($0.longitude), $0.degreeText, "", "", "\($0.house)", $0.ruler, "", ""]
+        }
+        rows += (result.houses ?? []).map {
+            ["house_cusp", "\($0.house)", number($0.cuspLongitude), $0.cuspText, "", "", "\($0.house)", $0.ruler, "", ""]
+        }
+        rows += result.natalPositions.map {
+            ["declination_position", $0.name, number($0.longitude), $0.degreeText, $0.declination.map(number) ?? "", "", $0.outOfBounds == true ? "OOB" : "", "", "", ""]
+        }
         rows += natalAspects(from: result).map {
             ["natal_aspect", $0.transitBodyName, "", "", "", "", $0.aspectName, $0.natalBodyName, number($0.separation), number($0.orb)]
+        }
+        rows += (result.declinationAspects ?? []).map {
+            ["declination_aspect", $0.body1, "", "", $0.declination1.map(number) ?? "", "", $0.type, $0.body2, "", number($0.diff)]
+        }
+        rows += (result.natalStarConjunctions ?? []).map {
+            ["fixed_star", $0.planet, "", "", "", "", "", $0.star, "", number($0.orb)]
+        }
+        rows += patternRows(result.patterns)
+        if let profile = result.chartProfile {
+            rows += profile.elements.sorted { $0.key < $1.key }.map {
+                ["chart_profile", "element_\($0.key)", "", "", "", "", "\($0.value)", "", "", ""]
+            }
         }
 
         return csv(rows)
@@ -127,6 +155,9 @@ enum TextExportBuilder {
         }
         rows += result.bInAHouses.map {
             ["b_in_a_house", $0.bodyName, "", "", "", "", "\($0.house)", "", "", ""]
+        }
+        rows += (result.crossDeclinationAspects ?? []).map {
+            ["cross_declination_aspect", $0.body1, "", "", $0.declination1.map(number) ?? "", "", $0.type, $0.body2, "", number($0.diff)]
         }
         rows += patternRows(result.patterns)
         return csv(rows)
@@ -475,15 +506,23 @@ private struct NatalChartExport: Codable {
     struct Meta: Codable {
         let birthUTC: String
         let ephemeris: String
+        let effectivePointSet: ModernPointSet?
 
         enum CodingKeys: String, CodingKey {
             case birthUTC = "birth_utc"
             case ephemeris
+            case effectivePointSet = "effective_point_set"
         }
     }
 
     let meta: Meta
     let positions: [PositionRow]
+    let angles: [ClassicalPoint]
+    let houses: [HouseRow]
     let aspects: [AspectHit]
+    let declinationAspects: [DeclinationAspect]
+    let fixedStarConjunctions: [FixedStarConjunction]
+    let patterns: [PatternResult]
+    let chartProfile: ChartProfile?
     let warnings: [String]
 }

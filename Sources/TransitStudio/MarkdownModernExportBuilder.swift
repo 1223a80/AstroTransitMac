@@ -22,6 +22,18 @@ enum MarkdownModernExportBuilder {
             }
         }
         lines.append("")
+        lines.append("## 跨盘赤纬相位")
+        if let decAspects = result.crossDeclinationAspects, !decAspects.isEmpty {
+            lines.append("| A | 类型 | B | 差值 |")
+            lines.append("|---|---|---|---:|")
+            for aspect in decAspects {
+                let type = aspect.type == "contraparallel" ? "反平行" : "平行"
+                lines.append("| \(aspect.body1) | \(type) | \(aspect.body2) | \(MarkdownExportBuilder.degree(aspect.diff, digits: 4)) |")
+            }
+        } else {
+            lines.append("无跨盘赤纬相位。")
+        }
+        lines.append("")
         lines.append("## A落入B宫")
         lines.append(contentsOf: housePlacementLines(result.aInBHouses))
         lines.append("")

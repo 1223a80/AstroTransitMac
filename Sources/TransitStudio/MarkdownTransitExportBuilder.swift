@@ -14,6 +14,27 @@ extension MarkdownExportBuilder {
 
         lines += positionSection("本命位置", result.natalPositions)
 
+        if let angles = result.angles {
+            lines += [
+                "## 轴点",
+                "",
+                "| 轴点 | 位置 | 宫 |",
+                "| --- | --- | ---: |"
+            ]
+            lines += angles.map { "| \($0.name) | \($0.degreeText) | \($0.house) |" }
+            lines.append("")
+        }
+        if let houses = result.houses {
+            lines += [
+                "## 宫头",
+                "",
+                "| 宫 | 宫头 | 主星 |",
+                "| ---: | --- | --- |"
+            ]
+            lines += houses.map { "| \($0.house) | \($0.cuspText) | \($0.ruler) |" }
+            lines.append("")
+        }
+
         let aspects = natalAspects(from: result)
         lines += [
             "## 本命相位",
@@ -35,6 +56,9 @@ extension MarkdownExportBuilder {
         }
         if let starConjunctions = result.natalStarConjunctions {
             lines += fixedStarSection("本命固定星合相", starConjunctions, names: bodyNames)
+        }
+        if let profile = result.chartProfile {
+            lines += chartProfileSection(profile)
         }
 
         lines += warnings(result.warnings)
@@ -97,6 +121,24 @@ extension MarkdownExportBuilder {
             let dec = $0.declination.map { degree($0, digits: 4) } ?? ""
             let oob = $0.outOfBounds == true ? "是" : ""
             return "| \($0.name) | \($0.degreeText) | \($0.house.map(String.init) ?? "") | \(degree($0.latitude, digits: 4)) | \(dec) | \(oob) | \(degree($0.speed, digits: 4))/日 |"
+        }
+        lines.append("")
+        return lines
+    }
+
+    private static func chartProfileSection(_ profile: ChartProfile) -> [String] {
+        var lines = [
+            "## 结构统计",
+            "",
+            "- 统计点集：\(profile.pointIDs.joined(separator: ", "))",
+            "- 元素：\(profile.elements.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: ", "))",
+            "- 模式：\(profile.modalities.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: ", "))",
+            "- 阴阳：\(profile.polarities.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: ", "))",
+            "- 半球：\(profile.hemispheres.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: ", "))",
+            "- 象限：\(profile.quadrants.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: ", "))",
+        ]
+        if !profile.omittedSections.isEmpty {
+            lines.append("- 未计算：\(profile.omittedSections.joined(separator: ", "))")
         }
         lines.append("")
         return lines

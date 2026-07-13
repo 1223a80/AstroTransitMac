@@ -200,12 +200,12 @@ extension ContentView {
 
     var modernNatalTabs: [(id: String, title: String)] {
         [
-            ("wheel", "星盘图"), ("natal_positions", "本命位置"), ("natal_aspects", "本命相位"),
+            ("wheel", "星盘图"), ("natal_positions", "本命位置"), ("natal_aspects", "本命相位"), ("structure", "结构"),
         ]
     }
 
     var modernNatalMoreTabs: [(id: String, title: String)] {
-        [("diagnostics", "诊断")]
+        [("declination", "赤纬"), ("fixed_stars", "固定星"), ("diagnostics", "诊断")]
     }
 
     var modernNatalTabTitle: String {
@@ -226,6 +226,12 @@ extension ContentView {
                 rightColumnTitle: "天体 B",
                 aspects: natalAspects(from: result)
             )
+        case "structure":
+            ModernStructureView(profile: result.chartProfile, patterns: result.patterns ?? [])
+        case "declination":
+            ModernDeclinationView(positions: result.natalPositions, aspects: result.declinationAspects ?? [])
+        case "fixed_stars":
+            ModernFixedStarsView(conjunctions: result.natalStarConjunctions ?? [])
         case "diagnostics":
             DiagnosticsView(result: result)
         default:

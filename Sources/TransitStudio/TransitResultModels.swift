@@ -11,7 +11,39 @@ struct TransitResult: Codable {
     let declinationAspects: [DeclinationAspect]?
     let natalStarConjunctions: [FixedStarConjunction]?
     let transitStarConjunctions: [FixedStarConjunction]?
+    let patterns: [PatternResult]?
+    let chartProfile: ChartProfile?
     let warnings: [String]
+
+    init(
+        meta: ResultMeta,
+        natalPositions: [PositionRow],
+        transitPositions: [PositionRow],
+        angles: [ClassicalPoint]?,
+        houses: [HouseRow]?,
+        lots: [ClassicalPoint]?,
+        aspects: [AspectHit],
+        declinationAspects: [DeclinationAspect]?,
+        natalStarConjunctions: [FixedStarConjunction]?,
+        transitStarConjunctions: [FixedStarConjunction]?,
+        warnings: [String],
+        patterns: [PatternResult]? = nil,
+        chartProfile: ChartProfile? = nil
+    ) {
+        self.meta = meta
+        self.natalPositions = natalPositions
+        self.transitPositions = transitPositions
+        self.angles = angles
+        self.houses = houses
+        self.lots = lots
+        self.aspects = aspects
+        self.declinationAspects = declinationAspects
+        self.natalStarConjunctions = natalStarConjunctions
+        self.transitStarConjunctions = transitStarConjunctions
+        self.patterns = patterns
+        self.chartProfile = chartProfile
+        self.warnings = warnings
+    }
 
     enum CodingKeys: String, CodingKey {
         case meta
@@ -24,6 +56,8 @@ struct TransitResult: Codable {
         case declinationAspects = "declination_aspects"
         case natalStarConjunctions = "natal_star_conjunctions"
         case transitStarConjunctions = "transit_star_conjunctions"
+        case patterns
+        case chartProfile = "chart_profile"
         case warnings
     }
 }
@@ -32,11 +66,13 @@ struct ResultMeta: Codable {
     let natalUTC: String
     let transitUTC: String
     let ephemeris: String
+    let effectivePointSet: ModernPointSet?
 
     enum CodingKeys: String, CodingKey {
         case natalUTC = "natal_utc"
         case transitUTC = "transit_utc"
         case ephemeris
+        case effectivePointSet = "effective_point_set"
     }
 }
 

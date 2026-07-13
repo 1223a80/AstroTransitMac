@@ -262,6 +262,38 @@ def call_houses_ex(
     raise last_error or RuntimeError("无法调用 Swiss Ephemeris houses")
 
 
+def _read_optional_angle(
+    ascmc: list[float],
+    index: int,
+    angle_id: str,
+    warnings: list[str],
+) -> float | None:
+    if len(ascmc) <= index:
+        _append_unique(
+            warnings,
+            f"轴点 {angle_id} 不可用：Swiss Ephemeris ascmc[{index}] 缺失。",
+        )
+        return None
+
+    try:
+        value = float(ascmc[index])
+    except (TypeError, ValueError, OverflowError):
+        _append_unique(
+            warnings,
+            f"轴点 {angle_id} 不可用：Swiss Ephemeris ascmc[{index}] 转换失败。",
+        )
+        return None
+
+    if not math.isfinite(value):
+        _append_unique(
+            warnings,
+            f"轴点 {angle_id} 不可用：Swiss Ephemeris ascmc[{index}] 非 finite。",
+        )
+        return None
+
+    return norm360(value)
+
+
 def build_houses(
     jd_ut: float,
     latitude: float,
@@ -303,6 +335,13 @@ def build_houses(
         warnings.append("DATA QUALITY WARNING: All house cusps are identical. House-related hits are suppressed.")
 
     angles = {"ASC": asc, "MC": mc, "DSC": norm360(asc + 180), "IC": norm360(mc + 180)}
+    vertex = _read_optional_angle(ascmc, 3, "VERTEX", warnings)
+    if vertex is not None:
+        angles["VERTEX"] = vertex
+        angles["ANTIVERTEX"] = norm360(vertex + 180)
+    equatorial_ascendant = _read_optional_angle(ascmc, 4, "EQUATORIAL_ASCENDANT", warnings)
+    if equatorial_ascendant is not None:
+        angles["EQUATORIAL_ASCENDANT"] = equatorial_ascendant
     if math.isclose(angles["ASC"], angles["DSC"], abs_tol=1e-8):
         warnings.append("DATA QUALITY WARNING: ASC 与 DSC 相同。")
     if math.isclose(angles["MC"], angles["IC"], abs_tol=1e-8):

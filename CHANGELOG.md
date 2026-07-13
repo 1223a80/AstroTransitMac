@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-13 — 现代占星第 1 批共享点集与轴点基础
+
+- 新增现代 point-set 校验/解析，统一实体、交点、角点、宫头、Lots 和自定义小行星的有效点集记录；未知点与模糊配置直接拒绝。
+- 扩展 Swiss Ephemeris 轴点读取，保留 Vertex、Antivertex 与 Equatorial Ascendant，并保持既有 `build_houses()` 返回契约。
+- 现代本命响应增加 `effective_point_set`、`patterns`、`chart_profile`；Swift 结果页与 Markdown/CSV/JSON 同步呈现结构、轴点、宫头、赤纬/OOB 和固定星。
+- Synastry 增加可配置关系点集与带 A/B 前缀的跨盘赤纬相位；Composite、Davison、Progression、Solar Arc、Harmonic 接受 optional point set，并在星历未提供点时写 warning 后移除有效点。
+- 现代请求模型为自定义小行星调用既有准备流程；本批不引入模糊出生时间或 noon convention。
+- `mode=moment` 现在在入口拒绝缺少小时、分钟或时区的出生/行运 moment；现代 node_mode 也在入口做结构化枚举校验。
+
 ## 2026-07-13 — 现代占星第 0 批基线正确性修复
 
 - 修复 Composite 非 Whole Sign 宫位重建对 `build_houses()` 三元返回值的错误 unpack；保持现有 MC-shift、Whole Sign 与真实 fallback warning 语义，并增加 Placidus/Equal/Porphyry 回归。

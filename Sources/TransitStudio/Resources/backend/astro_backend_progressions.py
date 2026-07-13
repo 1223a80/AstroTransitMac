@@ -4,7 +4,6 @@ from datetime import timedelta, timezone
 from typing import Any
 
 from astro_backend_core import (
-    BODY_REGISTRY,
     angular_separation,
     format_local,
     moment_to_jd,
@@ -21,12 +20,8 @@ from astro_backend_ephemeris import (
     resolve_bodies,
 )
 from astro_backend_scan import find_aspects
+from astro_backend_modern_points import finalize_point_set, resolve_point_set
 
-
-PROGRESSION_BODY_IDS = [
-    "SUN", "MOON", "MERCURY", "VENUS", "MARS",
-    "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO",
-]
 
 LUNATION_PHASES = [
     (0, "新月"),
@@ -39,6 +34,16 @@ LUNATION_PHASES = [
     (315, "残月"),
 ]
 
+ANGLE_NAMES = {
+    "ASC": "ASC",
+    "MC": "MC",
+    "DSC": "DSC",
+    "IC": "IC",
+    "VERTEX": "Vertex",
+    "ANTIVERTEX": "Antivertex",
+    "EQUATORIAL_ASCENDANT": "East Point (Equatorial Ascendant)",
+}
+
 
 def _calc_progressed_dt(birth_utc: Any, reference_utc: Any) -> tuple[Any, float]:
     """Compute progressed datetime and age in years."""
@@ -49,13 +54,33 @@ def _calc_progressed_dt(birth_utc: Any, reference_utc: Any) -> tuple[Any, float]
     return progressed_dt, age_years
 
 
-def _resolve_prog_bodies(node_mode: str, warnings: list[str]) -> list[Any]:
-    body_ids = list(PROGRESSION_BODY_IDS)
-    if node_mode == "true_node":
-        body_ids += ["TRUE_NODE", "SOUTH_TRUE_NODE"]
-    elif node_mode == "mean_node":
-        body_ids += ["MEAN_NODE", "SOUTH_MEAN_NODE"]
-    return resolve_bodies(body_ids, [], warnings)
+def _resolve_prog_bodies(point_set: dict[str, Any], warnings: list[str]) -> list[Any]:
+    body_ids = [
+        body_id
+        for body_id in point_set["resolved_body_ids"]
+        if not body_id.startswith("AST:")
+    ]
+    return resolve_bodies(body_ids, list(point_set["custom_asteroids"]), warnings)
+
+
+def _angle_rows(
+    angle_values: dict[str, float],
+    angle_ids: list[str],
+    cusps: list[float],
+    warnings: list[str],
+) -> tuple[list[dict[str, Any]], list[str]]:
+    rows: list[dict[str, Any]] = []
+    available: list[str] = []
+    for angle_id in angle_ids:
+        value = angle_values.get(angle_id)
+        if value is None:
+            message = f"轴点 {angle_id} 不可用，已从 effective_point_set 移除。"
+            if message not in warnings:
+                warnings.append(message)
+            continue
+        rows.append(point_row(angle_id, ANGLE_NAMES.get(angle_id, angle_id), value, cusps))
+        available.append(angle_id)
+    return rows, available
 
 
 def _calc_lunation(prog_sun_lon: float, prog_moon_lon: float) -> dict[str, Any]:
@@ -84,6 +109,11 @@ def calculate_progressions(request: dict[str, Any], warnings: list[str]) -> dict
     sidereal = set_zodiac_mode(zodiac, warnings)
     node_mode = request.get("node_mode", "true_node")
     aspect_specs = request.get("aspects", [])
+    point_set = resolve_point_set(
+        request.get("point_set") if "point_set" in request else None,
+        node_mode=node_mode,
+    )
+    selected_body_ids = set(point_set["resolved_body_ids"])
 
     birth_dt = moment_to_local_datetime(birth["moment"])
     reference = request["reference"]
@@ -108,7 +138,7 @@ def calculate_progressions(request: dict[str, Any], warnings: list[str]) -> dict
     prog_jd = jd_from_datetime(progressed_dt)
 
     section_errors: dict[str, str] = {}
-    specs = _resolve_prog_bodies(node_mode, warnings)
+    specs = _resolve_prog_bodies(point_set, warnings)
 
     natal_positions = calculate_positions(birth_jd, specs, warnings, sidereal=sidereal)
     prog_positions = calculate_positions(prog_jd, specs, warnings, sidereal=sidereal)
@@ -120,26 +150,31 @@ def calculate_progressions(request: dict[str, Any], warnings: list[str]) -> dict
         prog_jd, latitude, longitude, house_system, sidereal, warnings,
     )
 
-    natal_positioned = [
+    natal_positioned_all = [
         {**row, "house": house_for_longitude(row["longitude"], natal_cusps)}
         for row in natal_positions
     ]
-    prog_positioned = [
+    prog_positioned_all = [
         {**row, "house": house_for_longitude(row["longitude"], prog_cusps)}
         for row in prog_positions
     ]
-
-    natal_angle_rows = [
-        point_row("ASC", "ASC", natal_angles["ASC"], natal_cusps),
-        point_row("MC", "MC", natal_angles["MC"], natal_cusps),
-        point_row("DSC", "DSC", natal_angles["DSC"], natal_cusps),
-        point_row("IC", "IC", natal_angles["IC"], natal_cusps),
+    natal_positioned = [
+        row for row in natal_positioned_all if row["body_id"] in selected_body_ids
     ]
-    prog_angle_rows = [
-        point_row("ASC", "ASC", prog_angles["ASC"], prog_cusps),
-        point_row("MC", "MC", prog_angles["MC"], prog_cusps),
-        point_row("DSC", "DSC", prog_angles["DSC"], prog_cusps),
-        point_row("IC", "IC", prog_angles["IC"], prog_cusps),
+    prog_positioned = [
+        row for row in prog_positioned_all if row["body_id"] in selected_body_ids
+    ]
+
+    natal_angle_rows, natal_available_angles = _angle_rows(
+        natal_angles, point_set["angle_ids"], natal_cusps, warnings,
+    )
+    prog_angle_rows, prog_available_angles = _angle_rows(
+        prog_angles, point_set["angle_ids"], prog_cusps, warnings,
+    )
+    available_angle_ids = [
+        angle_id
+        for angle_id in point_set["angle_ids"]
+        if angle_id in natal_available_angles and angle_id in prog_available_angles
     ]
 
     natal_house_rows = house_rows(natal_cusps)
@@ -172,6 +207,13 @@ def calculate_progressions(request: dict[str, Any], warnings: list[str]) -> dict
         warnings.append(f"Progressed lunation 计算失败：{exc}")
         section_errors["progressed_lunation"] = str(exc)
 
+    point_set = finalize_point_set(
+        point_set,
+        [row["body_id"] for row in natal_positions + prog_positions],
+        available_angle_ids=available_angle_ids,
+        warnings=warnings,
+    )
+
     birth_moment = birth.get("moment", {})
     if "hour" not in birth_moment or "minute" not in birth_moment:
         warnings.append("出生时间不详，progressed angles/houses 可能不准确。")
@@ -182,6 +224,7 @@ def calculate_progressions(request: dict[str, Any], warnings: list[str]) -> dict
             "natal_utc": birth_utc_str,
             "progressed_utc": progressed_dt.isoformat() if hasattr(progressed_dt, 'isoformat') else str(progressed_dt),
             "ephemeris": ", ".join(sorted(all_ephemerides)) if all_ephemerides else "unknown",
+            "effective_point_set": point_set,
         },
         "natal_planets": natal_positioned,
         "progressed_planets": prog_positioned,

@@ -177,6 +177,32 @@ extension ContentView {
 
     // MARK: - Modern Run Actions
 
+    private var modernDefaultBodyIDs: [String] {
+        ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"]
+    }
+
+    private func modernDefaultPointSet(asteroidIDs: [Int]) -> ModernPointSet {
+        ModernPointSet(
+            bodyIDs: modernDefaultBodyIDs,
+            includeNodes: true,
+            nodeMode: modernNodeMode,
+            customAsteroids: asteroidIDs,
+            angleIDs: ["ASC", "MC", "DSC", "IC"]
+        )
+    }
+
+    private func modernNatalPointSet(asteroidIDs: [Int]) -> ModernPointSet {
+        let nodeIDs: Set<String> = ["MEAN_NODE", "TRUE_NODE", "SOUTH_MEAN_NODE", "SOUTH_TRUE_NODE"]
+        let selected = sortedBodyIDs(selectedNatalBodies)
+        return ModernPointSet(
+            bodyIDs: selected.filter { !nodeIDs.contains($0) },
+            includeNodes: selected.contains(where: nodeIDs.contains),
+            nodeMode: modernNodeMode,
+            customAsteroids: asteroidIDs,
+            angleIDs: ["ASC", "MC", "DSC", "VERTEX", "ANTIVERTEX", "EQUATORIAL_ASCENDANT"]
+        )
+    }
+
     @MainActor
     func runModernNatal() async {
         await performRun {
@@ -194,7 +220,10 @@ extension ContentView {
                 ephemerisPath: effectiveEphemerisPath,
                 noAsteroids: appState.noAsteroids,
                 requireEphemeris: appState.requireEphemeris,
-                sameChart: true
+                sameChart: true,
+                nodeMode: modernNodeMode,
+                pointSet: modernNatalPointSet(asteroidIDs: asteroidIDs),
+                patternsEnabled: true
             )
             let result = try await BackendClient.calculate(request: request, pythonPath: appState.pythonPath)
             calcVM.fullNatalResult = result
@@ -208,14 +237,17 @@ extension ContentView {
         guard let a = requireCoordinates(birthLatitude, birthLongitude),
               let b = requireCoordinates(modernPersonBLatitude, modernPersonBLongitude) else { return }
         await performRun {
+            let asteroidIDs = parseAsteroids(customAsteroids)
+            let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
             let pair = makePersonPair(latitudeA: a.latitude, longitudeA: a.longitude, latitudeB: b.latitude, longitudeB: b.longitude)
             let request = SynastryRequest(
                 mode: "synastry",
                 personA: pair.personA,
                 personB: pair.personB,
                 houseSystem: selectedHouseSystem, zodiac: selectedZodiac, nodeMode: modernNodeMode,
-                aspects: selectedAspectRequests(orb: globalOrb), ephemerisPath: normalizedEphemerisPath,
-                noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
+                aspects: selectedAspectRequests(orb: globalOrb), ephemerisPath: effectiveEphemerisPath,
+                noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris,
+                pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.synastry(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .synastry(result)
@@ -227,14 +259,17 @@ extension ContentView {
         guard let a = requireCoordinates(birthLatitude, birthLongitude),
               let b = requireCoordinates(modernPersonBLatitude, modernPersonBLongitude) else { return }
         await performRun {
+            let asteroidIDs = parseAsteroids(customAsteroids)
+            let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
             let pair = makePersonPair(latitudeA: a.latitude, longitudeA: a.longitude, latitudeB: b.latitude, longitudeB: b.longitude)
             let request = CompositeRequest(
                 mode: "composite",
                 personA: pair.personA,
                 personB: pair.personB,
                 houseSystem: selectedHouseSystem, zodiac: selectedZodiac, nodeMode: modernNodeMode,
-                aspects: selectedAspectRequests(orb: globalOrb), ephemerisPath: normalizedEphemerisPath,
-                noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
+                aspects: selectedAspectRequests(orb: globalOrb), ephemerisPath: effectiveEphemerisPath,
+                noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris,
+                pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.composite(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .composite(result)
@@ -246,14 +281,17 @@ extension ContentView {
         guard let a = requireCoordinates(birthLatitude, birthLongitude),
               let b = requireCoordinates(modernPersonBLatitude, modernPersonBLongitude) else { return }
         await performRun {
+            let asteroidIDs = parseAsteroids(customAsteroids)
+            let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
             let pair = makePersonPair(latitudeA: a.latitude, longitudeA: a.longitude, latitudeB: b.latitude, longitudeB: b.longitude)
             let request = DavisonRequest(
                 mode: "davison",
                 personA: pair.personA,
                 personB: pair.personB,
                 houseSystem: selectedHouseSystem, zodiac: selectedZodiac, nodeMode: modernNodeMode,
-                aspects: selectedAspectRequests(orb: globalOrb), ephemerisPath: normalizedEphemerisPath,
-                noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
+                aspects: selectedAspectRequests(orb: globalOrb), ephemerisPath: effectiveEphemerisPath,
+                noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris,
+                pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.davison(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .davison(result)
@@ -264,6 +302,8 @@ extension ContentView {
     func runProgressions() async {
         guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
         await performRun {
+            let asteroidIDs = parseAsteroids(customAsteroids)
+            let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
             let request = ProgressionRequest(
                 mode: "progression",
                 birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
@@ -271,7 +311,8 @@ extension ContentView {
                 houseSystem: selectedHouseSystem,
                 zodiac: selectedZodiac,
                 nodeMode: modernNodeMode, aspects: selectedAspectRequests(orb: globalOrb),
-                ephemerisPath: normalizedEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
+                ephemerisPath: effectiveEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris,
+                pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.progression(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .progression(result)
@@ -282,6 +323,8 @@ extension ContentView {
     func runSolarArc() async {
         guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
         await performRun {
+            let asteroidIDs = parseAsteroids(customAsteroids)
+            let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
             let request = SolarArcRequest(
                 mode: "solar_arc",
                 birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
@@ -290,7 +333,8 @@ extension ContentView {
                 zodiac: selectedZodiac,
                 nodeMode: modernNodeMode, aspects: selectedAspectRequests(orb: globalOrb),
                 patternsEnabled: true,
-                ephemerisPath: normalizedEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
+                ephemerisPath: effectiveEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris,
+                pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.solarArc(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .solarArc(result)
@@ -301,6 +345,8 @@ extension ContentView {
     func runHarmonic() async {
         guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
         await performRun {
+            let asteroidIDs = parseAsteroids(customAsteroids)
+            let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
             let request = HarmonicRequest(
                 mode: "harmonic",
                 birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
@@ -309,7 +355,8 @@ extension ContentView {
                 zodiac: selectedZodiac,
                 nodeMode: modernNodeMode,
                 aspects: selectedAspectRequests(orb: globalOrb),
-                ephemerisPath: normalizedEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris
+                ephemerisPath: effectiveEphemerisPath, noAsteroids: appState.noAsteroids, requireEphemeris: appState.requireEphemeris,
+                pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.harmonic(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .harmonic(result)

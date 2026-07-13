@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Any
 
 from astro_backend_core import (
-    BODY_REGISTRY,
     circular_midpoint,
+    format_longitude,
     geographic_longitude_midpoint,
     moment_to_jd,
     norm360,
@@ -18,6 +18,7 @@ from astro_backend_ephemeris import (
     point_row,
     resolve_bodies,
 )
+from astro_backend_modern_points import resolve_point_set
 from astro_backend_scan import find_aspects
 
 
@@ -27,9 +28,37 @@ COMPOSITE_BODY_IDS = [
 ]
 
 
-def _positions_for(jd: float, specs: list[dict[str, Any]], sidereal: bool, warnings: list[str]) -> dict[str, dict[str, Any]]:
+def _positions_for(jd: float, specs: list[Any], sidereal: bool, warnings: list[str]) -> dict[str, dict[str, Any]]:
     rows = calculate_positions(jd, specs, warnings, sidereal=sidereal)
     return {row["body_id"]: row for row in rows}
+
+
+def _requested_angle_values(
+    angle_ids: list[str],
+    left_angles: dict[str, float],
+    right_angles: dict[str, float],
+) -> dict[str, float]:
+    """Midpoint only the requested axes that both source charts provide."""
+    values: dict[str, float] = {}
+    for angle_id in angle_ids:
+        left_value = left_angles.get(angle_id)
+        right_value = right_angles.get(angle_id)
+        if left_value is None or right_value is None:
+            continue
+        values[angle_id] = circular_midpoint(left_value, right_value)
+    return values
+
+
+def _angle_rows(
+    angle_ids: list[str],
+    angle_values: dict[str, float],
+    cusps: list[float],
+) -> list[dict[str, Any]]:
+    return [
+        point_row(angle_id, angle_id, angle_values[angle_id], cusps)
+        for angle_id in angle_ids
+        if angle_id in angle_values
+    ]
 
 
 def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
@@ -49,13 +78,20 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
     b_lat = float(person_b["latitude"])
     b_lon = float(person_b["longitude"])
 
-    body_ids = list(COMPOSITE_BODY_IDS)
-    if node_mode == "true_node":
-        body_ids += ["TRUE_NODE", "SOUTH_TRUE_NODE"]
-    elif node_mode == "mean_node":
-        body_ids += ["MEAN_NODE", "SOUTH_MEAN_NODE"]
-
-    specs = resolve_bodies(body_ids, [], warnings)
+    effective_point_set = resolve_point_set(
+        request.get("point_set"),
+        default_body_ids=COMPOSITE_BODY_IDS,
+        default_include_nodes=True,
+        default_angle_ids=("ASC", "MC", "DSC", "IC"),
+        node_mode=node_mode,
+    )
+    body_ids = list(effective_point_set["resolved_body_ids"])
+    specs = resolve_bodies(
+        body_ids,
+        list(effective_point_set["custom_asteroids"]),
+        warnings,
+    )
+    specs_by_id = {spec.body_id: spec for spec in specs}
 
     a_positions = _positions_for(a_jd, specs, sidereal, warnings)
     b_positions = _positions_for(b_jd, specs, sidereal, warnings)
@@ -74,6 +110,9 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
     asc_lon = geographic_longitude_midpoint(a_lon, b_lon)
     a_cusps, a_angles, _ = build_houses(a_jd, a_lat, a_lon, house_system, sidereal, warnings)
     b_cusps, b_angles, _ = build_houses(b_jd, b_lat, b_lon, house_system, sidereal, warnings)
+
+    # ASC/MC are needed internally for the existing composite house rebuild,
+    # even when the caller did not request those angle rows.
     comp_asc = circular_midpoint(a_angles["ASC"], b_angles["ASC"])
     comp_mc = circular_midpoint(a_angles["MC"], b_angles["MC"])
 
@@ -92,12 +131,11 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
             )
             comp_cusps = [norm360(comp_asc + 30.0 * i) for i in range(12)]
 
-    comp_angles = {
-        "ASC": comp_asc,
-        "MC": comp_mc,
-        "DSC": norm360(comp_asc + 180.0),
-        "IC": norm360(comp_mc + 180.0),
-    }
+    comp_angles = _requested_angle_values(
+        list(effective_point_set["angle_ids"]),
+        a_angles,
+        b_angles,
+    )
 
     comp_planet_rows: list[dict[str, Any]] = []
     all_ephemerides: set[str] = set()
@@ -105,12 +143,11 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
         if body_id not in composite_lons:
             continue
         lon = composite_lons[body_id]
-        spec = BODY_REGISTRY.get(body_id)
+        spec = specs_by_id.get(body_id)
         if spec is None:
             continue
         sign, degree_text = "", ""
         try:
-            from astro_backend_core import format_longitude
             sign, degree_text = format_longitude(lon)
         except Exception as exc:
             warnings.append(f"composite 计算局部失败: {exc}")
@@ -131,12 +168,15 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
         if eph:
             all_ephemerides.add(eph)
 
-    comp_angle_rows = [
-        point_row("ASC", "ASC", comp_angles["ASC"], comp_cusps),
-        point_row("MC", "MC", comp_angles["MC"], comp_cusps),
-        point_row("DSC", "DSC", comp_angles["DSC"], comp_cusps),
-        point_row("IC", "IC", comp_angles["IC"], comp_cusps),
+    requested_angle_ids = list(effective_point_set["angle_ids"])
+    effective_point_set["angle_ids"] = [
+        angle_id for angle_id in requested_angle_ids if angle_id in comp_angles
     ]
+    comp_angle_rows = _angle_rows(
+        effective_point_set["angle_ids"],
+        comp_angles,
+        comp_cusps,
+    )
     comp_house_rows = house_rows(comp_cusps)
 
     section_errors: dict[str, str] = {}
@@ -162,6 +202,7 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
             "person_a_utc": a_utc,
             "person_b_utc": b_utc,
             "ephemeris": ", ".join(sorted(all_ephemerides)) if all_ephemerides else "unknown",
+            "effective_point_set": effective_point_set,
         },
         "angles": comp_angle_rows,
         "houses": comp_house_rows,

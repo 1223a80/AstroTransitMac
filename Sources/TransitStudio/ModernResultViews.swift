@@ -21,6 +21,104 @@ struct ModernDiagnosticsView: View {
     }
 }
 
+struct ModernStructureView: View {
+    let profile: ChartProfile?
+    let patterns: [PatternResult]
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                Text("结构统计").font(TS.Font.sectionTitle)
+                if let profile {
+                    profileBlock("统计点集", profile.pointIDs.joined(separator: ", "))
+                    profileBlock("元素", profile.elements.sorted { $0.key < $1.key }.map { "\($0.key): \($0.value)" }.joined(separator: " · "))
+                    profileBlock("模式", profile.modalities.sorted { $0.key < $1.key }.map { "\($0.key): \($0.value)" }.joined(separator: " · "))
+                    profileBlock("阴阳", profile.polarities.sorted { $0.key < $1.key }.map { "\($0.key): \($0.value)" }.joined(separator: " · "))
+                    profileBlock("半球", profile.hemispheres.sorted { $0.key < $1.key }.map { "\($0.key): \($0.value)" }.joined(separator: " · "))
+                    profileBlock("象限", profile.quadrants.sorted { $0.key < $1.key }.map { "\($0.key): \($0.value)" }.joined(separator: " · "))
+                    if !profile.omittedSections.isEmpty {
+                        profileBlock("未计算", profile.omittedSections.joined(separator: ", "))
+                    }
+                } else {
+                    Text("暂无结构统计。请使用现代本命排盘并启用结构分析。").foregroundStyle(.secondary)
+                }
+                Text("相位图形").font(TS.Font.sectionTitle)
+                PatternListView(patterns: patterns)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private func profileBlock(_ title: String, _ value: String) -> some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.xs) {
+            Text(title).font(TS.Font.label).foregroundStyle(.secondary)
+            Text(value.isEmpty ? "—" : value).font(TS.Font.body)
+        }
+    }
+}
+
+struct ModernDeclinationView: View {
+    let positions: [PositionRow]
+    let aspects: [DeclinationAspect]
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                Text("赤纬位置（含 OOB）").font(TS.Font.sectionTitle)
+                Table(positions) {
+                    TableColumn("天体", value: \.name)
+                    TableColumn("赤纬") { row in Text(row.declination.map { String(format: "%.4f°", $0) } ?? "—") }
+                    TableColumn("OOB") { row in Text(row.outOfBounds == true ? "是" : "") }
+                }
+                .tsTableStyle()
+                Text("赤纬相位").font(TS.Font.sectionTitle)
+                if aspects.isEmpty {
+                    Text("没有平行或反平行命中").foregroundStyle(.secondary)
+                } else {
+                    VStack(alignment: .leading, spacing: TS.Spacing.sm) {
+                        ForEach(Array(aspects.enumerated()), id: \.offset) { item in
+                            HStack(spacing: TS.Spacing.md) {
+                                Text(item.element.body1)
+                                Text(item.element.type == "contraparallel" ? "反平行" : "平行")
+                                    .foregroundStyle(.secondary)
+                                Text(item.element.body2)
+                                Text(String(format: "%.4f°", item.element.diff))
+                                    .monospacedDigit()
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+struct ModernFixedStarsView: View {
+    let conjunctions: [FixedStarConjunction]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Text("固定星合相").font(TS.Font.sectionTitle)
+            if conjunctions.isEmpty {
+                EmptyStateView(title: "无固定星合相", systemImage: "star")
+            } else {
+                VStack(alignment: .leading, spacing: TS.Spacing.sm) {
+                    ForEach(Array(conjunctions.enumerated()), id: \.offset) { item in
+                        HStack(spacing: TS.Spacing.md) {
+                            Text(item.element.planet)
+                            Text(item.element.star)
+                            Text(String(format: "%.2f°", item.element.orb)).monospacedDigit()
+                            Text(item.element.starNature).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 // MARK: - Synastry Views
 
 struct SynastryResultPane: View {
@@ -53,7 +151,7 @@ struct SynastryResultPane: View {
     }
 
     var moreTabs: [(String, String)] {
-        [("diagnostics", "诊断"), ("json", "JSON")]
+        [("declination", "赤纬"), ("diagnostics", "诊断"), ("json", "JSON")]
     }
 
     var tabTitle: String {
@@ -78,6 +176,8 @@ struct SynastryResultPane: View {
             PositionTableView(title: "A 本命位置", positions: result.personAPlanets)
         case "person_b_planets":
             PositionTableView(title: "B 本命位置", positions: result.personBPlanets)
+        case "declination":
+            ModernDeclinationView(positions: result.personAPlanets, aspects: result.crossDeclinationAspects ?? [])
         case "diagnostics":
             ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
         case "json":

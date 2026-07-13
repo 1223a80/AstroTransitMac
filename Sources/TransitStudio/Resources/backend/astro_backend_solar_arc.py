@@ -4,8 +4,6 @@ from datetime import timedelta, timezone
 from typing import Any
 
 from astro_backend_core import (
-    BODY_REGISTRY,
-    angular_separation,
     moment_to_jd,
     moment_to_local_datetime,
     norm360,
@@ -20,12 +18,54 @@ from astro_backend_ephemeris import (
     resolve_bodies,
 )
 from astro_backend_scan import find_aspects
+from astro_backend_modern_points import finalize_point_set, resolve_point_set
 
 
-SOLAR_ARC_BODY_IDS = [
-    "SUN", "MOON", "MERCURY", "VENUS", "MARS",
-    "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO",
-]
+ANGLE_NAMES = {
+    "ASC": "ASC",
+    "MC": "MC",
+    "DSC": "DSC",
+    "IC": "IC",
+    "VERTEX": "Vertex",
+    "ANTIVERTEX": "Antivertex",
+    "EQUATORIAL_ASCENDANT": "East Point (Equatorial Ascendant)",
+}
+
+
+def _resolve_solar_arc_specs(
+    point_set: dict[str, Any],
+    warnings: list[str],
+) -> list[Any]:
+    # The Sun is the Solar Arc anchor even when the caller intentionally does
+    # not request it as an output point.
+    body_ids = list(point_set["resolved_body_ids"])
+    if "SUN" not in body_ids:
+        body_ids.insert(0, "SUN")
+    return resolve_bodies(
+        [body_id for body_id in body_ids if not body_id.startswith("AST:")],
+        list(point_set["custom_asteroids"]),
+        warnings,
+    )
+
+
+def _angle_rows(
+    angle_values: dict[str, float],
+    angle_ids: list[str],
+    cusps: list[float],
+    warnings: list[str],
+) -> tuple[list[dict[str, Any]], list[str]]:
+    rows: list[dict[str, Any]] = []
+    available: list[str] = []
+    for angle_id in angle_ids:
+        value = angle_values.get(angle_id)
+        if value is None:
+            message = f"轴点 {angle_id} 不可用，已从 effective_point_set 移除。"
+            if message not in warnings:
+                warnings.append(message)
+            continue
+        rows.append(point_row(angle_id, ANGLE_NAMES.get(angle_id, angle_id), value, cusps))
+        available.append(angle_id)
+    return rows, available
 
 
 def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
@@ -37,6 +77,11 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     sidereal = set_zodiac_mode(zodiac, warnings)
     node_mode = request.get("node_mode", "true_node")
     aspect_specs = request.get("aspects", [])
+    point_set = resolve_point_set(
+        request.get("point_set") if "point_set" in request else None,
+        node_mode=node_mode,
+    )
+    selected_body_ids = set(point_set["resolved_body_ids"])
 
     birth_dt = moment_to_local_datetime(birth["moment"])
     reference = request["reference"]
@@ -61,13 +106,7 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     from astro_backend_core import jd_from_datetime
     prog_jd = jd_from_datetime(progressed_dt)
 
-    body_ids = list(SOLAR_ARC_BODY_IDS)
-    if node_mode == "true_node":
-        body_ids += ["TRUE_NODE", "SOUTH_TRUE_NODE"]
-    elif node_mode == "mean_node":
-        body_ids += ["MEAN_NODE", "SOUTH_MEAN_NODE"]
-
-    specs = resolve_bodies(body_ids, [], warnings)
+    specs = _resolve_solar_arc_specs(point_set, warnings)
     natal_positions = calculate_positions(birth_jd, specs, warnings, sidereal=sidereal)
     prog_positions = calculate_positions(prog_jd, specs, warnings, sidereal=sidereal)
 
@@ -83,9 +122,12 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     natal_cusps, natal_angles, _ = build_houses(
         birth_jd, latitude, longitude, house_system, sidereal, warnings,
     )
-    natal_positioned = [
+    natal_positioned_all = [
         {**row, "house": house_for_longitude(row["longitude"], natal_cusps)}
         for row in natal_positions
+    ]
+    natal_positioned = [
+        row for row in natal_positioned_all if row["body_id"] in selected_body_ids
     ]
 
     # Solar arc houses move by the same arc as every directed point.  Assign
@@ -94,8 +136,8 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     sa_house_rows = house_rows(sa_cusps)
 
     # Solar arc positions = natal lon + arc
-    sa_positioned: list[dict[str, Any]] = []
-    for row in natal_positions:
+    sa_positioned_all: list[dict[str, Any]] = []
+    for row in natal_positioned_all:
         sa_lon = norm360(row["longitude"] + arc)
         sign, degree_text = "", ""
         try:
@@ -104,7 +146,7 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
         except Exception:
             pass
         h = house_for_longitude(sa_lon, sa_cusps)
-        sa_positioned.append({
+        sa_positioned_all.append({
             "body_id": row["body_id"],
             "name": row["name"],
             "longitude": sa_lon,
@@ -114,6 +156,9 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
             "degree_text": degree_text,
             "house": h,
         })
+    sa_positioned = [
+        row for row in sa_positioned_all if row["body_id"] in selected_body_ids
+    ]
 
     # Solar arc angles
     sa_asc = norm360(natal_angles["ASC"] + arc)
@@ -122,12 +167,15 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     sa_ic = norm360(sa_mc + 180.0)
 
     sa_angles = {"ASC": sa_asc, "MC": sa_mc, "DSC": sa_dsc, "IC": sa_ic}
-    sa_angle_rows = [
-        point_row("ASC", "ASC", sa_asc, sa_cusps),
-        point_row("MC", "MC", sa_mc, sa_cusps),
-        point_row("DSC", "DSC", sa_dsc, sa_cusps),
-        point_row("IC", "IC", sa_ic, sa_cusps),
-    ]
+    for angle_id in point_set["angle_ids"]:
+        if angle_id in sa_angles:
+            continue
+        natal_value = natal_angles.get(angle_id)
+        if natal_value is not None:
+            sa_angles[angle_id] = norm360(natal_value + arc)
+    sa_angle_rows, available_angle_ids = _angle_rows(
+        sa_angles, point_set["angle_ids"], sa_cusps, warnings,
+    )
 
     all_ephemerides = {row.get("_ephemeris", "Swiss Ephemeris") for row in natal_positions + prog_positions}
 
@@ -157,15 +205,23 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
             warnings.append(f"Solar Arc 图形识别失败：{exc}")
             section_errors["patterns"] = str(exc)
 
+    point_set = finalize_point_set(
+        point_set,
+        [row["body_id"] for row in natal_positions + prog_positions],
+        available_angle_ids=available_angle_ids,
+        warnings=warnings,
+    )
+
     return {
         "meta": {
             "method": "true_solar_arc",
             "natal_utc": birth_utc_str,
             "progressed_utc": progressed_dt.isoformat() if hasattr(progressed_dt, 'isoformat') else str(progressed_dt),
             "ephemeris": ", ".join(sorted(all_ephemerides)) if all_ephemerides else "unknown",
+            "effective_point_set": point_set,
         },
-        "natal_planets": [row for row in natal_positioned if row["body_id"] in body_ids],
-        "solar_arc_planets": [row for row in sa_positioned if row["body_id"] in body_ids],
+        "natal_planets": natal_positioned,
+        "solar_arc_planets": sa_positioned,
         "solar_arc_angles": sa_angle_rows,
         "solar_arc_houses": sa_house_rows,
         "solar_arc_to_natal_aspects": sa_to_natal,

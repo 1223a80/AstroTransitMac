@@ -46,6 +46,14 @@ from astro_backend_ephemeris import (
 )
 from astro_backend_scan import find_aspects, scan_window
 from astro_backend_fixed_stars import compute_star_positions, find_star_conjunctions
+from astro_backend_modern_points import (
+    DEFAULT_MODERN_BODY_IDS,
+    NODE_BODY_IDS,
+    finalize_point_set,
+    resolve_point_set,
+    validate_point_set,
+)
+from astro_backend_patterns import find_patterns
 from astro_backend_classical_medieval import (
     sect_light_triplicity_rulers,
     determine_kurios,
@@ -107,6 +115,78 @@ def _cross_declination_aspects(
     return aspects
 
 
+def _legacy_moment_point_set(
+    body_ids: list[str],
+    custom_asteroids: list[int],
+) -> dict[str, Any]:
+    """Describe the pre-point_set moment request without changing its output."""
+    selected_nodes = [body_id for body_id in body_ids if body_id in NODE_BODY_IDS]
+    body_ids = [body_id for body_id in body_ids if body_id not in NODE_BODY_IDS]
+    resolved = list(dict.fromkeys(body_ids + selected_nodes + [f"AST:{number}" for number in custom_asteroids]))
+    node_mode = "mean_node" if any("MEAN" in node_id for node_id in selected_nodes) else "true_node"
+    return {
+        "body_ids": body_ids,
+        "include_nodes": bool(selected_nodes),
+        "node_mode": node_mode,
+        "custom_asteroids": custom_asteroids,
+        "angle_ids": ["ASC", "MC", "DSC", "IC"],
+        "house_cusps": [],
+        "lot_ids": [],
+        "resolved_body_ids": resolved,
+    }
+
+
+def _modern_chart_profile(
+    positions: list[dict[str, Any]],
+    point_ids: list[str],
+    *,
+    reliable_houses: bool,
+) -> dict[str, Any]:
+    """Return transparent counts; deliberately no interpretive conclusion."""
+    from astro_backend_core import zodiac_sign_index
+
+    element_names = ("fire", "earth", "air", "water")
+    modality_names = ("cardinal", "fixed", "mutable")
+    elements = {name: 0 for name in element_names}
+    modalities = {name: 0 for name in modality_names}
+    polarities = {"positive": 0, "negative": 0}
+    hemispheres = {"east": 0, "west": 0, "above": 0, "below": 0}
+    quadrants = {"q1": 0, "q2": 0, "q3": 0, "q4": 0}
+    by_id = {row.get("body_id"): row for row in positions}
+    included_ids = [body_id for body_id in point_ids if body_id in by_id]
+
+    for body_id in included_ids:
+        row = by_id[body_id]
+        sign = zodiac_sign_index(float(row["longitude"]))
+        elements[element_names[sign % 4]] += 1
+        modalities[modality_names[sign % 3]] += 1
+        polarities["positive" if sign % 2 == 0 else "negative"] += 1
+        house = row.get("house")
+        if reliable_houses and isinstance(house, int) and 1 <= house <= 12:
+            if house in {10, 11, 12, 1, 2, 3}:
+                hemispheres["east"] += 1
+            else:
+                hemispheres["west"] += 1
+            if house >= 7:
+                hemispheres["above"] += 1
+            else:
+                hemispheres["below"] += 1
+            quadrants[f"q{((house - 1) // 3) + 1}"] += 1
+
+    omitted_sections: list[str] = []
+    if not reliable_houses:
+        omitted_sections.extend(["hemispheres", "quadrants"])
+    return {
+        "point_ids": included_ids,
+        "elements": elements,
+        "modalities": modalities,
+        "polarities": polarities,
+        "hemispheres": hemispheres,
+        "quadrants": quadrants,
+        "omitted_sections": omitted_sections,
+    }
+
+
 def _closest_primary_directions(
     primary_directions: list[dict[str, Any]],
     reference_age: float,
@@ -126,7 +206,21 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
     zodiac = (birth or {}).get("zodiac", request.get("zodiac", "tropical"))
     sidereal = set_zodiac_mode(zodiac, warnings)
     same_chart = bool(request.get("sameChart", request.get("same_chart", False)))
-    custom_asteroids = [int(value) for value in request.get("customAsteroids", [])]
+    legacy_custom_asteroids = [int(value) for value in request.get("customAsteroids", [])]
+    legacy_natal_body_ids = list(request.get("natalBodies", []))
+    if "point_set" in request:
+        point_set = resolve_point_set(
+            request.get("point_set"),
+            default_body_ids=[
+                body_id for body_id in legacy_natal_body_ids if body_id not in NODE_BODY_IDS
+            ] or DEFAULT_MODERN_BODY_IDS,
+            default_include_nodes=any(body_id in NODE_BODY_IDS for body_id in legacy_natal_body_ids),
+            node_mode=str(request.get("node_mode", "true_node")),
+            legacy_custom_asteroids=legacy_custom_asteroids,
+        )
+    else:
+        point_set = _legacy_moment_point_set(legacy_natal_body_ids, legacy_custom_asteroids)
+    custom_asteroids = list(point_set["custom_asteroids"])
     natal_specs = resolve_bodies(request.get("natalBodies", []), custom_asteroids, warnings)
     transit_specs = resolve_bodies(request.get("transitBodies", []), custom_asteroids, warnings)
 
@@ -152,12 +246,24 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
             {**row, "house": house_for_longitude(row["longitude"], cusps)}
             for row in natal_positions
         ]
-        angles = [
-            point_row("ASC", "ASC", angle_values["ASC"], cusps),
-            point_row("MC", "MC", angle_values["MC"], cusps),
-            point_row("DSC", "DSC", angle_values["DSC"], cusps),
-            point_row("IC", "IC", angle_values["IC"], cusps),
-        ]
+        angle_names = {
+            "ASC": "ASC",
+            "MC": "MC",
+            "DSC": "DSC",
+            "IC": "IC",
+            "VERTEX": "Vertex",
+            "ANTIVERTEX": "Antivertex",
+            "EQUATORIAL_ASCENDANT": "East Point (Equatorial Ascendant)",
+        }
+        available_angle_ids: list[str] = []
+        for angle_id in point_set["angle_ids"]:
+            value = angle_values.get(angle_id)
+            if value is None:
+                warnings.append(f"轴点 {angle_id} 不可用，已从 effective_point_set 移除。")
+                continue
+            angles.append(point_row(angle_id, angle_names.get(angle_id, angle_id), value, cusps))
+            available_angle_ids.append(angle_id)
+        point_set["angle_ids"] = available_angle_ids
         houses = house_rows(cusps)
         lot_specs = [BODY_REGISTRY[body_id] for body_id in CLASSICAL_BODY_IDS]
         lot_positions = calculate_positions(natal_jd, lot_specs, warnings, sidereal=sidereal)
@@ -185,12 +291,18 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
         transit_jd, warnings=warnings, sidereal=sidereal
     )
     transit_star_conj = [] if same_chart else find_star_conjunctions(transit_positions, transit_star_positions)
-
-    return {
+    point_set = finalize_point_set(
+        point_set,
+        [row.get("body_id") for row in natal_positions + transit_positions],
+        available_angle_ids=point_set.get("angle_ids", []) if birth else [],
+        warnings=warnings,
+    )
+    response: dict[str, Any] = {
         "meta": {
             "natal_utc": natal_utc,
             "transit_utc": transit_utc,
             "ephemeris": ", ".join(sorted(ephemerides)) if ephemerides else "unknown",
+            "effective_point_set": point_set,
         },
         "natal_positions": [public_position(row) for row in natal_positions],
         "transit_positions": [public_position(row) for row in transit_positions],
@@ -203,6 +315,34 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
         "aspects": aspects,
         "warnings": warnings,
     }
+
+    if same_chart and bool(request.get("patterns_enabled", False)):
+        analysis_ids = [
+            body_id for body_id in point_set["resolved_body_ids"]
+            if body_id in {row.get("body_id") for row in natal_positions}
+        ]
+        analysis_positions = {
+            row["body_id"]: float(row["longitude"])
+            for row in natal_positions
+            if row.get("body_id") in analysis_ids
+        }
+        analysis_house_map = {
+            row["body_id"]: int(row["house"])
+            for row in natal_positions
+            if row.get("body_id") in analysis_ids and isinstance(row.get("house"), int)
+        }
+        response["patterns"] = find_patterns(
+            analysis_positions,
+            aspects,
+            house_map=analysis_house_map,
+            warnings=warnings,
+        )
+        response["chart_profile"] = _modern_chart_profile(
+            natal_positions,
+            analysis_ids,
+            reliable_houses=bool(birth),
+        )
+    return response
 
 
 def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
@@ -622,6 +762,23 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             if f not in ref:
                 missing.append(f"reference.{f}")
     invalid: list[str] = []
+    if mode == "moment":
+        for field in ("natal", "transit"):
+            moment = request.get(field)
+            if not isinstance(moment, dict):
+                invalid.append(f"{field} must be an object with an exact moment")
+                continue
+            for key in ("year", "month", "day", "hour", "minute", "timezone"):
+                if key not in moment:
+                    missing.append(f"{field}.{key}")
+        if isinstance(request.get("birth"), dict):
+            birth_moment = request["birth"].get("moment")
+            if not isinstance(birth_moment, dict):
+                missing.append("birth.moment")
+            else:
+                for key in ("year", "month", "day", "hour", "minute", "timezone"):
+                    if key not in birth_moment:
+                        missing.append(f"birth.moment.{key}")
     if mode == "horary" and "chart" in request:
         chart = request["chart"]
         if not isinstance(chart, dict):
@@ -684,6 +841,18 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             for f in ref_fields:
                 if f not in ref:
                     missing.append(f"reference.{f}")
+    modern_point_modes = {
+        "moment", "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
+    }
+    if mode in modern_point_modes and "point_set" in request:
+        node_mode = str(request.get("node_mode", "true_node"))
+        invalid.extend(f"point_set: {error}" for error in validate_point_set(request.get("point_set"), node_mode=node_mode))
+    if mode in modern_point_modes:
+        node_mode_value = request.get("node_mode", "true_node")
+        if not isinstance(node_mode_value, str) or node_mode_value not in {"true_node", "mean_node"}:
+            invalid.append("node_mode must be one of: true_node, mean_node")
+    if mode == "moment" and "patterns_enabled" in request and not isinstance(request["patterns_enabled"], bool):
+        invalid.append("patterns_enabled must be a boolean")
     missing = list(dict.fromkeys(missing))
     if missing or invalid:
         parts: list[str] = []

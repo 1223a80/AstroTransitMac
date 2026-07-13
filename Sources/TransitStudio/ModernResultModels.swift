@@ -82,6 +82,22 @@ struct PatternResult: Codable, Identifiable {
     }
 }
 
+struct ChartProfile: Codable {
+    let pointIDs: [String]
+    let elements: [String: Int]
+    let modalities: [String: Int]
+    let polarities: [String: Int]
+    let hemispheres: [String: Int]
+    let quadrants: [String: Int]
+    let omittedSections: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case pointIDs = "point_ids"
+        case elements, modalities, polarities, hemispheres, quadrants
+        case omittedSections = "omitted_sections"
+    }
+}
+
 struct ModernMeta: Codable {
     let method: String
     let personAUTC: String?
@@ -89,6 +105,46 @@ struct ModernMeta: Codable {
     let natalUTC: String?
     let progressedUTC: String?
     let ephemeris: String?
+    let schemaVersion: Int?
+    let zodiac: String?
+    let houseSystemRequested: String?
+    let houseSystemEffective: String?
+    let nodeMode: String?
+    let displayTimezone: String?
+    let effectivePointSet: ModernPointSet?
+    let calculationAssumptions: [String: String]?
+
+    init(
+        method: String,
+        personAUTC: String?,
+        personBUTC: String?,
+        natalUTC: String?,
+        progressedUTC: String?,
+        ephemeris: String?,
+        schemaVersion: Int? = nil,
+        zodiac: String? = nil,
+        houseSystemRequested: String? = nil,
+        houseSystemEffective: String? = nil,
+        nodeMode: String? = nil,
+        displayTimezone: String? = nil,
+        effectivePointSet: ModernPointSet? = nil,
+        calculationAssumptions: [String: String]? = nil
+    ) {
+        self.method = method
+        self.personAUTC = personAUTC
+        self.personBUTC = personBUTC
+        self.natalUTC = natalUTC
+        self.progressedUTC = progressedUTC
+        self.ephemeris = ephemeris
+        self.schemaVersion = schemaVersion
+        self.zodiac = zodiac
+        self.houseSystemRequested = houseSystemRequested
+        self.houseSystemEffective = houseSystemEffective
+        self.nodeMode = nodeMode
+        self.displayTimezone = displayTimezone
+        self.effectivePointSet = effectivePointSet
+        self.calculationAssumptions = calculationAssumptions
+    }
 
     enum CodingKeys: String, CodingKey {
         case method
@@ -97,6 +153,14 @@ struct ModernMeta: Codable {
         case natalUTC = "natal_utc"
         case progressedUTC = "progressed_utc"
         case ephemeris
+        case schemaVersion = "schema_version"
+        case zodiac
+        case houseSystemRequested = "house_system_requested"
+        case houseSystemEffective = "house_system_effective"
+        case nodeMode = "node_mode"
+        case displayTimezone = "display_timezone"
+        case effectivePointSet = "effective_point_set"
+        case calculationAssumptions = "calculation_assumptions"
     }
 }
 
@@ -113,6 +177,20 @@ struct SynastryRequest: Codable {
     let ephemerisPath: String?
     let noAsteroids: Bool
     let requireEphemeris: String
+    let pointSet: ModernPointSet?
+
+    init(
+        mode: String, personA: PersonSettings, personB: PersonSettings,
+        houseSystem: String, zodiac: String, nodeMode: String,
+        aspects: [AspectRequest], ephemerisPath: String?, noAsteroids: Bool,
+        requireEphemeris: String, pointSet: ModernPointSet? = nil
+    ) {
+        self.mode = mode; self.personA = personA; self.personB = personB
+        self.houseSystem = houseSystem; self.zodiac = zodiac; self.nodeMode = nodeMode
+        self.aspects = aspects; self.ephemerisPath = ephemerisPath
+        self.noAsteroids = noAsteroids; self.requireEphemeris = requireEphemeris
+        self.pointSet = pointSet
+    }
 
     enum CodingKeys: String, CodingKey {
         case mode
@@ -125,6 +203,7 @@ struct SynastryRequest: Codable {
         case ephemerisPath = "ephemeris_path"
         case noAsteroids = "no_asteroids"
         case requireEphemeris = "require_ephemeris"
+        case pointSet = "point_set"
     }
 }
 
@@ -147,6 +226,7 @@ struct SynastryResult: Codable {
     let aInBHouses: [HousePlacement]
     let bInAHouses: [HousePlacement]
     let patterns: [PatternResult]?
+    let crossDeclinationAspects: [DeclinationAspect]?
     let warnings: [String]
     let sectionErrors: [String: String]?
 
@@ -162,6 +242,7 @@ struct SynastryResult: Codable {
         case aInBHouses = "a_in_b_houses"
         case bInAHouses = "b_in_a_houses"
         case patterns
+        case crossDeclinationAspects = "cross_declination_aspects"
         case warnings
         case sectionErrors = "section_errors"
     }
@@ -194,6 +275,20 @@ struct CompositeRequest: Codable {
     let ephemerisPath: String?
     let noAsteroids: Bool
     let requireEphemeris: String
+    let pointSet: ModernPointSet?
+
+    init(
+        mode: String, personA: PersonSettings, personB: PersonSettings,
+        houseSystem: String, zodiac: String, nodeMode: String,
+        aspects: [AspectRequest], ephemerisPath: String?, noAsteroids: Bool,
+        requireEphemeris: String, pointSet: ModernPointSet? = nil
+    ) {
+        self.mode = mode; self.personA = personA; self.personB = personB
+        self.houseSystem = houseSystem; self.zodiac = zodiac; self.nodeMode = nodeMode
+        self.aspects = aspects; self.ephemerisPath = ephemerisPath
+        self.noAsteroids = noAsteroids; self.requireEphemeris = requireEphemeris
+        self.pointSet = pointSet
+    }
 
     enum CodingKeys: String, CodingKey {
         case mode
@@ -206,6 +301,7 @@ struct CompositeRequest: Codable {
         case ephemerisPath = "ephemeris_path"
         case noAsteroids = "no_asteroids"
         case requireEphemeris = "require_ephemeris"
+        case pointSet = "point_set"
     }
 }
 
@@ -255,6 +351,20 @@ struct DavisonRequest: Codable {
     let ephemerisPath: String?
     let noAsteroids: Bool
     let requireEphemeris: String
+    let pointSet: ModernPointSet?
+
+    init(
+        mode: String, personA: PersonSettings, personB: PersonSettings,
+        houseSystem: String, zodiac: String, nodeMode: String,
+        aspects: [AspectRequest], ephemerisPath: String?, noAsteroids: Bool,
+        requireEphemeris: String, pointSet: ModernPointSet? = nil
+    ) {
+        self.mode = mode; self.personA = personA; self.personB = personB
+        self.houseSystem = houseSystem; self.zodiac = zodiac; self.nodeMode = nodeMode
+        self.aspects = aspects; self.ephemerisPath = ephemerisPath
+        self.noAsteroids = noAsteroids; self.requireEphemeris = requireEphemeris
+        self.pointSet = pointSet
+    }
 
     enum CodingKeys: String, CodingKey {
         case mode
@@ -267,6 +377,7 @@ struct DavisonRequest: Codable {
         case ephemerisPath = "ephemeris_path"
         case noAsteroids = "no_asteroids"
         case requireEphemeris = "require_ephemeris"
+        case pointSet = "point_set"
     }
 }
 
@@ -305,6 +416,20 @@ struct ProgressionRequest: Codable {
     let ephemerisPath: String?
     let noAsteroids: Bool
     let requireEphemeris: String
+    let pointSet: ModernPointSet?
+
+    init(
+        mode: String, birth: BirthSettings, reference: ChartMoment,
+        houseSystem: String, zodiac: String, nodeMode: String,
+        aspects: [AspectRequest], ephemerisPath: String?, noAsteroids: Bool,
+        requireEphemeris: String, pointSet: ModernPointSet? = nil
+    ) {
+        self.mode = mode; self.birth = birth; self.reference = reference
+        self.houseSystem = houseSystem; self.zodiac = zodiac; self.nodeMode = nodeMode
+        self.aspects = aspects; self.ephemerisPath = ephemerisPath
+        self.noAsteroids = noAsteroids; self.requireEphemeris = requireEphemeris
+        self.pointSet = pointSet
+    }
 
     enum CodingKeys: String, CodingKey {
         case mode
@@ -317,6 +442,7 @@ struct ProgressionRequest: Codable {
         case ephemerisPath = "ephemeris_path"
         case noAsteroids = "no_asteroids"
         case requireEphemeris = "require_ephemeris"
+        case pointSet = "point_set"
     }
 }
 
@@ -354,11 +480,13 @@ struct ProgressedLunation: Codable {
     let sunMoonSeparation: Double
     let phaseAngle: Double
     let phaseName: String
+    let directedPhase: Double?
 
     enum CodingKeys: String, CodingKey {
         case sunMoonSeparation = "sun_moon_separation"
         case phaseAngle = "phase_angle"
         case phaseName = "phase_name"
+        case directedPhase = "directed_phase"
     }
 }
 
@@ -376,6 +504,20 @@ struct SolarArcRequest: Codable {
     let ephemerisPath: String?
     let noAsteroids: Bool
     let requireEphemeris: String
+    let pointSet: ModernPointSet?
+
+    init(
+        mode: String, birth: BirthSettings, reference: ChartMoment,
+        houseSystem: String, zodiac: String, nodeMode: String,
+        aspects: [AspectRequest], patternsEnabled: Bool?, ephemerisPath: String?,
+        noAsteroids: Bool, requireEphemeris: String, pointSet: ModernPointSet? = nil
+    ) {
+        self.mode = mode; self.birth = birth; self.reference = reference
+        self.houseSystem = houseSystem; self.zodiac = zodiac; self.nodeMode = nodeMode
+        self.aspects = aspects; self.patternsEnabled = patternsEnabled
+        self.ephemerisPath = ephemerisPath; self.noAsteroids = noAsteroids
+        self.requireEphemeris = requireEphemeris; self.pointSet = pointSet
+    }
 
     enum CodingKeys: String, CodingKey {
         case mode
@@ -389,6 +531,7 @@ struct SolarArcRequest: Codable {
         case ephemerisPath = "ephemeris_path"
         case noAsteroids = "no_asteroids"
         case requireEphemeris = "require_ephemeris"
+        case pointSet = "point_set"
     }
 }
 
@@ -405,6 +548,20 @@ struct HarmonicRequest: Codable {
     let ephemerisPath: String?
     let noAsteroids: Bool
     let requireEphemeris: String
+    let pointSet: ModernPointSet?
+
+    init(
+        mode: String, birth: BirthSettings, harmonicOrder: Int,
+        houseSystem: String, zodiac: String, nodeMode: String,
+        aspects: [AspectRequest], ephemerisPath: String?, noAsteroids: Bool,
+        requireEphemeris: String, pointSet: ModernPointSet? = nil
+    ) {
+        self.mode = mode; self.birth = birth; self.harmonicOrder = harmonicOrder
+        self.houseSystem = houseSystem; self.zodiac = zodiac; self.nodeMode = nodeMode
+        self.aspects = aspects; self.ephemerisPath = ephemerisPath
+        self.noAsteroids = noAsteroids; self.requireEphemeris = requireEphemeris
+        self.pointSet = pointSet
+    }
 
     enum CodingKeys: String, CodingKey {
         case mode
@@ -417,6 +574,7 @@ struct HarmonicRequest: Codable {
         case ephemerisPath = "ephemeris_path"
         case noAsteroids = "no_asteroids"
         case requireEphemeris = "require_ephemeris"
+        case pointSet = "point_set"
     }
 }
 

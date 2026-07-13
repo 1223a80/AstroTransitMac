@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any
 
 from astro_backend_core import (
-    BODY_REGISTRY,
     moment_to_jd,
     norm360,
     set_zodiac_mode,
@@ -17,12 +16,47 @@ from astro_backend_ephemeris import (
     resolve_bodies,
 )
 from astro_backend_scan import find_aspects
+from astro_backend_modern_points import finalize_point_set, resolve_point_set
 
 
-HARMONIC_BODY_IDS = [
-    "SUN", "MOON", "MERCURY", "VENUS", "MARS",
-    "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO",
-]
+ANGLE_NAMES = {
+    "ASC": "ASC",
+    "MC": "MC",
+    "DSC": "DSC",
+    "IC": "IC",
+    "VERTEX": "Vertex",
+    "ANTIVERTEX": "Antivertex",
+    "EQUATORIAL_ASCENDANT": "East Point (Equatorial Ascendant)",
+}
+
+
+def _resolve_harmonic_specs(point_set: dict[str, Any], warnings: list[str]) -> list[Any]:
+    body_ids = [
+        body_id
+        for body_id in point_set["resolved_body_ids"]
+        if not body_id.startswith("AST:")
+    ]
+    return resolve_bodies(body_ids, list(point_set["custom_asteroids"]), warnings)
+
+
+def _angle_rows(
+    angle_values: dict[str, float],
+    angle_ids: list[str],
+    cusps: list[float],
+    warnings: list[str],
+) -> tuple[list[dict[str, Any]], list[str]]:
+    rows: list[dict[str, Any]] = []
+    available: list[str] = []
+    for angle_id in angle_ids:
+        value = angle_values.get(angle_id)
+        if value is None:
+            message = f"轴点 {angle_id} 不可用，已从 effective_point_set 移除。"
+            if message not in warnings:
+                warnings.append(message)
+            continue
+        rows.append(point_row(angle_id, ANGLE_NAMES.get(angle_id, angle_id), value, cusps))
+        available.append(angle_id)
+    return rows, available
 
 
 def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
@@ -33,18 +67,16 @@ def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str
     node_mode = request.get("node_mode", "true_node")
     aspect_specs = request.get("aspects", [])
     harmonic_order = int(request.get("harmonic_order", 4))
+    point_set = resolve_point_set(
+        request.get("point_set") if "point_set" in request else None,
+        node_mode=node_mode,
+    )
 
     birth_jd, birth_utc_str = moment_to_jd(birth["moment"])
     latitude = float(birth["latitude"])
     longitude = float(birth["longitude"])
 
-    body_ids = list(HARMONIC_BODY_IDS)
-    if node_mode == "true_node":
-        body_ids += ["TRUE_NODE", "SOUTH_TRUE_NODE"]
-    elif node_mode == "mean_node":
-        body_ids += ["MEAN_NODE", "SOUTH_MEAN_NODE"]
-
-    specs = resolve_bodies(body_ids, [], warnings)
+    specs = _resolve_harmonic_specs(point_set, warnings)
     natal_positions = calculate_positions(birth_jd, specs, warnings, sidereal=sidereal)
 
     natal_cusps, natal_angles, _ = build_houses(
@@ -68,7 +100,7 @@ def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str
     section_errors: dict[str, str] = {}
 
     harmonic_planet_rows: list[dict[str, Any]] = []
-    for body_id in body_ids:
+    for body_id in point_set["resolved_body_ids"]:
         natal = natal_by_id.get(body_id)
         if natal is None:
             continue
@@ -91,12 +123,18 @@ def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str
             "house": h,
         })
 
-    harmonic_angle_rows = [
-        point_row("ASC", "ASC", harmonic_ASC, harmonic_cusps),
-        point_row("MC", "MC", harmonic_MC, harmonic_cusps),
-        point_row("DSC", "DSC", harmonic_DSC, harmonic_cusps),
-        point_row("IC", "IC", harmonic_IC, harmonic_cusps),
-    ]
+    harmonic_angle_values = {
+        "ASC": harmonic_ASC,
+        "MC": harmonic_MC,
+        "DSC": harmonic_DSC,
+        "IC": harmonic_IC,
+    }
+    for angle_id in ("VERTEX", "ANTIVERTEX", "EQUATORIAL_ASCENDANT"):
+        if angle_id in natal_angles:
+            harmonic_angle_values[angle_id] = norm360(natal_angles[angle_id] * harmonic_order)
+    harmonic_angle_rows, available_angle_ids = _angle_rows(
+        harmonic_angle_values, point_set["angle_ids"], harmonic_cusps, warnings,
+    )
     harmonic_house_rows = house_rows(harmonic_cusps)
 
     aspects: list[dict[str, Any]] = []
@@ -124,12 +162,20 @@ def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str
 
     all_ephemerides = {row.get("_ephemeris", "Swiss Ephemeris") for row in natal_positions}
 
+    point_set = finalize_point_set(
+        point_set,
+        [row["body_id"] for row in natal_positions],
+        available_angle_ids=available_angle_ids,
+        warnings=warnings,
+    )
+
     return {
         "meta": {
             "method": f"harmonic_{harmonic_order}",
             "natal_utc": birth_utc_str,
             "progressed_utc": None,
             "ephemeris": ", ".join(sorted(all_ephemerides)) if all_ephemerides else "unknown",
+            "effective_point_set": point_set,
         },
         "planets": harmonic_planet_rows,
         "angles": harmonic_angle_rows,

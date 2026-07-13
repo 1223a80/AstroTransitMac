@@ -732,3 +732,50 @@
 - 推进月相正确区分 0/45/90/135/180/225/270/315°，跨 0° 采用圆周距离；现有 `sun_moon_separation` 和字段兼容。
 - 不改变古典 `planetary_returns`、Horary、Vedic、现有 `scan` 契约；不新增现代功能字段。
 - 聚焦测试、必要跨模式测试和 `bash check_vibe_changes.sh` 通过；生成的 `.build`、pytest cache、`__pycache__`、`.pyc` 清理。
+
+---
+
+# 现代占星扩展实际施工 — 第 1 批（2026-07-13）
+
+## 分支
+
+`codex/feature-modern-completeness`（从已推送的 B0 `main` 新建）
+
+## 已确认边界
+
+- D02 已确认：不接受模糊出生时间；现代请求继续要求完整出生 moment，B1 不新增 `time_accuracy` 或 noon convention。
+- 本批只做现代完整性、共享 point set/chart snapshot、轴点、结构层、赤纬/OOB 和关系点集；不做 Return、动态时间线、中点、Relocation、食相或 AI。
+- 现有 `mode=moment` 与六个高级现代 mode 的旧默认点集必须保持兼容；新增字段优先 optional。
+
+## 具体工作与并行边界
+
+| 工作包 | 内容 | 主要写集 | 依赖 |
+|---|---|---|---|
+| 1A 共享 point set | `astro_backend_modern_points.py`、共享 chart snapshot、请求校验/effective point set、custom asteroid 与 node 兼容 | 新 helper + API 小范围接入 | 先完成现状查询 |
+| 1B 轴点与现代本命 | Vertex、Antivertex、Equatorial Ascendant/East Point；sameChart structure/chart_profile、patterns、declination/OOB | ephemeris/patterns/moment backend + Python tests | 1A 契约稳定后 |
+| 1C 高级现代点集 | Synastry 跨盘轴点/赤纬；Progression/Solar Arc/Harmonic/Composite/Davison optional point set | 现有六个 mode backend + focused tests | 1A |
+| 1D Swift 契约与 UI | Request/Result models、run action、sidebar/state、tabs、现代本命/关系结果页 | Swift modern/request/result/sidebar/results/export | 1A/1B JSON 形状稳定后 |
+| 1E 导出与 fixture | Markdown/CSV/JSON、真实 backend fixtures、contract/tab/export tests、Examples | export/tests/fixtures | 1B/1D |
+
+1A 与 1B/1C 的纯查询和部分实现可并行；涉及同一个 API dispatch 或共享模型的修改必须由主 Agent 统一整合。1D 不在后端契约未确认前猜字段。1E 在真实响应稳定后执行。
+
+## B1 执行状态
+
+| 阶段 | 状态 | 说明 |
+|---|---|---|
+| 01 分支与计划 | ✅ | 已从包含 B0 的 `main` 新建；本计划已写入 |
+| 02 现状与调用点查询 | ✅ | 已核对后端点集/轴点、Swift 链路和 fixture/测试 |
+| 03 共享 point set/chart snapshot | ✅ | 新增共享解析/校验与 `effective_point_set`；复用现有 registry、positions/houses 入口 |
+| 04 现代本命结构/轴点/赤纬 | ✅ | 完成本命 `chart_profile`、patterns、轴点、赤纬/OOB 与固定星结果入口；D02 无降级 |
+| 05 高级现代 mode 点集迁移 | ✅ | Synastry、Composite、Davison、Progression、Solar Arc、Harmonic 支持 optional point set，旧默认保持 |
+| 06 Swift 展示、导出、fixture | ✅ | 新增请求/结果字段、结构/赤纬/固定星/关系赤纬 tab，三种导出和六个真实 fixture 已同步 |
+| 07 门禁与交付 | 🔄 | 聚焦 Python、Swift build 与六个 modern smoke 已通过；待全量门禁、缓存清理、diff 复核和提交 |
+
+## B1 验收口径
+
+- `effective_point_set` 与结构、图形、相位实际使用的 subset 一致；unknown body/angle/node 冲突返回 validation error，不静默忽略。
+- Vertex/East Point 与 Swiss `ascmc[3]/[4]` 在容差内一致；Antivertex 为 Vertex 对点；非 finite/高纬 fallback 写 warning 并移除有效点。
+- 现代本命 structure/chart_profile 默认只统计十大行星；隐藏 Chiron/小行星后不得污染统计或图形；可靠出生时间以外不做降级分支。
+- declination position、OOB、declination aspects 分区输出；declination orb 独立默认 1°；Synastry 跨盘 ID 不歧义。
+- 现有 moment/synastry/composite/davison/progression/solar_arc/harmonic 默认 sample 与旧 schema 不漂移。
+- Swift 默认 tab、每个 tab case、Markdown/CSV/JSON、真实 fixture 和 `BackendContractTests` 同批通过；不接 AI。

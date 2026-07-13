@@ -167,7 +167,9 @@ var targetPlanetOptions: [TargetPositionOption] {
             },
             natalStarConjunctions: result.natalStarConjunctions?.filter { visibleBodyIDs.contains($0.planet) },
             transitStarConjunctions: result.transitStarConjunctions?.filter { visibleBodyIDs.contains($0.planet) },
-            warnings: result.warnings
+            warnings: result.warnings,
+            patterns: result.patterns,
+            chartProfile: result.chartProfile
         )
     }
     func resolvedScanTargetText() -> String {
