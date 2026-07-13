@@ -67,6 +67,7 @@ extension ContentView {
                 case .solarArc: await runSolarArc()
                 case .harmonic: await runHarmonic()
                 case .returnChart: await runModernReturn()
+                case .midpoint: await runMidpoint()
                 }
             }
         case .horary:
@@ -420,6 +421,45 @@ extension ContentView {
     }
 
     @MainActor
+    func runMidpoint() async {
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        guard midpointSelectedPointIDs.count >= 2 else {
+            calcVM.errorMessage = "中点计算至少需要两个有效本命点。"
+            return
+        }
+        let focusPointIDs = midpointEffectiveFocusPointIDs
+        guard !focusPointIDs.isEmpty else {
+            calcVM.errorMessage = "请至少选择一个属于当前中点点集的 focus point。"
+            return
+        }
+        let activationSourceOrder = ["natal", "transit", "secondary_progression", "solar_arc"]
+        let activationSources = activationSourceOrder.filter { midpointActivationSources.contains($0) }
+
+        await performRun {
+            let asteroidIDs = parseAsteroids(customAsteroids)
+            let effectiveEphemerisPath = try await prepareAsteroidsIfNeeded(asteroidIDs)
+            let request = MidpointRequest(
+                birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
+                reference: midpointIncludeReference ? makeMoment(from: classicalReferenceDate) : nil,
+                pointSet: midpointPointSet(asteroidIDs: asteroidIDs),
+                focusPointIDs: focusPointIDs,
+                activationSources: activationSources,
+                activationOrb: midpointActivationOrb,
+                modulus: 360,
+                includeOppositeAxis: true,
+                ephemerisPath: effectiveEphemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.midpoint(
+                request: request,
+                pythonPath: appState.pythonPath
+            )
+            calcVM.modernResultData = .midpoint(result)
+        }
+    }
+
+    @MainActor
     func runCalculation() async {
         await performRun {
             let asteroidIDs = parseAsteroids(customAsteroids)
@@ -521,7 +561,7 @@ extension ContentView {
             return
         }
 
-        let asteroidIDs = parseAsteroids(customAsteroids)
+        let asteroidIDs = timingUseCustomAsteroids ? parseAsteroids(customAsteroids) : []
         let targetPointSet = timingTargetPointSet(asteroidIDs: asteroidIDs)
         let techniques = timingTechniqueRequests()
         guard !techniques.isEmpty else {

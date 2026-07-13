@@ -53,8 +53,8 @@ extension MarkdownExportBuilder {
                         "",
                         "`\(first.groupID)`",
                         "",
-                        "| Pass | 精确当地时间 | 进入 UTC | 精确 UTC | 离开 UTC | Motion | Exact orb | Clipped | 方法 |",
-                        "| ---: | --- | --- | --- | --- | --- | ---: | --- | --- |",
+                        "| Event ID | Pass | 精确当地时间 | 进入 UTC | 精确 UTC | 离开 UTC | Motion | Exact orb | Clipped | 方法 |",
+                        "| --- | ---: | --- | --- | --- | --- | --- | ---: | --- | --- |",
                     ]
                     for event in group.sorted(by: { $0.exactUTC < $1.exactUTC }) {
                         let clipped = [
@@ -62,7 +62,7 @@ extension MarkdownExportBuilder {
                             event.windowClippedEnd ? "end" : nil,
                         ].compactMap { $0 }.joined(separator: "+")
                         lines.append(
-                            "| \(event.passIndexInWindow)/\(event.passCountInWindow) | \(markdownCell(event.exactLocal)) | \(markdownCell(event.enteringUTC ?? "")) | \(markdownCell(event.exactUTC)) | \(markdownCell(event.leavingUTC ?? "")) | \(markdownCell(event.motion)) | \(event.exactOrb.map { degree($0, digits: 6) } ?? "") | \(clipped) | \(markdownCell(event.methodKey)) |"
+                            "| \(markdownCell(event.id)) | \(event.passIndexInWindow)/\(event.passCountInWindow) | \(markdownCell(event.exactLocal)) | \(markdownCell(event.enteringUTC ?? "")) | \(markdownCell(event.exactUTC)) | \(markdownCell(event.leavingUTC ?? "")) | \(markdownCell(event.motion)) | \(event.exactOrb.map { degree($0, digits: 6) } ?? "") | \(clipped) | \(markdownCell(event.methodKey)) |"
                         )
                     }
                     lines.append("")
@@ -90,6 +90,9 @@ extension MarkdownExportBuilder {
         if let target = event.targetPointName ?? event.targetPointID {
             parts.append(target)
         }
+        if let branch = event.targetAxisBranch {
+            parts.append("[\(branch)]")
+        }
         return "[\(event.sourceType)] " + parts.joined(separator: " ")
     }
 
@@ -107,7 +110,7 @@ extension TextExportBuilder {
             "entering_utc", "exact_utc", "leaving_utc", "exact_local", "motion",
             "pass_index_in_window", "pass_count_in_window",
             "exact_orb", "method_key",
-            "id", "group_id", "moving_point_id", "target_point_id", "aspect_id", "aspect_angle",
+            "id", "group_id", "moving_point_id", "target_point_id", "target_axis_branch", "aspect_id", "aspect_angle",
             "moving_longitude", "target_longitude", "window_clipped_start", "window_clipped_end",
         ]
         let rows = [header] + result.events.map { event in
@@ -132,6 +135,7 @@ extension TextExportBuilder {
                 event.groupID,
                 event.movingPointID,
                 event.targetPointID ?? "",
+                event.targetAxisBranch ?? "",
                 event.aspectID ?? "",
                 event.aspectAngle.map(timingNumber) ?? "",
                 timingNumber(event.movingLongitude),

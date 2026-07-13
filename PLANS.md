@@ -844,3 +844,51 @@
 - Progression 与 Solar Arc adapter 在同 reference 与单点模式位置一致；Transit ingress/station 不重复。
 - estimator 前后端同口径，2.5M 要确认、5M 拒绝；进度/取消复用现有子进程与 generation 保护。
 - timeline/grouped/calendar 的 tab list 与 case 齐全；事件专用 Markdown/CSV/JSON 和真实 fixture/contract tests 同批交付。
+
+---
+
+# 现代占星扩展实际施工 — 第 4 批 Midpoints v1（2026-07-13）
+
+## 分支与边界
+
+- 继续在 `codex/feature-modern-completeness` 上形成独立 B4 commit；B3 已提交为 `52f2069`。
+- 新增独立 `mode=midpoint`，只实现 360° natal midpoint axis、focus tree 与 reference snapshot activation；不实现 hypothetical planets、midpoint-to-midpoint、45°/90° dial 或自动解释。
+- D02 继续生效：birth/reference 均要求完整明确时间；没有 reference 时只返回 axes 与 natal trees，动态 activation 必须为空。
+- 每个无序点对只生成一个稳定 `axis_id=midpoint|A|B`；direct/opposite 是同一轴的两个 branch，不复制成两个业务轴。
+- B3 时间线只接收用户明确选择的 midpoint pairs；后端根据 pair point IDs 与 natal snapshot 权威重算轴，不信任客户端传入经度，也不默认选择全部轴。
+
+## 工作包与并行边界
+
+| 工作包 | 内容 | 写集 | 状态 |
+|---|---|---|---|
+| 4A midpoint 核心 | canonical pair、circular midpoint、direct/opposite axis、focus tree、四类 snapshot activation、请求校验 | 新 `astro_backend_midpoints.py` + focused Python tests | ✅；真实 sample 15 axes / 4 trees / 9 activations |
+| 4B Timing 接入 | `target_point_set.midpoint_pairs`、两 branch 展开、稳定 axis ID、`target_axis_branch`、估算与事件分组 | `astro_backend_modern_timing.py`、共享 point-set/Swift timing models + tests | ✅；含 pair-only 真实 fixture 与预填 |
+| 4C API/fixture | mode 注册、sample、真实 backend fixture、contract tests | API、Examples、SwiftTests/Fixtures | ✅；standalone + timing midpoint fixtures |
+| 4D Swift/UI/导出 | ModernSubMode、请求/结果、sidebar、axes/trees/activations tabs、时间线预填、Markdown/CSV/JSON | Swift modern/result/export 文件 + tests | ✅；Swift 74 tests / 18 suites |
+| 4E 验收 | 边界数学、pair 去重、point-set 缩减、时间线 branch/event、旧模式回归、完整 gate、缓存清理与独立提交 | tests/PLANS/CHANGELOG | ✅；待独立 commit |
+
+## B4 最终验证记录
+
+- Midpoint + Timing-midpoint + 旧 Timing + constants 聚焦 Python：74 passed；全量 Python：702 passed。
+- Swift 全量：74 tests / 18 suites；真实 standalone midpoint 与 pair-only Timing fixtures、tabs、导出、estimator、branch-aware IDs 与审查修复全部通过。
+- `bash check_vibe_changes.sh` 完整门禁通过；classical/moment/scan/horary/vedic/harmonic、Solar/Lunar Return、Modern Timing、Midpoint、pair-only Timing、Rectify smokes 全部成功。
+- `.build`、所有 pytest cache、`__pycache__`、`.pyc`、`.pyo` 已清理；B4 未打包、不安装应用。
+- 提交前完整 diff 审查补齐 axis `trace.input_longitudes`，让 10°/190° 对径 tie-break 可从 backend JSON 与 Swift JSON 导出复算；重生成 midpoint fixture 后重新执行门禁。
+- 独立后端审查补齐含 pair 时所有“省略的普通 selector 视为空”的默认语义、嵌套 `point_set.node_mode` 校验优先级，以及 activation source 单项失败不影响其余来源的回归；90° 对 direct/opposite 的同时命中按 branch 事实契约保留。
+- 独立 Swift 审查补齐 Timing UI branch、Markdown event ID、普通请求省略空 `midpoint_pairs`、预填后清空 stale Timing result，以及重复 axis ID 下 CSV 安全降级；全部纳入重新执行的 Swift/全量门禁。
+
+## B4 接口落实口径
+
+- `mode=midpoint` 的 `modulus` 只接受 `360`；`activation_orb` 独立默认 `1°`，不得复用普通相位 orb。
+- `point_set` 决定可参与配对与 activation 的点；N 个有效点必须恰好返回 `N*(N-1)/2` 个轴，A=B、重复 pair 与输入顺序不得产生重复轴。
+- 轴经度使用现有 `circular_midpoint()`：`m1` 为 circular midpoint，`m2=norm360(m1+180)`；10°/190° 的歧义边界沿现有 helper 的确定性结果并由测试锁定。
+- B3 `target_point_set.midpoint_pairs` 使用 `{point_a_id, point_b_id}`；后端 canonicalize 后从 birth snapshot 解算 direct/opposite 两个 TargetPoint，事件保持同一 `target_point_id`，另以 `target_axis_branch=direct|opposite` 区分。
+- Swift 默认 midpoint selection 为空；用户可从 axes/focus/manual 明确选择并预填 Modern Timing，estimator 按实际展开的 branch 数量计数。
+
+## B4 验收口径
+
+- 350°/10° 返回 direct=0°、opposite=180°；10°/190°、0°边界、direct/opposite 命中均有聚焦测试。
+- 无序 pair canonical ID、pair 数量、point-set 缩减、无 reference 行为、四类 activation source 与 orb 独立性均可由真实输出复核。
+- Timing midpoint target 的估算、event/group ID、branch 字段及 CSV/Markdown/JSON 可复算；普通 natal target 与旧 `scan` 契约不漂移。
+- Swift axes 支持 A/B 搜索与度数排序，trees 可切 focus，activations 展示 source/reference；tabs 列表与 switch case 一致。
+- 聚焦测试、全量 `bash check_vibe_changes.sh`、backend smoke、完整 diff 审查与缓存清理通过后再独立提交 B4。

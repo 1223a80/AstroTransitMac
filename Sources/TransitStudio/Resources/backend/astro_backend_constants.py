@@ -4,7 +4,7 @@ from typing import ClassVar
 
 ALL_MODES: list[str] = ["transit", "classical", "horary", "scan", "rectify",
                         "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
-                        "vedic", "modern_return", "modern_timing"]
+                        "vedic", "modern_return", "modern_timing", "midpoint"]
 
 ALL_NODE_MODES: list[str] = ["true_node", "mean_node"]
 

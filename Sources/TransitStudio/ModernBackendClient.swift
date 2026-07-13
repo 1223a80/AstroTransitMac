@@ -28,4 +28,8 @@ extension BackendClient {
     static func modernReturn(request: ModernReturnRequest, pythonPath: String) async throws -> ModernReturnResult {
         try await run(request: request, pythonPath: pythonPath)
     }
+
+    static func midpoint(request: MidpointRequest, pythonPath: String) async throws -> MidpointResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
 }

@@ -1,0 +1,522 @@
+{
+  "meta": {
+    "schema_version": 1,
+    "method": "circular_midpoint_axis_360",
+    "modulus": 360,
+    "activation_orb": 1.0,
+    "include_opposite_axis": true,
+    "activation_sources": [
+      "natal",
+      "transit",
+      "secondary_progression",
+      "solar_arc"
+    ],
+    "birth_utc": "1990-01-01T04:00:00+00:00",
+    "reference_utc": "2026-07-13T04:00:00+00:00",
+    "ephemeris": "Swiss Ephemeris",
+    "effective_point_set": {
+      "body_ids": [
+        "SUN",
+        "MOON",
+        "MERCURY",
+        "VENUS"
+      ],
+      "include_nodes": false,
+      "node_mode": "true_node",
+      "custom_asteroids": [],
+      "angle_ids": [
+        "ASC",
+        "MC"
+      ],
+      "house_cusps": [],
+      "lot_ids": [],
+      "resolved_body_ids": [
+        "SUN",
+        "MOON",
+        "MERCURY",
+        "VENUS"
+      ]
+    }
+  },
+  "axes": [
+    {
+      "id": "midpoint|ASC|MC",
+      "point_a_id": "ASC",
+      "point_a_name": "ASC",
+      "point_b_id": "MC",
+      "point_b_name": "MC",
+      "midpoint_longitude": 329.336825,
+      "opposite_longitude": 149.336825,
+      "midpoint_text": "29°20'13\" 水瓶",
+      "opposite_text": "29°20'13\" 狮子",
+      "trace": {
+        "input_longitudes": [
+          17.616017,
+          281.057632
+        ]
+      }
+    },
+    {
+      "id": "midpoint|ASC|MERCURY",
+      "point_a_id": "ASC",
+      "point_a_name": "ASC",
+      "point_b_id": "MERCURY",
+      "point_b_name": "水星",
+      "midpoint_longitude": 336.68803,
+      "opposite_longitude": 156.68803,
+      "midpoint_text": "06°41'17\" 双鱼",
+      "opposite_text": "06°41'17\" 处女",
+      "trace": {
+        "input_longitudes": [
+          17.616017,
+          295.760043
+        ]
+      }
+    },
+    {
+      "id": "midpoint|ASC|MOON",
+      "point_a_id": "ASC",
+      "point_a_name": "ASC",
+      "point_b_id": "MOON",
+      "point_b_name": "月亮",
+      "midpoint_longitude": 353.202323,
+      "opposite_longitude": 173.202323,
+      "midpoint_text": "23°12'08\" 双鱼",
+      "opposite_text": "23°12'08\" 处女",
+      "trace": {
+        "input_longitudes": [
+          17.616017,
+          328.788629
+        ]
+      }
+    },
+    {
+      "id": "midpoint|ASC|SUN",
+      "point_a_id": "ASC",
+      "point_a_name": "ASC",
+      "point_b_id": "SUN",
+      "point_b_name": "太阳",
+      "midpoint_longitude": 329.045225,
+      "opposite_longitude": 149.045225,
+      "midpoint_text": "29°02'43\" 水瓶",
+      "opposite_text": "29°02'43\" 狮子",
+      "trace": {
+        "input_longitudes": [
+          17.616017,
+          280.474432
+        ]
+      }
+    },
+    {
+      "id": "midpoint|ASC|VENUS",
+      "point_a_id": "ASC",
+      "point_a_name": "ASC",
+      "point_b_id": "VENUS",
+      "point_b_name": "金星",
+      "midpoint_longitude": 341.939535,
+      "opposite_longitude": 161.939535,
+      "midpoint_text": "11°56'22\" 双鱼",
+      "opposite_text": "11°56'22\" 处女",
+      "trace": {
+        "input_longitudes": [
+          17.616017,
+          306.263052
+        ]
+      }
+    },
+    {
+      "id": "midpoint|MC|MERCURY",
+      "point_a_id": "MC",
+      "point_a_name": "MC",
+      "point_b_id": "MERCURY",
+      "point_b_name": "水星",
+      "midpoint_longitude": 288.408838,
+      "opposite_longitude": 108.408838,
+      "midpoint_text": "18°24'32\" 摩羯",
+      "opposite_text": "18°24'32\" 巨蟹",
+      "trace": {
+        "input_longitudes": [
+          281.057632,
+          295.760043
+        ]
+      }
+    },
+    {
+      "id": "midpoint|MC|MOON",
+      "point_a_id": "MC",
+      "point_a_name": "MC",
+      "point_b_id": "MOON",
+      "point_b_name": "月亮",
+      "midpoint_longitude": 304.923131,
+      "opposite_longitude": 124.923131,
+      "midpoint_text": "04°55'23\" 水瓶",
+      "opposite_text": "04°55'23\" 狮子",
+      "trace": {
+        "input_longitudes": [
+          281.057632,
+          328.788629
+        ]
+      }
+    },
+    {
+      "id": "midpoint|MC|SUN",
+      "point_a_id": "MC",
+      "point_a_name": "MC",
+      "point_b_id": "SUN",
+      "point_b_name": "太阳",
+      "midpoint_longitude": 280.766032,
+      "opposite_longitude": 100.766032,
+      "midpoint_text": "10°45'58\" 摩羯",
+      "opposite_text": "10°45'58\" 巨蟹",
+      "trace": {
+        "input_longitudes": [
+          281.057632,
+          280.474432
+        ]
+      }
+    },
+    {
+      "id": "midpoint|MC|VENUS",
+      "point_a_id": "MC",
+      "point_a_name": "MC",
+      "point_b_id": "VENUS",
+      "point_b_name": "金星",
+      "midpoint_longitude": 293.660342,
+      "opposite_longitude": 113.660342,
+      "midpoint_text": "23°39'37\" 摩羯",
+      "opposite_text": "23°39'37\" 巨蟹",
+      "trace": {
+        "input_longitudes": [
+          281.057632,
+          306.263052
+        ]
+      }
+    },
+    {
+      "id": "midpoint|MERCURY|MOON",
+      "point_a_id": "MERCURY",
+      "point_a_name": "水星",
+      "point_b_id": "MOON",
+      "point_b_name": "月亮",
+      "midpoint_longitude": 312.274336,
+      "opposite_longitude": 132.274336,
+      "midpoint_text": "12°16'28\" 水瓶",
+      "opposite_text": "12°16'28\" 狮子",
+      "trace": {
+        "input_longitudes": [
+          295.760043,
+          328.788629
+        ]
+      }
+    },
+    {
+      "id": "midpoint|MERCURY|SUN",
+      "point_a_id": "MERCURY",
+      "point_a_name": "水星",
+      "point_b_id": "SUN",
+      "point_b_name": "太阳",
+      "midpoint_longitude": 288.117238,
+      "opposite_longitude": 108.117238,
+      "midpoint_text": "18°07'02\" 摩羯",
+      "opposite_text": "18°07'02\" 巨蟹",
+      "trace": {
+        "input_longitudes": [
+          295.760043,
+          280.474432
+        ]
+      }
+    },
+    {
+      "id": "midpoint|MERCURY|VENUS",
+      "point_a_id": "MERCURY",
+      "point_a_name": "水星",
+      "point_b_id": "VENUS",
+      "point_b_name": "金星",
+      "midpoint_longitude": 301.011548,
+      "opposite_longitude": 121.011548,
+      "midpoint_text": "01°00'42\" 水瓶",
+      "opposite_text": "01°00'42\" 狮子",
+      "trace": {
+        "input_longitudes": [
+          295.760043,
+          306.263052
+        ]
+      }
+    },
+    {
+      "id": "midpoint|MOON|SUN",
+      "point_a_id": "MOON",
+      "point_a_name": "月亮",
+      "point_b_id": "SUN",
+      "point_b_name": "太阳",
+      "midpoint_longitude": 304.631531,
+      "opposite_longitude": 124.631531,
+      "midpoint_text": "04°37'54\" 水瓶",
+      "opposite_text": "04°37'54\" 狮子",
+      "trace": {
+        "input_longitudes": [
+          328.788629,
+          280.474432
+        ]
+      }
+    },
+    {
+      "id": "midpoint|MOON|VENUS",
+      "point_a_id": "MOON",
+      "point_a_name": "月亮",
+      "point_b_id": "VENUS",
+      "point_b_name": "金星",
+      "midpoint_longitude": 317.525841,
+      "opposite_longitude": 137.525841,
+      "midpoint_text": "17°31'33\" 水瓶",
+      "opposite_text": "17°31'33\" 狮子",
+      "trace": {
+        "input_longitudes": [
+          328.788629,
+          306.263052
+        ]
+      }
+    },
+    {
+      "id": "midpoint|SUN|VENUS",
+      "point_a_id": "SUN",
+      "point_a_name": "太阳",
+      "point_b_id": "VENUS",
+      "point_b_name": "金星",
+      "midpoint_longitude": 293.368742,
+      "opposite_longitude": 113.368742,
+      "midpoint_text": "23°22'07\" 摩羯",
+      "opposite_text": "23°22'07\" 巨蟹",
+      "trace": {
+        "input_longitudes": [
+          280.474432,
+          306.263052
+        ]
+      }
+    }
+  ],
+  "trees": [
+    {
+      "focus_point_id": "SUN",
+      "focus_point_name": "太阳",
+      "hits": [
+        {
+          "id": "midpoint_hit|natal|SUN|SUN|midpoint|MC|SUN|direct|1990-01-01T04:00:00+00:00",
+          "focus_point_id": "SUN",
+          "focus_point_name": "太阳",
+          "source_point_id": "SUN",
+          "source_point_name": "太阳",
+          "axis_id": "midpoint|MC|SUN",
+          "axis_branch": "direct",
+          "hit_longitude": 280.474432,
+          "axis_longitude": 280.766032,
+          "separation": 0.2916,
+          "orb": 0.2916,
+          "source_type": "natal",
+          "reference_utc": "1990-01-01T04:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "focus_point_id": "MOON",
+      "focus_point_name": "月亮",
+      "hits": [
+        {
+          "id": "midpoint_hit|natal|MOON|MOON|midpoint|ASC|SUN|direct|1990-01-01T04:00:00+00:00",
+          "focus_point_id": "MOON",
+          "focus_point_name": "月亮",
+          "source_point_id": "MOON",
+          "source_point_name": "月亮",
+          "axis_id": "midpoint|ASC|SUN",
+          "axis_branch": "direct",
+          "hit_longitude": 328.788629,
+          "axis_longitude": 329.045225,
+          "separation": 0.256596,
+          "orb": 0.256596,
+          "source_type": "natal",
+          "reference_utc": "1990-01-01T04:00:00+00:00"
+        },
+        {
+          "id": "midpoint_hit|natal|MOON|MOON|midpoint|ASC|MC|direct|1990-01-01T04:00:00+00:00",
+          "focus_point_id": "MOON",
+          "focus_point_name": "月亮",
+          "source_point_id": "MOON",
+          "source_point_name": "月亮",
+          "axis_id": "midpoint|ASC|MC",
+          "axis_branch": "direct",
+          "hit_longitude": 328.788629,
+          "axis_longitude": 329.336825,
+          "separation": 0.548196,
+          "orb": 0.548196,
+          "source_type": "natal",
+          "reference_utc": "1990-01-01T04:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "focus_point_id": "ASC",
+      "focus_point_name": "ASC",
+      "hits": []
+    },
+    {
+      "focus_point_id": "MC",
+      "focus_point_name": "MC",
+      "hits": [
+        {
+          "id": "midpoint_hit|natal|MC|MC|midpoint|MC|SUN|direct|1990-01-01T04:00:00+00:00",
+          "focus_point_id": "MC",
+          "focus_point_name": "MC",
+          "source_point_id": "MC",
+          "source_point_name": "MC",
+          "axis_id": "midpoint|MC|SUN",
+          "axis_branch": "direct",
+          "hit_longitude": 281.057632,
+          "axis_longitude": 280.766032,
+          "separation": 0.2916,
+          "orb": 0.2916,
+          "source_type": "natal",
+          "reference_utc": "1990-01-01T04:00:00+00:00"
+        }
+      ]
+    }
+  ],
+  "snapshot_activations": [
+    {
+      "id": "midpoint_hit|natal|snapshot|MC|midpoint|MC|SUN|direct|2026-07-13T04:00:00+00:00",
+      "focus_point_id": null,
+      "focus_point_name": null,
+      "source_point_id": "MC",
+      "source_point_name": "MC",
+      "axis_id": "midpoint|MC|SUN",
+      "axis_branch": "direct",
+      "hit_longitude": 281.057632,
+      "axis_longitude": 280.766032,
+      "separation": 0.2916,
+      "orb": 0.2916,
+      "source_type": "natal",
+      "reference_utc": "2026-07-13T04:00:00+00:00"
+    },
+    {
+      "id": "midpoint_hit|natal|snapshot|MOON|midpoint|ASC|SUN|direct|2026-07-13T04:00:00+00:00",
+      "focus_point_id": null,
+      "focus_point_name": null,
+      "source_point_id": "MOON",
+      "source_point_name": "月亮",
+      "axis_id": "midpoint|ASC|SUN",
+      "axis_branch": "direct",
+      "hit_longitude": 328.788629,
+      "axis_longitude": 329.045225,
+      "separation": 0.256596,
+      "orb": 0.256596,
+      "source_type": "natal",
+      "reference_utc": "2026-07-13T04:00:00+00:00"
+    },
+    {
+      "id": "midpoint_hit|natal|snapshot|MOON|midpoint|ASC|MC|direct|2026-07-13T04:00:00+00:00",
+      "focus_point_id": null,
+      "focus_point_name": null,
+      "source_point_id": "MOON",
+      "source_point_name": "月亮",
+      "axis_id": "midpoint|ASC|MC",
+      "axis_branch": "direct",
+      "hit_longitude": 328.788629,
+      "axis_longitude": 329.336825,
+      "separation": 0.548196,
+      "orb": 0.548196,
+      "source_type": "natal",
+      "reference_utc": "2026-07-13T04:00:00+00:00"
+    },
+    {
+      "id": "midpoint_hit|natal|snapshot|SUN|midpoint|MC|SUN|direct|2026-07-13T04:00:00+00:00",
+      "focus_point_id": null,
+      "focus_point_name": null,
+      "source_point_id": "SUN",
+      "source_point_name": "太阳",
+      "axis_id": "midpoint|MC|SUN",
+      "axis_branch": "direct",
+      "hit_longitude": 280.474432,
+      "axis_longitude": 280.766032,
+      "separation": 0.2916,
+      "orb": 0.2916,
+      "source_type": "natal",
+      "reference_utc": "2026-07-13T04:00:00+00:00"
+    },
+    {
+      "id": "midpoint_hit|secondary_progression|snapshot|MERCURY|midpoint|SUN|VENUS|direct|2026-07-13T04:00:00+00:00",
+      "focus_point_id": null,
+      "focus_point_name": null,
+      "source_point_id": "MERCURY",
+      "source_point_name": "水星",
+      "axis_id": "midpoint|SUN|VENUS",
+      "axis_branch": "direct",
+      "hit_longitude": 293.115792,
+      "axis_longitude": 293.368742,
+      "separation": 0.25295,
+      "orb": 0.25295,
+      "source_type": "secondary_progression",
+      "reference_utc": "2026-07-13T04:00:00+00:00"
+    },
+    {
+      "id": "midpoint_hit|secondary_progression|snapshot|MERCURY|midpoint|MC|VENUS|direct|2026-07-13T04:00:00+00:00",
+      "focus_point_id": null,
+      "focus_point_name": null,
+      "source_point_id": "MERCURY",
+      "source_point_name": "水星",
+      "axis_id": "midpoint|MC|VENUS",
+      "axis_branch": "direct",
+      "hit_longitude": 293.115792,
+      "axis_longitude": 293.660342,
+      "separation": 0.54455,
+      "orb": 0.54455,
+      "source_type": "secondary_progression",
+      "reference_utc": "2026-07-13T04:00:00+00:00"
+    },
+    {
+      "id": "midpoint_hit|secondary_progression|snapshot|SUN|midpoint|MOON|VENUS|direct|2026-07-13T04:00:00+00:00",
+      "focus_point_id": null,
+      "focus_point_name": null,
+      "source_point_id": "SUN",
+      "source_point_name": "太阳",
+      "axis_id": "midpoint|MOON|VENUS",
+      "axis_branch": "direct",
+      "hit_longitude": 317.637973,
+      "axis_longitude": 317.525841,
+      "separation": 0.112132,
+      "orb": 0.112132,
+      "source_type": "secondary_progression",
+      "reference_utc": "2026-07-13T04:00:00+00:00"
+    },
+    {
+      "id": "midpoint_hit|solar_arc|snapshot|MC|midpoint|MOON|VENUS|direct|2026-07-13T04:00:00+00:00",
+      "focus_point_id": null,
+      "focus_point_name": null,
+      "source_point_id": "MC",
+      "source_point_name": "MC",
+      "axis_id": "midpoint|MOON|VENUS",
+      "axis_branch": "direct",
+      "hit_longitude": 318.221173,
+      "axis_longitude": 317.525841,
+      "separation": 0.695332,
+      "orb": 0.695332,
+      "source_type": "solar_arc",
+      "reference_utc": "2026-07-13T04:00:00+00:00"
+    },
+    {
+      "id": "midpoint_hit|solar_arc|snapshot|SUN|midpoint|MOON|VENUS|direct|2026-07-13T04:00:00+00:00",
+      "focus_point_id": null,
+      "focus_point_name": null,
+      "source_point_id": "SUN",
+      "source_point_name": "太阳",
+      "axis_id": "midpoint|MOON|VENUS",
+      "axis_branch": "direct",
+      "hit_longitude": 317.637973,
+      "axis_longitude": 317.525841,
+      "separation": 0.112132,
+      "orb": 0.112132,
+      "source_type": "solar_arc",
+      "reference_utc": "2026-07-13T04:00:00+00:00"
+    }
+  ],
+  "warnings": [],
+  "section_errors": null
+}

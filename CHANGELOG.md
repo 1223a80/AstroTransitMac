@@ -1,5 +1,45 @@
 # Changelog
 
+## 2026-07-13 — 现代占星第 4 批 Midpoints v1
+
+- 启动独立 `mode=midpoint`：入口要求精确出生时刻和显式 point set/focus/source 配置，modulus 第一版只接受 360°，activation orb 独立校验。
+- midpoint reference 保持 optional；无 reference 时契约只生成本命轴与 focus tree，不伪造动态 snapshot activation。
+- B4 按独立 midpoint 核心、B3 timing axis target、Swift UI/导出与真实 fixture 四条写集实施，避免改动旧 `mode=scan`。
+- Modern Timing 的 `target_point_set.midpoint_pairs` 采用两个 point ID 的权威重算契约；入口拒绝自配对、反序重复 pair 和畸形结构，不接受客户端注入中点经度。
+- Swift point-set 增加 optional `midpoint_pairs`，并建立独立 Midpoint 请求模型；旧 fixture 缺少该字段时继续按 `nil` 解码，不改变既有 mode 的编码。
+- Modern Timing 前端估算器按每个去重 midpoint axis 的 direct/opposite 两个实际 target branch 计数，与后端工作量公式保持同口径。
+- Swift/Python 共享 mode 常量同步登记 `midpoint`，让 constants contract 在 API 新 mode 落地时立即覆盖漂移。
+- 增加 Swift 请求/估算聚焦契约：独立 midpoint 请求可省略 reference、pair 编码 canonicalize 端点顺序，重复反序轴在估算时只计一次且展开两个 branch。
+- Midpoint API 不只检查时刻字段是否存在，还实际解析 birth/reference 的日期、时区与 DST，并限制在项目支持的 1800...2100 年范围。
+- B3 Timing 现可从 `midpoint_pairs` 的 endpoint IDs 权威重算轴并展开 direct/opposite target；branch 进入 group/event signature 防止 90° 同时命中被去重吞掉，事件另输出 `target_axis_branch`。
+- Pair-only timing 请求不再继承默认十大行星与四轴；body/angle/cusp/Lot/asteroid endpoint 统一走共享 natal point resolver，未知或不可用端点显式失败。
+- Swift Timing event 解码、Markdown 摘要与 CSV 增加 `target_axis_branch`，普通事件继续以 `nil`/空列兼容，midpoint direct/opposite 可在导出中复核。
+- 新增独立 Timing–Midpoint 回归，锁定 pair-only 两 branch、估算 target 数、90° 同时 exact 的 branch-aware 去重、普通 target ID 兼容和畸形/未知 endpoint 失败路径。
+- 新增覆盖六个本命点、四个 focus 与四类 reference activation 的真实 midpoint 示例请求，作为 backend smoke 和 Swift fixture 的唯一生成源。
+- Midpoint 核心完成 canonical 轴、N*(N-1)/2 完整性、focus tree、四来源 snapshot activation、全 point-set resolver 与稳定 hit wire contract；16 项模块测试通过。
+- Swift 新增 midpoint Codable、axes/trees/activations + diagnostics/JSON 结果页及专用 Markdown/CSV/JSON，第一版明确不接 AI。
+- `.midpoint` 接入既有 ModernSubMode、ModernResultData、通用 BackendClient 与结果路由；从轴表选择后可切到现代综合时间线并只预填 canonical midpoint pairs，不自动运行。
+- Midpoint 使用独立 bodies/angles/cusps/Lots/focus/source/orb/reference 状态；Timing target point set 可携带 canonical pairs，并以显式 custom-asteroid 开关保证轴表跳转后不会混入隐藏普通目标。
+- 新增 `runMidpoint()`，严格校验至少两个有效点和一个有效 focus；reference 可显式关闭，四类 activation source 与独立 orb 编码后复用通用后端运行链。
+- Timing 的 custom-asteroid 开关只影响 `modern_timing` 请求与星历准备；旧精确 Scan 继续无条件沿用原自定义小行星输入，不发生跨工作区行为漂移。
+- Midpoint 侧栏补齐精确出生说明、点集、focus、optional reference、四类 activation source、独立 orb 与 360° direct/opposite 口径。
+- Timing 侧栏展示和逐条删除预填 midpoint axes，默认不选全部；普通自定义小行星目标有独立开关，轴表跳转时显式关闭。
+- Midpoint Swift meta 保留后端 `activation_sources` 并写入诊断与 Markdown，确保用户选择的 source 配置不会在 Codable 往返后丢失。
+- Activations tab 可将当前 snapshot 实际命中的去重 axis 集合预填到综合时间线，仍只跳转不自动计算。
+- 按文档命令生成真实 `midpoint-result.json`，并因 intentional event shape 刷新 `modern-timing-result.json`；BackendContract 锁定 15 轴、四 focus/四来源 activation 与普通 Timing branch=nil。
+- 新增 pair-only Modern Timing 示例：普通目标数组全部显式为空，只扫描 SUN/MOON natal midpoint axis 的两个 branch，供 estimator/event/export 真实契约验证。
+- 由 pair-only 示例生成真实 Timing midpoint fixture：2 个 target branches、6 条事件、direct/opposite 四个稳定 group；Swift contract 同步验证 branch-aware ID 与导出列。
+- Modern tab 状态测试锁定 `.midpoint.defaultResultTab == axes`，切换子模式时不继承其他结果页的 stale tab。
+- 真实 midpoint contract 明确区分 meta 中“已配置 activation sources”和 snapshot 中“实际命中 sources”；某来源零命中不伪造事实行。
+- Midpoint API 回归显式锁定 D02：缺失小时、分钟或时区必须返回 missing；非法 reference 时区和 45/90 dial modulus 返回结构化 invalid，不进入计算。
+- B4 聚焦门禁当前通过：Midpoint/Timing/常量 Python 68 项，Swift 73 项 / 18 suites；下一步执行项目全量 gate 与所有 legacy smokes。
+- 一键本地门禁、CI 与 AGENTS smoke 清单同步登记 Solar/Lunar Return、Modern Timing、Midpoint 和 pair-only Timing，后续 push 会持续执行新 mode 的真实入口检查。
+- Timing midpoint target 选择完整覆盖 all/focus/manual：轴表可全选当前筛选结果或手动多选，中点树可发送当前 focus 的实际命中轴；三条路径默认都不自动运行。
+- B4 审查修复后的完整门禁通过：Python 702、Swift 74；legacy、Return、Timing、Midpoint、pair-only Timing 与 Rectify smokes 全绿，随后再次清理构建/pytest/bytecode 缓存。
+- 提交前契约审查补齐每条 axis 的 `trace.input_longitudes`，并由 Swift Codable 保留该字段，确保 10°/190° 对径 tie-break 在 JSON 导出中可复算而非只靠实现约定。
+- 修正含 midpoint pair 的部分 point-set 请求仍继承普通默认目标的问题：所有省略 selector 均按空集处理，只有显式普通 selector 才形成混合 target；同步校验嵌套 `point_set.node_mode`，并新增 activation source 单项失败隔离回归。
+- Timing 的 Timeline/Grouped/Calendar 事件摘要与详情现显示 direct/opposite，Markdown 逐行保留稳定 event ID；普通 Timing 不再编码空 `midpoint_pairs`，中点预填会清除旧结果，CSV 对异常重复 axis ID 安全处理而不崩溃。
+
 ## 2026-07-13 — 现代占星第 3 批综合预测时间线
 
 - Timing 筛选条改为窄窗口可横向滚动；Calendar 按显示时区做“月 / ISO 周”分组，并在周内保留当地日期时间，补充周键测试。

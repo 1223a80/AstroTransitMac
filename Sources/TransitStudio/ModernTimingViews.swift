@@ -353,6 +353,9 @@ private struct ModernTimingEventCard: View {
                     GridRow { Text("进入").foregroundStyle(.secondary); Text(lifecycleValue(event.enteringUTC, clipped: event.windowClippedStart)) }
                     GridRow { Text("精确").foregroundStyle(.secondary); Text(event.exactUTC) }
                     GridRow { Text("离开").foregroundStyle(.secondary); Text(lifecycleValue(event.leavingUTC, clipped: event.windowClippedEnd)) }
+                    if let branch = event.targetAxisBranch {
+                        GridRow { Text("中点分支").foregroundStyle(.secondary); Text(branch) }
+                    }
                     GridRow { Text("运动").foregroundStyle(.secondary); Text(event.motion) }
                     GridRow { Text("方法").foregroundStyle(.secondary); Text(event.methodKey) }
                 }
@@ -412,6 +415,9 @@ private enum ModernTimingLabels {
         }
         if let target = event.targetPointName ?? event.targetPointID {
             parts.append(target)
+        }
+        if let branch = event.targetAxisBranch {
+            parts.append("[\(branch)]")
         }
         return parts.joined(separator: " ")
     }

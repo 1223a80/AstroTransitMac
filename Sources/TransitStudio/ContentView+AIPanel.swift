@@ -131,6 +131,8 @@ extension ContentView {
                 return nil
             case .returnChart:
                 return nil
+            case .midpoint:
+                return nil
             }
         case .horary:
             return AIPanelContext(

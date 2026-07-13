@@ -80,4 +80,43 @@ extension ContentView {
             }
         }
     }
+
+    var midpointResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .midpoint(let midpoint) = result {
+                MidpointResultPane(
+                    result: midpoint,
+                    selectedTab: $calcVM.modernSelectedTab,
+                    onSendAxesToTiming: { axisIDs in
+                        openMidpointAxesInTiming(result: midpoint, axisIDs: axisIDs)
+                    }
+                )
+            } else {
+                EmptyStateView(
+                    title: "等待中点计算",
+                    systemImage: "circle.grid.cross",
+                    description: "选择本命点集、focus 与单时点激活来源后开始计算。"
+                )
+            }
+        }
+    }
+
+    func openMidpointAxesInTiming(result: MidpointResult, axisIDs: [String]) {
+        let selectedIDs = Set(axisIDs)
+        let pairs = result.axes
+            .filter { selectedIDs.contains($0.id) }
+            .map { MidpointPairRequest(pointAID: $0.pointAID, pointBID: $0.pointBID) }
+        guard !pairs.isEmpty else { return }
+
+        timingMidpointPairs = Set(pairs)
+        timingTargetBodies.removeAll()
+        timingTargetAngles.removeAll()
+        timingTargetHouseCusps.removeAll()
+        timingTargetLots.removeAll()
+        timingUseCustomAsteroids = false
+        calcVM.modernTimingResult = nil
+        practiceMode = .modern
+        mode = .scan
+        scanWorkspaceMode = "modern_timing"
+    }
 }

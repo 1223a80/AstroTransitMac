@@ -111,6 +111,60 @@ struct ModernRequestEncodingTests {
         #expect(dict["reference"] is [String: Any])
     }
 
+    @Test func midpointRequestEncodesCanonicalPairFreeStandaloneContract() throws {
+        let request = MidpointRequest(
+            birth: birth,
+            reference: nil,
+            pointSet: ModernPointSet(
+                bodyIDs: ["SUN", "MOON", "MARS"],
+                includeNodes: false,
+                nodeMode: "true_node",
+                customAsteroids: [],
+                angleIDs: ["ASC", "MC"]
+            ),
+            focusPointIDs: ["SUN", "MOON", "ASC", "MC"],
+            activationSources: ["natal", "transit", "secondary_progression", "solar_arc"]
+        )
+
+        let dict = try encodedDictionary(request)
+
+        #expect(dict["mode"] as? String == "midpoint")
+        #expect(dict["reference"] == nil)
+        #expect(dict["modulus"] as? Int == 360)
+        #expect(dict["activation_orb"] as? Double == 1.0)
+        #expect(dict["include_opposite_axis"] as? Bool == true)
+        #expect(dict["focus_point_ids"] as? [String] == ["SUN", "MOON", "ASC", "MC"])
+    }
+
+    @Test func midpointPairRequestCanonicalizesEndpointOrder() throws {
+        let pointSet = ModernPointSet(
+            bodyIDs: [],
+            includeNodes: false,
+            nodeMode: "true_node",
+            customAsteroids: [],
+            angleIDs: [],
+            midpointPairs: [MidpointPairRequest(pointAID: "SUN", pointBID: "MOON")]
+        )
+        let dict = try encodedDictionary(pointSet)
+        let pairs = try #require(dict["midpoint_pairs"] as? [[String: Any]])
+
+        #expect(pairs.first?["point_a_id"] as? String == "MOON")
+        #expect(pairs.first?["point_b_id"] as? String == "SUN")
+    }
+
+    @Test func ordinaryPointSetOmitsMidpointPairsWhenUnused() throws {
+        let pointSet = ModernPointSet(
+            bodyIDs: ["SUN"],
+            includeNodes: false,
+            nodeMode: "true_node",
+            customAsteroids: [],
+            angleIDs: ["ASC"]
+        )
+        let dict = try encodedDictionary(pointSet)
+
+        #expect(dict["midpoint_pairs"] == nil)
+    }
+
     private func encodedDictionary<T: Encodable>(_ value: T) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         return try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])

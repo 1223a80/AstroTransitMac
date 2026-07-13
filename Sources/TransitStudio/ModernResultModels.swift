@@ -9,6 +9,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
     case solarArc = "solar_arc"
     case harmonic = "harmonic"
     case returnChart = "return"
+    case midpoint = "midpoint"
 
     var id: String { rawValue }
 
@@ -22,6 +23,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .solarArc: return "太阳弧"
         case .harmonic: return "调和盘"
         case .returnChart: return "返照盘"
+        case .midpoint: return "中点"
         }
     }
 
@@ -35,6 +37,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .solarArc: return "sun.max"
         case .harmonic: return "music.note.list"
         case .returnChart: return "arrow.clockwise.circle"
+        case .midpoint: return "circle.grid.cross"
         }
     }
 
@@ -49,6 +52,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .progression: return "progressed_planets"
         case .solarArc: return "sa_planets"
         case .returnChart: return "current_return"
+        case .midpoint: return "axes"
         }
     }
 }
@@ -61,6 +65,7 @@ enum ModernResultData {
     case solarArc(SolarArcResult)
     case harmonic(HarmonicResult)
     case returnChart(ModernReturnResult)
+    case midpoint(MidpointResult)
 }
 
 struct PatternResult: Codable, Identifiable {

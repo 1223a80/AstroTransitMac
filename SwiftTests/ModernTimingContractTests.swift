@@ -156,6 +156,24 @@ struct ModernTimingContractTests {
         #expect(emptyTargetEstimate.workUnits == 1)
     }
 
+    @Test func estimatorCountsTwoBranchesPerUniqueMidpointAxis() {
+        let midpointTargets = ModernPointSet(
+            bodyIDs: ["SUN"],
+            includeNodes: false,
+            nodeMode: "true_node",
+            customAsteroids: [],
+            angleIDs: [],
+            midpointPairs: [
+                MidpointPairRequest(pointAID: "SUN", pointBID: "MOON"),
+                MidpointPairRequest(pointAID: "MOON", pointBID: "SUN"),
+                MidpointPairRequest(pointAID: "ASC", pointBID: "MC"),
+            ]
+        )
+
+        // One ordinary SUN target plus two canonical axes × two branches.
+        #expect(ModernTimingWorkEstimator.targetCount(for: midpointTargets) == 5)
+    }
+
     @Test func estimatorMatchesRealBackendFixture() throws {
         let result = try realFixtureResult()
         let formatter = ISO8601DateFormatter()

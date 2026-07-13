@@ -40,6 +40,7 @@ struct ModernTimingEvent: Codable, Identifiable {
     let targetPointID: String?
     let targetPointName: String?
     let targetPointKind: String?
+    let targetAxisBranch: String?
     let aspectID: String?
     let aspectName: String?
     let aspectAngle: Double?
@@ -72,6 +73,7 @@ struct ModernTimingEvent: Codable, Identifiable {
         case targetPointID = "target_point_id"
         case targetPointName = "target_point_name"
         case targetPointKind = "target_point_kind"
+        case targetAxisBranch = "target_axis_branch"
         case aspectID = "aspect_id"
         case aspectName = "aspect_name"
         case aspectAngle = "aspect_angle"

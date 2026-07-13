@@ -86,6 +86,8 @@ struct ContentView: View {
     @State var timingTargetAngles: Set<String> = ["ASC", "MC", "DSC", "IC", "VERTEX", "EQUATORIAL_ASCENDANT"]
     @State var timingTargetHouseCusps: Set<Int> = []
     @State var timingTargetLots: Set<String> = []
+    @State var timingMidpointPairs: Set<MidpointPairRequest> = []
+    @State var timingUseCustomAsteroids = true
     @State var timingTransitEventTypes: Set<String> = ["aspect", "ingress", "station"]
     @State var timingProgressionEventTypes: Set<String> = ["aspect", "moon_ingress", "lunation"]
     @State var timingTransitAspects = Set(aspectOptions.filter(\.isDefault).map(\.id))
@@ -108,6 +110,14 @@ struct ContentView: View {
     @State var modernReturnLocationLatitude = "31.2304"
     @State var modernReturnLocationLongitude = "121.4737"
     @State var modernReturnLocationTimezone = "Asia/Shanghai"
+    @State var midpointBodies: Set<String> = ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"]
+    @State var midpointAngles: Set<String> = ["ASC", "MC"]
+    @State var midpointHouseCusps: Set<Int> = []
+    @State var midpointLots: Set<String> = []
+    @State var midpointFocusPointIDs: Set<String> = ["SUN", "MOON", "ASC", "MC"]
+    @State var midpointActivationSources: Set<String> = ["natal", "transit", "secondary_progression", "solar_arc"]
+    @State var midpointActivationOrb = 1.0
+    @State var midpointIncludeReference = true
 
     // Vedic astrology state
     @State var vedicAyanamsha = "lahiri"

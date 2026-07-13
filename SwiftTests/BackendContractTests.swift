@@ -104,6 +104,64 @@ struct BackendContractTests {
         #expect(result.events.allSatisfy { $0.exactUTC.contains("Z") })
         #expect(result.events.allSatisfy { $0.exactLocal.contains("+08:00") })
         #expect(result.events.contains(where: { $0.passCountInWindow > 1 }))
+        #expect(result.events.allSatisfy { $0.targetAxisBranch == nil })
+    }
+
+    @Test func decodeMidpointResultFromRealOutput() throws {
+        let result = try JSONDecoder().decode(
+            MidpointResult.self,
+            from: fixtureData("midpoint-result")
+        )
+
+        #expect(result.meta.schemaVersion == 1)
+        #expect(result.meta.method == "circular_midpoint_axis_360")
+        #expect(result.meta.modulus == 360)
+        #expect(result.meta.activationSources == ["natal", "transit", "secondary_progression", "solar_arc"])
+        #expect(result.axes.count == 15)
+        #expect(Set(result.axes.map(\.id)).count == result.axes.count)
+        #expect(result.axes.allSatisfy { $0.pointAID < $0.pointBID })
+        #expect(Set(result.trees.map(\.focusPointID)) == Set(["SUN", "MOON", "ASC", "MC"]))
+        let configuredSources = Set(result.meta.activationSources ?? [])
+        let hitSources = Set(result.snapshotActivations.map(\.sourceType))
+        #expect(!hitSources.isEmpty)
+        #expect(hitSources.isSubset(of: configuredSources))
+        #expect(result.snapshotActivations.allSatisfy { ["direct", "opposite"].contains($0.axisBranch) })
+        #expect(result.sectionErrors == nil)
+
+        let markdown = MarkdownExportBuilder.midpoint(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(markdown.contains("Direct longitude"))
+        #expect(markdown.contains("Activation sources"))
+        #expect(csv.contains("point_a_id,point_a_name,point_b_id,point_b_name"))
+        #expect(csv.contains("snapshot_activation"))
+    }
+
+    @Test func decodeModernTimingMidpointTargetsFromRealOutput() throws {
+        let result = try JSONDecoder().decode(
+            ModernTimingResult.self,
+            from: fixtureData("modern-timing-midpoint-result")
+        )
+
+        #expect(result.meta.targetCount == 2)
+        #expect(result.meta.effectivePointSet.bodyIDs.isEmpty)
+        #expect(result.meta.effectivePointSet.angleIDs.isEmpty)
+        #expect(result.meta.effectivePointSet.midpointPairs?.map(\.axisID) == ["midpoint|MOON|SUN"])
+        #expect(!result.events.isEmpty)
+        #expect(result.events.allSatisfy { $0.targetPointID == "midpoint|MOON|SUN" })
+        #expect(result.events.allSatisfy { $0.targetPointKind == "midpoint_axis" })
+        #expect(Set(result.events.compactMap(\.targetAxisBranch)) == Set(["direct", "opposite"]))
+        #expect(result.events.allSatisfy { event in
+            guard let branch = event.targetAxisBranch else { return false }
+            return event.groupID.hasSuffix("|\(branch)") && event.id.contains("|\(branch)|")
+        })
+
+        let markdown = MarkdownExportBuilder.modernTiming(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(markdown.contains("[direct]") && markdown.contains("[opposite]"))
+        #expect(result.events.allSatisfy { markdown.contains($0.id.replacingOccurrences(of: "|", with: "\\|")) })
+        #expect(csv.contains("target_point_id,target_axis_branch,aspect_id"))
+        #expect(csv.contains("midpoint|MOON|SUN,direct"))
+        #expect(csv.contains("midpoint|MOON|SUN,opposite"))
     }
 
     @Test func decodeHarmonicResult() throws {

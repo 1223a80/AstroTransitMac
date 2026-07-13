@@ -155,14 +155,54 @@ func selectedAspectRequests(orb: Double) -> [AspectRequest] {
         let nodeIDs: Set<String> = ["MEAN_NODE", "TRUE_NODE", "SOUTH_MEAN_NODE", "SOUTH_TRUE_NODE"]
         let orderedBodies = sortedBodyIDs(timingTargetBodies)
         let angleOrder = ["ASC", "MC", "DSC", "IC", "VERTEX", "ANTIVERTEX", "EQUATORIAL_ASCENDANT"]
+        let midpointPairs = timingMidpointPairs.sorted { $0.axisID < $1.axisID }
         return ModernPointSet(
             bodyIDs: orderedBodies.filter { !nodeIDs.contains($0) },
             includeNodes: orderedBodies.contains(where: nodeIDs.contains),
             nodeMode: modernNodeMode,
-            customAsteroids: asteroidIDs ?? parseAsteroids(customAsteroids),
+            customAsteroids: timingUseCustomAsteroids
+                ? (asteroidIDs ?? parseAsteroids(customAsteroids))
+                : [],
             angleIDs: angleOrder.filter { timingTargetAngles.contains($0) },
             houseCusps: timingTargetHouseCusps.sorted(),
-            lotIDs: timingTargetLots.sorted()
+            lotIDs: timingTargetLots.sorted(),
+            midpointPairs: midpointPairs.isEmpty ? nil : midpointPairs
+        )
+    }
+
+    var midpointSelectedPointIDs: Set<String> {
+        let nodeIDs: Set<String> = ["MEAN_NODE", "TRUE_NODE", "SOUTH_MEAN_NODE", "SOUTH_TRUE_NODE"]
+        var pointIDs = midpointBodies.subtracting(nodeIDs)
+        if !midpointBodies.isDisjoint(with: nodeIDs) {
+            if modernNodeMode == "mean_node" {
+                pointIDs.formUnion(["MEAN_NODE", "SOUTH_MEAN_NODE"])
+            } else {
+                pointIDs.formUnion(["TRUE_NODE", "SOUTH_TRUE_NODE"])
+            }
+        }
+        pointIDs.formUnion(parseAsteroids(customAsteroids).map { "AST:\($0)" })
+        pointIDs.formUnion(midpointAngles)
+        pointIDs.formUnion(midpointHouseCusps.map { "HOUSE_CUSP_\($0)" })
+        pointIDs.formUnion(midpointLots)
+        return pointIDs
+    }
+
+    var midpointEffectiveFocusPointIDs: [String] {
+        midpointFocusPointIDs
+            .intersection(midpointSelectedPointIDs)
+            .sorted()
+    }
+
+    func midpointPointSet(asteroidIDs: [Int]) -> ModernPointSet {
+        let nodeIDs: Set<String> = ["MEAN_NODE", "TRUE_NODE", "SOUTH_MEAN_NODE", "SOUTH_TRUE_NODE"]
+        return ModernPointSet(
+            bodyIDs: sortedBodyIDs(midpointBodies).filter { !nodeIDs.contains($0) },
+            includeNodes: !midpointBodies.isDisjoint(with: nodeIDs),
+            nodeMode: modernNodeMode,
+            customAsteroids: asteroidIDs,
+            angleIDs: Self.modernTimingAngleOptions.map(\.id).filter { midpointAngles.contains($0) },
+            houseCusps: midpointHouseCusps.sorted(),
+            lotIDs: midpointLots.sorted()
         )
     }
 

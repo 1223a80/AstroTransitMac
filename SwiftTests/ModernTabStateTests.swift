@@ -13,6 +13,7 @@ struct ModernTabStateTests {
         #expect(ModernSubMode.solarArc.defaultResultTab == "sa_planets")
         #expect(ModernSubMode.harmonic.defaultResultTab == "planets")
         #expect(ModernSubMode.returnChart.defaultResultTab == "current_return")
+        #expect(ModernSubMode.midpoint.defaultResultTab == "axes")
     }
 
     @Test func resetModernSelectedTabUsesSubModeDefault() {
@@ -22,5 +23,7 @@ struct ModernTabStateTests {
         #expect(vm.modernSelectedTab == "cross_aspects")
         vm.resetModernSelectedTab(for: .solarArc)
         #expect(vm.modernSelectedTab == "sa_planets")
+        vm.resetModernSelectedTab(for: .midpoint)
+        #expect(vm.modernSelectedTab == "axes")
     }
 }

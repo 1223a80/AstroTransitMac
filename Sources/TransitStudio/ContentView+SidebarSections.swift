@@ -341,7 +341,40 @@ extension ContentView {
                     }
                 }
             }
+            HStack {
+                Text("中点轴目标").font(TS.Font.label).foregroundStyle(.secondary)
+                Spacer()
+                Button("清空") { timingMidpointPairs.removeAll() }
+                    .font(TS.Font.label)
+                    .disabled(timingMidpointPairs.isEmpty)
+            }
+            if timingMidpointPairs.isEmpty {
+                Text("可从中点结果页选择轴并预填；默认不自动选择全部中点轴。")
+                    .font(TS.Font.label)
+                    .foregroundStyle(.secondary)
+            } else {
+                VStack(alignment: .leading, spacing: TS.Spacing.sm) {
+                    ForEach(timingMidpointPairs.sorted { $0.axisID < $1.axisID }, id: \.axisID) { pair in
+                        HStack {
+                            Text(pair.axisID)
+                                .font(TS.Font.monoSmall)
+                                .textSelection(.enabled)
+                            Spacer(minLength: 0)
+                            Button {
+                                timingMidpointPairs.remove(pair)
+                            } label: {
+                                Image(systemName: "xmark")
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+            }
+            Toggle("将自定义小行星作为普通目标", isOn: $timingUseCustomAsteroids)
+                .font(TS.Font.label)
             customAsteroidSection
+                .disabled(!timingUseCustomAsteroids)
+                .opacity(timingUseCustomAsteroids ? 1 : 0.55)
         }
     }
 
@@ -563,6 +596,142 @@ extension ContentView {
                 harmonicSidebar
             case .returnChart:
                 returnSidebar
+            case .midpoint:
+                midpointSidebar
+            }
+        }
+    }
+
+    private var midpointSidebar: some View {
+        Group {
+            collapsible("本命盘") { natalSettingsSection }
+            collapsible("中点点集") { midpointPointSetSection }
+            collapsible("中点 Focus") { midpointFocusSection }
+            collapsible("单时点激活") { midpointActivationSection }
+            collapsible("中点参数") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    pickerRow("宫制", selection: $selectedHouseSystem, options: Self.houseSystemOptions)
+                    pickerRow("黄道", selection: $selectedZodiac, options: Self.zodiacOptions)
+                    pickerRow("节点", selection: $modernNodeMode, options: Self.nodeModeOptions)
+                    HStack {
+                        Text("Activation orb").foregroundStyle(.secondary)
+                        Spacer()
+                        Text("\(midpointActivationOrb, specifier: "%.1f")°").monospacedDigit()
+                    }
+                    Slider(value: $midpointActivationOrb, in: 0...5, step: 0.1)
+                    Text("v1 固定使用 360° circular midpoint；direct / opposite 是同一 axis 的两个 branch。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+    }
+
+    private var midpointPointSetSection: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Text("中点功能只接受完整、精确的出生日期、时间、时区和地点。")
+                .font(TS.Font.label)
+                .foregroundStyle(.secondary)
+            bodySection(title: "中点实体", selection: $midpointBodies)
+            selectionHeader(
+                "中点轴点",
+                selectAll: { midpointAngles = Set(Self.modernTimingAngleOptions.map(\.id)) },
+                selectNone: { midpointAngles.removeAll() }
+            )
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: TS.Spacing.md)], alignment: .leading, spacing: TS.Spacing.md) {
+                ForEach(Self.modernTimingAngleOptions) { option in
+                    Toggle(option.title, isOn: toggleBinding(for: option.id, in: $midpointAngles))
+                        .toggleStyle(.checkbox)
+                }
+            }
+            selectionHeader(
+                "中点宫头",
+                selectAll: { midpointHouseCusps = Set(1...12) },
+                selectNone: { midpointHouseCusps.removeAll() }
+            )
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: TS.Spacing.md)], alignment: .leading, spacing: TS.Spacing.md) {
+                ForEach(1...12, id: \.self) { house in
+                    Toggle("\(house) 宫", isOn: Binding(
+                        get: { midpointHouseCusps.contains(house) },
+                        set: { selected in
+                            if selected { midpointHouseCusps.insert(house) }
+                            else { midpointHouseCusps.remove(house) }
+                        }
+                    ))
+                    .toggleStyle(.checkbox)
+                }
+            }
+            selectionHeader(
+                "中点阿拉伯点",
+                selectAll: { midpointLots = Set(targetLotOptions.map(\.id)) },
+                selectNone: { midpointLots.removeAll() }
+            )
+            if targetLotOptions.isEmpty {
+                Text("先计算现代本命盘后，可复用其有效 Lots。")
+                    .font(TS.Font.label)
+                    .foregroundStyle(.secondary)
+            } else {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: TS.Spacing.md)], alignment: .leading, spacing: TS.Spacing.md) {
+                    ForEach(targetLotOptions) { option in
+                        Toggle(option.name, isOn: toggleBinding(for: option.id, in: $midpointLots))
+                            .toggleStyle(.checkbox)
+                    }
+                }
+            }
+            customAsteroidSection
+        }
+    }
+
+    private var midpointFocusSection: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            selectionHeader(
+                "Focus points",
+                selectAll: { midpointFocusPointIDs = midpointSelectedPointIDs },
+                selectNone: { midpointFocusPointIDs.removeAll() }
+            )
+            if midpointSelectedPointIDs.isEmpty {
+                Text("先在中点点集中选择至少两个点。")
+                    .font(TS.Font.label)
+                    .foregroundStyle(.secondary)
+            } else {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 132), spacing: TS.Spacing.md)], alignment: .leading, spacing: TS.Spacing.md) {
+                    ForEach(midpointSelectedPointIDs.sorted(), id: \.self) { pointID in
+                        Toggle(pointID, isOn: toggleBinding(for: pointID, in: $midpointFocusPointIDs))
+                            .toggleStyle(.checkbox)
+                    }
+                }
+            }
+        }
+    }
+
+    private var midpointActivationSection: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            Toggle("计算 reference snapshot", isOn: $midpointIncludeReference)
+            if midpointIncludeReference {
+                Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: TS.Spacing.lg) {
+                    GridRow {
+                        Text("参考").foregroundStyle(.secondary)
+                        DateTimeInput(date: $classicalReferenceDate, timeZone: selectedTimeZone)
+                    }
+                }
+                selectionHeader(
+                    "Activation sources",
+                    selectAll: { midpointActivationSources = ["natal", "transit", "secondary_progression", "solar_arc"] },
+                    selectNone: { midpointActivationSources.removeAll() }
+                )
+                ForEach([
+                    PickerOption(id: "natal", title: "Natal"),
+                    PickerOption(id: "transit", title: "Transit"),
+                    PickerOption(id: "secondary_progression", title: "Secondary Progression"),
+                    PickerOption(id: "solar_arc", title: "Solar Arc"),
+                ]) { option in
+                    Toggle(option.title, isOn: toggleBinding(for: option.id, in: $midpointActivationSources))
+                        .toggleStyle(.checkbox)
+                }
+            } else {
+                Text("不提供 reference：只返回 axes 与 natal focus trees，snapshot activations 为空。")
+                    .font(TS.Font.label)
+                    .foregroundStyle(.secondary)
             }
         }
     }

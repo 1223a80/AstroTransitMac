@@ -347,7 +347,13 @@ enum ModernTimingWorkEstimator {
         targetIDs.formUnion(pointSet.angleIDs)
         targetIDs.formUnion(pointSet.houseCusps.map { "HOUSE_CUSP:\($0)" })
         targetIDs.formUnion(pointSet.lotIDs)
-        return targetIDs.count
+        let midpointAxisIDs = Set((pointSet.midpointPairs ?? []).map { pair in
+            let ordered = [pair.pointAID, pair.pointBID].sorted()
+            return "midpoint|\(ordered[0])|\(ordered[1])"
+        })
+        // Each midpoint axis expands to direct and opposite TargetPoint
+        // branches, matching the backend estimator's actual target count.
+        return targetIDs.count + midpointAxisIDs.count * 2
     }
 
     static func estimatedSteps(

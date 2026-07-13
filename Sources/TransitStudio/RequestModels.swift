@@ -34,6 +34,26 @@ struct AspectRequest: Codable {
     let orb: Double
 }
 
+/// One authoritative natal midpoint axis selection. Only endpoint IDs cross
+/// the wire; the backend recomputes both axis branches from the birth chart.
+struct MidpointPairRequest: Codable, Hashable {
+    let pointAID: String
+    let pointBID: String
+
+    init(pointAID: String, pointBID: String) {
+        let ordered = [pointAID, pointBID].sorted()
+        self.pointAID = ordered[0]
+        self.pointBID = ordered[1]
+    }
+
+    var axisID: String { "midpoint|\(pointAID)|\(pointBID)" }
+
+    enum CodingKeys: String, CodingKey {
+        case pointAID = "point_a_id"
+        case pointBID = "point_b_id"
+    }
+}
+
 struct ModernPointSet: Codable {
     let bodyIDs: [String]
     let includeNodes: Bool
@@ -42,6 +62,7 @@ struct ModernPointSet: Codable {
     let angleIDs: [String]
     let houseCusps: [Int]
     let lotIDs: [String]
+    let midpointPairs: [MidpointPairRequest]?
     let resolvedBodyIDs: [String]?
 
     init(
@@ -52,6 +73,7 @@ struct ModernPointSet: Codable {
         angleIDs: [String],
         houseCusps: [Int] = [],
         lotIDs: [String] = [],
+        midpointPairs: [MidpointPairRequest]? = nil,
         resolvedBodyIDs: [String]? = nil
     ) {
         self.bodyIDs = bodyIDs
@@ -61,6 +83,7 @@ struct ModernPointSet: Codable {
         self.angleIDs = angleIDs
         self.houseCusps = houseCusps
         self.lotIDs = lotIDs
+        self.midpointPairs = midpointPairs
         self.resolvedBodyIDs = resolvedBodyIDs
     }
 
@@ -72,7 +95,65 @@ struct ModernPointSet: Codable {
         case angleIDs = "angle_ids"
         case houseCusps = "house_cusps"
         case lotIDs = "lot_ids"
+        case midpointPairs = "midpoint_pairs"
         case resolvedBodyIDs = "resolved_body_ids"
+    }
+}
+
+/// Request contract for standalone 360° midpoint axes, trees and reference
+/// snapshot activations. Reference remains optional by contract.
+struct MidpointRequest: Codable {
+    let mode: String
+    let birth: BirthSettings
+    let reference: ChartMoment?
+    let pointSet: ModernPointSet
+    let focusPointIDs: [String]
+    let activationSources: [String]
+    let activationOrb: Double
+    let modulus: Int
+    let includeOppositeAxis: Bool
+    let ephemerisPath: String?
+    let noAsteroids: Bool
+    let requireEphemeris: String
+
+    init(
+        mode: String = "midpoint",
+        birth: BirthSettings,
+        reference: ChartMoment?,
+        pointSet: ModernPointSet,
+        focusPointIDs: [String],
+        activationSources: [String],
+        activationOrb: Double = 1.0,
+        modulus: Int = 360,
+        includeOppositeAxis: Bool = true,
+        ephemerisPath: String? = nil,
+        noAsteroids: Bool = false,
+        requireEphemeris: String = "warn"
+    ) {
+        self.mode = mode
+        self.birth = birth
+        self.reference = reference
+        self.pointSet = pointSet
+        self.focusPointIDs = focusPointIDs
+        self.activationSources = activationSources
+        self.activationOrb = activationOrb
+        self.modulus = modulus
+        self.includeOppositeAxis = includeOppositeAxis
+        self.ephemerisPath = ephemerisPath
+        self.noAsteroids = noAsteroids
+        self.requireEphemeris = requireEphemeris
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case mode, birth, reference, modulus
+        case pointSet = "point_set"
+        case focusPointIDs = "focus_point_ids"
+        case activationSources = "activation_sources"
+        case activationOrb = "activation_orb"
+        case includeOppositeAxis = "include_opposite_axis"
+        case ephemerisPath = "ephemeris_path"
+        case noAsteroids = "no_asteroids"
+        case requireEphemeris = "require_ephemeris"
     }
 }
 

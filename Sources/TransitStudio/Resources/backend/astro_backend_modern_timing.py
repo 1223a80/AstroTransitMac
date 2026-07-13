@@ -28,7 +28,16 @@ from astro_backend_ephemeris import (
     house_for_longitude,
     resolve_bodies,
 )
-from astro_backend_modern_points import finalize_point_set, resolve_point_set
+from astro_backend_modern_points import (
+    NODE_BODY_IDS,
+    SUPPORTED_ANGLE_IDS,
+    finalize_point_set,
+    resolve_point_set,
+)
+from astro_backend_midpoints import (
+    build_canonical_midpoint_axis,
+    resolve_natal_midpoint_points,
+)
 from astro_backend_progressions import _calc_progressed_dt
 from astro_backend_scan import (
     MAX_SCAN_WORK_UNITS,
@@ -77,6 +86,7 @@ class TargetPoint:
     name: str
     kind: str
     longitude: float
+    axis_branch: str | None = None
 
 
 @dataclass(frozen=True)
@@ -409,7 +419,25 @@ def _build_targets(
     raw_point_set: Any,
     node_mode: str,
 ) -> tuple[list[TargetPoint], dict[str, Any]]:
-    point_set = resolve_point_set(raw_point_set, node_mode=node_mode)
+    raw_config = dict(raw_point_set) if isinstance(raw_point_set, dict) else raw_point_set
+    midpoint_pairs = _canonical_midpoint_pairs(
+        raw_config.get("midpoint_pairs", []) if isinstance(raw_config, dict) else []
+    )
+    regular_config = dict(raw_config) if isinstance(raw_config, dict) else raw_config
+    if isinstance(regular_config, dict):
+        regular_config.pop("midpoint_pairs", None)
+        if midpoint_pairs:
+            # Once midpoint pairs are present, omitted ordinary selectors mean
+            # empty rather than resolve_point_set's legacy defaults. Explicit
+            # ordinary selectors still opt into mixed targets.
+            regular_config.setdefault("body_ids", [])
+            regular_config.setdefault("include_nodes", False)
+            regular_config.setdefault("custom_asteroids", [])
+            regular_config.setdefault("angle_ids", [])
+            regular_config.setdefault("house_cusps", [])
+            regular_config.setdefault("lot_ids", [])
+
+    point_set = resolve_point_set(regular_config, node_mode=node_mode)
     body_ids = list(point_set["resolved_body_ids"])
     specs = resolve_bodies(
         [point_id for point_id in body_ids if not point_id.startswith("AST:")],
@@ -482,7 +510,123 @@ def _build_targets(
     )
     effective["house_cusps"] = available_houses
     effective["lot_ids"] = available_lots
+
+    if midpoint_pairs:
+        endpoint_ids = sorted({point_id for pair in midpoint_pairs for point_id in pair})
+        endpoint_point_set = _midpoint_endpoint_point_set(endpoint_ids, node_mode)
+        endpoint_points, _ = resolve_natal_midpoint_points(
+            context,
+            endpoint_point_set,
+            context.warnings,
+            node_mode=node_mode,
+        )
+        point_by_id = {str(point["point_id"]): point for point in endpoint_points}
+        effective_pairs: list[dict[str, str]] = []
+        for point_a_id, point_b_id in midpoint_pairs:
+            point_a = point_by_id.get(point_a_id)
+            point_b = point_by_id.get(point_b_id)
+            missing_ids = [
+                point_id
+                for point_id, point in ((point_a_id, point_a), (point_b_id, point_b))
+                if point is None
+            ]
+            if missing_ids:
+                raise ValueError(
+                    "timing midpoint pair endpoints are unavailable: " + ", ".join(missing_ids)
+                )
+            axis = build_canonical_midpoint_axis(point_a, point_b)
+            axis_name = f"{axis['point_a_name']}/{axis['point_b_name']} 中点轴"
+            targets.extend([
+                TargetPoint(
+                    str(axis["id"]),
+                    axis_name,
+                    "midpoint_axis",
+                    float(axis["midpoint_longitude"]),
+                    "direct",
+                ),
+                TargetPoint(
+                    str(axis["id"]),
+                    axis_name,
+                    "midpoint_axis",
+                    float(axis["opposite_longitude"]),
+                    "opposite",
+                ),
+            ])
+            effective_pairs.append({
+                "point_a_id": str(axis["point_a_id"]),
+                "point_b_id": str(axis["point_b_id"]),
+            })
+        effective["midpoint_pairs"] = effective_pairs
     return targets, effective
+
+
+def _canonical_midpoint_pairs(raw_pairs: Any) -> list[tuple[str, str]]:
+    if raw_pairs is None:
+        return []
+    if not isinstance(raw_pairs, list):
+        raise ValueError("target_point_set.midpoint_pairs must be an array")
+    result: list[tuple[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for index, raw_pair in enumerate(raw_pairs):
+        if not isinstance(raw_pair, dict):
+            raise ValueError(f"target_point_set.midpoint_pairs[{index}] must be an object")
+        point_a_id = raw_pair.get("point_a_id")
+        point_b_id = raw_pair.get("point_b_id")
+        if not isinstance(point_a_id, str) or not point_a_id or not isinstance(point_b_id, str) or not point_b_id:
+            raise ValueError(
+                f"target_point_set.midpoint_pairs[{index}] requires non-empty point_a_id and point_b_id"
+            )
+        if point_a_id == point_b_id:
+            raise ValueError(f"target_point_set.midpoint_pairs[{index}] endpoints must be different")
+        pair = tuple(sorted((point_a_id, point_b_id)))
+        if pair in seen:
+            raise ValueError(
+                f"target_point_set.midpoint_pairs contains duplicate pair: {pair[0]}|{pair[1]}"
+            )
+        seen.add(pair)
+        result.append(pair)
+    return sorted(result)
+
+
+def _midpoint_endpoint_point_set(endpoint_ids: list[str], node_mode: str) -> dict[str, Any]:
+    body_ids: list[str] = []
+    custom_asteroids: list[int] = []
+    angle_ids: list[str] = []
+    house_cusps: list[int] = []
+    lot_ids: list[str] = []
+    include_nodes = False
+
+    for point_id in endpoint_ids:
+        if point_id in NODE_BODY_IDS:
+            include_nodes = True
+        elif point_id in BODY_REGISTRY:
+            body_ids.append(point_id)
+        elif point_id.startswith("AST:") and point_id.split(":", 1)[1].isdigit():
+            number = int(point_id.split(":", 1)[1])
+            if number <= 0:
+                raise ValueError(f"invalid timing midpoint asteroid endpoint: {point_id}")
+            custom_asteroids.append(number)
+        elif point_id in SUPPORTED_ANGLE_IDS:
+            angle_ids.append(point_id)
+        elif point_id.startswith("HOUSE_CUSP_") and point_id.removeprefix("HOUSE_CUSP_").isdigit():
+            house = int(point_id.removeprefix("HOUSE_CUSP_"))
+            if not 1 <= house <= 12:
+                raise ValueError(f"invalid timing midpoint house cusp endpoint: {point_id}")
+            house_cusps.append(house)
+        else:
+            # Shared point-set validation remains the authority for Lot IDs;
+            # unknown free-form endpoints fail there rather than being ignored.
+            lot_ids.append(point_id)
+
+    return {
+        "body_ids": body_ids,
+        "include_nodes": include_nodes,
+        "node_mode": node_mode,
+        "custom_asteroids": custom_asteroids,
+        "angle_ids": angle_ids,
+        "house_cusps": house_cusps,
+        "lot_ids": lot_ids,
+    }
 
 
 def _aspect_orb(longitude: float, target_longitude: float, angle: float) -> float:
@@ -538,7 +682,8 @@ def _aspect_events(
                             step,
                             orb_limit,
                         )
-                        group_id = f"{source_type}|{moving_id}|{aspect['id']}|{target.point_id}"
+                        branch_suffix = f"|{target.axis_branch}" if target.axis_branch else ""
+                        group_id = f"{source_type}|{moving_id}|{aspect['id']}|{target.point_id}{branch_suffix}"
                         rows.append(
                             {
                                 "id": f"{group_id}|{_id_stamp(exact_utc)}",
@@ -550,6 +695,7 @@ def _aspect_events(
                                 "target_point_id": target.point_id,
                                 "target_point_name": target.name,
                                 "target_point_kind": target.kind,
+                                "target_axis_branch": target.axis_branch,
                                 "aspect_id": aspect["id"],
                                 "aspect_name": aspect["name"],
                                 "aspect_angle": angle,
@@ -626,6 +772,7 @@ def _ingress_events(
                                 "target_point_id": target_id,
                                 "target_point_name": SIGNS[target_sign],
                                 "target_point_kind": "sign",
+                                "target_axis_branch": None,
                                 "aspect_id": None,
                                 "aspect_name": None,
                                 "aspect_angle": None,
@@ -685,6 +832,7 @@ def _station_events(
                     "target_point_id": None,
                     "target_point_name": None,
                     "target_point_kind": None,
+                    "target_axis_branch": None,
                     "aspect_id": None,
                     "aspect_name": None,
                     "aspect_angle": None,
@@ -744,6 +892,7 @@ def _lunation_events(
                     "target_point_id": "SUN",
                     "target_point_name": sun.name,
                     "target_point_kind": "body",
+                    "target_axis_branch": None,
                     "aspect_id": phase_id,
                     "aspect_name": phase_name,
                     "aspect_angle": phase_angle,

@@ -114,6 +114,11 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-scan-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-horary-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-vedic-ai-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-solar-return-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-lunar-return-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-timing-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-midpoint-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-timing-midpoint-request.json
 ```
 
 For rectify mode smoke test:

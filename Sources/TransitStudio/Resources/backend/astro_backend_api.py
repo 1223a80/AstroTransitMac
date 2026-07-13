@@ -735,7 +735,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
     supported_modes = {
         "moment", "classical", "vedic", "horary", "scan", "rectify",
         "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
-        "modern_return", "modern_timing",
+        "modern_return", "modern_timing", "midpoint",
     }
     if mode not in supported_modes:
         return {"error": f"不支持的 mode：{mode or '<empty>'}", "mode": mode}
@@ -753,6 +753,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "harmonic": ["birth"],
         "modern_return": ["birth", "reference"],
         "modern_timing": ["birth", "start", "end", "display_timezone", "target_point_set", "techniques"],
+        "midpoint": ["birth", "point_set", "focus_point_ids", "activation_sources"],
     }
     default_required = ["natal", "transit"]
     required = required_by_mode.get(mode, default_required)
@@ -830,7 +831,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             for f in ("latitude", "longitude"):
                 if f not in p:
                     missing.append(f"{side}.{f}")
-    if mode in ("progression", "solar_arc", "harmonic", "vedic", "modern_return", "modern_timing"):
+    if mode in ("progression", "solar_arc", "harmonic", "vedic", "modern_return", "modern_timing", "midpoint"):
         if "birth" in request:
             b = request["birth"]
             if isinstance(b, dict):
@@ -850,9 +851,73 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             ref_fields = ("year", "month", "day", "hour", "minute")
             if mode != "vedic":
                 ref_fields = ("year", "month", "day", "hour", "minute", "timezone")
-            for f in ref_fields:
-                if f not in ref:
-                    missing.append(f"reference.{f}")
+            if not isinstance(ref, dict):
+                invalid.append("reference must be an object with an exact moment")
+            else:
+                for f in ref_fields:
+                    if f not in ref:
+                        missing.append(f"reference.{f}")
+    if mode == "midpoint":
+        birth = request.get("birth")
+        if isinstance(birth, dict):
+            latitude = birth.get("latitude")
+            longitude = birth.get("longitude")
+            if isinstance(latitude, bool) or not isinstance(latitude, (int, float)) or not math.isfinite(float(latitude)) or not -90 <= float(latitude) <= 90:
+                invalid.append("birth.latitude must be a finite number in [-90, 90]")
+            if isinstance(longitude, bool) or not isinstance(longitude, (int, float)) or not math.isfinite(float(longitude)) or not -180 <= float(longitude) <= 180:
+                invalid.append("birth.longitude must be a finite number in [-180, 180]")
+            birth_moment = birth.get("moment")
+            if isinstance(birth_moment, dict) and all(field in birth_moment for field in _PERSON_MOMENT_FIELDS):
+                try:
+                    parsed_birth = moment_to_local_datetime(birth_moment)
+                    if not 1800 <= parsed_birth.year <= 2100:
+                        invalid.append("birth.moment.year must be in [1800, 2100]")
+                except Exception as exc:
+                    invalid.append(f"birth.moment is invalid: {exc}")
+        reference = request.get("reference")
+        if isinstance(reference, dict) and all(field in reference for field in _PERSON_MOMENT_FIELDS):
+            try:
+                parsed_reference = moment_to_local_datetime(reference)
+                if not 1800 <= parsed_reference.year <= 2100:
+                    invalid.append("reference.year must be in [1800, 2100]")
+            except Exception as exc:
+                invalid.append(f"reference is invalid: {exc}")
+
+        modulus = request.get("modulus", 360)
+        if isinstance(modulus, bool) or not isinstance(modulus, (int, float)) or not math.isfinite(float(modulus)) or float(modulus) != 360.0:
+            invalid.append("modulus currently only supports 360")
+        activation_orb = request.get("activation_orb", 1.0)
+        if isinstance(activation_orb, bool) or not isinstance(activation_orb, (int, float)) or not math.isfinite(float(activation_orb)) or not 0 <= float(activation_orb) <= 15:
+            invalid.append("activation_orb must be a finite number in [0, 15]")
+        if not isinstance(request.get("include_opposite_axis", True), bool):
+            invalid.append("include_opposite_axis must be a boolean")
+
+        focus_point_ids = request.get("focus_point_ids")
+        if not isinstance(focus_point_ids, list):
+            invalid.append("focus_point_ids must be an array")
+        else:
+            seen_focus_ids: set[str] = set()
+            for index, point_id in enumerate(focus_point_ids):
+                if not isinstance(point_id, str) or not point_id.strip():
+                    invalid.append(f"focus_point_ids[{index}] must be a non-empty string")
+                elif point_id in seen_focus_ids:
+                    invalid.append(f"focus_point_ids contains duplicate value: {point_id}")
+                else:
+                    seen_focus_ids.add(point_id)
+
+        activation_sources = request.get("activation_sources")
+        supported_activation_sources = {"natal", "transit", "secondary_progression", "solar_arc"}
+        if not isinstance(activation_sources, list):
+            invalid.append("activation_sources must be an array")
+        else:
+            seen_sources: set[str] = set()
+            for index, source in enumerate(activation_sources):
+                if not isinstance(source, str) or source not in supported_activation_sources:
+                    invalid.append(f"activation_sources[{index}] is unsupported: {source}")
+                elif source in seen_sources:
+                    invalid.append(f"activation_sources contains duplicate value: {source}")
+                else:
+                    seen_sources.add(source)
     if mode == "modern_timing":
         birth = request.get("birth")
         if isinstance(birth, dict):
@@ -915,6 +980,35 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             f"target_point_set: {error}"
             for error in validate_point_set(target_point_set, node_mode=target_node_mode)
         )
+        if isinstance(target_point_set, dict):
+            midpoint_pairs = target_point_set.get("midpoint_pairs", [])
+            if not isinstance(midpoint_pairs, list):
+                invalid.append("target_point_set.midpoint_pairs must be an array")
+            else:
+                seen_midpoint_pairs: set[tuple[str, str]] = set()
+                for pair_index, pair in enumerate(midpoint_pairs):
+                    pair_prefix = f"target_point_set.midpoint_pairs[{pair_index}]"
+                    if not isinstance(pair, dict):
+                        invalid.append(f"{pair_prefix} must be an object")
+                        continue
+                    point_a_id = pair.get("point_a_id")
+                    point_b_id = pair.get("point_b_id")
+                    if not isinstance(point_a_id, str) or not point_a_id.strip():
+                        invalid.append(f"{pair_prefix}.point_a_id must be a non-empty string")
+                    if not isinstance(point_b_id, str) or not point_b_id.strip():
+                        invalid.append(f"{pair_prefix}.point_b_id must be a non-empty string")
+                    if not isinstance(point_a_id, str) or not isinstance(point_b_id, str):
+                        continue
+                    if point_a_id == point_b_id:
+                        invalid.append(f"{pair_prefix} must contain two different point IDs")
+                        continue
+                    canonical_pair = tuple(sorted((point_a_id, point_b_id)))
+                    if canonical_pair in seen_midpoint_pairs:
+                        invalid.append(
+                            f"target_point_set.midpoint_pairs contains duplicate pair: {canonical_pair[0]}|{canonical_pair[1]}"
+                        )
+                    else:
+                        seen_midpoint_pairs.add(canonical_pair)
 
         allowed_event_types = {
             "transit": {"aspect", "ingress", "station"},
@@ -1066,10 +1160,15 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                     invalid.append("location.longitude must be a number in [-180, 180]")
                 validate_timezone_text(location.get("timezone"), "location.timezone")
     modern_point_modes = {
-        "moment", "synastry", "composite", "davison", "progression", "solar_arc", "harmonic", "modern_return",
+        "moment", "synastry", "composite", "davison", "progression", "solar_arc", "harmonic", "modern_return", "midpoint",
     }
     if mode in modern_point_modes and "point_set" in request:
-        node_mode = str(request.get("node_mode", "true_node"))
+        point_set_value = request.get("point_set")
+        node_mode = str(
+            point_set_value.get("node_mode", request.get("node_mode", "true_node"))
+            if isinstance(point_set_value, dict)
+            else request.get("node_mode", "true_node")
+        )
         invalid.extend(f"point_set: {error}" for error in validate_point_set(request.get("point_set"), node_mode=node_mode))
     if mode in modern_point_modes:
         node_mode_value = request.get("node_mode", "true_node")
@@ -1152,6 +1251,9 @@ def main() -> None:
         elif mode == "modern_timing":
             from astro_backend_modern_timing import calculate_modern_timing
             response = calculate_modern_timing(request, warnings)
+        elif mode == "midpoint":
+            from astro_backend_midpoints import calculate_midpoints
+            response = calculate_midpoints(request, warnings)
         else:
             response = calculate_moment(request, warnings)
 

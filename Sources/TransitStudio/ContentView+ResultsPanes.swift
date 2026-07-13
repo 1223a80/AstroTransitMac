@@ -42,6 +42,7 @@ extension ContentView {
             case .solarArc: return "计算太阳弧"
             case .harmonic: return "计算调和盘"
             case .returnChart: return "计算返照盘"
+            case .midpoint: return "计算中点"
             }
         case .horary:
             return "Horary 起盘"
@@ -100,6 +101,11 @@ extension ContentView {
                         || modernReturnLocationName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                         || modernReturnLocationTimezone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                     ))
+            case .midpoint:
+                return parseDouble(birthLatitude) == nil
+                    || parseDouble(birthLongitude) == nil
+                    || midpointSelectedPointIDs.count < 2
+                    || midpointEffectiveFocusPointIDs.isEmpty
             }
         case .horary:
             return parseDouble(horaryLatitude) == nil
@@ -186,6 +192,7 @@ extension ContentView {
             case .solarArc: return AnyView(solarArcResultsPane)
             case .harmonic: return AnyView(harmonicResultsPane)
             case .returnChart: return AnyView(modernReturnResultsPane)
+            case .midpoint: return AnyView(midpointResultsPane)
             }
         case .horary:
             return AnyView(horaryResultsPane)
