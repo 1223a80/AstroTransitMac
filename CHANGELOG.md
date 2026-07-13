@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — 现代占星后续施工暂停交接（仅文档）
+
+- 按用户要求暂停 B6A；已停止全部 sub agent，并撤回尚未形成完整闭环的 Relocation 代码草稿，待打包源码保持在已验收的 B0–B5A 能力边界。
+- `PLANS.md` 固化 B6A Relocation 的 same-birth-UTC/new-location-houses 与 exact-time/location 契约，并记录 B6B cycles、B6C map spike、5B 决策门和明日恢复顺序。
+- 后续 sub agent 继续只允许 GPT-5.6 Sol / medium 或 GPT-5.6 Luna / xhigh；本次安装包不包含半成品 Relocation 入口。
+- 本次覆盖安装版提升为 `1.4.0 (42)`，对应已验收的 B0–B5A 现代占星扩展集合。
+
 ## 2026-07-13 — 现代占星第 5A 批关系动态
 
 - 按蓝图固定拆分 B5A：并行实施 Transit→Composite/Davison 与 `progress_each_person_then_midpoint` Progressed Composite；5B 的方法争议项保持排除。

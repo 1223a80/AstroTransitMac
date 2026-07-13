@@ -942,3 +942,62 @@
 - Progressed Composite JSON/Swift model/Markdown/CSV 明确只有行星、相位和 trace；不存在 houses/angles key 或 UI tab。
 - Composite/Davison 结果页“动态”只预填并导航，不自动运行；Progressed Composite 是独立 submode，不共享 Composite stale result state。
 - 聚焦 Python/Swift、真实 backend fixtures、`bash check_vibe_changes.sh`、新增 smokes、完整 diff 审查和缓存清理全部通过后，形成独立 B5A commit。
+
+---
+
+# 现代占星扩展实际施工 — 第 6A 批 Relocation Chart（2026-07-13）
+
+## 分支、边界与非目标
+
+- 继续在 `codex/feature-modern-completeness` 上形成 B6A 独立 commit；B5A 已提交为 `d110b45`。
+- 本批只实现蓝图 12A Relocation；12B 朔望/食相周期在 B6A 提交后另开，12C A*C*G / Local Space 只允许先做方法与 MapKit spike，不混入本批。
+- D02 延续用户决定：birth 必须包含年月日、小时、分钟和明确 timezone；relocation 必须包含有效经纬度、地点名和 timezone，不提供未知/模糊生时降级。
+- 原出生时间只在出生 timezone 解释一次；birth UTC/JD 固定。新地点 timezone 只做同一 UTC 的当地显示，不得改变 JD 或行星经度。
+
+## 固定接口口径
+
+- 新增独立 `mode=relocation` / `ModernSubMode.relocation`，method 固定 `same_birth_utc_new_location_houses`。
+- 请求字段固定为 exact `birth`、`relocation{name,latitude,longitude,timezone}`、`house_system`、`zodiac`、`point_set`、`aspects`；point set 继续使用 B1 contract。
+- backend 只计算一次 birth JD 与行星 positions；natal / relocated chart 复用同一行星经度，再分别以出生地点和新地点调用现有 `build_houses()`，杜绝重新解释新地点 timezone。
+- 响应包含 `meta`、`natal_chart`、`relocated_chart`、`planet_house_changes`、`relocated_angles_in_natal_houses`、`natal_angles_in_relocated_houses`、warnings/section errors；不制造 relocation planets→natal planets 相位表。
+- meta 至少保留 schema、method、birth UTC、relocation local、原/新地点、requested/effective house system、zodiac、ephemeris、effective point set；两张 chart 的 houses/angles/fallback provenance 可审计。
+- 所有 shared planet longitude 必须在 1e-9° 内相同；compare row 只记录 `body_id/name/natal_house/relocated_house/changed`，overlay 只记录角点落入对方宫位。
+- UI 为独立 submode；primary tabs 固定 biwheel / relocated houses+angles / overlays / compare，more 为 diagnostics / json；AI 延后并返回 nil。
+
+## 工作包与并行写集
+
+| 工作包 | 内容 | 写集 | 状态 |
+|---|---|---|---|
+| 6A-B Backend | same-JD 双地点 houses/angles、point set、overlay/change、fallback/meta | 新 relocation module + Python tests/sample | 已暂停；草稿未保留，明日重启（GPT-5.6 Sol / medium） |
+| 6A-C Swift contract/export | request/result Codable、backend client、Markdown/CSV/JSON、fixture contract | models/client/new exports/Swift tests | 已暂停；草稿未保留，明日重启（GPT-5.6 Luna / xhigh） |
+| 6A-U Swift UI | submode/state/sidebar/run/result tabs、biwheel/compare、stale result/AI 边界 | ContentView/ModernResultViews/new view/UI tests | 已暂停；草稿未保留，明日重启（GPT-5.6 Luna / xhigh） |
+| 6A-I 主线集成 | API/constants/validation、CI/smoke、真实 fixture、跨写集审查 | API/constants/scripts/docs/fixtures | 已暂停；不得在 calculation module 完成前登记可用入口 |
+| 6A-V 验收 | UTC/JD/longitude invariance、DST/±180°/高纬 fallback、导出与完整 gate | tests/PLANS/CHANGELOG | 待执行 |
+
+## 测试矩阵与 DoD
+
+- Shanghai birth→London relocation：meta birth UTC 与独立 natal 一致，relocation local 正确处理 DST；两 chart 同 body longitude 逐点相等。
+- 同地点 relocation 行星/角点/宫头及 house assignment 稳定；跨经度 ±180° 只改变 houses/angles，不改变 JD/行星。
+- 高纬 Placidus fallback 必须通过现有 house helper 暴露 requested/effective method 与 warning，不能 silent fallback。
+- point set 减少后两盘 planets/angles 与 effective point set 同步减少；缺星历点按实际结果剔除。
+- planet house changes 与双向 angle overlays 可从 chart rows 独立复算；响应没有伪造的跨盘 planetary aspects。
+- Swift tabs 与 switch case 一一对应，biwheel endpoint 完整；Markdown/CSV/JSON 记录原地点、新地点、同一 birth UTC、house fallback 与 compare/overlay。
+- 聚焦 Python/Swift、真实 backend fixture、`bash check_vibe_changes.sh`、新增 smoke、双路 review、完整 diff 与缓存清理通过后形成独立 B6A commit。
+
+## 2026-07-13 暂停交接与明日恢复点
+
+- 当前可打包源码的功能终点是 B5A commit `d110b45`：B0 基线、B1 point set/现代完整性、B2 Solar/Lunar Return、B3 综合时间线、B4 中点、B5A 关系动态均已完成；B6A 未完成代码不进入安装包。
+- 2026-07-13 已停止 B6A 的 3 个并行 sub agent，撤回未闭环的 API/Swift contract 草稿；工作区只保留本交接文档，不存在可见但调用必坏的半成品 Relocation mode。
+- 明日第一步先从最新已验收 commit 新开/确认 B6A 独立任务边界，再按 6A-B、6A-C、6A-U 并行，主 agent 负责 6A-I；不得跨写集，sub agent 只用 GPT-5.6 Sol / medium 或 GPT-5.6 Luna / xhigh。
+- B6A 完成并独立提交后，顺序进入 B6B `modern_cycles`：New/Full Moon、Solar/Lunar Eclipse、global/location visibility、可选 natal contacts、导出与时间线 source 接入。
+- B6B 完成后只先做 B6C 只读方法/MapKit spike，回答 Swiss Ephemeris binding、ACG/Local Space 公式、极区与 ±180° 断线、MapKit 命中/性能、10 点权威交叉验证；spike 验收前不得直接做产品地图。
+- 5B 仍是明确决策门，不属于已交付 5A：D10 Composite 非整宫正式方法、D12 Progression/SA→Composite、Progressed Composite angles/houses 和 Davison reference place 均需用户确认后另开工作，不得在施工中代替用户拍板。
+- 以当前蓝图工程量粗估，B0–B5A 已完成约 70%，整体剩余约 30%：B6A 约 8%、B6B 约 10%、B6C spike/后续产品化约 8%、5B 决策与最终全局收口约 4%。该比例是相对工作量，不是日历工期承诺。
+
+### 明日恢复检查单
+
+1. 读取 `AGENTS.md`、本节和蓝图 12A；确认分支/工作区仅有预期文档差异。
+2. 先写/复核当日 B6A plan 与独立 commit 边界，再启动允许模型的三个互斥 worker。
+3. 主线先查现有接口，随后实现严格 exact birth/location API；不得先登记一个没有 calculation module 的 dispatch。
+4. 用真实 sample 生成 fixture，禁止手改；完成 Python/Swift 聚焦测试、smoke、双路 review 和 `bash check_vibe_changes.sh`。
+5. 检查完整 diff/stat、清理 `.build`/pytest/`__pycache__`，更新本计划状态与 changelog，再形成 B6A 独立 commit。
