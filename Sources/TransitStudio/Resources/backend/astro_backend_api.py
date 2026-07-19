@@ -737,6 +737,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
         "modern_return", "modern_timing", "midpoint", "progressed_composite",
         "relocation", "modern_cycles", "astrocartography", "local_space",
+        "declination_timing",
     }
     if mode not in supported_modes:
         return {"error": f"不支持的 mode：{mode or '<empty>'}", "mode": mode}
@@ -760,6 +761,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "modern_cycles": ["start", "end", "display_timezone"],
         "astrocartography": ["moment"],
         "local_space": ["moment", "location"],
+        "declination_timing": ["birth", "start", "end", "display_timezone"],
     }
     default_required = ["natal", "transit"]
     required = required_by_mode.get(mode, default_required)
@@ -926,7 +928,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                 if value not in (None, []):
                     invalid.append(f"point_set.{field} is not supported by progressed_composite v1")
         validate_aspect_specs(request.get("aspects", []), "aspects")
-    if mode in ("progression", "solar_arc", "harmonic", "vedic", "modern_return", "modern_timing", "midpoint", "relocation"):
+    if mode in ("progression", "solar_arc", "harmonic", "vedic", "modern_return", "modern_timing", "midpoint", "relocation", "declination_timing"):
         if "birth" in request:
             b = request["birth"]
             if isinstance(b, dict):
@@ -1003,6 +1005,65 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                 for field in ("latitude", "longitude"):
                     if field not in location:
                         missing.append(f"location.{field}")
+    if mode == "declination_timing":
+        birth = request.get("birth")
+        if isinstance(birth, dict):
+            latitude = birth.get("latitude")
+            longitude = birth.get("longitude")
+            if isinstance(latitude, bool) or not isinstance(latitude, (int, float)) or not math.isfinite(float(latitude)) or not -90 <= float(latitude) <= 90:
+                invalid.append("birth.latitude must be a finite number in [-90, 90]")
+            if isinstance(longitude, bool) or not isinstance(longitude, (int, float)) or not math.isfinite(float(longitude)) or not -180 <= float(longitude) <= 180:
+                invalid.append("birth.longitude must be a finite number in [-180, 180]")
+        parsed_moments: dict[str, datetime] = {}
+        for field in ("start", "end"):
+            moment = request.get(field)
+            if not isinstance(moment, dict):
+                invalid.append(f"{field} must be an object with an exact moment")
+                continue
+            for key in _PERSON_MOMENT_FIELDS:
+                if key not in moment:
+                    missing.append(f"{field}.{key}")
+            if all(key in moment for key in _PERSON_MOMENT_FIELDS):
+                try:
+                    parsed_moments[field] = moment_to_local_datetime(moment)
+                except Exception as exc:
+                    invalid.append(f"{field} is invalid: {exc}")
+        if "start" in parsed_moments and "end" in parsed_moments:
+            if parsed_moments["end"] <= parsed_moments["start"]:
+                invalid.append("end must be later than start")
+            for field, value in parsed_moments.items():
+                if not 1800 <= value.year <= 2100:
+                    invalid.append(f"{field}.year must be in [1800, 2100]")
+        display_timezone = request.get("display_timezone")
+        if not isinstance(display_timezone, str) or not display_timezone.strip():
+            invalid.append("display_timezone must be a non-empty string")
+        event_types = request.get("event_types")
+        if event_types is not None:
+            if not isinstance(event_types, list) or not event_types:
+                invalid.append("event_types must be a non-empty array when provided")
+            else:
+                supported_decl_events = {
+                    "parallel", "contraparallel", "oob_entry", "oob_exit", "declination_station",
+                }
+                for index, item in enumerate(event_types):
+                    if item not in supported_decl_events:
+                        invalid.append(f"event_types[{index}] is unsupported: {item}")
+        moving_body_ids = request.get("moving_body_ids")
+        if moving_body_ids is not None:
+            if not isinstance(moving_body_ids, list) or not moving_body_ids:
+                invalid.append("moving_body_ids must be a non-empty array when provided")
+            else:
+                for index, item in enumerate(moving_body_ids):
+                    if not isinstance(item, str) or not item.strip():
+                        invalid.append(f"moving_body_ids[{index}] must be a non-empty string")
+        declination_orb = request.get("declination_orb")
+        if declination_orb is not None and (
+            isinstance(declination_orb, bool)
+            or not isinstance(declination_orb, (int, float))
+            or not math.isfinite(float(declination_orb))
+            or not 0 <= float(declination_orb) <= 5
+        ):
+            invalid.append("declination_orb must be a finite number in [0, 5]")
     if mode in ("astrocartography", "local_space"):
         moment = request.get("moment")
         if not isinstance(moment, dict):
@@ -1456,6 +1517,9 @@ def main() -> None:
         elif mode == "modern_cycles":
             from astro_backend_cycles import calculate_modern_cycles
             response = calculate_modern_cycles(request, warnings)
+        elif mode == "declination_timing":
+            from astro_backend_declination_timing import calculate_declination_timing
+            response = calculate_declination_timing(request, warnings)
         elif mode in {"astrocartography", "local_space"}:
             from astro_backend_map import calculate_map_mode
             response = calculate_map_mode(request, warnings)

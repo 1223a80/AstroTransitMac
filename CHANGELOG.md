@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-19 — B7 动态赤纬事件与 OOB 时间线
+
+- 新增后端 mode=`declination_timing`：行运体对本命 point set 的平行 / 反平行、OOB 进入与离开、赤纬停滞（最大南北赤纬），带 entering / exact / leaving、pass 编号与真实黄赤交角 OOB 阈值。
+- 复用 modern_timing 的 bracket + bisection 求根原语；输出 `requested_config` / `effective_config` / `warnings` / `section_errors` / `calculation_assumptions`。
+- Swift：Codable 模型、结果页、Markdown / CSV / JSON 导出、现代子模式「赤纬事件」侧栏与运行入口。
+- 新增 sample、BackendContract fixture、聚焦 pytest 与 Swift 契约测试；CI 与 `check_vibe_changes.sh` 纳入 smoke。
+
 ## 2026-07-19 — B6 后现代 / 古典计算路线写回文档
 
 - 根 `README.md` 补齐 B1–B6 已交付的现代 point set、返照、综合时间线、中点、关系动态、Relocation、周期与地图计算能力，并同步扩展后端示例命令和导出范围。

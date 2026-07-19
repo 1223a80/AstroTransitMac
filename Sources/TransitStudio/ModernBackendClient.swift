@@ -48,6 +48,13 @@ extension BackendClient {
         try await run(request: request, pythonPath: pythonPath)
     }
 
+    static func declinationTiming(
+        request: DeclinationTimingRequest,
+        pythonPath: String
+    ) async throws -> DeclinationTimingResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
     static func astrocartography(
         request: AstrocartographyRequest,
         pythonPath: String

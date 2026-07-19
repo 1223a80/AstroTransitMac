@@ -46,6 +46,7 @@ extension ContentView {
             case .progressedComposite: return "计算推进组合盘"
             case .relocation: return "计算迁移盘"
             case .modernCycles: return "扫描朔望食相"
+            case .declinationTiming: return "计算赤纬事件"
             case .astrocartography: return "计算天体地图线"
             case .localSpace: return "计算 Local Space"
             }
@@ -127,6 +128,11 @@ extension ContentView {
                     || relocationTimezone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             case .modernCycles:
                 return cyclesSelectedTypes.isEmpty
+            case .declinationTiming:
+                return parseDouble(birthLatitude) == nil
+                    || parseDouble(birthLongitude) == nil
+                    || declinationMovingBodies.isEmpty
+                    || declinationEventTypes.isEmpty
             case .astrocartography:
                 return mapBodies.isEmpty
             case .localSpace:
@@ -219,6 +225,7 @@ extension ContentView {
             case .progressedComposite: return AnyView(progressedCompositeResultsPane)
             case .relocation: return AnyView(relocationResultsPane)
             case .modernCycles: return AnyView(modernCyclesResultsPane)
+            case .declinationTiming: return AnyView(declinationTimingResultsPane)
             case .astrocartography: return AnyView(astrocartographyResultsPane)
             case .localSpace: return AnyView(localSpaceResultsPane)
             case .progression: return AnyView(progressionResultsPane)

@@ -13,6 +13,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
     case progressedComposite = "progressed_composite"
     case relocation = "relocation"
     case modernCycles = "modern_cycles"
+    case declinationTiming = "declination_timing"
     case astrocartography = "astrocartography"
     case localSpace = "local_space"
 
@@ -32,6 +33,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .progressedComposite: return "推进组合盘"
         case .relocation: return "迁移盘"
         case .modernCycles: return "朔望食相"
+        case .declinationTiming: return "赤纬事件"
         case .astrocartography: return "天体地图"
         case .localSpace: return "Local Space"
         }
@@ -51,6 +53,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .progressedComposite: return "arrow.triangle.2.circlepath.circle"
         case .relocation: return "airplane.departure"
         case .modernCycles: return "moon.stars"
+        case .declinationTiming: return "arrow.up.and.down.circle"
         case .astrocartography: return "globe.americas"
         case .localSpace: return "location.north.line"
         }
@@ -71,6 +74,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .progressedComposite: return "radix_composite_planets"
         case .relocation: return "biwheel"
         case .modernCycles: return "events"
+        case .declinationTiming: return "events"
         case .astrocartography: return "lines"
         case .localSpace: return "directions"
         }
@@ -89,6 +93,7 @@ enum ModernResultData {
     case progressedComposite(ProgressedCompositeResult)
     case relocation(RelocationResult)
     case modernCycles(ModernCyclesResult)
+    case declinationTiming(DeclinationTimingResult)
     case astrocartography(AstrocartographyResult)
     case localSpace(LocalSpaceResult)
 }

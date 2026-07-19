@@ -39,7 +39,7 @@ Transit Studio 是一个运行在 macOS 上、基于 SwiftUI 的占星计算应�
 
 近期优先批次：
 
-1. **B7 动态赤纬事件**：平行 / 反平行精确时间、OOB 进入与离开、赤纬停滞、orb 生命周期和多次命中。
+1. **B7 动态赤纬事件**（已交付 mode=`declination_timing`）：平行 / 反平行精确时间、OOB 进入与离开、赤纬停滞、orb 生命周期和多次命中。
 2. **B8 行星返照与逆行周期**：把现代返照扩展到水星至外行星，补齐逆行前阴影、逆行区间、后阴影及重复触发。
 3. **B9 古典可见相位与行星时**：基于 Swiss Ephemeris 计算 heliacal rising / setting、地方升落与昼夜不等时。
 4. **B10 行星会合周期**：任意两星的 synodic cycle、合冲四分、周期阶段、相对速度和对本命 point set 的接触。
@@ -123,6 +123,7 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-cycles-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-astrocartography-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-local-space-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-declination-timing-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-vedic-ai-request.json
 ```
 

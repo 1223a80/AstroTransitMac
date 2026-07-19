@@ -71,6 +71,7 @@ extension ContentView {
                 case .progressedComposite: await runProgressedComposite()
                 case .relocation: await runRelocation()
                 case .modernCycles: await runModernCycles()
+                case .declinationTiming: await runDeclinationTiming()
                 case .astrocartography: await runAstrocartography()
                 case .localSpace: await runLocalSpace()
                 }
@@ -483,6 +484,51 @@ extension ContentView {
             )
             let result = try await BackendClient.modernCycles(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .modernCycles(result)
+        }
+    }
+
+    @MainActor
+    func runDeclinationTiming() async {
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        guard !declinationMovingBodies.isEmpty else {
+            calcVM.errorMessage = "请至少选择一个行运体。"
+            return
+        }
+        guard !declinationEventTypes.isEmpty else {
+            calcVM.errorMessage = "请至少选择一种赤纬事件类型。"
+            return
+        }
+        await performRun(progressLabel: "赤纬事件") {
+            let angleOrder = ["ASC", "MC", "DSC", "IC", "VERTEX", "ANTIVERTEX", "EQUATORIAL_ASCENDANT"]
+            let targetPointSet = ModernPointSet(
+                bodyIDs: sortedBodyIDs(declinationTargetBodies),
+                includeNodes: false,
+                nodeMode: modernNodeMode,
+                customAsteroids: [],
+                angleIDs: angleOrder.filter { declinationTargetAngles.contains($0) },
+                houseCusps: [],
+                lotIDs: []
+            )
+            let request = DeclinationTimingRequest(
+                birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                movingBodyIDs: sortedBodyIDs(declinationMovingBodies),
+                eventTypes: Array(declinationEventTypes).sorted(),
+                declinationOrb: declinationOrb,
+                targetPointSet: targetPointSet,
+                zodiac: selectedZodiac,
+                nodeMode: modernNodeMode,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.declinationTiming(
+                request: request,
+                pythonPath: appState.pythonPath
+            )
+            calcVM.modernResultData = .declinationTiming(result)
         }
     }
 

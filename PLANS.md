@@ -1,3 +1,30 @@
+# B7 动态赤纬事件与 OOB 时间线（2026-07-19）
+
+## 范围
+
+- 新 mode=`declination_timing`：行运体对本命 point set 的平行 / 反平行、OOB 进出、赤纬停滞（最大南北赤纬）。
+- 复用 modern_timing 的 `_find_roots` / `_refine_root` / `_lifecycle_bounds` / pass 编号；OOB 阈值使用事件时刻真实黄赤交角。
+- JSON + SwiftUI + Markdown + CSV；requested/effective config、warnings、section_errors、calculation_assumptions。
+- 聚焦 pytest、sample、BackendContract fixture、Swift 契约/导出测试；`check_vibe_changes.sh` 纳入 smoke。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 契约发现 | ✅ | modern_timing 求根原语、静态赤纬/OOB、point-set、导出与 fixture 路径已查清 |
+| 02 后端实现 | ✅ | `astro_backend_declination_timing.py` + API 白名单 |
+| 03 测试与 sample | ✅ | pytest + sample smoke + fixture |
+| 04 Swift 契约与 UI | ✅ | Codable / 视图 / 导出 / 侧栏 / 运行 |
+| 05 门禁与提交 | ✅ | pytest / smoke / swift build+test / check_vibe / 清理 / 独立 commit |
+
+## 边界
+
+- 保留「外部宠物升级 — プリルン」PLANS 条目，不混入本批次说明。
+- 不改 dist/.build/缓存/backups。
+- B7 门禁未绿前不宣称 B8 开始完成。
+
+---
+
 # B6 后现代 / 古典技法路线写回仓库（2026-07-19）
 
 ## 范围

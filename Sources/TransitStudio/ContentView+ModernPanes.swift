@@ -145,6 +145,20 @@ extension ContentView {
         }
     }
 
+    var declinationTimingResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .declinationTiming(let r) = result {
+                DeclinationTimingResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(
+                    title: "等待赤纬事件计算",
+                    systemImage: "arrow.up.and.down.circle",
+                    description: "设定时间窗、行运体与本命目标后计算平行/反平行/OOB。"
+                )
+            }
+        }
+    }
+
     var astrocartographyResultsPane: some View {
         Group {
             if let result = calcVM.modernResultData, case .astrocartography(let r) = result {

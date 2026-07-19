@@ -1,0 +1,57 @@
+{
+  "mode": "declination_timing",
+  "birth": {
+    "moment": {
+      "year": 1990,
+      "month": 1,
+      "day": 1,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "houseSystem": "placidus",
+    "zodiac": "tropical",
+    "boundsSystem": "egyptian",
+    "triplicitySystem": "dorothean"
+  },
+  "start": {
+    "year": 2026,
+    "month": 1,
+    "day": 1,
+    "hour": 0,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "end": {
+    "year": 2026,
+    "month": 6,
+    "day": 30,
+    "hour": 23,
+    "minute": 59,
+    "timezone": "Asia/Shanghai"
+  },
+  "display_timezone": "Asia/Shanghai",
+  "moving_body_ids": ["MOON", "MERCURY", "MARS", "JUPITER"],
+  "event_types": [
+    "parallel",
+    "contraparallel",
+    "oob_entry",
+    "oob_exit",
+    "declination_station"
+  ],
+  "declination_orb": 1.0,
+  "target_point_set": {
+    "body_ids": ["SUN", "MOON", "MERCURY", "VENUS", "MARS"],
+    "include_nodes": false,
+    "node_mode": "true_node",
+    "custom_asteroids": [],
+    "angle_ids": ["ASC", "MC"],
+    "house_cusps": [],
+    "lot_ids": []
+  },
+  "ephemeris_path": null,
+  "no_asteroids": false,
+  "require_ephemeris": "warn"
+}

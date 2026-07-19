@@ -143,6 +143,13 @@ struct ContentView: View {
     @State var cyclesVisibility = "global"
     @State var cyclesIncludeNatalContacts = true
     @State var cyclesSelectedTypes: Set<String> = ["new_moon", "full_moon", "solar_eclipse", "lunar_eclipse"]
+    @State var declinationMovingBodies: Set<String> = ["MOON", "MERCURY", "MARS", "JUPITER"]
+    @State var declinationTargetBodies: Set<String> = ["SUN", "MOON", "MERCURY", "VENUS", "MARS"]
+    @State var declinationTargetAngles: Set<String> = ["ASC", "MC"]
+    @State var declinationEventTypes: Set<String> = [
+        "parallel", "contraparallel", "oob_entry", "oob_exit", "declination_station",
+    ]
+    @State var declinationOrb: Double = 1.0
     @State var mapBodies: Set<String> = [
         "SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"
     ]

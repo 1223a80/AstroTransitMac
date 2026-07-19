@@ -273,6 +273,36 @@ struct BackendContractTests {
         #expect(csv.contains("cycle_event"))
     }
 
+    @Test func decodeDeclinationTimingFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(
+            DeclinationTimingResult.self,
+            from: fixtureData("declination-timing-result")
+        )
+        #expect(result.meta.method == "declination_timing_v1")
+        #expect(result.meta.coordinateKind == "declination")
+        #expect(result.meta.oobThresholdMethod == "true_obliquity_at_event_time")
+        #expect(!result.events.isEmpty)
+        let types = Set(result.events.map(\.eventType))
+        #expect(types.contains("parallel"))
+        #expect(types.contains("contraparallel"))
+        #expect(types.contains("declination_station"))
+        #expect(types.contains("oob_entry") || types.contains("oob_exit"))
+        #expect(result.events.contains { $0.passCountInWindow > 1 })
+        #expect(result.events.allSatisfy { $0.exactUTC.hasSuffix("Z") })
+        #expect(result.events.allSatisfy { $0.exactLocal.contains("+08:00") })
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        #expect(result.requestedConfig != nil)
+        #expect(result.effectiveConfig != nil)
+        let markdown = MarkdownExportBuilder.declinationTiming(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(markdown.contains("动态赤纬事件"))
+        #expect(markdown.contains("计算假设"))
+        #expect(markdown.contains("警告"))
+        #expect(markdown.contains("可复算的时间与坐标事实"))
+        #expect(csv.contains("declination_event"))
+        #expect(csv.contains("moving_declination"))
+    }
+
     @Test func decodeAstrocartographyFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(AstrocartographyResult.self, from: fixtureData("astrocartography-result"))
         #expect(result.meta.method.contains("acg"))

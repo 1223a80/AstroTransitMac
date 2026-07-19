@@ -657,6 +657,8 @@ extension ContentView {
                 relocationSidebar
             case .modernCycles:
                 modernCyclesSidebar
+            case .declinationTiming:
+                declinationTimingSidebar
             case .astrocartography:
                 astrocartographySidebar
             case .localSpace:
@@ -728,6 +730,69 @@ extension ContentView {
                             .font(TS.Font.label)
                             .foregroundStyle(.secondary)
                     }
+                }
+            }
+        }
+    }
+
+    private var declinationTimingSidebar: some View {
+        Group {
+            collapsible("本命盘") { natalSettingsSection }
+            collapsible("时间窗") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    DateTimeInput(date: $scanStartDate, timeZone: selectedTimeZone)
+                    DateTimeInput(date: $scanEndDate, timeZone: selectedTimeZone)
+                    Text("使用扫描窗口的起止时间与显示时区。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            collapsible("行运体") {
+                bodySection(title: "行运体", selection: $declinationMovingBodies)
+            }
+            collapsible("本命目标") {
+                bodySection(title: "本命天体", selection: $declinationTargetBodies)
+            }
+            collapsible("本命轴点") {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                    ForEach(["ASC", "MC", "DSC", "IC"], id: \.self) { angle in
+                        Toggle(angle, isOn: Binding(
+                            get: { declinationTargetAngles.contains(angle) },
+                            set: { enabled in
+                                if enabled { declinationTargetAngles.insert(angle) }
+                                else { declinationTargetAngles.remove(angle) }
+                            }
+                        ))
+                    }
+                }
+            }
+            collapsible("事件类型") {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                    ForEach(
+                        ["parallel", "contraparallel", "oob_entry", "oob_exit", "declination_station"],
+                        id: \.self
+                    ) { type in
+                        Toggle(type, isOn: Binding(
+                            get: { declinationEventTypes.contains(type) },
+                            set: { enabled in
+                                if enabled { declinationEventTypes.insert(type) }
+                                else { declinationEventTypes.remove(type) }
+                            }
+                        ))
+                    }
+                }
+            }
+            collapsible("容许度") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    HStack {
+                        Text("赤纬 orb").foregroundStyle(.secondary)
+                        Spacer()
+                        Text("\(declinationOrb, specifier: "%.1f")°").monospacedDigit()
+                    }
+                    Slider(value: $declinationOrb, in: 0...3, step: 0.1)
+                    Text("OOB 阈值使用事件时刻真实黄赤交角；平行/反平行使用上表容许度。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
                 }
             }
         }
