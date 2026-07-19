@@ -1,0 +1,1564 @@
+{
+  "meta": {
+    "mode": "time_lords_extended",
+    "method": "time_lords_extended_v1",
+    "schema_version": 1,
+    "birth_utc": "1990-01-01T04:00:00+00:00",
+    "reference_local": "2026-05-05 12:00:00+08:00",
+    "ephemeris": "Swiss Ephemeris",
+    "age": 36
+  },
+  "requested_config": {
+    "zodiac": "tropical"
+  },
+  "effective_config": {
+    "method": "time_lords_extended_v1",
+    "zr_max_level": 4,
+    "daily_profection_profile": "day_step_proxy_v1"
+  },
+  "profection": {
+    "age": 36,
+    "house": 1,
+    "sign": "白羊",
+    "lord": "火星",
+    "lordId": "MARS",
+    "lord_condition": "射手 9宫，顺行，评分 -2",
+    "start_local": "2026-01-01 12:00",
+    "end_local": "2027-01-01 12:00",
+    "start_utc": "2026-01-01 04:00",
+    "end_utc": "2027-01-01 04:00",
+    "activated_planets": [],
+    "logic_steps": [
+      "1. 年龄 36，从本命上升白羊起数到第 1 宫。",
+      "2. 激活星座为 白羊，年主为 火星。",
+      "3. 年主状态：射手 9宫，顺行，评分 -2。",
+      "4. 激活宫内行星：无。",
+      "5. 月小限：第 5 月，狮子，月主 太阳。",
+      "6. Profected ASC：白羊 17.6°。"
+    ],
+    "_method": "Annual_Profection_Hellenistic",
+    "_source_tradition": "Hellenistic",
+    "monthly": {
+      "month": 5,
+      "house": 5,
+      "sign": "狮子",
+      "lord": "太阳",
+      "lord_id": "SUN",
+      "start_local": "2026-05-01 12:00",
+      "end_local": "2026-06-01 11:59",
+      "lord_condition": "摩羯 10宫，顺行，评分 5"
+    },
+    "profected_asc_longitude": 17.616,
+    "profected_asc_sign": "白羊"
+  },
+  "daily_profection": {
+    "activated_sign_index": 1,
+    "activated_sign": "金牛",
+    "lord": "VENUS",
+    "day_in_cycle": 133,
+    "method_key": "daily_profection_day_step_proxy_v1",
+    "note": "One sign per day from annual profection sign; explicit proxy profile."
+  },
+  "zodiacal_releasing": {
+    "fortune": {
+      "id": "zr-FORTUNE",
+      "technique": "Zodiacal Releasing from Fortune",
+      "level": "L1",
+      "ruler": "水星",
+      "sign": "双子",
+      "start_local": "2013-01-01 01:51",
+      "end_local": "2032-12-31 22:15",
+      "next_transition": "2032-12-31 22:15",
+      "importance_score": 0,
+      "notes": [],
+      "current_active_level": "L3",
+      "lot_angularity": "果宫",
+      "l1_periods": [
+        {
+          "level": "L1",
+          "sign": "白羊",
+          "sign_index": 0,
+          "ruler": "火星",
+          "years": 15,
+          "start_local": "1990-01-01 12:00",
+          "end_local": "2005-01-01 03:18",
+          "is_active": false
+        },
+        {
+          "level": "L1",
+          "sign": "金牛",
+          "sign_index": 1,
+          "ruler": "金星",
+          "years": 8,
+          "start_local": "2005-01-01 03:18",
+          "end_local": "2013-01-01 01:51",
+          "is_active": false
+        },
+        {
+          "level": "L1",
+          "sign": "双子",
+          "sign_index": 2,
+          "ruler": "水星",
+          "years": 20,
+          "start_local": "2013-01-01 01:51",
+          "end_local": "2032-12-31 22:15",
+          "is_active": true
+        }
+      ],
+      "l2_periods": [
+        {
+          "level": "L2",
+          "sign": "双子",
+          "sign_index": 2,
+          "ruler": "水星",
+          "years": 1.9,
+          "start_local": "2013-01-01 01:51",
+          "end_local": "2014-11-24 11:31",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "巨蟹",
+          "sign_index": 3,
+          "ruler": "月亮",
+          "years": 2.37,
+          "start_local": "2014-11-24 11:31",
+          "end_local": "2017-04-07 23:36",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "狮子",
+          "sign_index": 4,
+          "ruler": "太阳",
+          "years": 1.8,
+          "start_local": "2017-04-07 23:36",
+          "end_local": "2019-01-25 18:23",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "处女",
+          "sign_index": 5,
+          "ruler": "水星",
+          "years": 1.9,
+          "start_local": "2019-01-25 18:23",
+          "end_local": "2020-12-18 04:03",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "天秤",
+          "sign_index": 6,
+          "ruler": "金星",
+          "years": 0.76,
+          "start_local": "2020-12-18 04:03",
+          "end_local": "2021-09-21 03:07",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "天蝎",
+          "sign_index": 7,
+          "ruler": "火星",
+          "years": 1.42,
+          "start_local": "2021-09-21 03:07",
+          "end_local": "2023-02-22 10:22",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "射手",
+          "sign_index": 8,
+          "ruler": "木星",
+          "years": 1.14,
+          "start_local": "2023-02-22 10:22",
+          "end_local": "2024-04-12 20:58",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "摩羯",
+          "sign_index": 9,
+          "ruler": "土星",
+          "years": 2.56,
+          "start_local": "2024-04-12 20:58",
+          "end_local": "2026-11-03 14:49",
+          "is_active": true,
+          "sub_periods": [
+            {
+              "level": "L3",
+              "sign": "摩羯",
+              "sign_index": 9,
+              "ruler": "土星",
+              "years": 0.33,
+              "start_local": "2024-04-12 20:58",
+              "end_local": "2024-08-10 11:39",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "水瓶",
+              "sign_index": 10,
+              "ruler": "土星",
+              "years": 0.36,
+              "start_local": "2024-08-10 11:39",
+              "end_local": "2024-12-21 09:18",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "双鱼",
+              "sign_index": 11,
+              "ruler": "木星",
+              "years": 0.15,
+              "start_local": "2024-12-21 09:18",
+              "end_local": "2025-02-12 13:09",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "白羊",
+              "sign_index": 0,
+              "ruler": "火星",
+              "years": 0.18,
+              "start_local": "2025-02-12 13:09",
+              "end_local": "2025-04-19 23:59",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "金牛",
+              "sign_index": 1,
+              "ruler": "金星",
+              "years": 0.1,
+              "start_local": "2025-04-19 23:59",
+              "end_local": "2025-05-25 10:33",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "双子",
+              "sign_index": 2,
+              "ruler": "水星",
+              "years": 0.24,
+              "start_local": "2025-05-25 10:33",
+              "end_local": "2025-08-22 00:59",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "巨蟹",
+              "sign_index": 3,
+              "ruler": "月亮",
+              "years": 0.3,
+              "start_local": "2025-08-22 00:59",
+              "end_local": "2025-12-10 19:01",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "狮子",
+              "sign_index": 4,
+              "ruler": "太阳",
+              "years": 0.23,
+              "start_local": "2025-12-10 19:01",
+              "end_local": "2026-03-04 23:08",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "处女",
+              "sign_index": 5,
+              "ruler": "水星",
+              "years": 0.24,
+              "start_local": "2026-03-04 23:08",
+              "end_local": "2026-06-01 13:34",
+              "is_active": true,
+              "sub_periods": [
+                {
+                  "level": "L4",
+                  "sign": "处女",
+                  "sign_index": 5,
+                  "ruler": "水星",
+                  "years": 0.02,
+                  "start_local": "2026-03-04 23:08",
+                  "end_local": "2026-03-13 08:41",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "天秤",
+                  "sign_index": 6,
+                  "ruler": "金星",
+                  "years": 0.01,
+                  "start_local": "2026-03-13 08:41",
+                  "end_local": "2026-03-16 17:19",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "天蝎",
+                  "sign_index": 7,
+                  "ruler": "火星",
+                  "years": 0.02,
+                  "start_local": "2026-03-16 17:19",
+                  "end_local": "2026-03-23 00:29",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "射手",
+                  "sign_index": 8,
+                  "ruler": "木星",
+                  "years": 0.01,
+                  "start_local": "2026-03-23 00:29",
+                  "end_local": "2026-03-28 01:25",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "摩羯",
+                  "sign_index": 9,
+                  "ruler": "土星",
+                  "years": 0.03,
+                  "start_local": "2026-03-28 01:25",
+                  "end_local": "2026-04-08 09:31",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "水瓶",
+                  "sign_index": 10,
+                  "ruler": "土星",
+                  "years": 0.03,
+                  "start_local": "2026-04-08 09:31",
+                  "end_local": "2026-04-20 23:51",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "双鱼",
+                  "sign_index": 11,
+                  "ruler": "木星",
+                  "years": 0.01,
+                  "start_local": "2026-04-20 23:51",
+                  "end_local": "2026-04-26 00:47",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "白羊",
+                  "sign_index": 0,
+                  "ruler": "火星",
+                  "years": 0.02,
+                  "start_local": "2026-04-26 00:47",
+                  "end_local": "2026-05-02 07:57",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "金牛",
+                  "sign_index": 1,
+                  "ruler": "金星",
+                  "years": 0.01,
+                  "start_local": "2026-05-02 07:57",
+                  "end_local": "2026-05-05 16:35",
+                  "is_active": true
+                },
+                {
+                  "level": "L4",
+                  "sign": "双子",
+                  "sign_index": 2,
+                  "ruler": "水星",
+                  "years": 0.02,
+                  "start_local": "2026-05-05 16:35",
+                  "end_local": "2026-05-14 02:08",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "巨蟹",
+                  "sign_index": 3,
+                  "ruler": "月亮",
+                  "years": 0.03,
+                  "start_local": "2026-05-14 02:08",
+                  "end_local": "2026-05-24 14:05",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "狮子",
+                  "sign_index": 4,
+                  "ruler": "太阳",
+                  "years": 0.02,
+                  "start_local": "2026-05-24 14:05",
+                  "end_local": "2026-06-01 13:34",
+                  "is_active": false
+                }
+              ]
+            },
+            {
+              "level": "L3",
+              "sign": "天秤",
+              "sign_index": 6,
+              "ruler": "金星",
+              "years": 0.1,
+              "start_local": "2026-06-01 13:34",
+              "end_local": "2026-07-07 00:08",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "天蝎",
+              "sign_index": 7,
+              "ruler": "火星",
+              "years": 0.18,
+              "start_local": "2026-07-07 00:08",
+              "end_local": "2026-09-11 10:58",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "射手",
+              "sign_index": 8,
+              "ruler": "木星",
+              "years": 0.15,
+              "start_local": "2026-09-11 10:58",
+              "end_local": "2026-11-03 14:49",
+              "is_active": false
+            }
+          ]
+        },
+        {
+          "level": "L2",
+          "sign": "水瓶",
+          "sign_index": 10,
+          "ruler": "土星",
+          "years": 2.84,
+          "start_local": "2026-11-03 14:49",
+          "end_local": "2029-09-07 05:19",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "双鱼",
+          "sign_index": 11,
+          "ruler": "木星",
+          "years": 1.14,
+          "start_local": "2029-09-07 05:19",
+          "end_local": "2030-10-27 15:55",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "白羊",
+          "sign_index": 0,
+          "ruler": "火星",
+          "years": 1.42,
+          "start_local": "2030-10-27 15:55",
+          "end_local": "2032-03-29 23:10",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "金牛",
+          "sign_index": 1,
+          "ruler": "金星",
+          "years": 0.76,
+          "start_local": "2032-03-29 23:10",
+          "end_local": "2032-12-31 22:15",
+          "is_active": false
+        }
+      ],
+      "l3_periods": [
+        {
+          "level": "L3",
+          "sign": "摩羯",
+          "sign_index": 9,
+          "ruler": "土星",
+          "years": 0.33,
+          "start_local": "2024-04-12 20:58",
+          "end_local": "2024-08-10 12:29",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "水瓶",
+          "sign_index": 10,
+          "ruler": "土星",
+          "years": 0.36,
+          "start_local": "2024-08-10 12:29",
+          "end_local": "2024-12-21 11:05",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "双鱼",
+          "sign_index": 11,
+          "ruler": "木星",
+          "years": 0.15,
+          "start_local": "2024-12-21 11:05",
+          "end_local": "2025-02-12 15:19",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "白羊",
+          "sign_index": 0,
+          "ruler": "火星",
+          "years": 0.18,
+          "start_local": "2025-02-12 15:19",
+          "end_local": "2025-04-20 02:37",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "金牛",
+          "sign_index": 1,
+          "ruler": "金星",
+          "years": 0.1,
+          "start_local": "2025-04-20 02:37",
+          "end_local": "2025-05-25 13:26",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "双子",
+          "sign_index": 2,
+          "ruler": "水星",
+          "years": 0.24,
+          "start_local": "2025-05-25 13:26",
+          "end_local": "2025-08-22 04:30",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "巨蟹",
+          "sign_index": 3,
+          "ruler": "月亮",
+          "years": 0.3,
+          "start_local": "2025-08-22 04:30",
+          "end_local": "2025-12-10 23:20",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "狮子",
+          "sign_index": 4,
+          "ruler": "太阳",
+          "years": 0.23,
+          "start_local": "2025-12-10 23:20",
+          "end_local": "2026-03-05 04:02",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "处女",
+          "sign_index": 5,
+          "ruler": "水星",
+          "years": 0.24,
+          "start_local": "2026-03-05 04:02",
+          "end_local": "2026-06-01 19:06",
+          "is_active": true,
+          "sub_periods": [
+            {
+              "level": "L4",
+              "sign": "处女",
+              "sign_index": 5,
+              "ruler": "水星",
+              "years": 0.02,
+              "start_local": "2026-03-05 04:02",
+              "end_local": "2026-03-13 13:39",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "天秤",
+              "sign_index": 6,
+              "ruler": "金星",
+              "years": 0.01,
+              "start_local": "2026-03-13 13:39",
+              "end_local": "2026-03-16 22:18",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "天蝎",
+              "sign_index": 7,
+              "ruler": "火星",
+              "years": 0.02,
+              "start_local": "2026-03-16 22:18",
+              "end_local": "2026-03-23 05:31",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "射手",
+              "sign_index": 8,
+              "ruler": "木星",
+              "years": 0.01,
+              "start_local": "2026-03-23 05:31",
+              "end_local": "2026-03-28 06:29",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "摩羯",
+              "sign_index": 9,
+              "ruler": "土星",
+              "years": 0.03,
+              "start_local": "2026-03-28 06:29",
+              "end_local": "2026-04-08 14:40",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "水瓶",
+              "sign_index": 10,
+              "ruler": "土星",
+              "years": 0.03,
+              "start_local": "2026-04-08 14:40",
+              "end_local": "2026-04-21 05:06",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "双鱼",
+              "sign_index": 11,
+              "ruler": "木星",
+              "years": 0.01,
+              "start_local": "2026-04-21 05:06",
+              "end_local": "2026-04-26 06:04",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "白羊",
+              "sign_index": 0,
+              "ruler": "火星",
+              "years": 0.02,
+              "start_local": "2026-04-26 06:04",
+              "end_local": "2026-05-02 13:17",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "金牛",
+              "sign_index": 1,
+              "ruler": "金星",
+              "years": 0.01,
+              "start_local": "2026-05-02 13:17",
+              "end_local": "2026-05-05 21:55",
+              "is_active": true
+            },
+            {
+              "level": "L4",
+              "sign": "双子",
+              "sign_index": 2,
+              "ruler": "水星",
+              "years": 0.02,
+              "start_local": "2026-05-05 21:55",
+              "end_local": "2026-05-14 07:33",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "巨蟹",
+              "sign_index": 3,
+              "ruler": "月亮",
+              "years": 0.03,
+              "start_local": "2026-05-14 07:33",
+              "end_local": "2026-05-24 19:34",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "狮子",
+              "sign_index": 4,
+              "ruler": "太阳",
+              "years": 0.02,
+              "start_local": "2026-05-24 19:34",
+              "end_local": "2026-06-01 19:06",
+              "is_active": false
+            }
+          ]
+        },
+        {
+          "level": "L3",
+          "sign": "天秤",
+          "sign_index": 6,
+          "ruler": "金星",
+          "years": 0.1,
+          "start_local": "2026-06-01 19:06",
+          "end_local": "2026-07-07 05:55",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "天蝎",
+          "sign_index": 7,
+          "ruler": "火星",
+          "years": 0.18,
+          "start_local": "2026-07-07 05:55",
+          "end_local": "2026-09-11 17:13",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "射手",
+          "sign_index": 8,
+          "ruler": "木星",
+          "years": 0.15,
+          "start_local": "2026-09-11 17:13",
+          "end_local": "2026-11-03 21:27",
+          "is_active": false
+        }
+      ],
+      "loosing_of_bond": false,
+      "loosing_of_bond_detail": "",
+      "loosing_of_bond_level": "",
+      "_method": "Zodiacal_Releasing_Valens",
+      "_source_tradition": "Hellenistic"
+    },
+    "spirit": {
+      "id": "zr-SPIRIT",
+      "technique": "Zodiacal Releasing from Spirit",
+      "level": "L1",
+      "ruler": "水星",
+      "sign": "双子",
+      "start_local": "2013-01-01 01:51",
+      "end_local": "2032-12-31 22:15",
+      "next_transition": "2032-12-31 22:15",
+      "importance_score": 0,
+      "notes": [],
+      "current_active_level": "L3",
+      "lot_angularity": "果宫",
+      "l1_periods": [
+        {
+          "level": "L1",
+          "sign": "白羊",
+          "sign_index": 0,
+          "ruler": "火星",
+          "years": 15,
+          "start_local": "1990-01-01 12:00",
+          "end_local": "2005-01-01 03:18",
+          "is_active": false
+        },
+        {
+          "level": "L1",
+          "sign": "金牛",
+          "sign_index": 1,
+          "ruler": "金星",
+          "years": 8,
+          "start_local": "2005-01-01 03:18",
+          "end_local": "2013-01-01 01:51",
+          "is_active": false
+        },
+        {
+          "level": "L1",
+          "sign": "双子",
+          "sign_index": 2,
+          "ruler": "水星",
+          "years": 20,
+          "start_local": "2013-01-01 01:51",
+          "end_local": "2032-12-31 22:15",
+          "is_active": true
+        }
+      ],
+      "l2_periods": [
+        {
+          "level": "L2",
+          "sign": "双子",
+          "sign_index": 2,
+          "ruler": "水星",
+          "years": 1.9,
+          "start_local": "2013-01-01 01:51",
+          "end_local": "2014-11-24 11:31",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "巨蟹",
+          "sign_index": 3,
+          "ruler": "月亮",
+          "years": 2.37,
+          "start_local": "2014-11-24 11:31",
+          "end_local": "2017-04-07 23:36",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "狮子",
+          "sign_index": 4,
+          "ruler": "太阳",
+          "years": 1.8,
+          "start_local": "2017-04-07 23:36",
+          "end_local": "2019-01-25 18:23",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "处女",
+          "sign_index": 5,
+          "ruler": "水星",
+          "years": 1.9,
+          "start_local": "2019-01-25 18:23",
+          "end_local": "2020-12-18 04:03",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "天秤",
+          "sign_index": 6,
+          "ruler": "金星",
+          "years": 0.76,
+          "start_local": "2020-12-18 04:03",
+          "end_local": "2021-09-21 03:07",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "天蝎",
+          "sign_index": 7,
+          "ruler": "火星",
+          "years": 1.42,
+          "start_local": "2021-09-21 03:07",
+          "end_local": "2023-02-22 10:22",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "射手",
+          "sign_index": 8,
+          "ruler": "木星",
+          "years": 1.14,
+          "start_local": "2023-02-22 10:22",
+          "end_local": "2024-04-12 20:58",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "摩羯",
+          "sign_index": 9,
+          "ruler": "土星",
+          "years": 2.56,
+          "start_local": "2024-04-12 20:58",
+          "end_local": "2026-11-03 14:49",
+          "is_active": true,
+          "sub_periods": [
+            {
+              "level": "L3",
+              "sign": "摩羯",
+              "sign_index": 9,
+              "ruler": "土星",
+              "years": 0.33,
+              "start_local": "2024-04-12 20:58",
+              "end_local": "2024-08-10 11:39",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "水瓶",
+              "sign_index": 10,
+              "ruler": "土星",
+              "years": 0.36,
+              "start_local": "2024-08-10 11:39",
+              "end_local": "2024-12-21 09:18",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "双鱼",
+              "sign_index": 11,
+              "ruler": "木星",
+              "years": 0.15,
+              "start_local": "2024-12-21 09:18",
+              "end_local": "2025-02-12 13:09",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "白羊",
+              "sign_index": 0,
+              "ruler": "火星",
+              "years": 0.18,
+              "start_local": "2025-02-12 13:09",
+              "end_local": "2025-04-19 23:59",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "金牛",
+              "sign_index": 1,
+              "ruler": "金星",
+              "years": 0.1,
+              "start_local": "2025-04-19 23:59",
+              "end_local": "2025-05-25 10:33",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "双子",
+              "sign_index": 2,
+              "ruler": "水星",
+              "years": 0.24,
+              "start_local": "2025-05-25 10:33",
+              "end_local": "2025-08-22 00:59",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "巨蟹",
+              "sign_index": 3,
+              "ruler": "月亮",
+              "years": 0.3,
+              "start_local": "2025-08-22 00:59",
+              "end_local": "2025-12-10 19:01",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "狮子",
+              "sign_index": 4,
+              "ruler": "太阳",
+              "years": 0.23,
+              "start_local": "2025-12-10 19:01",
+              "end_local": "2026-03-04 23:08",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "处女",
+              "sign_index": 5,
+              "ruler": "水星",
+              "years": 0.24,
+              "start_local": "2026-03-04 23:08",
+              "end_local": "2026-06-01 13:34",
+              "is_active": true,
+              "sub_periods": [
+                {
+                  "level": "L4",
+                  "sign": "处女",
+                  "sign_index": 5,
+                  "ruler": "水星",
+                  "years": 0.02,
+                  "start_local": "2026-03-04 23:08",
+                  "end_local": "2026-03-13 08:41",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "天秤",
+                  "sign_index": 6,
+                  "ruler": "金星",
+                  "years": 0.01,
+                  "start_local": "2026-03-13 08:41",
+                  "end_local": "2026-03-16 17:19",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "天蝎",
+                  "sign_index": 7,
+                  "ruler": "火星",
+                  "years": 0.02,
+                  "start_local": "2026-03-16 17:19",
+                  "end_local": "2026-03-23 00:29",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "射手",
+                  "sign_index": 8,
+                  "ruler": "木星",
+                  "years": 0.01,
+                  "start_local": "2026-03-23 00:29",
+                  "end_local": "2026-03-28 01:25",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "摩羯",
+                  "sign_index": 9,
+                  "ruler": "土星",
+                  "years": 0.03,
+                  "start_local": "2026-03-28 01:25",
+                  "end_local": "2026-04-08 09:31",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "水瓶",
+                  "sign_index": 10,
+                  "ruler": "土星",
+                  "years": 0.03,
+                  "start_local": "2026-04-08 09:31",
+                  "end_local": "2026-04-20 23:51",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "双鱼",
+                  "sign_index": 11,
+                  "ruler": "木星",
+                  "years": 0.01,
+                  "start_local": "2026-04-20 23:51",
+                  "end_local": "2026-04-26 00:47",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "白羊",
+                  "sign_index": 0,
+                  "ruler": "火星",
+                  "years": 0.02,
+                  "start_local": "2026-04-26 00:47",
+                  "end_local": "2026-05-02 07:57",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "金牛",
+                  "sign_index": 1,
+                  "ruler": "金星",
+                  "years": 0.01,
+                  "start_local": "2026-05-02 07:57",
+                  "end_local": "2026-05-05 16:35",
+                  "is_active": true
+                },
+                {
+                  "level": "L4",
+                  "sign": "双子",
+                  "sign_index": 2,
+                  "ruler": "水星",
+                  "years": 0.02,
+                  "start_local": "2026-05-05 16:35",
+                  "end_local": "2026-05-14 02:08",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "巨蟹",
+                  "sign_index": 3,
+                  "ruler": "月亮",
+                  "years": 0.03,
+                  "start_local": "2026-05-14 02:08",
+                  "end_local": "2026-05-24 14:05",
+                  "is_active": false
+                },
+                {
+                  "level": "L4",
+                  "sign": "狮子",
+                  "sign_index": 4,
+                  "ruler": "太阳",
+                  "years": 0.02,
+                  "start_local": "2026-05-24 14:05",
+                  "end_local": "2026-06-01 13:34",
+                  "is_active": false
+                }
+              ]
+            },
+            {
+              "level": "L3",
+              "sign": "天秤",
+              "sign_index": 6,
+              "ruler": "金星",
+              "years": 0.1,
+              "start_local": "2026-06-01 13:34",
+              "end_local": "2026-07-07 00:08",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "天蝎",
+              "sign_index": 7,
+              "ruler": "火星",
+              "years": 0.18,
+              "start_local": "2026-07-07 00:08",
+              "end_local": "2026-09-11 10:58",
+              "is_active": false
+            },
+            {
+              "level": "L3",
+              "sign": "射手",
+              "sign_index": 8,
+              "ruler": "木星",
+              "years": 0.15,
+              "start_local": "2026-09-11 10:58",
+              "end_local": "2026-11-03 14:49",
+              "is_active": false
+            }
+          ]
+        },
+        {
+          "level": "L2",
+          "sign": "水瓶",
+          "sign_index": 10,
+          "ruler": "土星",
+          "years": 2.84,
+          "start_local": "2026-11-03 14:49",
+          "end_local": "2029-09-07 05:19",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "双鱼",
+          "sign_index": 11,
+          "ruler": "木星",
+          "years": 1.14,
+          "start_local": "2029-09-07 05:19",
+          "end_local": "2030-10-27 15:55",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "白羊",
+          "sign_index": 0,
+          "ruler": "火星",
+          "years": 1.42,
+          "start_local": "2030-10-27 15:55",
+          "end_local": "2032-03-29 23:10",
+          "is_active": false
+        },
+        {
+          "level": "L2",
+          "sign": "金牛",
+          "sign_index": 1,
+          "ruler": "金星",
+          "years": 0.76,
+          "start_local": "2032-03-29 23:10",
+          "end_local": "2032-12-31 22:15",
+          "is_active": false
+        }
+      ],
+      "l3_periods": [
+        {
+          "level": "L3",
+          "sign": "摩羯",
+          "sign_index": 9,
+          "ruler": "土星",
+          "years": 0.33,
+          "start_local": "2024-04-12 20:58",
+          "end_local": "2024-08-10 12:29",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "水瓶",
+          "sign_index": 10,
+          "ruler": "土星",
+          "years": 0.36,
+          "start_local": "2024-08-10 12:29",
+          "end_local": "2024-12-21 11:05",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "双鱼",
+          "sign_index": 11,
+          "ruler": "木星",
+          "years": 0.15,
+          "start_local": "2024-12-21 11:05",
+          "end_local": "2025-02-12 15:19",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "白羊",
+          "sign_index": 0,
+          "ruler": "火星",
+          "years": 0.18,
+          "start_local": "2025-02-12 15:19",
+          "end_local": "2025-04-20 02:37",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "金牛",
+          "sign_index": 1,
+          "ruler": "金星",
+          "years": 0.1,
+          "start_local": "2025-04-20 02:37",
+          "end_local": "2025-05-25 13:26",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "双子",
+          "sign_index": 2,
+          "ruler": "水星",
+          "years": 0.24,
+          "start_local": "2025-05-25 13:26",
+          "end_local": "2025-08-22 04:30",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "巨蟹",
+          "sign_index": 3,
+          "ruler": "月亮",
+          "years": 0.3,
+          "start_local": "2025-08-22 04:30",
+          "end_local": "2025-12-10 23:20",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "狮子",
+          "sign_index": 4,
+          "ruler": "太阳",
+          "years": 0.23,
+          "start_local": "2025-12-10 23:20",
+          "end_local": "2026-03-05 04:02",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "处女",
+          "sign_index": 5,
+          "ruler": "水星",
+          "years": 0.24,
+          "start_local": "2026-03-05 04:02",
+          "end_local": "2026-06-01 19:06",
+          "is_active": true,
+          "sub_periods": [
+            {
+              "level": "L4",
+              "sign": "处女",
+              "sign_index": 5,
+              "ruler": "水星",
+              "years": 0.02,
+              "start_local": "2026-03-05 04:02",
+              "end_local": "2026-03-13 13:39",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "天秤",
+              "sign_index": 6,
+              "ruler": "金星",
+              "years": 0.01,
+              "start_local": "2026-03-13 13:39",
+              "end_local": "2026-03-16 22:18",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "天蝎",
+              "sign_index": 7,
+              "ruler": "火星",
+              "years": 0.02,
+              "start_local": "2026-03-16 22:18",
+              "end_local": "2026-03-23 05:31",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "射手",
+              "sign_index": 8,
+              "ruler": "木星",
+              "years": 0.01,
+              "start_local": "2026-03-23 05:31",
+              "end_local": "2026-03-28 06:29",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "摩羯",
+              "sign_index": 9,
+              "ruler": "土星",
+              "years": 0.03,
+              "start_local": "2026-03-28 06:29",
+              "end_local": "2026-04-08 14:40",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "水瓶",
+              "sign_index": 10,
+              "ruler": "土星",
+              "years": 0.03,
+              "start_local": "2026-04-08 14:40",
+              "end_local": "2026-04-21 05:06",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "双鱼",
+              "sign_index": 11,
+              "ruler": "木星",
+              "years": 0.01,
+              "start_local": "2026-04-21 05:06",
+              "end_local": "2026-04-26 06:04",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "白羊",
+              "sign_index": 0,
+              "ruler": "火星",
+              "years": 0.02,
+              "start_local": "2026-04-26 06:04",
+              "end_local": "2026-05-02 13:17",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "金牛",
+              "sign_index": 1,
+              "ruler": "金星",
+              "years": 0.01,
+              "start_local": "2026-05-02 13:17",
+              "end_local": "2026-05-05 21:55",
+              "is_active": true
+            },
+            {
+              "level": "L4",
+              "sign": "双子",
+              "sign_index": 2,
+              "ruler": "水星",
+              "years": 0.02,
+              "start_local": "2026-05-05 21:55",
+              "end_local": "2026-05-14 07:33",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "巨蟹",
+              "sign_index": 3,
+              "ruler": "月亮",
+              "years": 0.03,
+              "start_local": "2026-05-14 07:33",
+              "end_local": "2026-05-24 19:34",
+              "is_active": false
+            },
+            {
+              "level": "L4",
+              "sign": "狮子",
+              "sign_index": 4,
+              "ruler": "太阳",
+              "years": 0.02,
+              "start_local": "2026-05-24 19:34",
+              "end_local": "2026-06-01 19:06",
+              "is_active": false
+            }
+          ]
+        },
+        {
+          "level": "L3",
+          "sign": "天秤",
+          "sign_index": 6,
+          "ruler": "金星",
+          "years": 0.1,
+          "start_local": "2026-06-01 19:06",
+          "end_local": "2026-07-07 05:55",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "天蝎",
+          "sign_index": 7,
+          "ruler": "火星",
+          "years": 0.18,
+          "start_local": "2026-07-07 05:55",
+          "end_local": "2026-09-11 17:13",
+          "is_active": false
+        },
+        {
+          "level": "L3",
+          "sign": "射手",
+          "sign_index": 8,
+          "ruler": "木星",
+          "years": 0.15,
+          "start_local": "2026-09-11 17:13",
+          "end_local": "2026-11-03 21:27",
+          "is_active": false
+        }
+      ],
+      "loosing_of_bond": false,
+      "loosing_of_bond_detail": "",
+      "loosing_of_bond_level": "",
+      "_method": "Zodiacal_Releasing_Valens",
+      "_source_tradition": "Hellenistic"
+    },
+    "max_level": 4
+  },
+  "firdaria": {
+    "id": "firdaria-main",
+    "technique": "Firdaria",
+    "level": "主限",
+    "ruler": "月亮",
+    "sign": null,
+    "start_local": "2021-01-01 00:25",
+    "end_local": "2030-01-01 04:48",
+    "next_transition": "2030-01-01 04:48",
+    "notes": [
+      "昼盘序列",
+      "9 年主限",
+      "7 等分次限，从主限星开始"
+    ],
+    "sub_periods": [
+      {
+        "id": "firdaria-sub-MOON-1-MOON",
+        "ruler": "月亮",
+        "start_local": "2021-01-01 00:25",
+        "end_local": "2022-04-15 14:45",
+        "fraction": 0.1429
+      },
+      {
+        "id": "firdaria-sub-MOON-2-SATURN",
+        "ruler": "土星",
+        "start_local": "2022-04-15 14:45",
+        "end_local": "2023-07-29 05:06",
+        "fraction": 0.1429
+      },
+      {
+        "id": "firdaria-sub-MOON-3-JUPITER",
+        "ruler": "木星",
+        "start_local": "2023-07-29 05:06",
+        "end_local": "2024-11-09 19:26",
+        "fraction": 0.1429
+      },
+      {
+        "id": "firdaria-sub-MOON-4-MARS",
+        "ruler": "火星",
+        "start_local": "2024-11-09 19:26",
+        "end_local": "2026-02-22 09:46",
+        "fraction": 0.1429
+      },
+      {
+        "id": "firdaria-sub-MOON-5-SUN",
+        "ruler": "太阳",
+        "start_local": "2026-02-22 09:46",
+        "end_local": "2027-06-07 00:07",
+        "fraction": 0.1429
+      },
+      {
+        "id": "firdaria-sub-MOON-6-VENUS",
+        "ruler": "金星",
+        "start_local": "2027-06-07 00:07",
+        "end_local": "2028-09-18 14:27",
+        "fraction": 0.1429
+      },
+      {
+        "id": "firdaria-sub-MOON-7-MERCURY",
+        "ruler": "水星",
+        "start_local": "2028-09-18 14:27",
+        "end_local": "2030-01-01 04:48",
+        "fraction": 0.1429
+      }
+    ],
+    "current_sub_period": {
+      "id": "firdaria-sub-MOON-5-SUN",
+      "ruler": "太阳",
+      "start_local": "2026-02-22 09:46",
+      "end_local": "2027-06-07 00:07",
+      "fraction": 0.1429
+    },
+    "planetary_years": {
+      "SUN": 19,
+      "MOON": 25,
+      "MERCURY": 20,
+      "VENUS": 8,
+      "MARS": 15,
+      "JUPITER": 12,
+      "SATURN": 30
+    },
+    "_method": "Firdaria_Persian_Traditional",
+    "_source_tradition": "Persian/Medieval"
+  },
+  "decennials": {
+    "id": "decennials-main",
+    "technique": "Decennials",
+    "level": "主限",
+    "ruler": "月亮",
+    "sign": null,
+    "start_local": "2021-01-01 00:25",
+    "end_local": "2030-01-01 04:48",
+    "notes": [
+      "昼盘序列",
+      "9 年主限",
+      "共 6 个子限",
+      "Decennials = 7-planet 70-year cycle (no lunar nodes); differs from Firdaria which totals 75 years with nodes"
+    ],
+    "sub_periods": [
+      {
+        "id": "decennials-sub-MOON-SUN",
+        "ruler": "太阳",
+        "start_local": "2021-01-01 00:25",
+        "end_local": "2022-06-23 21:35",
+        "fraction": 0.1639
+      },
+      {
+        "id": "decennials-sub-MOON-VENUS",
+        "ruler": "金星",
+        "start_local": "2022-06-23 21:35",
+        "end_local": "2023-08-29 00:08",
+        "fraction": 0.1311
+      },
+      {
+        "id": "decennials-sub-MOON-MERCURY",
+        "ruler": "水星",
+        "start_local": "2023-08-29 00:08",
+        "end_local": "2025-07-29 13:16",
+        "fraction": 0.2131
+      },
+      {
+        "id": "decennials-sub-MOON-SATURN",
+        "ruler": "土星",
+        "start_local": "2025-07-29 13:16",
+        "end_local": "2027-03-14 07:45",
+        "fraction": 0.1803
+      },
+      {
+        "id": "decennials-sub-MOON-JUPITER",
+        "ruler": "木星",
+        "start_local": "2027-03-14 07:45",
+        "end_local": "2028-12-19 23:34",
+        "fraction": 0.1967
+      },
+      {
+        "id": "decennials-sub-MOON-MARS",
+        "ruler": "火星",
+        "start_local": "2028-12-19 23:34",
+        "end_local": "2030-01-01 04:47",
+        "fraction": 0.1148
+      }
+    ],
+    "_method": "Decennials_Hellenistic_10_year_cycle",
+    "_source_tradition": "Hellenistic",
+    "method_variant": "decennials_7_planet_70_year_cycle"
+  },
+  "revolutions_concordance": [
+    {
+      "body_id": "月亮",
+      "techniques": [
+        "firdaria",
+        "decennials"
+      ],
+      "count": 2
+    },
+    {
+      "body_id": "火星",
+      "techniques": [
+        "profection_annual"
+      ],
+      "count": 1
+    },
+    {
+      "body_id": "VENUS",
+      "techniques": [
+        "daily_profection"
+      ],
+      "count": 1
+    }
+  ],
+  "warnings": [],
+  "section_errors": null,
+  "calculation_assumptions": [
+    "ZR max_level=4 for Fortune and Spirit.",
+    "Daily profection uses day-step sign proxy from annual sign (explicit profile).",
+    "Concordance lists techniques naming the same planet; no event prediction."
+  ]
+}
