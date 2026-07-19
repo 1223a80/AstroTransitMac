@@ -69,6 +69,13 @@ extension BackendClient {
         try await run(request: request, pythonPath: pythonPath)
     }
 
+    static func planetarySynodic(
+        request: PlanetarySynodicRequest,
+        pythonPath: String
+    ) async throws -> PlanetarySynodicResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
     static func astrocartography(
         request: AstrocartographyRequest,
         pythonPath: String

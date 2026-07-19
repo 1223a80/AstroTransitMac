@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-19 — B10 行星会合周期
+
+- 新增 mode=`planetary_synodic`：任意两星合/冲/四分等相对黄经相位、会合周期、相对速度、多次命中 pass、对本命 point set 接触。
+- Swift 子模式、Markdown/CSV、sample、fixture 与聚焦 pytest；纳入 CI / check_vibe smoke。
+
 ## 2026-07-19 — B9 古典 heliacal 与行星时
 
 - 新增 mode=`classical_visibility`：Swiss Ephemeris heliacal rising/setting、地方升落、昼夜不等行星时（迦勒底序）。

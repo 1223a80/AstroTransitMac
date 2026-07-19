@@ -1,0 +1,88 @@
+{
+  "mode": "planetary_synodic",
+  "start": {
+    "year": 2024,
+    "month": 1,
+    "day": 1,
+    "hour": 0,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "end": {
+    "year": 2026,
+    "month": 1,
+    "day": 1,
+    "hour": 0,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "display_timezone": "Asia/Shanghai",
+  "pair": {
+    "body_a": "MARS",
+    "body_b": "JUPITER"
+  },
+  "phases": [
+    {
+      "id": "conjunction",
+      "name": "合相",
+      "angle": 0.0
+    },
+    {
+      "id": "square",
+      "name": "刑相",
+      "angle": 90.0
+    },
+    {
+      "id": "opposition",
+      "name": "冲相",
+      "angle": 180.0
+    },
+    {
+      "id": "square_closing",
+      "name": "闭刑",
+      "angle": 270.0
+    }
+  ],
+  "birth": {
+    "moment": {
+      "year": 1990,
+      "month": 1,
+      "day": 1,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737
+  },
+  "target_point_set": {
+    "body_ids": [
+      "SUN",
+      "MOON",
+      "MERCURY",
+      "VENUS",
+      "MARS"
+    ],
+    "include_nodes": false,
+    "node_mode": "true_node",
+    "custom_asteroids": [],
+    "angle_ids": [],
+    "house_cusps": [],
+    "lot_ids": []
+  },
+  "contact_aspects": [
+    {
+      "id": "conjunction",
+      "name": "合相",
+      "angle": 0.0,
+      "orb": 1.0
+    },
+    {
+      "id": "opposition",
+      "name": "冲相",
+      "angle": 180.0,
+      "orb": 1.0
+    }
+  ],
+  "zodiac": "tropical"
+}

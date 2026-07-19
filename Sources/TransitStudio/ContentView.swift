@@ -154,6 +154,9 @@ struct ContentView: View {
     @State var visibilityBodies: Set<String> = ["MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"]
     @State var visibilityHeliacalTypes: Set<String> = ["heliacal_rising", "heliacal_setting"]
     @State var visibilityInclude: Set<String> = ["heliacal", "rise_set", "planetary_hours"]
+    @State var synodicBodyA = "JUPITER"
+    @State var synodicBodyB = "SATURN"
+    @State var synodicIncludeNatalContacts = true
     @State var mapBodies: Set<String> = [
         "SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"
     ]
@@ -174,6 +177,17 @@ struct ContentView: View {
         PickerOption(id: "regiomontanus", title: "Regiomontanus"),
         PickerOption(id: "alcabitius", title: "Alcabitius"),
         PickerOption(id: "equal", title: "Equal")
+    ]
+
+    static let synodicBodyOptions = [
+        PickerOption(id: "MERCURY", title: "水星"),
+        PickerOption(id: "VENUS", title: "金星"),
+        PickerOption(id: "MARS", title: "火星"),
+        PickerOption(id: "JUPITER", title: "木星"),
+        PickerOption(id: "SATURN", title: "土星"),
+        PickerOption(id: "URANUS", title: "天王星"),
+        PickerOption(id: "NEPTUNE", title: "海王星"),
+        PickerOption(id: "PLUTO", title: "冥王星"),
     ]
 
     static let zodiacOptions = [

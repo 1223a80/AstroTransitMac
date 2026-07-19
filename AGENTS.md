@@ -130,6 +130,7 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-mercury-return-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-retrograde-cycles-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-visibility-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-planetary-synodic-request.json
 ```
 
 For rectify mode smoke test:

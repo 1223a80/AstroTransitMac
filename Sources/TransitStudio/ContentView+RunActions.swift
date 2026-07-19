@@ -74,6 +74,7 @@ extension ContentView {
                 case .declinationTiming: await runDeclinationTiming()
                 case .retrogradeCycles: await runRetrogradeCycles()
                 case .classicalVisibility: await runClassicalVisibility()
+                case .planetarySynodic: await runPlanetarySynodic()
                 case .astrocartography: await runAstrocartography()
                 case .localSpace: await runLocalSpace()
                 }
@@ -588,6 +589,59 @@ extension ContentView {
                 pythonPath: appState.pythonPath
             )
             calcVM.modernResultData = .classicalVisibility(result)
+        }
+    }
+
+    @MainActor
+    func runPlanetarySynodic() async {
+        guard synodicBodyA != synodicBodyB else {
+            calcVM.errorMessage = "会合周期需要两个不同的天体。"
+            return
+        }
+        await performRun(progressLabel: "会合周期") {
+            var birth: RelocationBirth?
+            var target: ModernPointSet?
+            if synodicIncludeNatalContacts, let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                birth = RelocationBirth(
+                    name: "Natal",
+                    moment: makeMoment(from: natalDate),
+                    latitude: coords.latitude,
+                    longitude: coords.longitude
+                )
+                target = ModernPointSet(
+                    bodyIDs: ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"],
+                    includeNodes: false,
+                    nodeMode: modernNodeMode,
+                    customAsteroids: [],
+                    angleIDs: [],
+                    houseCusps: [],
+                    lotIDs: []
+                )
+            }
+            let request = PlanetarySynodicRequest(
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                pair: PlanetaryPair(bodyA: synodicBodyA, bodyB: synodicBodyB),
+                phases: [
+                    AspectRequest(id: "conjunction", name: "合相", angle: 0, orb: 0),
+                    AspectRequest(id: "square", name: "刑相", angle: 90, orb: 0),
+                    AspectRequest(id: "opposition", name: "冲相", angle: 180, orb: 0),
+                    AspectRequest(id: "square_closing", name: "闭刑", angle: 270, orb: 0),
+                ],
+                birth: birth,
+                targetPointSet: target,
+                contactAspects: selectedAspectRequests(orb: 1.0),
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.planetarySynodic(
+                request: request,
+                pythonPath: appState.pythonPath
+            )
+            calcVM.modernResultData = .planetarySynodic(result)
         }
     }
 

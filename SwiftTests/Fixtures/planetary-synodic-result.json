@@ -1,0 +1,236 @@
+{
+  "meta": {
+    "mode": "planetary_synodic",
+    "method": "planetary_synodic_v1",
+    "schema_version": 1,
+    "start_utc": "2023-12-31T16:00:00.000Z",
+    "end_utc": "2025-12-31T16:00:00.000Z",
+    "display_timezone": "Asia/Shanghai",
+    "pair": {
+      "body_a": "MARS",
+      "body_b": "JUPITER"
+    },
+    "phases": [
+      {
+        "id": "conjunction",
+        "name": "合相",
+        "angle": 0.0
+      },
+      {
+        "id": "square",
+        "name": "刑相",
+        "angle": 90.0
+      },
+      {
+        "id": "opposition",
+        "name": "冲相",
+        "angle": 180.0
+      },
+      {
+        "id": "square_closing",
+        "name": "闭刑",
+        "angle": 270.0
+      }
+    ],
+    "event_count": 3,
+    "cycle_count": 1,
+    "zodiac": "tropical",
+    "ephemeris": "Swiss Ephemeris"
+  },
+  "requested_config": {
+    "pair": {
+      "body_a": "MARS",
+      "body_b": "JUPITER"
+    },
+    "phases": [
+      {
+        "id": "conjunction",
+        "name": "合相",
+        "angle": 0.0
+      },
+      {
+        "id": "square",
+        "name": "刑相",
+        "angle": 90.0
+      },
+      {
+        "id": "opposition",
+        "name": "冲相",
+        "angle": 180.0
+      },
+      {
+        "id": "square_closing",
+        "name": "闭刑",
+        "angle": 270.0
+      }
+    ],
+    "start": {
+      "year": 2024,
+      "month": 1,
+      "day": 1,
+      "hour": 0,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "end": {
+      "year": 2026,
+      "month": 1,
+      "day": 1,
+      "hour": 0,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "display_timezone": "Asia/Shanghai",
+    "zodiac": "tropical"
+  },
+  "effective_config": {
+    "pair": {
+      "body_a": "MARS",
+      "body_b": "JUPITER"
+    },
+    "phases": [
+      {
+        "id": "conjunction",
+        "name": "合相",
+        "angle": 0.0
+      },
+      {
+        "id": "square",
+        "name": "刑相",
+        "angle": 90.0
+      },
+      {
+        "id": "opposition",
+        "name": "冲相",
+        "angle": 180.0
+      },
+      {
+        "id": "square_closing",
+        "name": "闭刑",
+        "angle": 270.0
+      }
+    ],
+    "start_utc": "2023-12-31T16:00:00.000Z",
+    "end_utc": "2025-12-31T16:00:00.000Z",
+    "display_timezone": "Asia/Shanghai",
+    "zodiac": "tropical",
+    "method": "planetary_synodic_v1"
+  },
+  "events": [
+    {
+      "id": "MARS|JUPITER|square_closing|2024-02-27T08:29:46.177Z",
+      "group_id": "MARS|JUPITER|square_closing",
+      "event_type": "phase",
+      "phase_id": "square_closing",
+      "phase_name": "闭刑",
+      "phase_angle": 270.0,
+      "body_a_id": "MARS",
+      "body_b_id": "JUPITER",
+      "body_a_name": "火星",
+      "body_b_name": "木星",
+      "exact_utc": "2024-02-27T08:29:46.177Z",
+      "exact_local": "2024-02-27T16:29:46.177+08:00",
+      "longitude_a": 310.869392415,
+      "longitude_b": 40.869392352,
+      "separation_deg": -89.999999936,
+      "relative_speed": 0.607888431343,
+      "motion_a": "direct",
+      "motion_b": "direct",
+      "relative_motion": "applying",
+      "exact_orb": 6.3661e-08,
+      "pass_index_in_window": 1,
+      "pass_count_in_window": 1,
+      "method_key": "relative_longitude_bisection",
+      "natal_contacts": []
+    },
+    {
+      "id": "MARS|JUPITER|conjunction|2024-08-14T15:21:31.902Z",
+      "group_id": "MARS|JUPITER|conjunction",
+      "event_type": "phase",
+      "phase_id": "conjunction",
+      "phase_name": "合相",
+      "phase_angle": 0.0,
+      "body_a_id": "MARS",
+      "body_b_id": "JUPITER",
+      "body_a_name": "火星",
+      "body_b_name": "木星",
+      "exact_utc": "2024-08-14T15:21:31.902Z",
+      "exact_local": "2024-08-14T23:21:31.902+08:00",
+      "longitude_a": 76.674605302,
+      "longitude_b": 76.674605398,
+      "separation_deg": -9.5e-08,
+      "relative_speed": 0.496927690024,
+      "motion_a": "direct",
+      "motion_b": "direct",
+      "relative_motion": "applying",
+      "exact_orb": 9.5485e-08,
+      "pass_index_in_window": 1,
+      "pass_count_in_window": 1,
+      "method_key": "relative_longitude_bisection",
+      "natal_contacts": []
+    },
+    {
+      "id": "MARS|JUPITER|square|2025-09-05T02:58:37.430Z",
+      "group_id": "MARS|JUPITER|square",
+      "event_type": "phase",
+      "phase_id": "square",
+      "phase_name": "刑相",
+      "phase_angle": 90.0,
+      "body_a_id": "MARS",
+      "body_b_id": "JUPITER",
+      "body_a_name": "火星",
+      "body_b_name": "木星",
+      "exact_utc": "2025-09-05T02:58:37.430Z",
+      "exact_local": "2025-09-05T10:58:37.430+08:00",
+      "longitude_a": 198.599726684,
+      "longitude_b": 108.599726679,
+      "separation_deg": 90.000000005,
+      "relative_speed": 0.480356932745,
+      "motion_a": "direct",
+      "motion_b": "direct",
+      "relative_motion": "separating",
+      "exact_orb": 5.264e-09,
+      "pass_index_in_window": 1,
+      "pass_count_in_window": 1,
+      "method_key": "relative_longitude_bisection",
+      "natal_contacts": []
+    }
+  ],
+  "cycles": [
+    {
+      "id": "cycle|MARS|JUPITER|conjunction|2024-08-14T15:21:31.902Z",
+      "start_event_id": "MARS|JUPITER|conjunction|2024-08-14T15:21:31.902Z",
+      "end_event_id": null,
+      "start_utc": "2024-08-14T15:21:31.902Z",
+      "end_utc": null,
+      "start_local": "2024-08-14T23:21:31.902+08:00",
+      "end_local": null,
+      "body_a_id": "MARS",
+      "body_b_id": "JUPITER",
+      "duration_days": null,
+      "method_key": "synodic_cycle_between_conjunctions"
+    }
+  ],
+  "window_end_state": {
+    "longitude_a": 282.4327411192236,
+    "longitude_b": 111.40106174998006,
+    "speed_a": 0.7661379651911329,
+    "speed_b": -0.13025259770406686,
+    "separation": 171.03167936924353,
+    "relative_speed": 0.8963905628951997,
+    "motion_a": "direct",
+    "motion_b": "retrograde",
+    "relative_motion": "separating"
+  },
+  "current_cycle_progress": null,
+  "warnings": [],
+  "section_errors": null,
+  "calculation_assumptions": [
+    "相位 exact 定义为 body_a 与 body_b 相对黄经差到达目标角的 bracket + bisection 求根。",
+    "synodic cycle 以相邻两次合相（0°）界定；无结束合相的周期 end 为 null。",
+    "relative_speed = speed_a − speed_b；relative_motion 由 residual 与速度符号判定 applying/separating。",
+    "同一相位因逆行可多次命中，pass_index/count 按 group 编号。",
+    "对本命接触为事件时刻黄经与本命点的静态 orb 匹配，不另求 exact 时间。",
+    "结果为可复算时间与坐标事实，不含解释性论断。"
+  ]
+}

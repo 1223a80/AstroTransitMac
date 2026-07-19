@@ -187,6 +187,20 @@ extension ContentView {
         }
     }
 
+    var planetarySynodicResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .planetarySynodic(let r) = result {
+                PlanetarySynodicResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(
+                    title: "等待会合周期扫描",
+                    systemImage: "arrow.triangle.2.circlepath",
+                    description: "选择行星对与时间窗后计算合冲四分与周期。"
+                )
+            }
+        }
+    }
+
     var astrocartographyResultsPane: some View {
         Group {
             if let result = calcVM.modernResultData, case .astrocartography(let r) = result {

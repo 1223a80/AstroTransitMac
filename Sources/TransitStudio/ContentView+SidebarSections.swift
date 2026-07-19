@@ -663,6 +663,8 @@ extension ContentView {
                 retrogradeCyclesSidebar
             case .classicalVisibility:
                 classicalVisibilitySidebar
+            case .planetarySynodic:
+                planetarySynodicSidebar
             case .astrocartography:
                 astrocartographySidebar
             case .localSpace:
@@ -734,6 +736,24 @@ extension ContentView {
                             .font(TS.Font.label)
                             .foregroundStyle(.secondary)
                     }
+                }
+            }
+        }
+    }
+
+    private var planetarySynodicSidebar: some View {
+        Group {
+            collapsible("时间窗") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    DateTimeInput(date: $scanStartDate, timeZone: selectedTimeZone)
+                    DateTimeInput(date: $scanEndDate, timeZone: selectedTimeZone)
+                }
+            }
+            collapsible("行星对") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    pickerRow("A", selection: $synodicBodyA, options: Self.synodicBodyOptions)
+                    pickerRow("B", selection: $synodicBodyB, options: Self.synodicBodyOptions)
+                    Toggle("计算对本命点接触", isOn: $synodicIncludeNatalContacts)
                 }
             }
         }

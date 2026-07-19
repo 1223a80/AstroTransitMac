@@ -388,6 +388,21 @@ struct BackendContractTests {
         #expect(csv.contains("station"))
     }
 
+    @Test func decodePlanetarySynodicFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(
+            PlanetarySynodicResult.self,
+            from: fixtureData("planetary-synodic-result")
+        )
+        #expect(result.meta.method == "planetary_synodic_v1")
+        #expect(!result.events.isEmpty)
+        #expect(result.events.allSatisfy { ($0.exactOrb ?? 1) < 1e-2 })
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        let markdown = MarkdownExportBuilder.planetarySynodic(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(markdown.contains("会合周期") || markdown.contains("相位事件"))
+        #expect(csv.contains("phase_event"))
+    }
+
     @Test func decodeClassicalVisibilityFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(
             ClassicalVisibilityResult.self,
