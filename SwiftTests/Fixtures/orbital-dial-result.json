@@ -1,0 +1,319 @@
+{
+  "meta": {
+    "mode": "orbital_dial",
+    "method": "orbital_dial_v1",
+    "schema_version": 1,
+    "birth_utc": "1990-01-01T04:00:00+00:00",
+    "modulus": 90,
+    "orbital_point_count": 20,
+    "dial_hit_count": 11,
+    "ephemeris": "Swiss Ephemeris"
+  },
+  "requested_config": {
+    "body_ids": [
+      "MERCURY",
+      "VENUS",
+      "MARS",
+      "JUPITER",
+      "SATURN"
+    ],
+    "modulus": 90,
+    "picture_orb": 1.0
+  },
+  "effective_config": {
+    "modulus": 90,
+    "picture_orb": 1.0,
+    "method": "orbital_dial_v1"
+  },
+  "orbital_points": [
+    {
+      "body_id": "MERCURY",
+      "point_kind": "north_node",
+      "longitude": 297.917312168,
+      "sign": "摩羯",
+      "degree_text": "27°55'02\" 摩羯",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "MERCURY",
+      "point_kind": "south_node",
+      "longitude": 264.637080167,
+      "sign": "射手",
+      "degree_text": "24°38'13\" 射手",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "MERCURY",
+      "point_kind": "perihelion",
+      "longitude": 290.316377848,
+      "sign": "摩羯",
+      "degree_text": "20°18'59\" 摩羯",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "MERCURY",
+      "point_kind": "aphelion",
+      "longitude": 273.016531447,
+      "sign": "摩羯",
+      "degree_text": "03°01'00\" 摩羯",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "VENUS",
+      "point_kind": "north_node",
+      "longitude": 322.428430811,
+      "sign": "水瓶",
+      "degree_text": "22°25'42\" 水瓶",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "VENUS",
+      "point_kind": "south_node",
+      "longitude": 270.35383817,
+      "sign": "摩羯",
+      "degree_text": "00°21'14\" 摩羯",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "VENUS",
+      "point_kind": "perihelion",
+      "longitude": 235.405418866,
+      "sign": "天蝎",
+      "degree_text": "25°24'20\" 天蝎",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "VENUS",
+      "point_kind": "aphelion",
+      "longitude": 293.556257232,
+      "sign": "摩羯",
+      "degree_text": "23°33'23\" 摩羯",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "MARS",
+      "point_kind": "north_node",
+      "longitude": 7.619067412,
+      "sign": "白羊",
+      "degree_text": "07°37'09\" 白羊",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "MARS",
+      "point_kind": "south_node",
+      "longitude": 248.877230567,
+      "sign": "射手",
+      "degree_text": "08°52'38\" 射手",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "MARS",
+      "point_kind": "perihelion",
+      "longitude": 313.223162648,
+      "sign": "水瓶",
+      "degree_text": "13°13'23\" 水瓶",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "MARS",
+      "point_kind": "aphelion",
+      "longitude": 192.065725172,
+      "sign": "天秤",
+      "degree_text": "12°03'57\" 天秤",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "JUPITER",
+      "point_kind": "north_node",
+      "longitude": 100.344544441,
+      "sign": "巨蟹",
+      "degree_text": "10°20'40\" 巨蟹",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "JUPITER",
+      "point_kind": "south_node",
+      "longitude": 280.377103487,
+      "sign": "摩羯",
+      "degree_text": "10°22'38\" 摩羯",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "JUPITER",
+      "point_kind": "perihelion",
+      "longitude": 2.816961711,
+      "sign": "白羊",
+      "degree_text": "02°49'01\" 白羊",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "JUPITER",
+      "point_kind": "aphelion",
+      "longitude": 204.258906353,
+      "sign": "天秤",
+      "degree_text": "24°15'32\" 天秤",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "SATURN",
+      "point_kind": "north_node",
+      "longitude": 115.163454482,
+      "sign": "巨蟹",
+      "degree_text": "25°09'48\" 巨蟹",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "SATURN",
+      "point_kind": "south_node",
+      "longitude": 292.415193133,
+      "sign": "摩羯",
+      "degree_text": "22°24'55\" 摩羯",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "SATURN",
+      "point_kind": "perihelion",
+      "longitude": 91.961756454,
+      "sign": "巨蟹",
+      "degree_text": "01°57'42\" 巨蟹",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    },
+    {
+      "body_id": "SATURN",
+      "point_kind": "aphelion",
+      "longitude": 273.54947362,
+      "sign": "摩羯",
+      "degree_text": "03°32'58\" 摩羯",
+      "method_key": "swe.nod_aps_ut_mean",
+      "coordinate_center": "heliocentric_orbital_elements_proxy"
+    }
+  ],
+  "dial_pictures": [
+    {
+      "point_a": "MERCURY",
+      "point_b": "VENUS",
+      "midpoint_longitude": 301.011547859,
+      "modulus": 90,
+      "folded_position": 31.011547859,
+      "picture": "MERCURY/VENUS",
+      "method_key": "circular_midpoint_mod_90"
+    },
+    {
+      "point_a": "MERCURY",
+      "point_b": "MARS",
+      "midpoint_longitude": 272.762786444,
+      "modulus": 90,
+      "folded_position": 2.762786444,
+      "picture": "MERCURY/MARS",
+      "method_key": "circular_midpoint_mod_90"
+    },
+    {
+      "point_a": "MERCURY",
+      "point_b": "JUPITER",
+      "midpoint_longitude": 195.476846826,
+      "modulus": 90,
+      "folded_position": 15.476846826,
+      "picture": "MERCURY/JUPITER",
+      "method_key": "circular_midpoint_mod_90"
+    },
+    {
+      "point_a": "MERCURY",
+      "point_b": "SATURN",
+      "midpoint_longitude": 290.689061435,
+      "modulus": 90,
+      "folded_position": 20.689061435,
+      "picture": "MERCURY/SATURN",
+      "method_key": "circular_midpoint_mod_90"
+    },
+    {
+      "point_a": "VENUS",
+      "point_b": "MARS",
+      "midpoint_longitude": 278.014290989,
+      "modulus": 90,
+      "folded_position": 8.014290989,
+      "picture": "VENUS/MARS",
+      "method_key": "circular_midpoint_mod_90"
+    },
+    {
+      "point_a": "VENUS",
+      "point_b": "JUPITER",
+      "midpoint_longitude": 200.728351371,
+      "modulus": 90,
+      "folded_position": 20.728351371,
+      "picture": "VENUS/JUPITER",
+      "method_key": "circular_midpoint_mod_90"
+    },
+    {
+      "point_a": "VENUS",
+      "point_b": "SATURN",
+      "midpoint_longitude": 295.94056598,
+      "modulus": 90,
+      "folded_position": 25.94056598,
+      "picture": "VENUS/SATURN",
+      "method_key": "circular_midpoint_mod_90"
+    },
+    {
+      "point_a": "MERCURY",
+      "point_b": "VENUS",
+      "point_c": "SATURN",
+      "picture": "MERCURY = VENUS/SATURN",
+      "orb": 0.180523,
+      "modulus": 90,
+      "method_key": "planetary_picture_mod_90"
+    },
+    {
+      "point_a": "MARS",
+      "point_b": "JUPITER",
+      "midpoint_longitude": 172.479589956,
+      "modulus": 90,
+      "folded_position": 82.479589956,
+      "picture": "MARS/JUPITER",
+      "method_key": "circular_midpoint_mod_90"
+    },
+    {
+      "point_a": "MARS",
+      "point_b": "SATURN",
+      "midpoint_longitude": 267.691804565,
+      "modulus": 90,
+      "folded_position": 87.691804565,
+      "picture": "MARS/SATURN",
+      "method_key": "circular_midpoint_mod_90"
+    },
+    {
+      "point_a": "JUPITER",
+      "point_b": "SATURN",
+      "midpoint_longitude": 190.405864946,
+      "modulus": 90,
+      "folded_position": 10.405864946,
+      "picture": "JUPITER/SATURN",
+      "method_key": "circular_midpoint_mod_90"
+    }
+  ],
+  "warnings": [],
+  "section_errors": null,
+  "calculation_assumptions": [
+    "Dial modulus=90 (45/90/360 allowed).",
+    "Planetary pictures: C near midpoint(A,B) within picture_orb.",
+    "Orbital nodes/apsides from swe.nod_aps_ut when available.",
+    "No Uranian hypothetical planets."
+  ]
+}
