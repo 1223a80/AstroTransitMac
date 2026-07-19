@@ -1,0 +1,320 @@
+{
+  "meta": {
+    "mode": "method_families",
+    "method": "method_families_v1",
+    "schema_version": 1,
+    "birth_utc": "1990-01-01T04:00:00+00:00",
+    "reference_utc": "2026-05-05T04:00:00Z",
+    "age_years": 36.34027,
+    "true_solar_arc_deg": 36.972162522,
+    "ephemeris": "Swiss Ephemeris"
+  },
+  "requested_config": {
+    "body_ids": [
+      "SUN",
+      "MOON",
+      "MERCURY",
+      "VENUS",
+      "MARS"
+    ],
+    "solar_arc_rate_deg_per_year": null
+  },
+  "effective_config": {
+    "progression_profiles": [
+      "secondary_naibod",
+      "secondary_solar_arc_mc",
+      "secondary_armc_361"
+    ],
+    "solar_arc_profiles": [
+      "true_sun",
+      "naibod_mean",
+      "custom_rate"
+    ],
+    "method": "method_families_v1"
+  },
+  "progression_profiles": [
+    {
+      "profile_id": "secondary_naibod",
+      "description": "Secondary progression; angles by Naibod mean (placeholder uses secondary day-for-year).",
+      "progressed_utc": "1990-02-06T12:09:59.289348Z",
+      "rows": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "natal_longitude": 280.474432156,
+          "progressed_longitude": 317.446594678,
+          "method_key": "secondary_naibod"
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "natal_longitude": 328.788629281,
+          "progressed_longitude": 96.205819704,
+          "method_key": "secondary_naibod"
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "natal_longitude": 295.760043314,
+          "progressed_longitude": 292.886474072,
+          "method_key": "secondary_naibod"
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "natal_longitude": 306.263052404,
+          "progressed_longitude": 290.993078419,
+          "method_key": "secondary_naibod"
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "natal_longitude": 249.765529575,
+          "progressed_longitude": 275.716183854,
+          "method_key": "secondary_naibod"
+        }
+      ]
+    },
+    {
+      "profile_id": "secondary_solar_arc_mc",
+      "description": "Secondary progression; MC advanced by true solar arc (approx via sun arc).",
+      "progressed_utc": "1990-02-06T12:09:59.289348Z",
+      "rows": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "natal_longitude": 280.474432156,
+          "progressed_longitude": 317.446594678,
+          "method_key": "secondary_solar_arc_mc"
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "natal_longitude": 328.788629281,
+          "progressed_longitude": 96.205819704,
+          "method_key": "secondary_solar_arc_mc"
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "natal_longitude": 295.760043314,
+          "progressed_longitude": 292.886474072,
+          "method_key": "secondary_solar_arc_mc"
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "natal_longitude": 306.263052404,
+          "progressed_longitude": 290.993078419,
+          "method_key": "secondary_solar_arc_mc"
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "natal_longitude": 249.765529575,
+          "progressed_longitude": 275.716183854,
+          "method_key": "secondary_solar_arc_mc"
+        }
+      ]
+    },
+    {
+      "profile_id": "secondary_armc_361",
+      "description": "Secondary progression; ARMC+361°/year proxy via sun mean motion * year fraction.",
+      "progressed_utc": "1990-02-06T12:09:59.289348Z",
+      "rows": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "natal_longitude": 280.474432156,
+          "progressed_longitude": 316.392618249,
+          "method_key": "secondary_armc_361"
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "natal_longitude": 328.788629281,
+          "progressed_longitude": 4.706815374,
+          "method_key": "secondary_armc_361"
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "natal_longitude": 295.760043314,
+          "progressed_longitude": 331.678229407,
+          "method_key": "secondary_armc_361"
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "natal_longitude": 306.263052404,
+          "progressed_longitude": 342.181238497,
+          "method_key": "secondary_armc_361"
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "natal_longitude": 249.765529575,
+          "progressed_longitude": 285.683715667,
+          "method_key": "secondary_armc_361"
+        }
+      ]
+    }
+  ],
+  "solar_arc_profiles": [
+    {
+      "profile_id": "true_sun",
+      "description": "True solar arc: progressed Sun - natal Sun.",
+      "arc_deg": 36.972162522,
+      "rows": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "natal_longitude": 280.474432156,
+          "solar_arc_longitude": 317.446594678,
+          "arc_deg": 36.972162522,
+          "method_key": "true_sun"
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "natal_longitude": 328.788629281,
+          "solar_arc_longitude": 5.760791803,
+          "arc_deg": 36.972162522,
+          "method_key": "true_sun"
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "natal_longitude": 295.760043314,
+          "solar_arc_longitude": 332.732205836,
+          "arc_deg": 36.972162522,
+          "method_key": "true_sun"
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "natal_longitude": 306.263052404,
+          "solar_arc_longitude": 343.235214926,
+          "arc_deg": 36.972162522,
+          "method_key": "true_sun"
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "natal_longitude": 249.765529575,
+          "solar_arc_longitude": 286.737692096,
+          "arc_deg": 36.972162522,
+          "method_key": "true_sun"
+        }
+      ]
+    },
+    {
+      "profile_id": "naibod_mean",
+      "description": "Naibod mean: 0.98564733° per day * years.",
+      "arc_deg": 35.818689656,
+      "rows": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "natal_longitude": 280.474432156,
+          "solar_arc_longitude": 316.293121812,
+          "arc_deg": 35.818689656,
+          "method_key": "naibod_mean"
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "natal_longitude": 328.788629281,
+          "solar_arc_longitude": 4.607318937,
+          "arc_deg": 35.818689656,
+          "method_key": "naibod_mean"
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "natal_longitude": 295.760043314,
+          "solar_arc_longitude": 331.57873297,
+          "arc_deg": 35.818689656,
+          "method_key": "naibod_mean"
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "natal_longitude": 306.263052404,
+          "solar_arc_longitude": 342.08174206,
+          "arc_deg": 35.818689656,
+          "method_key": "naibod_mean"
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "natal_longitude": 249.765529575,
+          "solar_arc_longitude": 285.584219231,
+          "arc_deg": 35.818689656,
+          "method_key": "naibod_mean"
+        }
+      ]
+    },
+    {
+      "profile_id": "custom_rate",
+      "description": "Custom rate from request.solar_arc_rate_deg_per_year.",
+      "arc_deg": 36.340269553,
+      "rows": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "natal_longitude": 280.474432156,
+          "solar_arc_longitude": 316.814701709,
+          "arc_deg": 36.340269553,
+          "method_key": "custom_rate"
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "natal_longitude": 328.788629281,
+          "solar_arc_longitude": 5.128898834,
+          "arc_deg": 36.340269553,
+          "method_key": "custom_rate"
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "natal_longitude": 295.760043314,
+          "solar_arc_longitude": 332.100312867,
+          "arc_deg": 36.340269553,
+          "method_key": "custom_rate"
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "natal_longitude": 306.263052404,
+          "solar_arc_longitude": 342.603321957,
+          "arc_deg": 36.340269553,
+          "method_key": "custom_rate"
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "natal_longitude": 249.765529575,
+          "solar_arc_longitude": 286.105799127,
+          "arc_deg": 36.340269553,
+          "method_key": "custom_rate"
+        }
+      ]
+    }
+  ],
+  "profile_arc_comparison": {
+    "true_sun": 36.972162522,
+    "naibod_mean": 35.818689656,
+    "custom_rate": 36.340269553
+  },
+  "warnings": [],
+  "section_errors": null,
+  "calculation_assumptions": [
+    "Secondary progression uses day-for-year via _calc_progressed_dt.",
+    "Solar arc true_sun uses true_solar_arc_value(natal_sun, progressed_sun).",
+    "Naibod mean uses 0.98564733°/year * age_years.",
+    "custom_rate uses request.solar_arc_rate_deg_per_year (default 1).",
+    "Angle-specific progression profiles are labeled proxies where noted."
+  ]
+}
