@@ -65,6 +65,6 @@ struct TimeLordsExtendedResultPane: View {
         let enc = JSONEncoder()
         enc.outputFormatting = [.prettyPrinted, .sortedKeys]
         guard let data = try? enc.encode(value), let s = String(data: data, encoding: .utf8) else { return "—" }
-        return String(s.prefix(4000))
+        return s
     }
 }

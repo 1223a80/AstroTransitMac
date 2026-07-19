@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -48,6 +49,19 @@ def calculate_mundane_electional(request: dict[str, Any], warnings: list[str]) -
     zodiac = request.get("zodiac", "tropical")
     sidereal = set_zodiac_mode(str(zodiac), warnings)
     hs = request.get("house_system", "whole_sign")
+
+    raw_step = request.get("scan_step_hours", 24)
+    try:
+        scan_step_hours = float(raw_step if raw_step is not None else 24)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("scan_step_hours must be a finite positive number") from exc
+    if (
+        isinstance(raw_step, bool)
+        or not math.isfinite(scan_step_hours)
+        or scan_step_hours <= 0
+        or scan_step_hours > 24 * 60
+    ):
+        raise ValueError("scan_step_hours must be a finite positive number in (0, 1440]")
 
     # Sun ingresses
     sun = resolve_bodies(["SUN"], [], warnings)[0]
@@ -143,7 +157,7 @@ def calculate_mundane_electional(request: dict[str, Any], warnings: list[str]) -
                 "note": "Facts only; no automatic ranking of best times.",
             }
         )
-        cursor += timedelta(hours=float(request.get("scan_step_hours") or 24))
+        cursor += timedelta(hours=scan_step_hours)
 
     return {
         "meta": {
@@ -171,6 +185,7 @@ def calculate_mundane_electional(request: dict[str, Any], warnings: list[str]) -
             "display_timezone": display_timezone,
             "latitude": lat,
             "longitude": lon,
+            "scan_step_hours": scan_step_hours,
         },
         "mundane_ingresses": ingresses,
         "electional_candidates": candidates,

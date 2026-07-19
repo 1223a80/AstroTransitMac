@@ -1522,6 +1522,131 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             invalid.append("node_mode must be one of: true_node, mean_node")
     if mode == "moment" and "patterns_enabled" in request and not isinstance(request["patterns_enabled"], bool):
         invalid.append("patterns_enabled must be a boolean")
+
+    # B13–B20 expansion modes: nested moment / arrays / numeric range checks.
+    expansion_birth_modes = {
+        "classical_derivatives",
+        "time_lords_extended",
+        "method_families",
+        "primary_directions_audit",
+        "distributions_pd",
+        "prenatal_parans",
+        "orbital_dial",
+        "hellenistic_condition_audit",
+        "draconic_heliocentric",
+    }
+    if mode in expansion_birth_modes:
+        birth = request.get("birth")
+        if not isinstance(birth, dict):
+            invalid.append("birth must be an object")
+        else:
+            moment = birth.get("moment")
+            if not isinstance(moment, dict):
+                missing.append("birth.moment")
+            else:
+                for key in _PERSON_MOMENT_FIELDS:
+                    if key not in moment:
+                        missing.append(f"birth.moment.{key}")
+                if all(key in moment for key in _PERSON_MOMENT_FIELDS):
+                    try:
+                        parsed_birth = moment_to_local_datetime(moment)
+                        if not 1800 <= parsed_birth.year <= 2100:
+                            invalid.append("birth.moment.year must be in [1800, 2100]")
+                    except Exception as exc:
+                        invalid.append(f"birth.moment is invalid: {exc}")
+            for field, lower, upper in (("latitude", -90.0, 90.0), ("longitude", -180.0, 180.0)):
+                value = birth.get(field)
+                if value is None:
+                    continue
+                if (
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not math.isfinite(float(value))
+                    or not lower <= float(value) <= upper
+                ):
+                    invalid.append(f"birth.{field} must be a finite number in [{lower:g}, {upper:g}]")
+        if mode in {"time_lords_extended", "method_families"}:
+            reference = request.get("reference")
+            if not isinstance(reference, dict):
+                invalid.append("reference must be an object with an exact moment")
+            else:
+                for key in _PERSON_MOMENT_FIELDS:
+                    if key not in reference:
+                        missing.append(f"reference.{key}")
+                if all(key in reference for key in _PERSON_MOMENT_FIELDS):
+                    try:
+                        parsed_reference = moment_to_local_datetime(reference)
+                        if not 1800 <= parsed_reference.year <= 2100:
+                            invalid.append("reference.year must be in [1800, 2100]")
+                    except Exception as exc:
+                        invalid.append(f"reference is invalid: {exc}")
+        body_ids = request.get("body_ids")
+        if body_ids is not None:
+            if not isinstance(body_ids, list):
+                invalid.append("body_ids must be an array when provided")
+            else:
+                for index, item in enumerate(body_ids):
+                    if not isinstance(item, str) or not item.strip():
+                        invalid.append(f"body_ids[{index}] must be a non-empty string")
+        picture_orb = request.get("picture_orb")
+        if picture_orb is not None and (
+            isinstance(picture_orb, bool)
+            or not isinstance(picture_orb, (int, float))
+            or not math.isfinite(float(picture_orb))
+            or float(picture_orb) < 0
+            or float(picture_orb) > 15
+        ):
+            invalid.append("picture_orb must be a finite number in [0, 15]")
+        modulus = request.get("modulus")
+        if modulus is not None and modulus not in (45, 90, 360):
+            invalid.append("modulus must be 45, 90, or 360")
+    if mode == "mundane_electional":
+        for field in ("start", "end"):
+            moment = request.get(field)
+            if not isinstance(moment, dict):
+                invalid.append(f"{field} must be an object with an exact moment")
+            else:
+                for key in _PERSON_MOMENT_FIELDS:
+                    if key not in moment:
+                        missing.append(f"{field}.{key}")
+        location = request.get("location")
+        if not isinstance(location, dict):
+            invalid.append("location must be an object")
+        else:
+            for field in ("latitude", "longitude"):
+                if field not in location:
+                    missing.append(f"location.{field}")
+                else:
+                    value = location.get(field)
+                    bounds = (-90.0, 90.0) if field == "latitude" else (-180.0, 180.0)
+                    if (
+                        isinstance(value, bool)
+                        or not isinstance(value, (int, float))
+                        or not math.isfinite(float(value))
+                        or not bounds[0] <= float(value) <= bounds[1]
+                    ):
+                        invalid.append(
+                            f"location.{field} must be a finite number in [{bounds[0]:g}, {bounds[1]:g}]"
+                        )
+        scan_step = request.get("scan_step_hours", 24)
+        if (
+            isinstance(scan_step, bool)
+            or not isinstance(scan_step, (int, float))
+            or not math.isfinite(float(scan_step))
+            or float(scan_step) <= 0
+            or float(scan_step) > 24 * 60
+        ):
+            invalid.append("scan_step_hours must be a finite positive number in (0, 1440]")
+        topic_house = request.get("topic_house", 7)
+        if (
+            isinstance(topic_house, bool)
+            or not isinstance(topic_house, (int, float))
+            or not math.isfinite(float(topic_house))
+            or int(topic_house) != float(topic_house)
+            or not 1 <= int(topic_house) <= 12
+        ):
+            invalid.append("topic_house must be an integer in [1, 12]")
+
     missing = list(dict.fromkeys(missing))
     if missing or invalid:
         parts: list[str] = []

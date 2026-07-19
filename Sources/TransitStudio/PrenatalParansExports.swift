@@ -16,7 +16,7 @@ extension MarkdownExportBuilder {
             "| Planet | Star | Planet RA | Star RA | ΔRA | Class | Method |",
             "| --- | --- | ---: | ---: | ---: | --- | --- |",
         ]
-        for p in result.fixedStarParans.prefix(80) {
+        for p in result.fixedStarParans {
             lines.append(
                 "| \(p.planetName ?? p.planetId ?? "") | \(p.starName ?? "") | \(p.planetRa.map { String(format: "%.4f", $0) } ?? "") | \(p.starRa.map { String(format: "%.4f", $0) } ?? "") | \(p.raDeltaDeg.map { String(format: "%.4f", $0) } ?? "") | \(p.paranClass ?? "") | \(p.methodKey ?? "") |"
             )
@@ -25,7 +25,7 @@ extension MarkdownExportBuilder {
             let enc = JSONEncoder()
             enc.outputFormatting = [.prettyPrinted, .sortedKeys]
             if let data = try? enc.encode(packet), let s = String(data: data, encoding: .utf8) {
-                lines += ["", "## Prenatal packet", "", "```json", String(s.prefix(6000)), "```"]
+                lines += ["", "## Prenatal packet", "", "```json", s, "```"]
             }
         }
         if let a = result.calculationAssumptions, !a.isEmpty {

@@ -23,6 +23,18 @@ All of B13–B20 implemented with independent backends, samples, fixtures, Swift
 | 门禁 | ✅ | pytest 839 / swift 103 / check_vibe |
 | 交接文档 | ✅ | `docs/b13-b20-skeptic-remediation-handoff-2026-07.md` |
 
+## 第二轮审查 REQUEST CHANGES（2026-07-19）
+
+| 项 | 状态 | 说明 |
+|---|---|---|
+| UI reference age=0 | ✅ | classicalReferenceDate + expansion sidebar |
+| B20 负步长无限循环 | ✅ | API + calculate 拒绝 ≤0 / 非有限步长 |
+| B20 侧栏时间窗 | ✅ | start/end/topic/step 可见 |
+| Candidate 证据字段 | ✅ | Codable + JSON round-trip 测试 |
+| Markdown 全量导出 | ✅ | 去掉静默 prefix |
+| isRunDisabled 经纬度 | ✅ | 统一校验、无重复 case |
+| 门禁 | ✅ | pytest 841 / swift 105 / check_vibe |
+
 ---
 
 # B12 Draconic/日心（2026-07-19）

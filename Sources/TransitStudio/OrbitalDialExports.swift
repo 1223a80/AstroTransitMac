@@ -23,7 +23,7 @@ extension MarkdownExportBuilder {
             )
         }
         lines += ["", "## Dial pictures", "", "| Picture | Midpoint | Modulus | Method |", "| --- | ---: | ---: | --- |"]
-        for p in result.dialPictures.prefix(80) {
+        for p in result.dialPictures {
             lines.append("| \(p.picture ?? "") | \(p.midpointLongitude.map { String(format: "%.4f", $0) } ?? "") | \(p.modulus.map(String.init) ?? "") | \(p.methodKey ?? "") |")
         }
         if let a = result.calculationAssumptions, !a.isEmpty {

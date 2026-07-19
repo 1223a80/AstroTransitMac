@@ -27,7 +27,7 @@ extension MarkdownExportBuilder {
             "| Profile | ID | Dir | Arc | Age | Key rate |",
             "| --- | --- | --- | ---: | ---: | ---: |",
         ]
-        for d in result.primaryDirectionsByProfile.prefix(120) {
+        for d in result.primaryDirectionsByProfile {
             lines.append(
                 "| \(d.methodProfile ?? d.methodKey ?? "") | \(d.directionId) | \(d.directionType ?? "") | \(d.arcSigned.map { String(format: "%.4f", $0) } ?? "") | \(d.ageFromAbsArc.map { String(format: "%.4f", $0) } ?? "") | \(d.keyRateDegPerYear.map { String(format: "%.6f", $0) } ?? "") |"
             )

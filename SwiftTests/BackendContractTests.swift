@@ -482,15 +482,42 @@ struct BackendContractTests {
     }
 
     @Test func decodeMundaneElectionalFixtureFromRealOutput() throws {
-        let result = try JSONDecoder().decode(MundaneElectionalResult.self, from: fixtureData("mundane-electional-result"))
+        let data = try fixtureData("mundane-electional-result")
+        let raw = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let rawCandidates = try #require(raw["electional_candidates"] as? [[String: Any]])
+        #expect(!rawCandidates.isEmpty)
+
+        let result = try JSONDecoder().decode(MundaneElectionalResult.self, from: data)
         #expect(result.meta.method.contains("mundane") || result.meta.mode == "mundane_electional" || !result.meta.method.isEmpty)
         #expect(result.calculationAssumptions?.isEmpty == false)
         #expect(!result.mundaneIngresses.isEmpty || !result.electionalCandidates.isEmpty)
+        #expect(result.electionalCandidates.count == rawCandidates.count)
+        // Core evidence fields must survive Codable (not dropped before JSON export).
+        #expect(result.electionalCandidates.contains { $0.moonSignExitDistance != nil })
+        #expect(result.electionalCandidates.contains { !($0.nearestMoonAspects ?? []).isEmpty })
+        #expect(result.electionalCandidates.contains { $0.planetaryHoursStatus != nil })
+
+        let reencoded = try JSONEncoder().encode(result)
+        let roundTrip = try #require(JSONSerialization.jsonObject(with: reencoded) as? [String: Any])
+        let rtCandidates = try #require(roundTrip["electional_candidates"] as? [[String: Any]])
+        #expect(rtCandidates.contains { $0["moon_sign_exit_distance"] != nil })
+        #expect(rtCandidates.contains { $0["nearest_moon_aspects"] != nil })
+        #expect(rtCandidates.contains { $0["planetary_hour"] != nil || $0["planetary_hours_status"] != nil })
+
         let md = MarkdownExportBuilder.mundaneElectional(result)
         let csv = TextExportBuilder.csv(result)
         #expect(md.contains(result.meta.method))
         #expect(csv.contains("ingress") || csv.contains("candidate"))
-        // No ranking scores on candidates (facts-only scanner)
+        #expect(csv.contains("moon_sign_exit_distance"))
+        #expect(csv.contains("nearest_moon_aspects"))
+        // Full export: every candidate UTC appears in Markdown (no silent prefix truncation).
+        for candidate in result.electionalCandidates.prefix(5) {
+            if let utc = candidate.candidateUtc {
+                #expect(md.contains(utc))
+            }
+        }
+        let candidateUTCCount = result.electionalCandidates.compactMap(\.candidateUtc).filter { md.contains($0) }.count
+        #expect(candidateUTCCount == result.electionalCandidates.compactMap(\.candidateUtc).count)
         #expect(result.electionalCandidates.isEmpty || result.electionalCandidates.contains { $0.methodKey != nil })
         #expect(md.contains("Facts only") || md.contains("facts") || md.contains("择时"))
     }

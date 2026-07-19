@@ -39,14 +39,26 @@ struct MundaneIngressRow: Codable, Identifiable {
     }
 }
 
+struct ElectionalMoonAspect: Codable, Hashable {
+    let bodyId: String?
+    let separationDeg: Double?
+    enum CodingKeys: String, CodingKey {
+        case bodyId = "body_id"
+        case separationDeg = "separation_deg"
+    }
+}
+
 struct ElectionalCandidateRow: Codable, Identifiable {
     let candidateUtc: String?
     let candidateLocal: String?
     let moonLongitude: Double?
     let moonSpeed: Double?
+    let moonSignExitDistance: Double?
     let sunMoonSeparation: Double?
+    let nearestMoonAspects: [ElectionalMoonAspect]?
     let ascLongitude: Double?
     let topicHouse: Int?
+    let planetaryHour: NestedJSON?
     let planetaryHoursStatus: String?
     let methodKey: String?
     let note: String?
@@ -57,9 +69,12 @@ struct ElectionalCandidateRow: Codable, Identifiable {
         case candidateLocal = "candidate_local"
         case moonLongitude = "moon_longitude"
         case moonSpeed = "moon_speed"
+        case moonSignExitDistance = "moon_sign_exit_distance"
         case sunMoonSeparation = "sun_moon_separation"
+        case nearestMoonAspects = "nearest_moon_aspects"
         case ascLongitude = "asc_longitude"
         case topicHouse = "topic_house"
+        case planetaryHour = "planetary_hour"
         case planetaryHoursStatus = "planetary_hours_status"
         case methodKey = "method_key"
     }

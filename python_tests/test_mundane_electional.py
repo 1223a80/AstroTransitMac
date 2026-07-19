@@ -56,3 +56,53 @@ def test_rejects_empty_location_and_invalid_timezone():
     }
     with pytest.raises(ValueError, match="时区|timezone|未知"):
         calculate_mundane_electional(bad_tz, [])
+
+
+def test_rejects_non_positive_scan_step_hours():
+    base = _req()
+    err = validate_required_fields({**base, "scan_step_hours": -1})
+    assert err is not None
+    assert "scan_step_hours" in str(err)
+    with pytest.raises(ValueError, match="scan_step_hours"):
+        calculate_mundane_electional({**base, "scan_step_hours": -1}, [])
+    with pytest.raises(ValueError, match="scan_step_hours"):
+        calculate_mundane_electional({**base, "scan_step_hours": 0}, [])
+
+
+def test_api_rejects_string_body_ids_and_missing_birth_moment_for_method_families():
+    bad_body = {
+        "mode": "method_families",
+        "birth": {
+            "moment": {
+                "year": 1990,
+                "month": 1,
+                "day": 1,
+                "hour": 12,
+                "minute": 0,
+                "timezone": "Asia/Shanghai",
+            },
+            "latitude": 31.2,
+            "longitude": 121.4,
+        },
+        "reference": {
+            "year": 2026,
+            "month": 1,
+            "day": 1,
+            "hour": 12,
+            "minute": 0,
+            "timezone": "Asia/Shanghai",
+        },
+        "body_ids": "SUN",
+    }
+    err = validate_required_fields(bad_body)
+    assert err is not None
+    assert "body_ids" in str(err)
+
+    missing_moment = {
+        "mode": "method_families",
+        "birth": {"latitude": 31.2, "longitude": 121.4},
+        "reference": bad_body["reference"],
+    }
+    err2 = validate_required_fields(missing_moment)
+    assert err2 is not None
+    assert "birth.moment" in str(err2)

@@ -102,8 +102,20 @@ Smoke 入口与 `check_vibe_changes.sh` / `AGENTS.md` 清单一致。
 **Tests / docs：**
 上述 pytest、本交接文档、`CHANGELOG.md`、`PLANS.md`
 
-## 6. 建议后续（非本轮阻断）
+## 6. 第二轮审查修复（2026-07-19）
+
+| Finding | 修复 |
+|---------|------|
+| Time Lords / Method Families UI age=0 | `reference = classicalReferenceDate`；侧栏「参考时间」；编码测试 birth.year ≠ reference.year |
+| B20 负 `scan_step_hours` 无限循环 | API + `calculate_mundane_electional` 要求有限正数 (0, 1440] |
+| B20 隐藏 scan 窗口 | 侧栏暴露 start/end、topic house、步长小时 |
+| Candidate 字段丢失 | 模型含 exit distance / nearest aspects / planetary_hour；JSON round-trip 测试 |
+| Markdown 静默截断 | 全量导出 rows / full prenatal packet JSON |
+| isRunDisabled 绕过经纬度 | 合并 case，统一 `parseDouble` 校验 |
+
+验证（第二轮）：`pytest` 841；`swift test` 105；`check_vibe_changes.sh` 全绿。
+
+## 7. 建议后续（非本轮阻断）
 
 1. 将 remediation 拆成独立 task branch 提交并与 `origin/main` 同步。
 2. 若产品需要完整 PD / 真 parans，另开批次 + 外部参考表。
-3. 清理 `ContentView+ResultsPanes` 中重复 case 编译警告（预存，非本轮引入逻辑错误）。

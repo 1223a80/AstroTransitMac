@@ -247,6 +247,49 @@ struct ModernRequestEncodingTests {
         #expect(dict["midpoint_pairs"] == nil)
     }
 
+    @Test func timeLordsAndMethodFamiliesEncodeDistinctReferenceFromBirth() throws {
+        for mode in ["time_lords_extended", "method_families"] {
+            let request = ExpansionGenericRequest(
+                mode: mode,
+                birth: birth,
+                reference: reference,
+                displayTimezone: "Asia/Shanghai",
+                bodyIDs: ["SUN", "MOON"],
+                houseSystem: "whole_sign",
+                zodiac: "tropical"
+            )
+            let dict = try encodedDictionary(request)
+            let birthMoment = try #require((dict["birth"] as? [String: Any])?["moment"] as? [String: Any])
+            let refMoment = try #require(dict["reference"] as? [String: Any])
+            #expect(dict["mode"] as? String == mode)
+            #expect(birthMoment["year"] as? Int == 1990)
+            #expect(refMoment["year"] as? Int == 2026)
+            #expect(birthMoment["year"] as? Int != refMoment["year"] as? Int)
+        }
+    }
+
+    @Test func mundaneElectionalEncodesWindowTopicAndPositiveStep() throws {
+        let start = ChartMoment(year: 2026, month: 1, day: 1, hour: 0, minute: 0, timezone: "Asia/Shanghai")
+        let end = ChartMoment(year: 2026, month: 6, day: 30, hour: 0, minute: 0, timezone: "Asia/Shanghai")
+        let request = ExpansionGenericRequest(
+            mode: "mundane_electional",
+            start: start,
+            end: end,
+            displayTimezone: "Asia/Shanghai",
+            location: GeoPlace(name: "Shanghai", latitude: 31.2304, longitude: 121.4737, timezone: "Asia/Shanghai"),
+            topicHouse: 7,
+            scanStepHours: 24
+        )
+        let dict = try encodedDictionary(request)
+        #expect(dict["mode"] as? String == "mundane_electional")
+        #expect(dict["start"] is [String: Any])
+        #expect(dict["end"] is [String: Any])
+        #expect(dict["topic_house"] as? Int == 7)
+        #expect((dict["scan_step_hours"] as? Double) == 24 || (dict["scan_step_hours"] as? Int) == 24)
+        let location = try #require(dict["location"] as? [String: Any])
+        #expect(location["latitude"] as? Double == 31.2304)
+    }
+
     private func encodedDictionary<T: Encodable>(_ value: T) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         return try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])

@@ -18,13 +18,13 @@ extension MarkdownExportBuilder {
             "| Source | Natal | Dodeka | Sign | Ruler | Method |",
             "| --- | ---: | ---: | --- | --- | --- |",
         ]
-        for row in result.dodekatemoria.prefix(80) {
+        for row in result.dodekatemoria {
             lines.append(
                 "| \(row.sourceName ?? row.sourceId ?? "") | \(fmt(row.natalLongitude)) | \(fmt(row.dodekatemorionLongitude)) | \(row.sign ?? "") | \(row.dodekatemorionRuler ?? "") | \(row.methodKey ?? "") |"
             )
         }
         lines += ["", "## Monomoiria", "", "| Source | Degree | Ruler | Method |", "| --- | ---: | --- | --- |"]
-        for row in result.monomoiria.prefix(80) {
+        for row in result.monomoiria {
             lines.append("| \(row.sourceName ?? row.sourceId ?? "") | \(row.degreeIndex.map(String.init) ?? "") | \(row.monomoiriaRuler ?? "") | \(row.methodKey ?? "") |")
         }
         lines += ["", "## Topical Almutens", "", "| Topic | Winner | Score | Method |", "| --- | --- | ---: | --- |"]

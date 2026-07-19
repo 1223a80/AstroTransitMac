@@ -16,7 +16,7 @@ extension MarkdownExportBuilder {
             "| Promissor | Significator | Dir | Arc | Age | Method |",
             "| --- | --- | --- | ---: | ---: | --- |",
         ]
-        for d in result.directions.prefix(100) {
+        for d in result.directions {
             lines.append(
                 "| \(d.promissor ?? d.promissorId ?? "") | \(d.significator ?? d.significatorId ?? "") | \(d.directionType ?? "") | \(d.arcSigned.map { String(format: "%.4f", $0) } ?? "") | \(d.ageFromAbsArc.map { String(format: "%.3f", $0) } ?? "") | \(d.methodKey ?? d.algorithmName ?? "") |"
             )

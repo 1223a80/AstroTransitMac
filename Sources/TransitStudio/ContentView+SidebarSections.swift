@@ -671,20 +671,14 @@ extension ContentView {
                 collapsible("本命盘") { natalSettingsSection }
             case .classicalDerivatives:
                 collapsible("本命盘") { natalSettingsSection }
-            case .timeLordsExtended:
-                collapsible("本命盘") { natalSettingsSection }
-            case .methodFamilies:
-                collapsible("本命盘") { natalSettingsSection }
-            case .primaryDirectionsAudit:
-                collapsible("本命盘") { natalSettingsSection }
-            case .distributionsPd:
-                collapsible("本命盘") { natalSettingsSection }
+            case .timeLordsExtended, .methodFamilies, .primaryDirectionsAudit, .distributionsPd:
+                expansionReferenceSidebar
             case .prenatalParans:
                 collapsible("本命盘") { natalSettingsSection }
             case .orbitalDial:
                 collapsible("本命盘") { natalSettingsSection }
             case .mundaneElectional:
-                collapsible("本命盘") { natalSettingsSection }
+                mundaneElectionalSidebar
             case .astrocartography:
                 astrocartographySidebar
             case .localSpace:
@@ -1141,6 +1135,59 @@ extension ContentView {
                 }
             }
             collapsible("参数") { modernParameterSection }
+        }
+    }
+
+    /// Shared natal + independent reference for time-lord / method / PD expansion modes.
+    private var expansionReferenceSidebar: some View {
+        Group {
+            collapsible("本命盘") { natalSettingsSection }
+            collapsible("参考时间") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    Text("用于年龄与推运/时间主计算；须与出生时刻不同才能得到非零年龄。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                    DateTimeInput(date: $classicalReferenceDate, timeZone: selectedTimeZone)
+                }
+            }
+        }
+    }
+
+    private var mundaneElectionalSidebar: some View {
+        Group {
+            collapsible("地点 / 本命") { natalSettingsSection }
+            collapsible("扫描时间窗") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    Text("开始").foregroundStyle(.secondary)
+                    DateTimeInput(date: $scanStartDate, timeZone: selectedTimeZone)
+                    Text("结束").foregroundStyle(.secondary)
+                    DateTimeInput(date: $scanEndDate, timeZone: selectedTimeZone)
+                    Text("显示时区：\(timezoneLabel)")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            collapsible("择时参数") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    HStack {
+                        Text("主题宫").foregroundStyle(.secondary)
+                        Spacer()
+                        Stepper("第 \(mundaneTopicHouse) 宫", value: $mundaneTopicHouse, in: 1...12)
+                            .monospacedDigit()
+                    }
+                    HStack {
+                        Text("扫描步长(小时)").foregroundStyle(.secondary)
+                        Spacer()
+                        TextField("24", value: $mundaneScanStepHours, format: .number)
+                            .frame(width: 72)
+                            .multilineTextAlignment(.trailing)
+                            .monospacedDigit()
+                    }
+                    Text("步长须为正有限数（小时）；仅输出事实矩阵，不排序吉时。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
     }
 

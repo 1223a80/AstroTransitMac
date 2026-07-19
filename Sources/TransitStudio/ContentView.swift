@@ -137,6 +137,9 @@ struct ContentView: View {
     @State var relocationLatitude = "51.5074"
     @State var relocationLongitude = "-0.1278"
     @State var relocationTimezone = "Europe/London"
+    /// B20 mundane/electional scan window controls (independent of shared scan dates for clarity in sidebar).
+    @State var mundaneTopicHouse = 7
+    @State var mundaneScanStepHours = 24.0
     @State var relocationBodies: Set<String> = [
         "SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"
     ]

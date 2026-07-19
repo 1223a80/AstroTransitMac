@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-19 — B13–B20 第二轮审查修复：reference / 步长 / 导出 / 校验
+
+- **P1**：`time_lords_extended` / `method_families`（及 PD 扩展）reference 改用 `classicalReferenceDate`；侧栏增加参考时间控件；请求编码测试断言 birth≠reference。
+- **P1**：`scan_step_hours` 强制有限正数 `(0, 1440]`（API + 计算层），杜绝负步长无限循环；B13–B20 补 birth.moment / body_ids / picture_orb / modulus 校验。
+- **P2**：B20 侧栏暴露 start/end、topic house、scan step；candidate Codable 保留 `moon_sign_exit_distance` / `nearest_moon_aspects` / `planetary_hour`。
+- **P2**：Markdown 全量导出（去掉 prefix 静默截断）；`isRunDisabled` 统一经纬度校验并消除重复 case 警告。
+- 测试：pytest 841；swift 105；check_vibe 全绿。
+
 ## 2026-07-19 — B13–B20 skeptic remediation（审查 REQUEST CHANGES 闭环）
 
 - **B14**：Fortune/Spirit 按 classical lot id（`fortune`/`spirit`）取黄经，禁止 ASC 静默替代；ZR 顶层 `l4_periods` + `current_active_level` 可达 L4；concordance 稳定英文 body_id。

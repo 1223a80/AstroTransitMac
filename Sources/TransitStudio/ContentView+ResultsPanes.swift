@@ -154,25 +154,9 @@ extension ContentView {
                     || visibilityInclude.isEmpty
             case .planetarySynodic:
                 return synodicBodyA == synodicBodyB
-            case .hellenisticConditionAudit:
-                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
-            case .draconicHeliocentric:
-                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
-            case .classicalDerivatives:
-                return false
-            case .methodFamilies:
-                return false
-            case .primaryDirectionsAudit:
-                return false
-            case .distributionsPd:
-                return false
-            case .prenatalParans:
-                return false
-            case .orbitalDial:
-                return false
-            case .mundaneElectional:
-                return false
-            case .timeLordsExtended, .methodFamilies, .primaryDirectionsAudit, .distributionsPd, .prenatalParans, .orbitalDial, .mundaneElectional, .classicalDerivatives, .hellenisticConditionAudit, .draconicHeliocentric:
+            case .classicalDerivatives, .timeLordsExtended, .methodFamilies, .primaryDirectionsAudit,
+                 .distributionsPd, .prenatalParans, .orbitalDial, .mundaneElectional,
+                 .hellenisticConditionAudit, .draconicHeliocentric:
                 return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
             case .astrocartography:
                 return mapBodies.isEmpty
