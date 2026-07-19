@@ -83,6 +83,13 @@ extension BackendClient {
         try await run(request: request, pythonPath: pythonPath)
     }
 
+    static func draconicHeliocentric(
+        request: DraconicHeliocentricRequest,
+        pythonPath: String
+    ) async throws -> DraconicHeliocentricResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
     static func astrocartography(
         request: AstrocartographyRequest,
         pythonPath: String

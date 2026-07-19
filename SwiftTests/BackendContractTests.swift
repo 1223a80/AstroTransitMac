@@ -388,6 +388,16 @@ struct BackendContractTests {
         #expect(csv.contains("station"))
     }
 
+    @Test func decodeDraconicHeliocentricFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(DraconicHeliocentricResult.self, from: fixtureData("draconic-heliocentric-result"))
+        #expect(result.meta.method == "draconic_heliocentric_v1")
+        #expect(result.draconic?.planets?.isEmpty == false)
+        #expect(result.heliocentric?.planets?.isEmpty == false)
+        #expect(result.geoHelioComparison?.isEmpty == false)
+        #expect(MarkdownExportBuilder.draconicHeliocentric(result).contains("Draconic"))
+        #expect(TextExportBuilder.csv(result).contains("heliocentric"))
+    }
+
     @Test func decodeHellenisticConditionAuditFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(
             HellenisticConditionAuditResult.self,

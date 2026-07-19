@@ -667,6 +667,8 @@ extension ContentView {
                 planetarySynodicSidebar
             case .hellenisticConditionAudit:
                 collapsible("本命盘") { natalSettingsSection }
+            case .draconicHeliocentric:
+                collapsible("本命盘") { natalSettingsSection }
             case .astrocartography:
                 astrocartographySidebar
             case .localSpace:

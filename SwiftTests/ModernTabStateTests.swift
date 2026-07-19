@@ -22,6 +22,7 @@ struct ModernTabStateTests {
         #expect(ModernSubMode.classicalVisibility.defaultResultTab == "heliacal")
         #expect(ModernSubMode.planetarySynodic.defaultResultTab == "events")
         #expect(ModernSubMode.hellenisticConditionAudit.defaultResultTab == "conditions")
+        #expect(ModernSubMode.draconicHeliocentric.defaultResultTab == "draconic")
         #expect(ModernSubMode.astrocartography.defaultResultTab == "lines")
         #expect(ModernSubMode.localSpace.defaultResultTab == "directions")
     }

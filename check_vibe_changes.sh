@@ -60,6 +60,7 @@ echo "3. 关键 smoke 测试（legacy + modern return/timing/midpoint + rectify�
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-visibility-request.json > /dev/null && echo "✅ classical visibility smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-planetary-synodic-request.json > /dev/null && echo "✅ planetary synodic smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-hellenistic-condition-audit-request.json > /dev/null && echo "✅ hellenistic condition audit smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-draconic-heliocentric-request.json > /dev/null && echo "✅ draconic heliocentric smoke OK"
 
 # rectify 简单 smoke（不要求完整 UI）
 echo '{"mode":"rectify","birth_date":"2000-01-01","center_time":"12:00","timezone":"Asia/Shanghai","latitude":31.23,"longitude":121.47,"house_system":"whole_sign","zodiac":"tropical","bounds_system":"egyptian","triplicity_system":"dorothean","max_age":30,"window_minutes":5,"step_minutes":5}' | "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py 2>/dev/null | "$PY" -c 'import json,sys; data=json.load(sys.stdin); assert data.get("total_candidates") == 3' && echo "✅ rectify smoke OK"

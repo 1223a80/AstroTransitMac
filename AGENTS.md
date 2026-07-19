@@ -132,6 +132,7 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-visibility-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-planetary-synodic-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-hellenistic-condition-audit-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-draconic-heliocentric-request.json
 ```
 
 For rectify mode smoke test:

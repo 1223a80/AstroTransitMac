@@ -51,6 +51,7 @@ extension ContentView {
             case .classicalVisibility: return "计算可见相位/行星时"
             case .planetarySynodic: return "扫描会合周期"
             case .hellenisticConditionAudit: return "计算希腊状态审计"
+            case .draconicHeliocentric: return "计算 Draconic/日心"
             case .astrocartography: return "计算天体地图线"
             case .localSpace: return "计算 Local Space"
             }
@@ -146,6 +147,8 @@ extension ContentView {
             case .planetarySynodic:
                 return synodicBodyA == synodicBodyB
             case .hellenisticConditionAudit:
+                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+            case .draconicHeliocentric:
                 return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
             case .astrocartography:
                 return mapBodies.isEmpty
@@ -244,6 +247,7 @@ extension ContentView {
             case .classicalVisibility: return AnyView(classicalVisibilityResultsPane)
             case .planetarySynodic: return AnyView(planetarySynodicResultsPane)
             case .hellenisticConditionAudit: return AnyView(hellenisticConditionAuditResultsPane)
+            case .draconicHeliocentric: return AnyView(draconicHeliocentricResultsPane)
             case .astrocartography: return AnyView(astrocartographyResultsPane)
             case .localSpace: return AnyView(localSpaceResultsPane)
             case .progression: return AnyView(progressionResultsPane)

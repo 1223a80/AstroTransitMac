@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-19 — B12 Draconic 与日心对照
+
+- 新增 mode=`draconic_heliocentric`：Draconic 移位盘（真/平交点）与 heliocentric 坐标对照，明确 coordinate_center / coordinate_system。
+
 ## 2026-07-19 — B11 Hellenistic 行星状态审计
 
 - 新增 mode=`hellenistic_condition_audit`：oriental/occidental、superior/inferior、sect/hayz、angularity、overcoming、enclosure、solar phase、chariot proxy 等证据行。

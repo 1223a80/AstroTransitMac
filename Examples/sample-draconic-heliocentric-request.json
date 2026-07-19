@@ -1,0 +1,41 @@
+{
+  "mode": "draconic_heliocentric",
+  "birth": {
+    "moment": {
+      "year": 1990,
+      "month": 1,
+      "day": 1,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "houseSystem": "whole_sign",
+    "zodiac": "tropical"
+  },
+  "node_mode": "true_node",
+  "point_set": {
+    "body_ids": [
+      "SUN",
+      "MOON",
+      "MERCURY",
+      "VENUS",
+      "MARS",
+      "JUPITER",
+      "SATURN",
+      "URANUS",
+      "NEPTUNE",
+      "PLUTO"
+    ],
+    "include_nodes": true,
+    "node_mode": "true_node",
+    "custom_asteroids": [],
+    "angle_ids": [
+      "ASC",
+      "MC"
+    ],
+    "house_cusps": [],
+    "lot_ids": []
+  }
+}

@@ -76,6 +76,7 @@ extension ContentView {
                 case .classicalVisibility: await runClassicalVisibility()
                 case .planetarySynodic: await runPlanetarySynodic()
                 case .hellenisticConditionAudit: await runHellenisticConditionAudit()
+                case .draconicHeliocentric: await runDraconicHeliocentric()
                 case .astrocartography: await runAstrocartography()
                 case .localSpace: await runLocalSpace()
                 }
@@ -663,6 +664,33 @@ extension ContentView {
                 pythonPath: appState.pythonPath
             )
             calcVM.modernResultData = .hellenisticConditionAudit(result)
+        }
+    }
+
+
+    @MainActor
+    func runDraconicHeliocentric() async {
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        await performRun(progressLabel: "Draconic/日心") {
+            let request = DraconicHeliocentricRequest(
+                birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
+                nodeMode: modernNodeMode,
+                pointSet: ModernPointSet(
+                    bodyIDs: sortedBodyIDs(selectedNatalBodies),
+                    includeNodes: true,
+                    nodeMode: modernNodeMode,
+                    customAsteroids: [],
+                    angleIDs: ["ASC", "MC"],
+                    houseCusps: [],
+                    lotIDs: []
+                ),
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.draconicHeliocentric(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .draconicHeliocentric(result)
         }
     }
 

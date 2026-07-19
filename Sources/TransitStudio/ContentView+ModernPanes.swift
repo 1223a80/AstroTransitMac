@@ -215,6 +215,16 @@ extension ContentView {
         }
     }
 
+    var draconicHeliocentricResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .draconicHeliocentric(let r) = result {
+                DraconicHeliocentricResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(title: "等待 Draconic/日心", systemImage: "arrow.triangle.swap", description: "填写本命后计算。")
+            }
+        }
+    }
+
     var astrocartographyResultsPane: some View {
         Group {
             if let result = calcVM.modernResultData, case .astrocartography(let r) = result {
