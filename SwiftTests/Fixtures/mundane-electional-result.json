@@ -1,0 +1,5339 @@
+{
+  "meta": {
+    "mode": "mundane_electional",
+    "method": "mundane_electional_v1",
+    "schema_version": 1,
+    "start_utc": "2025-12-31T16:00:00Z",
+    "end_utc": "2026-06-29T16:00:00Z",
+    "ingress_count": 2,
+    "candidate_count": 181,
+    "ephemeris": "Swiss Ephemeris"
+  },
+  "requested_config": {
+    "location": {
+      "name": "Shanghai",
+      "latitude": 31.2304,
+      "longitude": 121.4737,
+      "timezone": "Asia/Shanghai"
+    },
+    "topic_house": 7,
+    "scan_step_hours": 24
+  },
+  "effective_config": {
+    "ingress_targets": [
+      "aries",
+      "cancer",
+      "libra",
+      "capricorn"
+    ],
+    "house_system": "whole_sign",
+    "method": "mundane_electional_v1"
+  },
+  "mundane_ingresses": [
+    {
+      "ingress": "aries",
+      "target_longitude": 0.0,
+      "exact_utc": "2026-03-20T14:45:57.767487Z",
+      "exact_local": "2026-03-20T22:45:57.767487+08:00",
+      "exact_orb": 1.4470410292233282e-07,
+      "planets": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "longitude": 1.4470411674008696e-07,
+          "latitude": 9.009726413615644e-05,
+          "declination": 0.0001,
+          "out_of_bounds": false,
+          "speed": 0.9939959766712465,
+          "sign": "白羊",
+          "degree_text": "00°00'00\" 白羊",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "longitude": 20.515370066224047,
+          "latitude": 3.483363128441757,
+          "declination": 11.2381,
+          "out_of_bounds": false,
+          "speed": 14.339059268380945,
+          "sign": "白羊",
+          "degree_text": "20°30'55\" 白羊",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "longitude": 338.49272414953253,
+          "latitude": 1.0351213534559742,
+          "declination": -7.425,
+          "out_of_bounds": false,
+          "speed": -0.019769700446207527,
+          "sign": "双鱼",
+          "degree_text": "08°29'34\" 双鱼",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "longitude": 17.584773869383266,
+          "latitude": -0.8711243977158979,
+          "declination": 6.0968,
+          "out_of_bounds": false,
+          "speed": 1.2379637895672317,
+          "sign": "白羊",
+          "degree_text": "17°35'05\" 白羊",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "longitude": 344.189114691442,
+          "latitude": -1.0759590390434717,
+          "declination": -7.2145,
+          "out_of_bounds": false,
+          "speed": 0.7860264633654013,
+          "sign": "双鱼",
+          "degree_text": "14°11'21\" 双鱼",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "JUPITER",
+          "name": "木星",
+          "longitude": 105.23251543739187,
+          "latitude": 0.36277309253519696,
+          "declination": 22.929,
+          "out_of_bounds": false,
+          "speed": 0.030547152738109352,
+          "sign": "巨蟹",
+          "degree_text": "15°13'57\" 巨蟹",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "SATURN",
+          "name": "土星",
+          "longitude": 4.127390250480518,
+          "latitude": -2.1237089530610014,
+          "declination": -0.3089,
+          "out_of_bounds": false,
+          "speed": 0.12465605952671253,
+          "sign": "白羊",
+          "degree_text": "04°07'39\" 白羊",
+          "_ephemeris": "Swiss Ephemeris"
+        }
+      ],
+      "angles": {
+        "ASC": 240.36937349184066,
+        "MC": 159.55076283950186,
+        "DSC": 60.36937349184063,
+        "IC": 339.5507628395019,
+        "VERTEX": 110.77899661702094,
+        "ANTIVERTEX": 290.77899661702094,
+        "EQUATORIAL_ASCENDANT": 252.57393921463859
+      },
+      "house_system": "Whole Sign",
+      "method_key": "sun_sign_ingress_bisection"
+    },
+    {
+      "ingress": "cancer",
+      "target_longitude": 90.0,
+      "exact_utc": "2026-06-21T08:24:30.719147Z",
+      "exact_local": "2026-06-21T16:24:30.719147+08:00",
+      "exact_orb": 1.7956895703719056e-07,
+      "planets": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "longitude": 90.00000017956896,
+          "latitude": -4.310709792584474e-05,
+          "declination": 23.4379,
+          "out_of_bounds": true,
+          "speed": 0.9544146924650544,
+          "sign": "巨蟹",
+          "degree_text": "00°00'00\" 巨蟹",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "longitude": 173.27581024639986,
+          "latitude": -1.857050613365812,
+          "declination": 0.9636,
+          "out_of_bounds": false,
+          "speed": 13.000416019087172,
+          "sign": "处女",
+          "degree_text": "23°16'33\" 处女",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "longitude": 113.60919972839082,
+          "latitude": -0.07191561453597668,
+          "declination": 21.3037,
+          "out_of_bounds": false,
+          "speed": 0.6173082475095882,
+          "sign": "巨蟹",
+          "degree_text": "23°36'33\" 巨蟹",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "longitude": 129.1581226465055,
+          "latitude": 1.984635762850154,
+          "declination": 19.8776,
+          "out_of_bounds": false,
+          "speed": 1.1525994998915825,
+          "sign": "狮子",
+          "degree_text": "09°09'29\" 狮子",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "longitude": 54.64738477162346,
+          "latitude": -0.41154849815088707,
+          "declination": 18.5308,
+          "out_of_bounds": false,
+          "speed": 0.7212807614925374,
+          "sign": "金牛",
+          "degree_text": "24°38'51\" 金牛",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "JUPITER",
+          "name": "木星",
+          "longitude": 118.12229326120497,
+          "latitude": 0.4294038669378939,
+          "declination": 20.9568,
+          "out_of_bounds": false,
+          "speed": 0.20816825595575209,
+          "sign": "巨蟹",
+          "degree_text": "28°07'20\" 巨蟹",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "SATURN",
+          "name": "土星",
+          "longitude": 13.700615142959334,
+          "latitude": -2.340424272577753,
+          "declination": 3.2482,
+          "out_of_bounds": false,
+          "speed": 0.057561506822437436,
+          "sign": "白羊",
+          "degree_text": "13°42'02\" 白羊",
+          "_ephemeris": "Swiss Ephemeris"
+        }
+      ],
+      "angles": {
+        "ASC": 237.04783240573693,
+        "MC": 155.3373510883727,
+        "DSC": 57.047832405736926,
+        "IC": 335.3373510883727,
+        "VERTEX": 108.02000521929914,
+        "ANTIVERTEX": 288.02000521929915,
+        "EQUATORIAL_ASCENDANT": 248.86770908408192
+      },
+      "house_system": "Whole Sign",
+      "method_key": "sun_sign_ingress_bisection"
+    }
+  ],
+  "electional_candidates": [
+    {
+      "candidate_utc": "2025-12-31T16:00:00Z",
+      "candidate_local": "2026-01-01T00:00:00+08:00",
+      "moon_longitude": 61.72895,
+      "moon_speed": 14.92953,
+      "moon_sign_exit_distance": 28.2711,
+      "sun_moon_separation": 141.5,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 49.6721
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 65.5811
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 139.2962
+        }
+      ],
+      "asc_longitude": 190.182322,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-01T16:00:00Z",
+      "candidate_local": "2026-01-02T00:00:00+08:00",
+      "moon_longitude": 76.73357,
+      "moon_speed": 15.05461,
+      "moon_sign_exit_distance": 13.2664,
+      "sun_moon_separation": 155.4857,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 34.5368
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 80.5271
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 153.5344
+        }
+      ],
+      "asc_longitude": 191.030854,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-02T16:00:00Z",
+      "candidate_local": "2026-01-03T00:00:00+08:00",
+      "moon_longitude": 91.784147,
+      "moon_speed": 15.018543,
+      "moon_sign_exit_distance": 28.2159,
+      "sun_moon_separation": 169.5175,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 19.3547
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 95.5175
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 167.8178
+        }
+      ],
+      "asc_longitude": 191.87904,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-03T16:00:00Z",
+      "candidate_local": "2026-01-04T00:00:00+08:00",
+      "moon_longitude": 106.715648,
+      "moon_speed": 14.818583,
+      "moon_sign_exit_distance": 13.2844,
+      "sun_moon_separation": 176.5699,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 4.2909
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 110.3874
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 166.0248
+        }
+      ],
+      "asc_longitude": 192.726847,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-04T16:00:00Z",
+      "candidate_local": "2026-01-05T00:00:00+08:00",
+      "moon_longitude": 121.375035,
+      "moon_speed": 14.480773,
+      "moon_sign_exit_distance": 28.625,
+      "sun_moon_separation": 162.9293,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 10.5015
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 124.9836
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 152.9096
+        }
+      ],
+      "asc_longitude": 193.574243,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-05T16:00:00Z",
+      "candidate_local": "2026-01-06T00:00:00+08:00",
+      "moon_longitude": 135.646465,
+      "moon_speed": 14.051401,
+      "moon_sign_exit_distance": 14.3535,
+      "sun_moon_separation": 149.6768,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 24.9065
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 139.1905
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 140.1885
+        }
+      ],
+      "asc_longitude": 194.421202,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-06T16:00:00Z",
+      "candidate_local": "2026-01-07T00:00:00+08:00",
+      "moon_longitude": 149.464944,
+      "moon_speed": 13.583609,
+      "moon_sign_exit_distance": 0.5351,
+      "sun_moon_separation": 136.8771,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 38.8591
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 127.9265
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 136.8711
+        }
+      ],
+      "asc_longitude": 195.267702,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-07T16:00:00Z",
+      "candidate_local": "2026-01-08T00:00:00+08:00",
+      "moon_longitude": 162.816962,
+      "moon_speed": 13.125665,
+      "moon_sign_exit_distance": 17.183,
+      "sun_moon_separation": 124.544,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 52.3455
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 116.1374
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 124.544
+        }
+      ],
+      "asc_longitude": 196.113727,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-08T16:00:00Z",
+      "candidate_local": "2026-01-09T00:00:00+08:00",
+      "moon_longitude": 175.731879,
+      "moon_speed": 12.714418,
+      "moon_sign_exit_distance": 4.2681,
+      "sun_moon_separation": 112.6479,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 65.3952
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 104.7919
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 112.6479
+        }
+      ],
+      "asc_longitude": 196.959262,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-09T16:00:00Z",
+      "candidate_local": "2026-01-10T00:00:00+08:00",
+      "moon_longitude": 188.269378,
+      "moon_speed": 12.373737,
+      "moon_sign_exit_distance": 21.7306,
+      "sun_moon_separation": 101.1293,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 78.0676
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 93.8307
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 101.0849
+        }
+      ],
+      "asc_longitude": 197.804295,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-10T16:00:00Z",
+      "candidate_local": "2026-01-11T00:00:00+08:00",
+      "moon_longitude": 200.507053,
+      "moon_speed": 12.115958,
+      "moon_sign_exit_distance": 9.4929,
+      "sun_moon_separation": 89.9106,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 83.1762
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 89.6195
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 89.9106
+        }
+      ],
+      "asc_longitude": 198.648813,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-11T16:00:00Z",
+      "candidate_local": "2026-01-12T00:00:00+08:00",
+      "moon_longitude": 212.530098,
+      "moon_speed": 11.944391,
+      "moon_sign_exit_distance": 27.4699,
+      "sun_moon_separation": 78.9065,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 72.7436
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 78.3694
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 78.9065
+        }
+      ],
+      "asc_longitude": 199.492802,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-12T16:00:00Z",
+      "candidate_local": "2026-01-13T00:00:00+08:00",
+      "moon_longitude": 224.423537,
+      "moon_speed": 11.855748,
+      "moon_sign_exit_distance": 15.5765,
+      "sun_moon_separation": 68.032,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 62.4481
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 67.2494
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 68.032
+        }
+      ],
+      "asc_longitude": 200.336248,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-13T16:00:00Z",
+      "candidate_local": "2026-01-14T00:00:00+08:00",
+      "moon_longitude": 236.266631,
+      "moon_speed": 11.842077,
+      "moon_sign_exit_distance": 3.7334,
+      "sun_moon_separation": 57.2078,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 52.2107
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 56.1805
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 57.2078
+        }
+      ],
+      "asc_longitude": 201.179139,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-14T16:00:00Z",
+      "candidate_local": "2026-01-15T00:00:00+08:00",
+      "moon_longitude": 248.128995,
+      "moon_speed": 11.892255,
+      "moon_sign_exit_distance": 21.871,
+      "sun_moon_separation": 46.3643,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 41.9619
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 45.0929
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 46.3643
+        }
+      ],
+      "asc_longitude": 202.02146,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-15T16:00:00Z",
+      "candidate_local": "2026-01-16T00:00:00+08:00",
+      "moon_longitude": 260.068076,
+      "moon_speed": 11.99327,
+      "moon_sign_exit_distance": 9.9319,
+      "sun_moon_separation": 35.444,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 31.6446
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 33.9291
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 35.444
+        }
+      ],
+      "asc_longitude": 202.863197,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-16T16:00:00Z",
+      "candidate_local": "2026-01-17T00:00:00+08:00",
+      "moon_longitude": 272.127894,
+      "moon_speed": 12.131506,
+      "moon_sign_exit_distance": 27.8721,
+      "sun_moon_separation": 24.403,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 21.215
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 22.6452
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 24.403
+        }
+      ],
+      "asc_longitude": 203.704337,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-17T16:00:00Z",
+      "candidate_local": "2026-01-18T00:00:00+08:00",
+      "moon_longitude": 284.339139,
+      "moon_speed": 12.294157,
+      "moon_sign_exit_distance": 15.6609,
+      "sun_moon_separation": 13.2104,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 10.6426
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 11.2103
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 13.2104
+        }
+      ],
+      "asc_longitude": 204.544867,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-18T16:00:00Z",
+      "candidate_local": "2026-01-19T00:00:00+08:00",
+      "moon_longitude": 296.720715,
+      "moon_speed": 12.470686,
+      "moon_sign_exit_distance": 3.2793,
+      "sun_moon_separation": 1.8473,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 0.0913
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 0.3943
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 1.8473
+        }
+      ],
+      "asc_longitude": 205.384775,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-19T16:00:00Z",
+      "candidate_local": "2026-01-20T00:00:00+08:00",
+      "moon_longitude": 309.282657,
+      "moon_speed": 12.654063,
+      "moon_sign_exit_distance": 20.7173,
+      "sun_moon_separation": 9.6963,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 6.5964
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 9.6963
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 10.9965
+        }
+      ],
+      "asc_longitude": 206.224051,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-20T16:00:00Z",
+      "candidate_local": "2026-01-21T00:00:00+08:00",
+      "moon_longitude": 322.030023,
+      "moon_speed": 12.841399,
+      "moon_sign_exit_distance": 7.97,
+      "sun_moon_separation": 21.4255,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 18.0866
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 21.4255
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 22.0778
+        }
+      ],
+      "asc_longitude": 207.062689,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-21T16:00:00Z",
+      "candidate_local": "2026-01-22T00:00:00+08:00",
+      "moon_longitude": 334.966982,
+      "moon_speed": 13.033669,
+      "moon_sign_exit_distance": 25.033,
+      "sun_moon_separation": 33.3445,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 22.7135
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 29.7667
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 33.3394
+        }
+      ],
+      "asc_longitude": 207.900683,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-22T16:00:00Z",
+      "candidate_local": "2026-01-23T00:00:00+08:00",
+      "moon_longitude": 348.100083,
+      "moon_speed": 13.234351,
+      "moon_sign_exit_distance": 11.8999,
+      "sun_moon_separation": 45.4599,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 9.668
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 41.643
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 44.7876
+        }
+      ],
+      "asc_longitude": 208.738034,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-23T16:00:00Z",
+      "candidate_local": "2026-01-24T00:00:00+08:00",
+      "moon_longitude": 1.439682,
+      "moon_speed": 13.447133,
+      "moon_sign_exit_distance": 28.5603,
+      "sun_moon_separation": 57.7821,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 3.5828
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 53.726
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 56.4328
+        }
+      ],
+      "asc_longitude": 209.574747,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-24T16:00:00Z",
+      "candidate_local": "2026-01-25T00:00:00+08:00",
+      "moon_longitude": 14.998736,
+      "moon_speed": 13.673031,
+      "moon_sign_exit_distance": 15.0013,
+      "sun_moon_separation": 70.3239,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 17.0519
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 66.0287
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 68.288
+        }
+      ],
+      "asc_longitude": 210.410826,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-25T16:00:00Z",
+      "candidate_local": "2026-01-26T00:00:00+08:00",
+      "moon_longitude": 28.788662,
+      "moon_speed": 13.907503,
+      "moon_sign_exit_distance": 1.2113,
+      "sun_moon_separation": 83.097,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 30.7507
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 78.5624
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 79.3155
+        }
+      ],
+      "asc_longitude": 211.24628,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-26T16:00:00Z",
+      "candidate_local": "2026-01-27T00:00:00+08:00",
+      "moon_longitude": 42.812605,
+      "moon_speed": 14.138306,
+      "moon_sign_exit_distance": 17.1874,
+      "sun_moon_separation": 96.1044,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 44.6824
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 65.1695
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 91.3303
+        }
+      ],
+      "asc_longitude": 212.081118,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-27T16:00:00Z",
+      "candidate_local": "2026-01-28T00:00:00+08:00",
+      "moon_longitude": 57.057331,
+      "moon_speed": 14.34504,
+      "moon_sign_exit_distance": 2.9427,
+      "sun_moon_separation": 109.3328,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 50.8043
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 58.8337
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 104.3192
+        }
+      ],
+      "asc_longitude": 212.915348,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-28T16:00:00Z",
+      "candidate_local": "2026-01-29T00:00:00+08:00",
+      "moon_longitude": 71.485878,
+      "moon_speed": 14.501246,
+      "moon_sign_exit_distance": 18.5141,
+      "sun_moon_separation": 122.7454,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 36.257
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 73.1678
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 117.4921
+        }
+      ],
+      "asc_longitude": 213.748974,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-29T16:00:00Z",
+      "candidate_local": "2026-01-30T00:00:00+08:00",
+      "moon_longitude": 86.033755,
+      "moon_speed": 14.57938,
+      "moon_sign_exit_distance": 3.9662,
+      "sun_moon_separation": 136.2776,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 21.5922
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 87.6201
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 130.6665
+        }
+      ],
+      "asc_longitude": 214.582001,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-30T16:00:00Z",
+      "candidate_local": "2026-01-31T00:00:00+08:00",
+      "moon_longitude": 100.611243,
+      "moon_speed": 14.557744,
+      "moon_sign_exit_distance": 19.3888,
+      "sun_moon_separation": 149.8398,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 6.8997
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 102.101
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 143.4882
+        }
+      ],
+      "asc_longitude": 215.41443,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-01-31T16:00:00Z",
+      "candidate_local": "2026-02-01T00:00:00+08:00",
+      "moon_longitude": 115.112683,
+      "moon_speed": 14.42706,
+      "moon_sign_exit_distance": 4.8873,
+      "sun_moon_separation": 163.3262,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 7.7149
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 116.5047
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 156.2275
+        }
+      ],
+      "asc_longitude": 216.246265,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-01T16:00:00Z",
+      "candidate_local": "2026-02-02T00:00:00+08:00",
+      "moon_longitude": 129.430976,
+      "moon_speed": 14.193926,
+      "moon_sign_exit_distance": 20.569,
+      "sun_moon_separation": 176.6299,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 22.1443
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 130.7244
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 168.7785
+        }
+      ],
+      "asc_longitude": 217.077515,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-02T16:00:00Z",
+      "candidate_local": "2026-02-03T00:00:00+08:00",
+      "moon_longitude": 143.473274,
+      "moon_speed": 13.87966,
+      "moon_sign_exit_distance": 6.5267,
+      "sun_moon_separation": 170.3422,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 36.2957
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 144.6671
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 164.5594
+        }
+      ],
+      "asc_longitude": 217.908191,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-03T16:00:00Z",
+      "candidate_local": "2026-02-04T00:00:00+08:00",
+      "moon_longitude": 157.173429,
+      "moon_speed": 13.515297,
+      "moon_sign_exit_distance": 22.8266,
+      "sun_moon_separation": 157.6561,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 50.1027
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 151.6427
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 157.6561
+        }
+      ],
+      "asc_longitude": 218.738314,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-04T16:00:00Z",
+      "candidate_local": "2026-02-05T00:00:00+08:00",
+      "moon_longitude": 170.498477,
+      "moon_speed": 13.1351,
+      "moon_sign_exit_distance": 9.5015,
+      "sun_moon_separation": 145.3448,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 63.5325
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 139.1014
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 145.3448
+        }
+      ],
+      "asc_longitude": 219.567906,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-05T16:00:00Z",
+      "candidate_local": "2026-02-06T00:00:00+08:00",
+      "moon_longitude": 183.448925,
+      "moon_speed": 12.770986,
+      "moon_sign_exit_distance": 26.5511,
+      "sun_moon_separation": 133.4078,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 76.5854
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 126.935
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 133.4078
+        }
+      ],
+      "asc_longitude": 220.396994,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-06T16:00:00Z",
+      "candidate_local": "2026-02-07T00:00:00+08:00",
+      "moon_longitude": 196.054494,
+      "moon_speed": 12.449091,
+      "moon_sign_exit_distance": 13.9455,
+      "sun_moon_separation": 121.8155,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 89.291
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 115.1138
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 121.8155
+        }
+      ],
+      "asc_longitude": 221.225606,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-07T16:00:00Z",
+      "candidate_local": "2026-02-08T00:00:00+08:00",
+      "moon_longitude": 208.367532,
+      "moon_speed": 12.188467,
+      "moon_sign_exit_distance": 1.6325,
+      "sun_moon_separation": 110.5154,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 101.7017
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 103.5855
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 110.5154
+        }
+      ],
+      "asc_longitude": 222.053767,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-08T16:00:00Z",
+      "candidate_local": "2026-02-09T00:00:00+08:00",
+      "moon_longitude": 220.455916,
+      "moon_speed": 12.001233,
+      "moon_sign_exit_distance": 19.5441,
+      "sun_moon_separation": 99.4397,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 92.2822
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 99.4397
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 107.3351
+        }
+      ],
+      "asc_longitude": 222.881506,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-09T16:00:00Z",
+      "candidate_local": "2026-02-10T00:00:00+08:00",
+      "moon_longitude": 232.396507,
+      "moon_speed": 11.893407,
+      "moon_sign_exit_distance": 7.6035,
+      "sun_moon_separation": 88.5116,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 81.127
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 88.5116
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 96.6476
+        }
+      ],
+      "asc_longitude": 223.708851,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-10T16:00:00Z",
+      "candidate_local": "2026-02-11T00:00:00+08:00",
+      "moon_longitude": 244.269533,
+      "moon_speed": 11.865855,
+      "moon_sign_exit_distance": 25.7305,
+      "sun_moon_separation": 77.6507,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 70.0396
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 77.6507
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 86.0274
+        }
+      ],
+      "asc_longitude": 224.53583,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-11T16:00:00Z",
+      "candidate_local": "2026-02-12T00:00:00+08:00",
+      "moon_longitude": 256.153844,
+      "moon_speed": 11.915065,
+      "moon_sign_exit_distance": 13.8462,
+      "sun_moon_separation": 66.7783,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 58.9413
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 66.7783
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 75.3958
+        }
+      ],
+      "asc_longitude": 225.362471,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-12T16:00:00Z",
+      "candidate_local": "2026-02-13T00:00:00+08:00",
+      "moon_longitude": 268.12283,
+      "moon_speed": 12.033706,
+      "moon_sign_exit_distance": 1.8772,
+      "sun_moon_separation": 55.8209,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 47.7585
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 55.8209
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 64.6792
+        }
+      ],
+      "asc_longitude": 226.188804,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-13T16:00:00Z",
+      "candidate_local": "2026-02-14T00:00:00+08:00",
+      "moon_longitude": 280.240826,
+      "moon_speed": 12.211068,
+      "moon_sign_exit_distance": 19.7592,
+      "sun_moon_separation": 44.7141,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 36.427
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 44.7141
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 53.8134
+        }
+      ],
+      "asc_longitude": 227.01486,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-14T16:00:00Z",
+      "candidate_local": "2026-02-15T00:00:00+08:00",
+      "moon_longitude": 292.559968,
+      "moon_speed": 12.433555,
+      "moon_sign_exit_distance": 7.44,
+      "sun_moon_separation": 33.4059,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 24.8945
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 33.4059
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 42.7462
+        }
+      ],
+      "asc_longitude": 227.840671,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-15T16:00:00Z",
+      "candidate_local": "2026-02-16T00:00:00+08:00",
+      "moon_longitude": 305.117666,
+      "moon_speed": 12.685464,
+      "moon_sign_exit_distance": 24.8823,
+      "sun_moon_separation": 21.8588,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 13.1237
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 21.8588
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 31.4402
+        }
+      ],
+      "asc_longitude": 228.666272,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-16T16:00:00Z",
+      "candidate_local": "2026-02-17T00:00:00+08:00",
+      "moon_longitude": 317.935035,
+      "moon_speed": 12.950128,
+      "moon_sign_exit_distance": 12.065,
+      "sun_moon_separation": 10.0516,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 1.0934
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 10.0516
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 19.8742
+        }
+      ],
+      "asc_longitude": 229.4917,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-17T16:00:00Z",
+      "candidate_local": "2026-02-18T00:00:00+08:00",
+      "moon_longitude": 331.016658,
+      "moon_speed": 13.211416,
+      "moon_sign_exit_distance": 28.9833,
+      "sun_moon_separation": 2.0203,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SUN",
+          "separation_deg": 2.0203
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 8.0437
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 11.201
+        }
+      ],
+      "asc_longitude": 230.316997,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-18T16:00:00Z",
+      "candidate_local": "2026-02-19T00:00:00+08:00",
+      "moon_longitude": 344.351925,
+      "moon_speed": 13.455326,
+      "moon_sign_exit_distance": 15.6481,
+      "sun_moon_separation": 14.3463,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 3.6871
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 4.0408
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 14.3463
+        }
+      ],
+      "asc_longitude": 231.142207,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-19T16:00:00Z",
+      "candidate_local": "2026-02-20T00:00:00+08:00",
+      "moon_longitude": 357.917853,
+      "moon_speed": 13.671289,
+      "moon_sign_exit_distance": 2.0821,
+      "sun_moon_separation": 26.9033,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 2.7164
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 8.817
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 16.3563
+        }
+      ],
+      "asc_longitude": 231.967381,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-20T16:00:00Z",
+      "candidate_local": "2026-02-21T00:00:00+08:00",
+      "moon_longitude": 11.682893,
+      "moon_speed": 13.852768,
+      "moon_sign_exit_distance": 18.3171,
+      "sun_moon_separation": 39.66,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 10.9343
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 21.6448
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 28.8713
+        }
+      ],
+      "asc_longitude": 232.792571,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-21T16:00:00Z",
+      "candidate_local": "2026-02-22T00:00:00+08:00",
+      "moon_longitude": 25.610873,
+      "moon_speed": 13.996935,
+      "moon_sign_exit_distance": 4.3891,
+      "sun_moon_separation": 52.5801,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 24.7473
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 34.7703
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 41.5495
+        }
+      ],
+      "asc_longitude": 233.617834,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-22T16:00:00Z",
+      "candidate_local": "2026-02-23T00:00:00+08:00",
+      "moon_longitude": 39.66419,
+      "moon_speed": 14.103505,
+      "moon_sign_exit_distance": 20.3358,
+      "sun_moon_separation": 65.626,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 38.6851
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 48.1657
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 54.3534
+        }
+      ],
+      "asc_longitude": 234.443224,
+      "topic_house": 7,
+      "planetary_hour": {
+        "hour_index": 6,
+        "period": "night",
+        "ruler_id": "MOON",
+        "ruler_name": "月亮",
+        "start_utc": "2026-02-22T15:03:37.626Z",
+        "end_utc": "2026-02-22T16:07:16.816Z",
+        "start_local": "2026-02-22T23:03:37.626+08:00",
+        "end_local": "2026-02-23T00:07:16.816+08:00",
+        "duration_minutes": 63.6532
+      },
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-23T16:00:00Z",
+      "candidate_local": "2026-02-24T00:00:00+08:00",
+      "moon_longitude": 53.805551,
+      "moon_speed": 14.173099,
+      "moon_sign_exit_distance": 6.1944,
+      "sun_moon_separation": 78.7605,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 51.6721
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 52.7102
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 61.8017
+        }
+      ],
+      "asc_longitude": 235.268798,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-24T16:00:00Z",
+      "candidate_local": "2026-02-25T00:00:00+08:00",
+      "moon_longitude": 67.998072,
+      "moon_speed": 14.205703,
+      "moon_sign_exit_distance": 22.0019,
+      "sun_moon_separation": 91.9466,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 37.431
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 66.786
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 75.6477
+        }
+      ],
+      "asc_longitude": 236.094607,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-25T16:00:00Z",
+      "candidate_local": "2026-02-26T00:00:00+08:00",
+      "moon_longitude": 82.204118,
+      "moon_speed": 14.199746,
+      "moon_sign_exit_distance": 7.7959,
+      "sun_moon_separation": 105.1468,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 23.1796
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 80.8747
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 89.6701
+        }
+      ],
+      "asc_longitude": 236.920703,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-26T16:00:00Z",
+      "candidate_local": "2026-02-27T00:00:00+08:00",
+      "moon_longitude": 96.383687,
+      "moon_speed": 14.152157,
+      "moon_sign_exit_distance": 23.6163,
+      "sun_moon_separation": 118.3211,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 8.9578
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 94.9364
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 103.8304
+        }
+      ],
+      "asc_longitude": 237.747139,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-27T16:00:00Z",
+      "candidate_local": "2026-02-28T00:00:00+08:00",
+      "moon_longitude": 110.493347,
+      "moon_speed": 14.059402,
+      "moon_sign_exit_distance": 9.5067,
+      "sun_moon_separation": 131.4261,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 5.1908
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 108.9278
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 118.0837
+        }
+      ],
+      "asc_longitude": 238.573967,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-02-28T16:00:00Z",
+      "candidate_local": "2026-03-01T00:00:00+08:00",
+      "moon_longitude": 124.486603,
+      "moon_speed": 13.919191,
+      "moon_sign_exit_distance": 25.5134,
+      "sun_moon_separation": 144.4152,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 19.2198
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 122.8022
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 131.6877
+        }
+      ],
+      "asc_longitude": 239.401245,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-01T16:00:00Z",
+      "candidate_local": "2026-03-02T00:00:00+08:00",
+      "moon_longitude": 138.316061,
+      "moon_speed": 13.7323,
+      "moon_sign_exit_distance": 11.6839,
+      "sun_moon_separation": 157.2411,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 33.0818
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 136.5124
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 144.2707
+        }
+      ],
+      "asc_longitude": 240.229034,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-02T16:00:00Z",
+      "candidate_local": "2026-03-03T00:00:00+08:00",
+      "moon_longitude": 151.937227,
+      "moon_speed": 13.503899,
+      "moon_sign_exit_distance": 28.0628,
+      "sun_moon_separation": 169.8592,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 46.7323
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 150.0139
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 156.6458
+        }
+      ],
+      "asc_longitude": 241.057403,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-03T16:00:00Z",
+      "candidate_local": "2026-03-04T00:00:00+08:00",
+      "moon_longitude": 165.313192,
+      "moon_speed": 13.243963,
+      "moon_sign_exit_distance": 14.6868,
+      "sun_moon_separation": 177.7674,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 60.1344
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 163.2697
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 165.5317
+        }
+      ],
+      "asc_longitude": 241.886424,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-04T16:00:00Z",
+      "candidate_local": "2026-03-05T00:00:00+08:00",
+      "moon_longitude": 178.419213,
+      "moon_speed": 12.966666,
+      "moon_sign_exit_distance": 1.5808,
+      "sun_moon_separation": 165.6634,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 73.2632
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 153.2136
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 165.6634
+        }
+      ],
+      "asc_longitude": 242.716173,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-05T16:00:00Z",
+      "candidate_local": "2026-03-06T00:00:00+08:00",
+      "moon_longitude": 191.246259,
+      "moon_speed": 12.688978,
+      "moon_sign_exit_distance": 18.7537,
+      "sun_moon_separation": 153.8379,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 86.1098
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 141.1744
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 153.8379
+        }
+      ],
+      "asc_longitude": 243.546728,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-06T16:00:00Z",
+      "candidate_local": "2026-03-07T00:00:00+08:00",
+      "moon_longitude": 203.802933,
+      "moon_speed": 12.428896,
+      "moon_sign_exit_distance": 6.1971,
+      "sun_moon_separation": 142.2823,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 98.6828
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 129.4056
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 142.2823
+        }
+      ],
+      "asc_longitude": 244.378169,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-07T16:00:00Z",
+      "candidate_local": "2026-03-08T00:00:00+08:00",
+      "moon_longitude": 216.115627,
+      "moon_speed": 12.203748,
+      "moon_sign_exit_distance": 23.8844,
+      "sun_moon_separation": 130.9702,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 111.0085
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 117.8807
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 130.5539
+        }
+      ],
+      "asc_longitude": 245.210573,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-08T16:00:00Z",
+      "candidate_local": "2026-03-09T00:00:00+08:00",
+      "moon_longitude": 228.227151,
+      "moon_speed": 12.028862,
+      "moon_sign_exit_distance": 11.7728,
+      "sun_moon_separation": 119.8588,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 106.557
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 117.4288
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 119.8588
+        }
+      ],
+      "asc_longitude": 246.044022,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-09T16:00:00Z",
+      "candidate_local": "2026-03-10T00:00:00+08:00",
+      "moon_longitude": 240.194262,
+      "moon_speed": 11.916706,
+      "moon_sign_exit_distance": 29.8057,
+      "sun_moon_separation": 108.8914,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 95.3776
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 104.458
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 108.8914
+        }
+      ],
+      "asc_longitude": 246.878593,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-10T16:00:00Z",
+      "candidate_local": "2026-03-11T00:00:00+08:00",
+      "moon_longitude": 252.084539,
+      "moon_speed": 11.876398,
+      "moon_sign_exit_distance": 17.9155,
+      "sun_moon_separation": 98.0004,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 84.2751
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 91.5953
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 98.0004
+        }
+      ],
+      "asc_longitude": 247.714367,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-11T16:00:00Z",
+      "candidate_local": "2026-03-12T00:00:00+08:00",
+      "moon_longitude": 263.972874,
+      "moon_speed": 11.913413,
+      "moon_sign_exit_distance": 6.0271,
+      "sun_moon_separation": 87.1109,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 73.1744
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 78.785
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 87.1109
+        }
+      ],
+      "asc_longitude": 248.551426,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-12T16:00:00Z",
+      "candidate_local": "2026-03-13T00:00:00+08:00",
+      "moon_longitude": 275.937697,
+      "moon_speed": 12.029292,
+      "moon_sign_exit_distance": 24.0623,
+      "sun_moon_separation": 76.1444,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 61.9971
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 65.9651
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 76.1444
+        }
+      ],
+      "asc_longitude": 249.389854,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-13T16:00:00Z",
+      "candidate_local": "2026-03-14T00:00:00+08:00",
+      "moon_longitude": 288.056835,
+      "moon_speed": 12.221195,
+      "moon_sign_exit_distance": 11.9432,
+      "sun_moon_separation": 65.0232,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 50.6654
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 53.0711
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 65.0232
+        }
+      ],
+      "asc_longitude": 250.229736,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-14T16:00:00Z",
+      "candidate_local": "2026-03-15T00:00:00+08:00",
+      "moon_longitude": 300.402833,
+      "moon_speed": 12.481279,
+      "moon_sign_exit_distance": 29.5972,
+      "sun_moon_separation": 53.6746,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 39.1067
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 40.041
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 53.6746
+        }
+      ],
+      "asc_longitude": 251.07116,
+      "topic_house": 7,
+      "planetary_hour": {
+        "hour_index": 6,
+        "period": "night",
+        "ruler_id": "SUN",
+        "ruler_name": "太阳",
+        "start_utc": "2026-03-14T15:02:27.934Z",
+        "end_utc": "2026-03-14T16:02:58.205Z",
+        "start_local": "2026-03-14T23:02:27.934+08:00",
+        "end_local": "2026-03-15T00:02:58.205+08:00",
+        "duration_minutes": 60.5045
+      },
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-15T16:00:00Z",
+      "candidate_local": "2026-03-16T00:00:00+08:00",
+      "moon_longitude": 313.037603,
+      "moon_speed": 12.796013,
+      "moon_sign_exit_distance": 16.9624,
+      "sun_moon_separation": 42.0368,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 26.8201
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 27.2591
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 42.0368
+        }
+      ],
+      "asc_longitude": 251.914216,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-16T16:00:00Z",
+      "candidate_local": "2026-03-17T00:00:00+08:00",
+      "moon_longitude": 326.00649,
+      "moon_speed": 13.145758,
+      "moon_sign_exit_distance": 3.9935,
+      "sun_moon_separation": 30.0643,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 13.3679
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 15.0772
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 30.0643
+        }
+      ],
+      "asc_longitude": 252.758999,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-17T16:00:00Z",
+      "candidate_local": "2026-03-18T00:00:00+08:00",
+      "moon_longitude": 339.332244,
+      "moon_speed": 13.505111,
+      "moon_sign_exit_distance": 20.6678,
+      "sun_moon_separation": 17.7344,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 0.3359
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 2.5382
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 17.7344
+        }
+      ],
+      "asc_longitude": 253.605608,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-18T16:00:00Z",
+      "candidate_local": "2026-03-19T00:00:00+08:00",
+      "moon_longitude": 353.009975,
+      "moon_speed": 13.844614,
+      "moon_sign_exit_distance": 6.99,
+      "sun_moon_separation": 5.0521,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SUN",
+          "separation_deg": 5.0521
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 10.3529
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 10.8747
+        }
+      ],
+      "asc_longitude": 254.454146,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-19T16:00:00Z",
+      "candidate_local": "2026-03-20T00:00:00+08:00",
+      "moon_longitude": 7.004658,
+      "moon_speed": 14.134168,
+      "moon_sign_exit_distance": 22.9953,
+      "sun_moon_separation": 7.9478,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 2.9955
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 7.9478
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 9.4056
+        }
+      ],
+      "asc_longitude": 255.304724,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-20T16:00:00Z",
+      "candidate_local": "2026-03-21T00:00:00+08:00",
+      "moon_longitude": 21.252835,
+      "moon_speed": 14.347886,
+      "moon_sign_exit_distance": 8.7472,
+      "sun_moon_separation": 21.2017,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 3.6044
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 17.119
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 21.2017
+        }
+      ],
+      "asc_longitude": 256.157451,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-21T16:00:00Z",
+      "candidate_local": "2026-03-22T00:00:00+08:00",
+      "moon_longitude": 35.669411,
+      "moon_speed": 14.469156,
+      "moon_sign_exit_distance": 24.3306,
+      "sun_moon_separation": 34.6246,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 16.7833
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 31.4109
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 34.6246
+        }
+      ],
+      "asc_longitude": 257.012442,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-22T16:00:00Z",
+      "candidate_local": "2026-03-23T00:00:00+08:00",
+      "moon_longitude": 50.158847,
+      "moon_speed": 14.494043,
+      "moon_sign_exit_distance": 9.8412,
+      "sun_moon_separation": 48.121,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 30.0356
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 45.7755
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 48.121
+        }
+      ],
+      "asc_longitude": 257.869806,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-23T16:00:00Z",
+      "candidate_local": "2026-03-24T00:00:00+08:00",
+      "moon_longitude": 64.628226,
+      "moon_speed": 14.431447,
+      "moon_sign_exit_distance": 25.3718,
+      "sun_moon_separation": 61.5979,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 40.7123
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 43.2684
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 60.1201
+        }
+      ],
+      "asc_longitude": 258.729653,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-24T16:00:00Z",
+      "candidate_local": "2026-03-25T00:00:00+08:00",
+      "moon_longitude": 78.998687,
+      "moon_speed": 14.299796,
+      "moon_sign_exit_distance": 11.0013,
+      "sun_moon_separation": 74.9765,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 26.3836
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 56.4028
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 74.3656
+        }
+      ],
+      "asc_longitude": 259.59209,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-25T16:00:00Z",
+      "candidate_local": "2026-03-26T00:00:00+08:00",
+      "moon_longitude": 93.212338,
+      "moon_speed": 14.121626,
+      "moon_sign_exit_distance": 26.7877,
+      "sun_moon_separation": 88.1989,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 12.2148
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 69.381
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 88.1989
+        }
+      ],
+      "asc_longitude": 260.457225,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-26T16:00:00Z",
+      "candidate_local": "2026-03-27T00:00:00+08:00",
+      "moon_longitude": 107.233563,
+      "moon_speed": 13.918155,
+      "moon_sign_exit_distance": 12.7664,
+      "sun_moon_separation": 101.2296,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 1.7586
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 82.1674
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 101.2296
+        }
+      ],
+      "asc_longitude": 261.325169,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-27T16:00:00Z",
+      "candidate_local": "2026-03-28T00:00:00+08:00",
+      "moon_longitude": 121.045654,
+      "moon_speed": 13.705539,
+      "moon_sign_exit_distance": 28.9543,
+      "sun_moon_separation": 114.0518,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 15.5197
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 94.7452
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 114.0518
+        }
+      ],
+      "asc_longitude": 262.196035,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-28T16:00:00Z",
+      "candidate_local": "2026-03-29T00:00:00+08:00",
+      "moon_longitude": 134.644842,
+      "moon_speed": 13.493446,
+      "moon_sign_exit_distance": 15.3552,
+      "sun_moon_separation": 126.6618,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 29.065
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 107.1108
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 126.6618
+        }
+      ],
+      "asc_longitude": 263.069946,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-29T16:00:00Z",
+      "candidate_local": "2026-03-30T00:00:00+08:00",
+      "moon_longitude": 148.033976,
+      "moon_speed": 13.285685,
+      "moon_sign_exit_distance": 1.966,
+      "sun_moon_separation": 139.0623,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 42.3973
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 119.267
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 139.0623
+        }
+      ],
+      "asc_longitude": 263.947027,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-30T16:00:00Z",
+      "candidate_local": "2026-03-31T00:00:00+08:00",
+      "moon_longitude": 161.217561,
+      "moon_speed": 13.082152,
+      "moon_sign_exit_distance": 18.7824,
+      "sun_moon_separation": 151.258,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 55.5211
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 131.2183
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 151.258
+        }
+      ],
+      "asc_longitude": 264.82741,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-03-31T16:00:00Z",
+      "candidate_local": "2026-04-01T00:00:00+08:00",
+      "moon_longitude": 174.199081,
+      "moon_speed": 12.881324,
+      "moon_sign_exit_distance": 5.8009,
+      "sun_moon_separation": 163.2521,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 68.4399
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 142.9682
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 163.2521
+        }
+      ],
+      "asc_longitude": 265.711231,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-01T16:00:00Z",
+      "candidate_local": "2026-04-02T00:00:00+08:00",
+      "moon_longitude": 186.980781,
+      "moon_speed": 12.6826,
+      "moon_sign_exit_distance": 23.0192,
+      "sun_moon_separation": 175.0471,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 81.156
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 154.5188
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 157.2919
+        }
+      ],
+      "asc_longitude": 266.598627,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-02T16:00:00Z",
+      "candidate_local": "2026-04-03T00:00:00+08:00",
+      "moon_longitude": 199.565519,
+      "moon_speed": 12.488014,
+      "moon_sign_exit_distance": 10.4345,
+      "sun_moon_separation": 173.3543,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 93.6722
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 145.6135
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 154.8556
+        }
+      ],
+      "asc_longitude": 267.489738,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-03T16:00:00Z",
+      "candidate_local": "2026-04-04T00:00:00+08:00",
+      "moon_longitude": 211.959881,
+      "moon_speed": 12.303048,
+      "moon_sign_exit_distance": 28.0401,
+      "sun_moon_separation": 161.9456,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 105.9953
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 134.175
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 143.2426
+        }
+      ],
+      "asc_longitude": 268.384704,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-04T16:00:00Z",
+      "candidate_local": "2026-04-05T00:00:00+08:00",
+      "moon_longitude": 224.177647,
+      "moon_speed": 12.136517,
+      "moon_sign_exit_distance": 15.8224,
+      "sun_moon_separation": 150.7129,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 118.1389
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 122.9602
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 131.806
+        }
+      ],
+      "asc_longitude": 269.283665,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-05T16:00:00Z",
+      "candidate_local": "2026-04-06T00:00:00+08:00",
+      "moon_longitude": 236.242758,
+      "moon_speed": 11.999752,
+      "moon_sign_exit_distance": 3.7572,
+      "sun_moon_separation": 139.6324,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 111.9427
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 120.5215
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 129.8839
+        }
+      ],
+      "asc_longitude": 270.186761,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-06T16:00:00Z",
+      "candidate_local": "2026-04-07T00:00:00+08:00",
+      "moon_longitude": 248.191247,
+      "moon_speed": 11.905394,
+      "moon_sign_exit_distance": 21.8088,
+      "sun_moon_separation": 128.668,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 101.0845
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 109.3534
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 118.059
+        }
+      ],
+      "asc_longitude": 271.094133,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-07T16:00:00Z",
+      "candidate_local": "2026-04-08T00:00:00+08:00",
+      "moon_longitude": 260.071897,
+      "moon_speed": 11.866095,
+      "moon_sign_exit_distance": 9.9281,
+      "sun_moon_separation": 117.7709,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 90.3348
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 98.2526
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 106.3018
+        }
+      ],
+      "asc_longitude": 272.005924,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-08T16:00:00Z",
+      "candidate_local": "2026-04-09T00:00:00+08:00",
+      "moon_longitude": 271.945637,
+      "moon_speed": 11.89331,
+      "moon_sign_exit_distance": 28.0544,
+      "sun_moon_separation": 106.8803,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 79.631
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 87.1584
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 94.5512
+        }
+      ],
+      "asc_longitude": 272.922277,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-09T16:00:00Z",
+      "candidate_local": "2026-04-10T00:00:00+08:00",
+      "moon_longitude": 283.883785,
+      "moon_speed": 11.996178,
+      "moon_sign_exit_distance": 16.1162,
+      "sun_moon_separation": 95.9247,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 68.9002
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 75.9993
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 82.7359
+        }
+      ],
+      "asc_longitude": 273.843338,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-10T16:00:00Z",
+      "candidate_local": "2026-04-11T00:00:00+08:00",
+      "moon_longitude": 295.965156,
+      "moon_speed": 12.18035,
+      "moon_sign_exit_distance": 4.0348,
+      "sun_moon_separation": 84.8254,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 58.0622
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 64.6966
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 70.7772
+        }
+      ],
+      "asc_longitude": 274.769258,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-11T16:00:00Z",
+      "candidate_local": "2026-04-12T00:00:00+08:00",
+      "moon_longitude": 308.271897,
+      "moon_speed": 12.446568,
+      "moon_sign_exit_distance": 21.7281,
+      "sun_moon_separation": 73.5003,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 47.0336
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 53.168
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 58.5928
+        }
+      ],
+      "asc_longitude": 275.700187,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-12T16:00:00Z",
+      "candidate_local": "2026-04-13T00:00:00+08:00",
+      "moon_longitude": 320.883706,
+      "moon_speed": 12.788853,
+      "moon_sign_exit_distance": 9.1163,
+      "sun_moon_separation": 61.8696,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 35.7335
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 41.3339
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 46.103
+        }
+      ],
+      "asc_longitude": 276.63628,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-13T16:00:00Z",
+      "candidate_local": "2026-04-14T00:00:00+08:00",
+      "moon_longitude": 333.870063,
+      "moon_speed": 13.19238,
+      "moon_sign_exit_distance": 26.1299,
+      "sun_moon_separation": 49.8639,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 24.0916
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 29.1247
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 33.2383
+        }
+      ],
+      "asc_longitude": 277.577697,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-14T16:00:00Z",
+      "candidate_local": "2026-04-15T00:00:00+08:00",
+      "moon_longitude": 347.280375,
+      "moon_speed": 13.631568,
+      "moon_sign_exit_distance": 12.7196,
+      "sun_moon_separation": 37.4337,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 12.0575
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 16.4911
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 19.9493
+        }
+      ],
+      "asc_longitude": 278.524601,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-15T16:00:00Z",
+      "candidate_local": "2026-04-16T00:00:00+08:00",
+      "moon_longitude": 1.132776,
+      "moon_speed": 14.069564,
+      "moon_sign_exit_distance": 28.8672,
+      "sun_moon_separation": 24.5609,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 0.3877
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 3.4149
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 6.2179
+        }
+      ],
+      "asc_longitude": 279.477161,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-16T16:00:00Z",
+      "candidate_local": "2026-04-17T00:00:00+08:00",
+      "moon_longitude": 15.403804,
+      "moon_speed": 14.460787,
+      "moon_sign_exit_distance": 14.5962,
+      "sun_moon_separation": 11.269,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 7.9326
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 10.0805
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 11.269
+        }
+      ],
+      "asc_longitude": 280.435547,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-17T16:00:00Z",
+      "candidate_local": "2026-04-18T00:00:00+08:00",
+      "moon_longitude": 30.02276,
+      "moon_speed": 14.75788,
+      "moon_sign_exit_distance": 29.9772,
+      "sun_moon_separation": 2.3713,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SUN",
+          "separation_deg": 2.3713
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 22.0534
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 22.4314
+        }
+      ],
+      "asc_longitude": 281.399934,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-18T16:00:00Z",
+      "candidate_local": "2026-04-19T00:00:00+08:00",
+      "moon_longitude": 44.875092,
+      "moon_speed": 14.922474,
+      "moon_sign_exit_distance": 15.1249,
+      "sun_moon_separation": 16.2456,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 8.4216
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 16.2456
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 37.1639
+        }
+      ],
+      "asc_longitude": 282.370492,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-19T16:00:00Z",
+      "candidate_local": "2026-04-20T00:00:00+08:00",
+      "moon_longitude": 59.817062,
+      "moon_speed": 14.936118,
+      "moon_sign_exit_distance": 0.1829,
+      "sun_moon_separation": 30.21,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 5.3005
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 30.21
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 47.6549
+        }
+      ],
+      "asc_longitude": 283.347387,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-20T16:00:00Z",
+      "candidate_local": "2026-04-21T00:00:00+08:00",
+      "moon_longitude": 74.69914,
+      "moon_speed": 14.805955,
+      "moon_sign_exit_distance": 15.3009,
+      "sun_moon_separation": 44.1151,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 18.9634
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 32.8885
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 44.1151
+        }
+      ],
+      "asc_longitude": 284.330781,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-21T16:00:00Z",
+      "candidate_local": "2026-04-22T00:00:00+08:00",
+      "moon_longitude": 89.390856,
+      "moon_speed": 14.561762,
+      "moon_sign_exit_distance": 0.6091,
+      "sun_moon_separation": 57.8305,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 18.3149
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 32.4366
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 57.8305
+        }
+      ],
+      "asc_longitude": 285.320833,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-22T16:00:00Z",
+      "candidate_local": "2026-04-23T00:00:00+08:00",
+      "moon_longitude": 103.798814,
+      "moon_speed": 14.245901,
+      "moon_sign_exit_distance": 16.2012,
+      "sun_moon_separation": 71.2627,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 4.0274
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 45.6268
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 71.2627
+        }
+      ],
+      "asc_longitude": 286.317703,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-23T16:00:00Z",
+      "candidate_local": "2026-04-24T00:00:00+08:00",
+      "moon_longitude": 117.873245,
+      "moon_speed": 13.901418,
+      "moon_sign_exit_distance": 2.1268,
+      "sun_moon_separation": 84.3619,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 9.9244
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 58.4843
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 84.3619
+        }
+      ],
+      "asc_longitude": 287.321553,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-24T16:00:00Z",
+      "candidate_local": "2026-04-25T00:00:00+08:00",
+      "moon_longitude": 131.603871,
+      "moon_speed": 13.563161,
+      "moon_sign_exit_distance": 18.3961,
+      "sun_moon_separation": 97.118,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 23.5301
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 70.9988
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 97.118
+        }
+      ],
+      "asc_longitude": 288.332552,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-25T16:00:00Z",
+      "candidate_local": "2026-04-26T00:00:00+08:00",
+      "moon_longitude": 145.009323,
+      "moon_speed": 13.253831,
+      "moon_sign_exit_distance": 4.9907,
+      "sun_moon_separation": 109.5496,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 36.8085
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 83.1889
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 109.5496
+        }
+      ],
+      "asc_longitude": 289.350873,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-26T16:00:00Z",
+      "candidate_local": "2026-04-27T00:00:00+08:00",
+      "moon_longitude": 158.124808,
+      "moon_speed": 12.98415,
+      "moon_sign_exit_distance": 21.8752,
+      "sun_moon_separation": 121.6918,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 49.7947
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 95.0899
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 121.6918
+        }
+      ],
+      "asc_longitude": 290.37669,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-27T16:00:00Z",
+      "candidate_local": "2026-04-28T00:00:00+08:00",
+      "moon_longitude": 170.991268,
+      "moon_speed": 12.755404,
+      "moon_sign_exit_distance": 9.0087,
+      "sun_moon_separation": 133.5855,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 62.5298
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 106.7426
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 133.5855
+        }
+      ],
+      "asc_longitude": 291.410179,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-28T16:00:00Z",
+      "candidate_local": "2026-04-29T00:00:00+08:00",
+      "moon_longitude": 183.647633,
+      "moon_speed": 12.562861,
+      "moon_sign_exit_distance": 26.3524,
+      "sun_moon_separation": 145.2697,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 75.0527
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 118.1861
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 145.2697
+        }
+      ],
+      "asc_longitude": 292.451516,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-29T16:00:00Z",
+      "candidate_local": "2026-04-30T00:00:00+08:00",
+      "moon_longitude": 196.126516,
+      "moon_speed": 12.399161,
+      "moon_sign_exit_distance": 13.8735,
+      "sun_moon_separation": 156.777,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 87.396
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 129.4529
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 156.777
+        }
+      ],
+      "asc_longitude": 293.500874,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-04-30T16:00:00Z",
+      "candidate_local": "2026-05-01T00:00:00+08:00",
+      "moon_longitude": 208.453102,
+      "moon_speed": 12.257242,
+      "moon_sign_exit_distance": 1.5469,
+      "sun_moon_separation": 168.1325,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 99.585
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 140.5682
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 160.6556
+        }
+      ],
+      "asc_longitude": 294.558422,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-01T16:00:00Z",
+      "candidate_local": "2026-05-02T00:00:00+08:00",
+      "moon_longitude": 220.64662,
+      "moon_speed": 12.132551,
+      "moon_sign_exit_distance": 19.3534,
+      "sun_moon_separation": 179.3554,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 111.6388
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 148.5747
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 151.5513
+        }
+      ],
+      "asc_longitude": 295.624324,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-02T16:00:00Z",
+      "candidate_local": "2026-05-03T00:00:00+08:00",
+      "moon_longitude": 232.723607,
+      "moon_speed": 12.024414,
+      "moon_sign_exit_distance": 7.2764,
+      "sun_moon_separation": 169.5377,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 123.5741
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 136.6097
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 144.9259
+        }
+      ],
+      "asc_longitude": 296.698741,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-03T16:00:00Z",
+      "candidate_local": "2026-05-04T00:00:00+08:00",
+      "moon_longitude": 244.702093,
+      "moon_speed": 11.936491,
+      "moon_sign_exit_distance": 25.2979,
+      "sun_moon_separation": 158.5289,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 124.7426
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 133.7121
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 135.409
+        }
+      ],
+      "asc_longitude": 297.781827,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-04T16:00:00Z",
+      "candidate_local": "2026-05-05T00:00:00+08:00",
+      "moon_longitude": 256.605809,
+      "moon_speed": 11.876415,
+      "moon_sign_exit_distance": 13.3942,
+      "sun_moon_separation": 147.5944,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 112.9495
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 122.5725
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 136.4049
+        }
+      ],
+      "asc_longitude": 298.873733,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-05T16:00:00Z",
+      "candidate_local": "2026-05-06T00:00:00+08:00",
+      "moon_longitude": 268.467725,
+      "moon_speed": 11.854821,
+      "moon_sign_exit_distance": 1.5323,
+      "sun_moon_separation": 136.7013,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 101.1975
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 111.4739
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 126.5293
+        }
+      ],
+      "asc_longitude": 299.974604,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-06T16:00:00Z",
+      "candidate_local": "2026-05-07T00:00:00+08:00",
+      "moon_longitude": 280.332388,
+      "moon_speed": 11.884,
+      "moon_sign_exit_distance": 19.6676,
+      "sun_moon_separation": 125.805,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 89.442
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 100.3719
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 116.6788
+        }
+      ],
+      "asc_longitude": 301.084581,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-07T16:00:00Z",
+      "candidate_local": "2026-05-08T00:00:00+08:00",
+      "moon_longitude": 292.256839,
+      "moon_speed": 11.97639,
+      "moon_sign_exit_distance": 7.7432,
+      "sun_moon_separation": 114.8485,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 77.626
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 89.2095
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 106.7954
+        }
+      ],
+      "asc_longitude": 302.203797,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-08T16:00:00Z",
+      "candidate_local": "2026-05-09T00:00:00+08:00",
+      "moon_longitude": 304.309959,
+      "moon_speed": 12.142946,
+      "moon_sign_exit_distance": 25.69,
+      "sun_moon_separation": 103.763,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 65.6806
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 77.9176
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 96.809
+        }
+      ],
+      "asc_longitude": 303.332385,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-09T16:00:00Z",
+      "candidate_local": "2026-05-10T00:00:00+08:00",
+      "moon_longitude": 316.570074,
+      "moon_speed": 12.391269,
+      "moon_sign_exit_distance": 13.4299,
+      "sun_moon_separation": 92.47,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 53.5274
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 66.418
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 86.64
+        }
+      ],
+      "asc_longitude": 304.47047,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-10T16:00:00Z",
+      "candidate_local": "2026-05-11T00:00:00+08:00",
+      "moon_longitude": 329.120494,
+      "moon_speed": 12.72328,
+      "moon_sign_exit_distance": 0.8795,
+      "sun_moon_separation": 80.8864,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 41.083
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 54.6274
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 76.2032
+        }
+      ],
+      "asc_longitude": 305.618172,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-11T16:00:00Z",
+      "candidate_local": "2026-05-12T00:00:00+08:00",
+      "moon_longitude": 342.042402,
+      "moon_speed": 13.132261,
+      "moon_sign_exit_distance": 17.9576,
+      "sun_moon_separation": 68.9309,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 28.2664
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 42.4645
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 65.415
+        }
+      ],
+      "asc_longitude": 306.775606,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-12T16:00:00Z",
+      "candidate_local": "2026-05-13T00:00:00+08:00",
+      "moon_longitude": 355.404529,
+      "moon_speed": 13.599453,
+      "moon_sign_exit_distance": 4.5955,
+      "sun_moon_separation": 56.5348,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 15.0087
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 29.8607
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 54.2042
+        }
+      ],
+      "asc_longitude": 307.942879,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-13T16:00:00Z",
+      "candidate_local": "2026-05-14T00:00:00+08:00",
+      "moon_longitude": 9.249565,
+      "moon_speed": 14.091177,
+      "moon_sign_exit_distance": 20.7504,
+      "sun_moon_separation": 43.6555,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 1.2672
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 16.7731
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 42.5249
+        }
+      ],
+      "asc_longitude": 309.120095,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-14T16:00:00Z",
+      "candidate_local": "2026-05-15T00:00:00+08:00",
+      "moon_longitude": 23.578774,
+      "moon_speed": 14.558569,
+      "moon_sign_exit_distance": 6.4212,
+      "sun_moon_separation": 30.2917,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 3.2007
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 12.9592
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 30.2917
+        }
+      ],
+      "asc_longitude": 310.307345,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-15T16:00:00Z",
+      "candidate_local": "2026-05-16T00:00:00+08:00",
+      "moon_longitude": 38.338816,
+      "moon_speed": 14.942713,
+      "moon_sign_exit_distance": 21.6612,
+      "sun_moon_separation": 16.4966,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 10.8034
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 16.4966
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 17.796
+        }
+      ],
+      "asc_longitude": 311.504711,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-16T16:00:00Z",
+      "candidate_local": "2026-05-17T00:00:00+08:00",
+      "moon_longitude": 53.41719,
+      "moon_speed": 15.18675,
+      "moon_sign_exit_distance": 6.5828,
+      "sun_moon_separation": 2.3829,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SUN",
+          "separation_deg": 2.3829
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 4.9039
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 25.1266
+        }
+      ],
+      "asc_longitude": 312.712255,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-17T16:00:00Z",
+      "candidate_local": "2026-05-18T00:00:00+08:00",
+      "moon_longitude": 68.652403,
+      "moon_speed": 15.252313,
+      "moon_sign_exit_distance": 21.3476,
+      "sun_moon_separation": 11.8881,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 8.1467
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 11.8881
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 19.6986
+        }
+      ],
+      "asc_longitude": 313.93002,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-18T16:00:00Z",
+      "candidate_local": "2026-05-19T00:00:00+08:00",
+      "moon_longitude": 83.859719,
+      "moon_speed": 15.132762,
+      "moon_sign_exit_distance": 6.1403,
+      "sun_moon_separation": 26.1316,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 5.6875
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 21.1759
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 26.1316
+        }
+      ],
+      "asc_longitude": 315.158028,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-19T16:00:00Z",
+      "candidate_local": "2026-05-20T00:00:00+08:00",
+      "moon_longitude": 98.865066,
+      "moon_speed": 14.855289,
+      "moon_sign_exit_distance": 21.1349,
+      "sun_moon_separation": 40.1735,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 8.1225
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 12.9724
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 34.0144
+        }
+      ],
+      "asc_longitude": 316.396284,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-20T16:00:00Z",
+      "candidate_local": "2026-05-21T00:00:00+08:00",
+      "moon_longitude": 113.53453,
+      "moon_speed": 14.470509,
+      "moon_sign_exit_distance": 6.4655,
+      "sun_moon_separation": 53.88,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 1.524
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 21.5977
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 46.5329
+        }
+      ],
+      "asc_longitude": 317.644778,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-21T16:00:00Z",
+      "candidate_local": "2026-05-22T00:00:00+08:00",
+      "moon_longitude": 127.789653,
+      "moon_speed": 14.035941,
+      "moon_sign_exit_distance": 22.2103,
+      "sun_moon_separation": 67.1726,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 15.6046
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 34.6596
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 58.6574
+        }
+      ],
+      "asc_longitude": 318.903491,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-22T16:00:00Z",
+      "candidate_local": "2026-05-23T00:00:00+08:00",
+      "moon_longitude": 141.606794,
+      "moon_speed": 13.601848,
+      "moon_sign_exit_distance": 8.3932,
+      "sun_moon_separation": 80.0277,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 29.2458
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 47.2845
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 70.3686
+        }
+      ],
+      "asc_longitude": 320.172392,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-23T16:00:00Z",
+      "candidate_local": "2026-05-24T00:00:00+08:00",
+      "moon_longitude": 155.005588,
+      "moon_speed": 13.203872,
+      "moon_sign_exit_distance": 24.9944,
+      "sun_moon_separation": 92.4649,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 42.4673
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 59.4922
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 81.6899
+        }
+      ],
+      "asc_longitude": 321.451437,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-24T16:00:00Z",
+      "candidate_local": "2026-05-25T00:00:00+08:00",
+      "moon_longitude": 168.033365,
+      "moon_speed": 12.861976,
+      "moon_sign_exit_distance": 11.9666,
+      "sun_moon_separation": 104.5316,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 55.3163
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 71.33
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 92.6722
+        }
+      ],
+      "asc_longitude": 322.740567,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-25T16:00:00Z",
+      "candidate_local": "2026-05-26T00:00:00+08:00",
+      "moon_longitude": 180.750592,
+      "moon_speed": 12.583054,
+      "moon_sign_exit_distance": 29.2494,
+      "sun_moon_separation": 116.2881,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 67.8535
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 82.8584
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 103.3791
+        }
+      ],
+      "asc_longitude": 324.039703,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-26T16:00:00Z",
+      "candidate_local": "2026-05-27T00:00:00+08:00",
+      "moon_longitude": 193.219692,
+      "moon_speed": 12.364787,
+      "moon_sign_exit_distance": 16.7803,
+      "sun_moon_separation": 127.7969,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 80.1412
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 94.1397
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 113.8755
+        }
+      ],
+      "asc_longitude": 325.348743,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-27T16:00:00Z",
+      "candidate_local": "2026-05-28T00:00:00+08:00",
+      "moon_longitude": 205.497752,
+      "moon_speed": 12.199413,
+      "moon_sign_exit_distance": 4.5022,
+      "sun_moon_separation": 139.1151,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 92.2365
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 105.2311
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 124.2209
+        }
+      ],
+      "asc_longitude": 326.667565,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-28T16:00:00Z",
+      "candidate_local": "2026-05-29T00:00:00+08:00",
+      "moon_longitude": 217.632743,
+      "moon_speed": 12.076939,
+      "moon_sign_exit_distance": 22.3673,
+      "sun_moon_separation": 150.2905,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 104.1875
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 116.1807
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 134.465
+        }
+      ],
+      "asc_longitude": 327.99602,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-29T16:00:00Z",
+      "candidate_local": "2026-05-30T00:00:00+08:00",
+      "moon_longitude": 229.662631,
+      "moon_speed": 11.987733,
+      "moon_sign_exit_distance": 10.3374,
+      "sun_moon_separation": 161.3612,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 116.0321
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 127.0262
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 142.3818
+        }
+      ],
+      "asc_longitude": 329.333936,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-30T16:00:00Z",
+      "candidate_local": "2026-05-31T00:00:00+08:00",
+      "moon_longitude": 241.616777,
+      "moon_speed": 11.924499,
+      "moon_sign_exit_distance": 28.3832,
+      "sun_moon_separation": 172.3565,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 127.7998
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 130.5141
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 137.7972
+        }
+      ],
+      "asc_longitude": 330.681117,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-05-31T16:00:00Z",
+      "candidate_local": "2026-06-01T00:00:00+08:00",
+      "moon_longitude": 253.518999,
+      "moon_speed": 11.883615,
+      "moon_sign_exit_distance": 16.481,
+      "sun_moon_separation": 176.6999,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 118.6973
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 139.5143
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 145.9936
+        }
+      ],
+      "asc_longitude": 332.037339,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-01T16:00:00Z",
+      "candidate_local": "2026-06-02T00:00:00+08:00",
+      "moon_longitude": 265.391631,
+      "moon_speed": 11.865782,
+      "moon_sign_exit_distance": 4.6084,
+      "sun_moon_separation": 165.7855,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 106.909
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 134.862
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 151.198
+        }
+      ],
+      "asc_longitude": 333.402356,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-02T16:00:00Z",
+      "candidate_local": "2026-06-03T00:00:00+08:00",
+      "moon_longitude": 277.25987,
+      "moon_speed": 11.875963,
+      "moon_sign_exit_distance": 22.7401,
+      "sun_moon_separation": 154.8753,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 95.1238
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 123.7338
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 154.8753
+        }
+      ],
+      "asc_longitude": 334.775898,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-03T16:00:00Z",
+      "candidate_local": "2026-06-04T00:00:00+08:00",
+      "moon_longitude": 289.155732,
+      "moon_speed": 11.922666,
+      "moon_sign_exit_distance": 10.8443,
+      "sun_moon_separation": 143.9372,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 83.3098
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 112.5772
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 143.9372
+        }
+      ],
+      "asc_longitude": 336.157669,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-04T16:00:00Z",
+      "candidate_local": "2026-06-05T00:00:00+08:00",
+      "moon_longitude": 301.121023,
+      "moon_speed": 12.016729,
+      "moon_sign_exit_distance": 28.879,
+      "sun_moon_separation": 132.9294,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 71.4252
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 101.3501
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 132.9294
+        }
+      ],
+      "asc_longitude": 337.547354,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-05T16:00:00Z",
+      "candidate_local": "2026-06-06T00:00:00+08:00",
+      "moon_longitude": 313.208888,
+      "moon_speed": 12.169689,
+      "moon_sign_exit_distance": 16.7911,
+      "sun_moon_separation": 121.7988,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 59.4168
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 89.9996
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 121.7988
+        }
+      ],
+      "asc_longitude": 338.944612,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-06T16:00:00Z",
+      "candidate_local": "2026-06-07T00:00:00+08:00",
+      "moon_longitude": 325.483547,
+      "moon_speed": 12.391801,
+      "moon_sign_exit_distance": 4.5165,
+      "sun_moon_separation": 110.4813,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 47.2204
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 78.4614
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 110.4813
+        }
+      ],
+      "asc_longitude": 340.349085,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-07T16:00:00Z",
+      "candidate_local": "2026-06-08T00:00:00+08:00",
+      "moon_longitude": 338.017834,
+      "moon_speed": 12.689585,
+      "moon_sign_exit_distance": 21.9822,
+      "sun_moon_separation": 98.9039,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 34.7631
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 66.6626
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 98.9039
+        }
+      ],
+      "asc_longitude": 341.760392,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-08T16:00:00Z",
+      "candidate_local": "2026-06-09T00:00:00+08:00",
+      "moon_longitude": 350.887994,
+      "moon_speed": 13.062778,
+      "moon_sign_exit_distance": 9.112,
+      "sun_moon_separation": 86.9905,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 21.9686
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 54.527
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 86.9905
+        }
+      ],
+      "asc_longitude": 343.178135,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-09T16:00:00Z",
+      "candidate_local": "2026-06-10T00:00:00+08:00",
+      "moon_longitude": 4.165109,
+      "moon_speed": 13.50067,
+      "moon_sign_exit_distance": 25.8349,
+      "sun_moon_separation": 74.6699,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 8.7659
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 41.9836
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 74.6699
+        }
+      ],
+      "asc_longitude": 344.601897,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "ok",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-10T16:00:00Z",
+      "candidate_local": "2026-06-11T00:00:00+08:00",
+      "moon_longitude": 17.902763,
+      "moon_speed": 13.978414,
+      "moon_sign_exit_distance": 12.0972,
+      "sun_moon_separation": 61.8887,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 4.8986
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 28.9786
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 61.8887
+        }
+      ],
+      "asc_longitude": 346.031243,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-11T16:00:00Z",
+      "candidate_local": "2026-06-12T00:00:00+08:00",
+      "moon_longitude": 32.121599,
+      "moon_speed": 14.454872,
+      "moon_sign_exit_distance": 27.8784,
+      "sun_moon_separation": 48.6262,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 15.4915
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 19.0456
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 48.6262
+        }
+      ],
+      "asc_longitude": 347.465724,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-12T16:00:00Z",
+      "candidate_local": "2026-06-13T00:00:00+08:00",
+      "moon_longitude": 46.79361,
+      "moon_speed": 14.874734,
+      "moon_sign_exit_distance": 13.2064,
+      "sun_moon_separation": 34.9104,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 1.5503
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 33.6471
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 34.9104
+        }
+      ],
+      "asc_longitude": 348.904865,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-13T16:00:00Z",
+      "candidate_local": "2026-06-14T00:00:00+08:00",
+      "moon_longitude": 61.831826,
+      "moon_speed": 15.177504,
+      "moon_sign_exit_distance": 28.1682,
+      "sun_moon_separation": 20.8283,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MARS",
+          "separation_deg": 12.758
+        },
+        {
+          "body_id": "SUN",
+          "separation_deg": 20.8283
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 45.1785
+        }
+      ],
+      "asc_longitude": 350.348176,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-14T16:00:00Z",
+      "candidate_local": "2026-06-15T00:00:00+08:00",
+      "moon_longitude": 77.092491,
+      "moon_speed": 15.31302,
+      "moon_sign_exit_distance": 12.9075,
+      "sun_moon_separation": 6.5235,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SUN",
+          "separation_deg": 6.5235
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 27.2898
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 30.9745
+        }
+      ],
+      "asc_longitude": 351.79514,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-15T16:00:00Z",
+      "candidate_local": "2026-06-16T00:00:00+08:00",
+      "moon_longitude": 92.393882,
+      "moon_speed": 15.257863,
+      "moon_sign_exit_distance": 27.6061,
+      "sun_moon_separation": 7.8221,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SUN",
+          "separation_deg": 7.8221
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 16.6735
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 24.5573
+        }
+      ],
+      "asc_longitude": 353.24522,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-16T16:00:00Z",
+      "candidate_local": "2026-06-17T00:00:00+08:00",
+      "moon_longitude": 107.548252,
+      "moon_speed": 15.023753,
+      "moon_sign_exit_distance": 12.4517,
+      "sun_moon_separation": 22.0209,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 2.4617
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 9.6072
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 16.1929
+        }
+      ],
+      "asc_longitude": 354.697867,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-17T16:00:00Z",
+      "candidate_local": "2026-06-18T00:00:00+08:00",
+      "moon_longitude": 122.395656,
+      "moon_speed": 14.652723,
+      "moon_sign_exit_distance": 27.6043,
+      "sun_moon_separation": 35.9129,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 2.5051
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 5.0352
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 11.5023
+        }
+      ],
+      "asc_longitude": 356.152522,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-18T16:00:00Z",
+      "candidate_local": "2026-06-19T00:00:00+08:00",
+      "moon_longitude": 136.827358,
+      "moon_speed": 14.20231,
+      "moon_sign_exit_distance": 13.1726,
+      "sun_moon_separation": 49.3895,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 10.7686
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 19.2611
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 25.1115
+        }
+      ],
+      "asc_longitude": 357.608627,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-19T16:00:00Z",
+      "candidate_local": "2026-06-20T00:00:00+08:00",
+      "moon_longitude": 150.792999,
+      "moon_speed": 13.729349,
+      "moon_sign_exit_distance": 29.207,
+      "sun_moon_separation": 62.4002,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 23.5779
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 33.0202
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 38.3172
+        }
+      ],
+      "asc_longitude": 359.065627,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-20T16:00:00Z",
+      "candidate_local": "2026-06-21T00:00:00+08:00",
+      "moon_longitude": 164.293891,
+      "moon_speed": 13.279134,
+      "moon_sign_exit_distance": 15.7061,
+      "sun_moon_separation": 74.9465,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 35.9242
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 46.3138
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 51.1224
+        }
+      ],
+      "asc_longitude": 0.522968,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-21T16:00:00Z",
+      "candidate_local": "2026-06-22T00:00:00+08:00",
+      "moon_longitude": 177.369008,
+      "moon_speed": 12.881537,
+      "moon_sign_exit_distance": 2.631,
+      "sun_moon_separation": 87.0671,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 47.8464
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 59.1808
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 63.5679
+        }
+      ],
+      "asc_longitude": 1.980098,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-22T16:00:00Z",
+      "candidate_local": "2026-06-23T00:00:00+08:00",
+      "moon_longitude": 190.079791,
+      "moon_speed": 12.552035,
+      "moon_sign_exit_distance": 19.9202,
+      "sun_moon_separation": 98.8237,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 59.406
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 71.6829
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 75.7171
+        }
+      ],
+      "asc_longitude": 3.436464,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-23T16:00:00Z",
+      "candidate_local": "2026-06-24T00:00:00+08:00",
+      "moon_longitude": 202.497269,
+      "moon_speed": 12.294929,
+      "moon_sign_exit_distance": 7.5027,
+      "sun_moon_separation": 110.2871,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 70.6741
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 83.8909
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 87.6426
+        }
+      ],
+      "asc_longitude": 4.891517,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-24T16:00:00Z",
+      "candidate_local": "2026-06-25T00:00:00+08:00",
+      "moon_longitude": 214.692683,
+      "moon_speed": 12.106907,
+      "moon_sign_exit_distance": 25.3073,
+      "sun_moon_separation": 121.5286,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 81.722
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 95.8762
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 99.4175
+        }
+      ],
+      "asc_longitude": 6.344707,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-25T16:00:00Z",
+      "candidate_local": "2026-06-26T00:00:00+08:00",
+      "moon_longitude": 226.731476,
+      "moon_speed": 11.980151,
+      "moon_sign_exit_distance": 13.2685,
+      "sun_moon_separation": 132.6136,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 92.6152
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 107.7042
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 111.1088
+        }
+      ],
+      "asc_longitude": 7.795492,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-26T16:00:00Z",
+      "candidate_local": "2026-06-27T00:00:00+08:00",
+      "moon_longitude": 238.670091,
+      "moon_speed": 11.904848,
+      "moon_sign_exit_distance": 1.3299,
+      "sun_moon_separation": 143.5986,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 103.4101
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 119.4314
+        },
+        {
+          "body_id": "MERCURY",
+          "separation_deg": 122.7745
+        }
+      ],
+      "asc_longitude": 9.243334,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-27T16:00:00Z",
+      "candidate_local": "2026-06-28T00:00:00+08:00",
+      "moon_longitude": 250.555001,
+      "moon_speed": 11.871179,
+      "moon_sign_exit_distance": 19.445,
+      "sun_moon_separation": 154.53,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "VENUS",
+          "separation_deg": 114.1532
+        },
+        {
+          "body_id": "SATURN",
+          "separation_deg": 123.4797
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 131.1043
+        }
+      ],
+      "asc_longitude": 10.687705,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-28T16:00:00Z",
+      "candidate_local": "2026-06-29T00:00:00+08:00",
+      "moon_longitude": 262.423539,
+      "moon_speed": 11.870914,
+      "moon_sign_exit_distance": 7.5765,
+      "sun_moon_separation": 165.4451,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 111.6586
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 124.882
+        },
+        {
+          "body_id": "JUPITER",
+          "separation_deg": 142.7602
+        }
+      ],
+      "asc_longitude": 12.128087,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    },
+    {
+      "candidate_utc": "2026-06-29T16:00:00Z",
+      "candidate_local": "2026-06-30T00:00:00+08:00",
+      "moon_longitude": 274.306116,
+      "moon_speed": 11.898609,
+      "moon_sign_exit_distance": 25.6939,
+      "sun_moon_separation": 176.3743,
+      "nearest_moon_aspects": [
+        {
+          "body_id": "SATURN",
+          "separation_deg": 99.8219
+        },
+        {
+          "body_id": "VENUS",
+          "separation_deg": 135.6268
+        },
+        {
+          "body_id": "MARS",
+          "separation_deg": 146.3033
+        }
+      ],
+      "asc_longitude": 13.563975,
+      "topic_house": 7,
+      "planetary_hour": null,
+      "planetary_hours_status": "unavailable",
+      "method_key": "electional_fact_matrix_v1",
+      "note": "Facts only; no automatic ranking of best times."
+    }
+  ],
+  "warnings": [],
+  "section_errors": null,
+  "calculation_assumptions": [
+    "Mundane: Sun cardinal ingresses via relative longitude roots.",
+    "Electional scanner emits evidence matrix only; does not rank or pick lucky times.",
+    "Planetary hour attached when rise/set available; polar cases status=unavailable."
+  ]
+}

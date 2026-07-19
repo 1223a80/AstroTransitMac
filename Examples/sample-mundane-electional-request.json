@@ -1,0 +1,26 @@
+{
+  "mode": "mundane_electional",
+  "start": {
+    "year": 2026,
+    "month": 1,
+    "day": 1,
+    "hour": 0,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "end": {
+    "year": 2026,
+    "month": 6,
+    "day": 30,
+    "hour": 0,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "display_timezone": "Asia/Shanghai",
+  "location": {
+    "name": "Shanghai",
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "timezone": "Asia/Shanghai"
+  }
+}
