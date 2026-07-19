@@ -8,21 +8,26 @@ extension MarkdownExportBuilder {
             "## 输入与方法",
             "",
             "- Method: `\(result.meta.method)`",
-            "- Mode: \(result.meta.mode ?? "orbital_dial")",
+            "- Modulus: \(result.meta.modulus.map(String.init) ?? "—")",
+            "- Orbital points: \(result.orbitalPoints.count)",
+            "- Dial pictures: \(result.dialPictures.count)",
+            "",
+            "## Orbital points",
+            "",
+            "| Body | Kind | Longitude | Center | System | Method |",
+            "| --- | --- | ---: | --- | --- | --- |",
         ]
+        for p in result.orbitalPoints {
+            lines.append(
+                "| \(p.bodyId ?? "") | \(p.pointKind ?? "") | \(p.longitude.map { String(format: "%.4f", $0) } ?? "") | \(p.coordinateCenter ?? "") | \(p.coordinateSystem ?? "") | \(p.methodKey ?? "") |"
+            )
+        }
+        lines += ["", "## Dial pictures", "", "| Picture | Midpoint | Modulus | Method |", "| --- | ---: | ---: | --- |"]
+        for p in result.dialPictures.prefix(80) {
+            lines.append("| \(p.picture ?? "") | \(p.midpointLongitude.map { String(format: "%.4f", $0) } ?? "") | \(p.modulus.map(String.init) ?? "") | \(p.methodKey ?? "") |")
+        }
         if let a = result.calculationAssumptions, !a.isEmpty {
             lines += ["", "## 计算假设", ""] + a.map { "- \($0)" }
-        }
-        if result.warnings.isEmpty {
-            lines += ["", "## 警告", "", "无。"]
-        } else {
-            lines += ["", "## 警告", ""] + result.warnings.map { "- \($0)" }
-        }
-        if let errors = result.sectionErrors, !errors.isEmpty {
-            lines += ["", "## 未计算 / section_errors", ""]
-            for key in errors.keys.sorted() { lines.append("- `\(key)`: \(errors[key] ?? "")") }
-        } else {
-            lines += ["", "## 未计算 / section_errors", "", "无。"]
         }
         lines += ["", "> 事实输出，不含吉凶解释。"]
         return lines.joined(separator: "\n")
@@ -36,11 +41,18 @@ extension TextExportBuilder {
         guard let data = try? enc.encode(result), let s = String(data: data, encoding: .utf8) else { return "{}" }
         return s
     }
+
     static func csv(_ result: OrbitalDialResult) -> String {
-        var rows = ["row_type,field,value"]
-        rows.append("meta,method,\(result.meta.method)")
-        for (i, a) in (result.calculationAssumptions ?? []).enumerated() {
-            rows.append("assumption,\(i),\(a.replacingOccurrences(of: ",", with: ";"))")
+        var rows = ["row_type,body_id,point_kind,longitude,coordinate_center,method_key"]
+        for p in result.orbitalPoints {
+            rows.append(
+                "orbital_point,\(expansionCSVEscape(p.bodyId ?? "")),\(expansionCSVEscape(p.pointKind ?? "")),\(p.longitude.map { String($0) } ?? ""),\(expansionCSVEscape(p.coordinateCenter ?? "")),\(expansionCSVEscape(p.methodKey ?? ""))"
+            )
+        }
+        for p in result.dialPictures {
+            rows.append(
+                "dial_picture,\(expansionCSVEscape(p.pointA ?? "")),\(expansionCSVEscape(p.picture ?? "")),\(p.midpointLongitude.map { String($0) } ?? ""),,\(expansionCSVEscape(p.methodKey ?? ""))"
+            )
         }
         return rows.joined(separator: "\n")
     }

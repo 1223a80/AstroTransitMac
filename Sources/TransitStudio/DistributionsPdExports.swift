@@ -8,23 +8,34 @@ extension MarkdownExportBuilder {
             "## 输入与方法",
             "",
             "- Method: `\(result.meta.method)`",
-            "- Mode: \(result.meta.mode ?? "distributions_pd")",
+            "- Baseline: \(result.meta.baselineAlgorithm ?? "—")",
+            "- Distributions: \(result.distributions.count)",
+            "- PD by profile: \(result.primaryDirectionsByProfile.count)",
+            "",
+            "## Distributions",
+            "",
+            "| Significator | Lon | Bounds | Method |",
+            "| --- | ---: | --- | --- |",
         ]
+        for d in result.distributions {
+            lines.append("| \(d.significator ?? "") | \(d.significatorLongitude.map { String(format: "%.4f", $0) } ?? "") | \(d.boundsSystem ?? "") | \(d.methodKey ?? "") |")
+        }
+        lines += [
+            "",
+            "## Primary directions by profile",
+            "",
+            "| Profile | ID | Dir | Arc | Age | Key rate |",
+            "| --- | --- | --- | ---: | ---: | ---: |",
+        ]
+        for d in result.primaryDirectionsByProfile.prefix(120) {
+            lines.append(
+                "| \(d.methodProfile ?? d.methodKey ?? "") | \(d.directionId) | \(d.directionType ?? "") | \(d.arcSigned.map { String(format: "%.4f", $0) } ?? "") | \(d.ageFromAbsArc.map { String(format: "%.4f", $0) } ?? "") | \(d.keyRateDegPerYear.map { String(format: "%.6f", $0) } ?? "") |"
+            )
+        }
         if let a = result.calculationAssumptions, !a.isEmpty {
             lines += ["", "## 计算假设", ""] + a.map { "- \($0)" }
         }
-        if result.warnings.isEmpty {
-            lines += ["", "## 警告", "", "无。"]
-        } else {
-            lines += ["", "## 警告", ""] + result.warnings.map { "- \($0)" }
-        }
-        if let errors = result.sectionErrors, !errors.isEmpty {
-            lines += ["", "## 未计算 / section_errors", ""]
-            for key in errors.keys.sorted() { lines.append("- `\(key)`: \(errors[key] ?? "")") }
-        } else {
-            lines += ["", "## 未计算 / section_errors", "", "无。"]
-        }
-        lines += ["", "> 事实输出，不含吉凶解释。"]
+        lines += ["", "> Simplified PD multi-profile proxy; see B16 audit limits."]
         return lines.joined(separator: "\n")
     }
 }
@@ -36,11 +47,18 @@ extension TextExportBuilder {
         guard let data = try? enc.encode(result), let s = String(data: data, encoding: .utf8) else { return "{}" }
         return s
     }
+
     static func csv(_ result: DistributionsPdResult) -> String {
-        var rows = ["row_type,field,value"]
-        rows.append("meta,method,\(result.meta.method)")
-        for (i, a) in (result.calculationAssumptions ?? []).enumerated() {
-            rows.append("assumption,\(i),\(a.replacingOccurrences(of: ",", with: ";"))")
+        var rows = ["row_type,profile_or_bounds,id,direction_type,arc_signed,age_from_abs_arc,method_key"]
+        for d in result.distributions {
+            rows.append(
+                "distribution,\(expansionCSVEscape(d.boundsSystem ?? "")),\(expansionCSVEscape(d.significator ?? "")),,,,\(expansionCSVEscape(d.methodKey ?? ""))"
+            )
+        }
+        for d in result.primaryDirectionsByProfile {
+            rows.append(
+                "pd_profile,\(expansionCSVEscape(d.methodProfile ?? "")),\(expansionCSVEscape(d.directionId)),\(expansionCSVEscape(d.directionType ?? "")),\(d.arcSigned.map { String($0) } ?? ""),\(d.ageFromAbsArc.map { String($0) } ?? ""),\(expansionCSVEscape(d.methodKey ?? ""))"
+            )
         }
         return rows.joined(separator: "\n")
     }

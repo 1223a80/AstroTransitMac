@@ -4,7 +4,13 @@ from __future__ import annotations
 
 from typing import Any
 
-from astro_backend_core import moment_to_jd, set_zodiac_mode, swe, format_longitude, norm360
+from astro_backend_core import (
+    circular_midpoint,
+    format_longitude,
+    moment_to_jd,
+    set_zodiac_mode,
+    swe,
+)
 from astro_backend_ephemeris import calculate_positions, resolve_bodies
 
 METHOD = "orbital_dial_v1"
@@ -27,9 +33,13 @@ def calculate_orbital_dial(request: dict[str, Any], warnings: list[str]) -> dict
             continue
         spec = specs[0]
         try:
-            # nod_aps_ut if available
+            # nod_aps_ut: default flags without FLG_HELCTR yield geocentric ecliptic positions
+            # of orbital nodes/apsides (Swiss Ephemeris docs). Label coordinate_center accordingly.
             if hasattr(swe, "nod_aps_ut"):
-                ret = swe.nod_aps_ut(jd, spec.code, swe.NODBIT_MEAN, swe.FLG_SWIEPH)
+                nod_flags = swe.FLG_SWIEPH
+                if sidereal:
+                    nod_flags |= swe.FLG_SIDEREAL
+                ret = swe.nod_aps_ut(jd, spec.code, swe.NODBIT_MEAN, nod_flags)
                 # typically (xnasc, xndsc, xperi, xaphe)
                 if isinstance(ret, tuple) and len(ret) >= 4:
                     for label, arr in (
@@ -48,7 +58,10 @@ def calculate_orbital_dial(request: dict[str, Any], warnings: list[str]) -> dict
                                 "sign": sign,
                                 "degree_text": deg,
                                 "method_key": "swe.nod_aps_ut_mean",
-                                "coordinate_center": "heliocentric_orbital_elements_proxy",
+                                "coordinate_center": "geocentric",
+                                "coordinate_system": "sidereal_ecliptic" if sidereal else "tropical_ecliptic",
+                                "node_method": "NODBIT_MEAN",
+                                "se_flags": "FLG_SWIEPH" + ("|FLG_SIDEREAL" if sidereal else ""),
                             }
                         )
             else:
@@ -62,9 +75,9 @@ def calculate_orbital_dial(request: dict[str, Any], warnings: list[str]) -> dict
     dial_hits = []
     for i, a in enumerate(positions):
         for b in positions[i + 1 :]:
-            mid = norm360((float(a["longitude"]) + float(b["longitude"])) / 2.0)
+            mid = circular_midpoint(float(a["longitude"]), float(b["longitude"]))
             # fold to modulus
-            folded = (mid % modulus)
+            folded = mid % modulus
             dial_hits.append(
                 {
                     "point_a": a["body_id"],
@@ -76,7 +89,7 @@ def calculate_orbital_dial(request: dict[str, Any], warnings: list[str]) -> dict
                     "method_key": f"circular_midpoint_mod_{modulus}",
                 }
             )
-            # A = B/C style: for each third body, check if A near B+C-mid? simple A≈mid(B,C)
+            # A = B/C style: C near circular midpoint(A,B)
             for c in positions:
                 if c["body_id"] in {a["body_id"], b["body_id"]}:
                     continue
@@ -122,8 +135,8 @@ def calculate_orbital_dial(request: dict[str, Any], warnings: list[str]) -> dict
         "section_errors": None,
         "calculation_assumptions": [
             f"Dial modulus={modulus} (45/90/360 allowed).",
-            "Planetary pictures: C near midpoint(A,B) within picture_orb.",
-            "Orbital nodes/apsides from swe.nod_aps_ut when available.",
+            "Planetary pictures: C near circular_midpoint(A,B) within picture_orb.",
+            "Orbital nodes/apsides from swe.nod_aps_ut(NODBIT_MEAN) without FLG_HELCTR → geocentric ecliptic.",
             "No Uranian hypothetical planets.",
         ],
     }

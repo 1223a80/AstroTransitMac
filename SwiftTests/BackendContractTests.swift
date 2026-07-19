@@ -392,56 +392,107 @@ struct BackendContractTests {
         let result = try JSONDecoder().decode(ClassicalDerivativesResult.self, from: fixtureData("classical-derivatives-result"))
         #expect(result.meta.method.contains("classical") || result.meta.mode == "classical_derivatives" || !result.meta.method.isEmpty)
         #expect(result.calculationAssumptions?.isEmpty == false)
-        #expect(MarkdownExportBuilder.classicalDerivatives(result).contains(result.meta.method))
+        #expect(!result.dodekatemoria.isEmpty)
+        #expect(!result.monomoiria.isEmpty)
+        #expect(!result.topicalAlmutens.isEmpty)
+        let md = MarkdownExportBuilder.classicalDerivatives(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(md.contains(result.meta.method))
+        #expect(md.contains("Dodekatemoria"))
+        #expect(csv.contains("dodeka"))
+        #expect(csv.contains("method_key"))
     }
 
     @Test func decodeTimeLordsExtendedFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(TimeLordsExtendedResult.self, from: fixtureData("time-lords-extended-result"))
         #expect(result.meta.method.contains("time") || result.meta.mode == "time_lords_extended" || !result.meta.method.isEmpty)
         #expect(result.calculationAssumptions?.isEmpty == false)
-        #expect(MarkdownExportBuilder.timeLordsExtended(result).contains(result.meta.method))
+        #expect(result.zodiacalReleasing != nil)
+        #expect(!result.revolutionsConcordance.isEmpty)
+        let md = MarkdownExportBuilder.timeLordsExtended(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(md.contains(result.meta.method))
+        #expect(md.contains("concordance") || md.contains("Concordance") || md.contains("Body"))
+        #expect(csv.contains("concordance") || csv.contains("body_id"))
     }
 
     @Test func decodeMethodFamiliesFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(MethodFamiliesResult.self, from: fixtureData("method-families-result"))
         #expect(result.meta.method.contains("method") || result.meta.mode == "method_families" || !result.meta.method.isEmpty)
         #expect(result.calculationAssumptions?.isEmpty == false)
-        #expect(MarkdownExportBuilder.methodFamilies(result).contains(result.meta.method))
+        #expect(!result.progressionProfiles.isEmpty)
+        #expect(!result.solarArcProfiles.isEmpty)
+        #expect(result.progressionProfiles.allSatisfy { !$0.rows.isEmpty })
+        let md = MarkdownExportBuilder.methodFamilies(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(md.contains(result.meta.method))
+        #expect(csv.contains("progression") || csv.contains("solar_arc"))
+        #expect(csv.contains("method_key"))
     }
 
     @Test func decodePrimaryDirectionsAuditFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(PrimaryDirectionsAuditResult.self, from: fixtureData("primary-directions-audit-result"))
         #expect(result.meta.method.contains("primary") || result.meta.mode == "primary_directions_audit" || !result.meta.method.isEmpty)
         #expect(result.calculationAssumptions?.isEmpty == false)
-        #expect(MarkdownExportBuilder.primaryDirectionsAudit(result).contains(result.meta.method))
+        #expect(!result.directions.isEmpty)
+        let md = MarkdownExportBuilder.primaryDirectionsAudit(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(md.contains(result.meta.method))
+        #expect(csv.contains("direction"))
+        #expect(csv.contains("age_from_abs_arc") || csv.contains("arc_signed"))
     }
 
     @Test func decodeDistributionsPdFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(DistributionsPdResult.self, from: fixtureData("distributions-pd-result"))
         #expect(result.meta.method.contains("distributions") || result.meta.mode == "distributions_pd" || !result.meta.method.isEmpty)
         #expect(result.calculationAssumptions?.isEmpty == false)
-        #expect(MarkdownExportBuilder.distributionsPd(result).contains(result.meta.method))
+        #expect(!result.distributions.isEmpty)
+        #expect(!result.primaryDirectionsByProfile.isEmpty)
+        let md = MarkdownExportBuilder.distributionsPd(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(md.contains(result.meta.method))
+        #expect(csv.contains("pd_profile") || csv.contains("distribution"))
     }
 
     @Test func decodePrenatalParansFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(PrenatalParansResult.self, from: fixtureData("prenatal-parans-result"))
         #expect(result.meta.method.contains("prenatal") || result.meta.mode == "prenatal_parans" || !result.meta.method.isEmpty)
         #expect(result.calculationAssumptions?.isEmpty == false)
-        #expect(MarkdownExportBuilder.prenatalParans(result).contains(result.meta.method))
+        #expect(result.prenatalPacket != nil)
+        #expect(!result.fixedStarParans.isEmpty)
+        let md = MarkdownExportBuilder.prenatalParans(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(md.contains(result.meta.method))
+        #expect(md.contains("proxy") || md.contains("Paran"))
+        #expect(csv.contains("paran"))
+        #expect(csv.contains("method_key"))
     }
 
     @Test func decodeOrbitalDialFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(OrbitalDialResult.self, from: fixtureData("orbital-dial-result"))
         #expect(result.meta.method.contains("orbital") || result.meta.mode == "orbital_dial" || !result.meta.method.isEmpty)
         #expect(result.calculationAssumptions?.isEmpty == false)
-        #expect(MarkdownExportBuilder.orbitalDial(result).contains(result.meta.method))
+        #expect(!result.orbitalPoints.isEmpty)
+        #expect(result.orbitalPoints.contains { $0.coordinateCenter != nil })
+        let md = MarkdownExportBuilder.orbitalDial(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(md.contains(result.meta.method))
+        #expect(csv.contains("orbital_point"))
+        #expect(csv.contains("coordinate_center") || md.contains("Center") || md.contains("geocentric") || md.contains("coordinate"))
     }
 
     @Test func decodeMundaneElectionalFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(MundaneElectionalResult.self, from: fixtureData("mundane-electional-result"))
         #expect(result.meta.method.contains("mundane") || result.meta.mode == "mundane_electional" || !result.meta.method.isEmpty)
         #expect(result.calculationAssumptions?.isEmpty == false)
-        #expect(MarkdownExportBuilder.mundaneElectional(result).contains(result.meta.method))
+        #expect(!result.mundaneIngresses.isEmpty || !result.electionalCandidates.isEmpty)
+        let md = MarkdownExportBuilder.mundaneElectional(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(md.contains(result.meta.method))
+        #expect(csv.contains("ingress") || csv.contains("candidate"))
+        // No ranking scores on candidates (facts-only scanner)
+        #expect(result.electionalCandidates.isEmpty || result.electionalCandidates.contains { $0.methodKey != nil })
+        #expect(md.contains("Facts only") || md.contains("facts") || md.contains("择时"))
     }
 
     @Test func decodeDraconicHeliocentricFixtureFromRealOutput() throws {

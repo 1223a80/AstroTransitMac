@@ -13,9 +13,13 @@ from astro_backend_solar_arc import true_solar_arc_value
 METHOD = "method_families_v1"
 
 PROGRESSION_PROFILES = {
-    "secondary_naibod": "Secondary planets; ASC/MC advanced by Naibod mean (0.98564733°/year).",
-    "secondary_solar_arc_mc": "Secondary planets; ASC/MC advanced by true solar arc.",
-    "secondary_armc_361": "Secondary planets; ASC/MC advanced by 361°/year proxy.",
+    "secondary_naibod": "Secondary planets; ASC/MC advanced by Naibod mean (0.98564733° ecliptic/year).",
+    "secondary_solar_arc_mc": "Secondary planets; ASC/MC advanced by true solar arc (progressed Sun − natal Sun).",
+    "secondary_armc_361": (
+        "Secondary planets; ASC/MC advanced by ecliptic proxy of ARMC family: "
+        "(361/365.2422)° per year ≈ mean sidereal-day excess folded to ~0.9886°/year on ecliptic MC — "
+        "NOT a full 361° RAMC→MC reconstruction."
+    ),
 }
 
 SOLAR_ARC_PROFILES = {
@@ -191,11 +195,11 @@ def calculate_method_families(request: dict[str, Any], warnings: list[str]) -> d
         "section_errors": None,
         "calculation_assumptions": [
             "Secondary progression uses day-for-year via _calc_progressed_dt for planets.",
-            "Progression profile divergence is on ASC/MC: Naibod mean vs true solar arc vs 361°/year.",
+            "Progression profile divergence is on ASC/MC only: Naibod 0.98564733°/y vs true solar arc vs armc_ecliptic_proxy (361/365.2422)°/y.",
+            "secondary_armc_361 is an ecliptic-longitude proxy for the ARMC family, not full RAMC→MC.",
             "Solar arc true_sun uses true_solar_arc_value(natal_sun, progressed_sun).",
             "Naibod mean uses 0.98564733°/year * age_years.",
             "custom_rate uses request.solar_arc_rate_deg_per_year (default 1).",
-            "Angle-specific progression profiles are labeled proxies where noted.",
         ],
     }
 

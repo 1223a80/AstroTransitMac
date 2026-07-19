@@ -3,13 +3,16 @@ import SwiftUI
 struct ClassicalDerivativesResultPane: View {
     let result: ClassicalDerivativesResult
     @Binding var selectedTab: String
+    private var tabs: [(String, String)] { [("dodeka", "十二分盘"), ("monomoiria", "一度主"), ("topical", "主题Almuten")] }
+    private var more: [(String, String)] { [("assumptions", "假设"), ("diagnostics", "诊断"), ("json", "JSON")] }
+
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             ResultPaneToolbar(
                 selection: $selectedTab,
-                tabs: [("summary", "摘要"), ("assumptions", "假设")],
-                moreTabs: [("diagnostics", "诊断"), ("json", "JSON")],
-                currentTabTitle: resultTabTitle(selectedTab, in: [("summary", "摘要"), ("assumptions", "假设")], [("diagnostics", "诊断"), ("json", "JSON")]),
+                tabs: tabs,
+                moreTabs: more,
+                currentTabTitle: resultTabTitle(selectedTab, in: tabs, more),
                 markdownProvider: { MarkdownExportBuilder.classicalDerivatives(result) },
                 jsonProvider: { TextExportBuilder.classicalDerivativesJSON(result) },
                 csvProvider: { TextExportBuilder.csv(result) },
@@ -17,6 +20,19 @@ struct ClassicalDerivativesResultPane: View {
             )
             Group {
                 switch selectedTab {
+                case "monomoiria":
+                    Table(result.monomoiria) {
+                        TableColumn("Source") { Text($0.sourceName ?? $0.sourceId ?? "—") }
+                        TableColumn("Degree") { Text($0.degreeIndex.map(String.init) ?? "—") }
+                        TableColumn("Ruler") { Text($0.monomoiriaRuler ?? "—") }
+                        TableColumn("Method") { Text($0.methodKey ?? "").font(.caption) }
+                    }
+                case "topical":
+                    Table(result.topicalAlmutens) {
+                        TableColumn("Topic") { Text($0.topicName ?? $0.topicId ?? "—") }
+                        TableColumn("Winner") { Text($0.winnerId ?? "—") }
+                        TableColumn("Score") { Text($0.winnerScore.map(String.init) ?? "—").monospacedDigit() }
+                    }
                 case "assumptions":
                     ScrollView {
                         VStack(alignment: .leading, spacing: TS.Spacing.md) {
@@ -30,10 +46,12 @@ struct ClassicalDerivativesResultPane: View {
                 case "json":
                     RawJSONView(value: result)
                 default:
-                    VStack(alignment: .leading, spacing: TS.Spacing.md) {
-                        Text("Method: \(result.meta.method)")
-                        Text("Assumptions: \(result.calculationAssumptions?.count ?? 0)")
-                        Text("Warnings: \(result.warnings.count)")
+                    Table(result.dodekatemoria) {
+                        TableColumn("Source") { Text($0.sourceName ?? $0.sourceId ?? "—") }
+                        TableColumn("Natal°") { Text($0.natalLongitude.map { String(format: "%.3f", $0) } ?? "—").monospacedDigit() }
+                        TableColumn("Dodeka°") { Text($0.dodekatemorionLongitude.map { String(format: "%.3f", $0) } ?? "—").monospacedDigit() }
+                        TableColumn("Sign") { Text($0.sign ?? "—") }
+                        TableColumn("Ruler") { Text($0.dodekatemorionRuler ?? "—") }
                     }
                 }
             }.frame(maxWidth: .infinity, maxHeight: .infinity)

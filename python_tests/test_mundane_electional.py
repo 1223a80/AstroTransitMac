@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from astro_backend_api import validate_required_fields
 from astro_backend_mundane_electional import calculate_mundane_electional
 
@@ -26,14 +28,31 @@ def test_calculate_defining_facts():
     candidates = r["electional_candidates"]
     assert isinstance(ingresses, list)
     assert isinstance(candidates, list)
-    # Window should cover at least one cardinal ingress or daily samples
     assert len(ingresses) + len(candidates) >= 1
     for ing in ingresses[:4]:
         assert ing.get("ingress") in {"aries", "cancer", "libra", "capricorn"}
         assert ing.get("exact_utc")
         assert ing.get("method_key") == "sun_sign_ingress_bisection"
     for c in candidates[:3]:
-        assert "evidence" in c or "planets" in c or "planetary_hour" in c
-        # No ranking / lucky pick fields
+        assert "evidence" in c or "planets" in c or "planetary_hour" in c or "moon_longitude" in c
         assert "rank" not in c
         assert "lucky_score" not in c
+
+
+def test_rejects_empty_location_and_invalid_timezone():
+    base = _req()
+    with pytest.raises(ValueError, match="latitude|longitude"):
+        calculate_mundane_electional({**base, "location": {}}, [])
+    with pytest.raises(ValueError, match="latitude|longitude"):
+        calculate_mundane_electional({**base, "location": {"name": "x"}}, [])
+    bad_tz = {
+        **base,
+        "display_timezone": "Not/ARealZone",
+        "location": {
+            "latitude": 31.2,
+            "longitude": 121.4,
+            "timezone": "Not/ARealZone",
+        },
+    }
+    with pytest.raises(ValueError, match="时区|timezone|未知"):
+        calculate_mundane_electional(bad_tz, [])

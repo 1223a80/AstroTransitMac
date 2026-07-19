@@ -33,7 +33,10 @@
       "sign": "摩羯",
       "degree_text": "27°55'02\" 摩羯",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "MERCURY",
@@ -42,7 +45,10 @@
       "sign": "射手",
       "degree_text": "24°38'13\" 射手",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "MERCURY",
@@ -51,7 +57,10 @@
       "sign": "摩羯",
       "degree_text": "20°18'59\" 摩羯",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "MERCURY",
@@ -60,7 +69,10 @@
       "sign": "摩羯",
       "degree_text": "03°01'00\" 摩羯",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "VENUS",
@@ -69,7 +81,10 @@
       "sign": "水瓶",
       "degree_text": "22°25'42\" 水瓶",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "VENUS",
@@ -78,7 +93,10 @@
       "sign": "摩羯",
       "degree_text": "00°21'14\" 摩羯",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "VENUS",
@@ -87,7 +105,10 @@
       "sign": "天蝎",
       "degree_text": "25°24'20\" 天蝎",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "VENUS",
@@ -96,7 +117,10 @@
       "sign": "摩羯",
       "degree_text": "23°33'23\" 摩羯",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "MARS",
@@ -105,7 +129,10 @@
       "sign": "白羊",
       "degree_text": "07°37'09\" 白羊",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "MARS",
@@ -114,7 +141,10 @@
       "sign": "射手",
       "degree_text": "08°52'38\" 射手",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "MARS",
@@ -123,7 +153,10 @@
       "sign": "水瓶",
       "degree_text": "13°13'23\" 水瓶",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "MARS",
@@ -132,7 +165,10 @@
       "sign": "天秤",
       "degree_text": "12°03'57\" 天秤",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "JUPITER",
@@ -141,7 +177,10 @@
       "sign": "巨蟹",
       "degree_text": "10°20'40\" 巨蟹",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "JUPITER",
@@ -150,7 +189,10 @@
       "sign": "摩羯",
       "degree_text": "10°22'38\" 摩羯",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "JUPITER",
@@ -159,7 +201,10 @@
       "sign": "白羊",
       "degree_text": "02°49'01\" 白羊",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "JUPITER",
@@ -168,7 +213,10 @@
       "sign": "天秤",
       "degree_text": "24°15'32\" 天秤",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "SATURN",
@@ -177,7 +225,10 @@
       "sign": "巨蟹",
       "degree_text": "25°09'48\" 巨蟹",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "SATURN",
@@ -186,7 +237,10 @@
       "sign": "摩羯",
       "degree_text": "22°24'55\" 摩羯",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "SATURN",
@@ -195,7 +249,10 @@
       "sign": "巨蟹",
       "degree_text": "01°57'42\" 巨蟹",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     },
     {
       "body_id": "SATURN",
@@ -204,7 +261,10 @@
       "sign": "摩羯",
       "degree_text": "03°32'58\" 摩羯",
       "method_key": "swe.nod_aps_ut_mean",
-      "coordinate_center": "heliocentric_orbital_elements_proxy"
+      "coordinate_center": "geocentric",
+      "coordinate_system": "tropical_ecliptic",
+      "node_method": "NODBIT_MEAN",
+      "se_flags": "FLG_SWIEPH"
     }
   ],
   "dial_pictures": [
@@ -229,7 +289,7 @@
     {
       "point_a": "MERCURY",
       "point_b": "JUPITER",
-      "midpoint_longitude": 195.476846826,
+      "midpoint_longitude": 15.476846826,
       "modulus": 90,
       "folded_position": 15.476846826,
       "picture": "MERCURY/JUPITER",
@@ -256,7 +316,7 @@
     {
       "point_a": "VENUS",
       "point_b": "JUPITER",
-      "midpoint_longitude": 200.728351371,
+      "midpoint_longitude": 20.728351371,
       "modulus": 90,
       "folded_position": 20.728351371,
       "picture": "VENUS/JUPITER",
@@ -301,7 +361,7 @@
     {
       "point_a": "JUPITER",
       "point_b": "SATURN",
-      "midpoint_longitude": 190.405864946,
+      "midpoint_longitude": 10.405864946,
       "modulus": 90,
       "folded_position": 10.405864946,
       "picture": "JUPITER/SATURN",
@@ -312,8 +372,8 @@
   "section_errors": null,
   "calculation_assumptions": [
     "Dial modulus=90 (45/90/360 allowed).",
-    "Planetary pictures: C near midpoint(A,B) within picture_orb.",
-    "Orbital nodes/apsides from swe.nod_aps_ut when available.",
+    "Planetary pictures: C near circular_midpoint(A,B) within picture_orb.",
+    "Orbital nodes/apsides from swe.nod_aps_ut(NODBIT_MEAN) without FLG_HELCTR → geocentric ecliptic.",
     "No Uranian hypothetical planets."
   ]
 }

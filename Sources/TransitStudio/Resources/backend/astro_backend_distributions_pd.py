@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
 from typing import Any
 
 from astro_backend_circumambulations import calculate_circumambulations
@@ -14,8 +15,45 @@ METHOD = "distributions_pd_v1"
 PD_PROFILES = {
     "naibod_longitude_proxy": NAMED_ALGORITHM,
     "ptolemy_key_proxy": "same_arc_engine_with_ptolemy_key_1deg_per_year",
-    "converse_naibod_proxy": "same_arc_engine_with_negated_arc_label",
+    "converse_naibod_proxy": "same_arc_engine_with_negated_arc_converse",
 }
+
+
+def _rekey_direction(
+    base: dict[str, Any],
+    *,
+    profile_id: str,
+    algorithm_name: str,
+    birth_dt,
+    key: str,
+    key_rate: float,
+    arc_signed: float,
+    direction_type: str,
+) -> dict[str, Any]:
+    """Rebuild age/date fields from a signed ecliptic-arc proxy using the given key rate."""
+    age_signed = arc_signed / key_rate if key_rate else 0.0
+    age_abs = abs(age_signed)
+    event_dt = birth_dt + timedelta(days=age_abs * 365.2425)
+    symbolic = birth_dt + timedelta(days=age_signed * 365.2425)
+    row = dict(base)
+    row.update(
+        {
+            "method_profile": profile_id,
+            "algorithm_name": algorithm_name,
+            "method_key": profile_id,
+            "key": key,
+            "key_rate_deg_per_year": float(key_rate),
+            "arc_signed": round(arc_signed, 6),
+            "arc_abs": round(abs(arc_signed), 6),
+            "age_from_abs_arc": round(age_abs, 4),
+            "age_from_signed_arc": round(age_signed, 4),
+            "direction_type": direction_type,
+            "direction": direction_type,
+            "event_date_after_birth": event_dt.strftime("%Y-%m-%d"),
+            "symbolic_date_from_signed_arc": symbolic.strftime("%Y-%m-%d") if age_signed < 0 else None,
+        }
+    )
+    return row
 
 
 def calculate_distributions_pd(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
@@ -25,7 +63,6 @@ def calculate_distributions_pd(request: dict[str, Any], warnings: list[str]) -> 
     zodiac = request.get("zodiac") or birth.get("zodiac", "tropical")
     sidereal = set_zodiac_mode(str(zodiac), warnings)
     hs = birth.get("houseSystem", birth.get("house_system", "whole_sign"))
-    bounds = birth.get("boundsSystem", birth.get("bounds_system", "egyptian"))
     birth_dt = moment_to_local_datetime(birth["moment"])
     ref_dt = moment_to_local_datetime(ref if isinstance(ref, dict) else birth["moment"])
     lat = float(birth["latitude"])
@@ -41,7 +78,6 @@ def calculate_distributions_pd(request: dict[str, Any], warnings: list[str]) -> 
         elif sig == "MC":
             sig_lon = float(angles.get("MC", 0.0))
         else:
-            # use natal planet from PD path via positions
             from astro_backend_ephemeris import calculate_positions, resolve_bodies
             from astro_backend_core import BODY_REGISTRY
 
@@ -75,25 +111,54 @@ def calculate_distributions_pd(request: dict[str, Any], warnings: list[str]) -> 
     )
     multi = []
     for profile_id, algo in PD_PROFILES.items():
-        for d in (base_dirs or [])[:50]:
-            row = dict(d)
-            if profile_id == "ptolemy_key_proxy":
-                # re-scale age by key ratio if arc present
-                arc = float(d.get("arc_value") or d.get("arc") or 0.0)
-                row = {
-                    **row,
-                    "key": "ptolemy",
-                    "key_rate_deg_per_year": 1.0,
-                    "age_from_abs_arc": abs(arc) / 1.0 if arc else d.get("age_from_abs_arc"),
-                }
+        for d in base_dirs or []:
+            if not isinstance(d, dict):
+                continue
+            # Real PD arc fields from calculate_primary_directions.
+            arc_signed = float(d.get("arc_signed") if d.get("arc_signed") is not None else d.get("arc_abs") or 0.0)
+            if profile_id == "naibod_longitude_proxy":
+                multi.append(
+                    _rekey_direction(
+                        d,
+                        profile_id=profile_id,
+                        algorithm_name=algo,
+                        birth_dt=birth_dt,
+                        key="naibod",
+                        key_rate=float(NAIBOD_RATE),
+                        arc_signed=arc_signed,
+                        direction_type=str(d.get("direction_type") or ("direct" if arc_signed >= 0 else "converse")),
+                    )
+                )
+            elif profile_id == "ptolemy_key_proxy":
+                multi.append(
+                    _rekey_direction(
+                        d,
+                        profile_id=profile_id,
+                        algorithm_name=algo,
+                        birth_dt=birth_dt,
+                        key="ptolemy",
+                        key_rate=1.0,
+                        arc_signed=arc_signed,
+                        direction_type=str(d.get("direction_type") or ("direct" if arc_signed >= 0 else "converse")),
+                    )
+                )
             elif profile_id == "converse_naibod_proxy":
-                row = {**row, "direction": "converse", "key": "naibod_converse"}
+                # True converse relative to baseline: negate the signed arc and re-key with Naibod.
+                flipped = -arc_signed
+                multi.append(
+                    _rekey_direction(
+                        d,
+                        profile_id=profile_id,
+                        algorithm_name=algo,
+                        birth_dt=birth_dt,
+                        key="naibod_converse",
+                        key_rate=float(NAIBOD_RATE),
+                        arc_signed=flipped,
+                        direction_type="converse" if flipped < 0 else "direct",
+                    )
+                )
             else:
-                row = {**row, "key": "naibod", "key_rate_deg_per_year": float(NAIBOD_RATE)}
-            row["method_profile"] = profile_id
-            row["algorithm_name"] = algo
-            row["method_key"] = profile_id
-            multi.append(row)
+                warnings.append(f"unknown PD profile {profile_id}; skipped")
 
     return {
         "meta": {
@@ -114,6 +179,7 @@ def calculate_distributions_pd(request: dict[str, Any], warnings: list[str]) -> 
             "pd_profiles": list(PD_PROFILES),
             "bounds_systems": ["egyptian", "ptolemaic"],
             "method": METHOD,
+            "arc_fields_used": ["arc_signed", "arc_abs", "age_from_abs_arc", "direction_type"],
         },
         "distributions": distributions,
         "primary_directions_by_profile": multi,
@@ -121,7 +187,8 @@ def calculate_distributions_pd(request: dict[str, Any], warnings: list[str]) -> 
         "section_errors": None,
         "calculation_assumptions": [
             "Distributions/circumambulations for ASC/MC/planets with Egyptian and Ptolemaic bounds.",
-            "PD multi-profile: Naibod baseline, Ptolemy key re-age, converse label — explicit proxies on shared arc engine.",
+            "PD multi-profile recomputes ages from arc_signed: Naibod rate, Ptolemy 1°/year, converse = negated arc + Naibod.",
+            "Still a simplified longitude/Naibod-family proxy engine (see B16 audit); not full Placidus/Regio PD.",
             "Depends on B16 audit naming of baseline simplified PD algorithm.",
         ],
     }

@@ -421,11 +421,14 @@ def _detect_loosing_of_bond(
     l3_periods: list[dict[str, Any]] | None = None,
     l2_origin_idx: int | None = None,
     l3_origin_idx: int | None = None,
+    l4_periods: list[dict[str, Any]] | None = None,
+    l4_origin_idx: int | None = None,
 ) -> tuple[bool, str, str]:
     checks = [
         (lot_sign_idx, l1_periods, "L1"),
         (l2_origin_idx, l2_periods or [], "L2"),
         (l3_origin_idx, l3_periods or [], "L3"),
+        (l4_origin_idx, l4_periods or [], "L4"),
     ]
     for origin_idx, periods, level in checks:
         if origin_idx is None or not periods:
@@ -475,9 +478,11 @@ def zodiacal_releasing_summary(lot: dict[str, Any], birth_dt: datetime, referenc
             "l1_periods": [],
             "l2_periods": [],
             "l3_periods": [],
+            "l4_periods": [],
             "loosing_of_bond": False,
             "loosing_of_bond_detail": "",
             "loosing_of_bond_level": "",
+            "current_active_level": None,
         }
 
     active_period = next((p for p in l1_periods if p["is_active"]), l1_periods[-1])
@@ -485,6 +490,7 @@ def zodiacal_releasing_summary(lot: dict[str, Any], birth_dt: datetime, referenc
 
     l2_periods: list[dict[str, Any]] = []
     l3_periods: list[dict[str, Any]] = []
+    l4_periods: list[dict[str, Any]] = []
     if max_level >= 2:
         l1_start_dt = datetime.strptime(active_period["start_local"], "%Y-%m-%d %H:%M")
         l2_periods = _zr_proportional_sub_periods(active_period["sign_index"], l1_start_dt, l1_duration_days, reference_dt, 2, max_level)
@@ -494,9 +500,18 @@ def zodiacal_releasing_summary(lot: dict[str, Any], birth_dt: datetime, referenc
             l2_start_dt = datetime.strptime(active_l2["start_local"], "%Y-%m-%d %H:%M")
             l2_duration_days = active_l2["years"] * 365.2425
             l3_periods = _zr_proportional_sub_periods(active_l2["sign_index"], l2_start_dt, l2_duration_days, reference_dt, 3, max_level)
+    if max_level >= 4 and l3_periods:
+        active_l3_for_l4 = next((p for p in l3_periods if p.get("is_active")), None)
+        if active_l3_for_l4:
+            l3_start_dt = datetime.strptime(active_l3_for_l4["start_local"], "%Y-%m-%d %H:%M")
+            l3_duration_days = active_l3_for_l4["years"] * 365.2425
+            l4_periods = _zr_proportional_sub_periods(
+                active_l3_for_l4["sign_index"], l3_start_dt, l3_duration_days, reference_dt, 4, max_level
+            )
 
     active_l2 = next((p for p in l2_periods if p.get("is_active")), None) if l2_periods else None
     active_l3 = next((p for p in l3_periods if p.get("is_active")), None) if l3_periods else None
+    active_l4 = next((p for p in l4_periods if p.get("is_active")), None) if l4_periods else None
     lob, lob_detail, lob_level = _detect_loosing_of_bond(
         start_sign,
         l1_periods,
@@ -505,10 +520,14 @@ def zodiacal_releasing_summary(lot: dict[str, Any], birth_dt: datetime, referenc
         l3_periods,
         l2_origin_idx=active_period["sign_index"],
         l3_origin_idx=active_l2["sign_index"] if active_l2 else None,
+        l4_periods=l4_periods,
+        l4_origin_idx=active_l3["sign_index"] if active_l3 else None,
     )
 
     current_active_level = "L1"
-    if active_l3:
+    if active_l4:
+        current_active_level = "L4"
+    elif active_l3:
         current_active_level = "L3"
     elif active_l2:
         current_active_level = "L2"
@@ -526,6 +545,7 @@ def zodiacal_releasing_summary(lot: dict[str, Any], birth_dt: datetime, referenc
     if active_l2 and active_l2.get("sign_index") == active_period.get("sign_index"):
         importance += 2
 
+    finest = active_l4 or active_l3 or active_l2 or active_period
     return {
         "id": f"zr-{lot['id']}",
         "technique": f"Zodiacal Releasing from {lot['name']}",
@@ -538,10 +558,13 @@ def zodiacal_releasing_summary(lot: dict[str, Any], birth_dt: datetime, referenc
         "importance_score": importance,
         "notes": [],
         "current_active_level": current_active_level,
+        "current_level_ruler": finest.get("ruler") if finest else active_period["ruler"],
+        "current_level_sign": finest.get("sign") if finest else active_period["sign"],
         "lot_angularity": angularity,
         "l1_periods": l1_periods,
         "l2_periods": l2_periods,
         "l3_periods": l3_periods,
+        "l4_periods": l4_periods,
         "loosing_of_bond": lob,
         "loosing_of_bond_detail": lob_detail,
         "loosing_of_bond_level": lob_level,

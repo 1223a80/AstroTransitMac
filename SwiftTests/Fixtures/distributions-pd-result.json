@@ -31,7 +31,13 @@
       "egyptian",
       "ptolemaic"
     ],
-    "method": "distributions_pd_v1"
+    "method": "distributions_pd_v1",
+    "arc_fields_used": [
+      "arc_signed",
+      "arc_abs",
+      "age_from_abs_arc",
+      "direction_type"
+    ]
   },
   "distributions": [
     {
@@ -1189,14 +1195,16 @@
       "direction_type": "direct",
       "arc_signed": 0.5966,
       "arc_abs": 0.5966,
-      "age_from_abs_arc": 0.61,
+      "age_from_abs_arc": 0.6053,
       "event_date_after_birth": "1990-08-10",
       "symbolic_date_from_signed_arc": null,
-      "key": "naibod",
-      "key_rate_deg_per_year": 0.9856,
       "method_profile": "naibod_longitude_proxy",
       "algorithm_name": "simplified_longitude_semi_arc_proxy_naibod",
-      "method_key": "naibod_longitude_proxy"
+      "method_key": "naibod_longitude_proxy",
+      "key": "naibod",
+      "key_rate_deg_per_year": 0.9856,
+      "age_from_signed_arc": 0.6053,
+      "direction": "direct"
     },
     {
       "id": "pd-MC-SUN-conjunction",
@@ -1211,14 +1219,16 @@
       "direction_type": "converse",
       "arc_signed": -0.5966,
       "arc_abs": 0.5966,
-      "age_from_abs_arc": 0.61,
+      "age_from_abs_arc": 0.6053,
       "event_date_after_birth": "1990-08-10",
       "symbolic_date_from_signed_arc": "1989-05-25",
-      "key": "naibod",
-      "key_rate_deg_per_year": 0.9856,
       "method_profile": "naibod_longitude_proxy",
       "algorithm_name": "simplified_longitude_semi_arc_proxy_naibod",
-      "method_key": "naibod_longitude_proxy"
+      "method_key": "naibod_longitude_proxy",
+      "key": "naibod",
+      "key_rate_deg_per_year": 0.9856,
+      "age_from_signed_arc": -0.6053,
+      "direction": "converse"
     },
     {
       "id": "pd-VENUS-MARS-sextile",
@@ -1233,14 +1243,16 @@
       "direction_type": "direct",
       "arc_signed": 2.9435,
       "arc_abs": 2.9435,
-      "age_from_abs_arc": 2.99,
+      "age_from_abs_arc": 2.9865,
       "event_date_after_birth": "1992-12-27",
       "symbolic_date_from_signed_arc": null,
-      "key": "naibod",
-      "key_rate_deg_per_year": 0.9856,
       "method_profile": "naibod_longitude_proxy",
       "algorithm_name": "simplified_longitude_semi_arc_proxy_naibod",
-      "method_key": "naibod_longitude_proxy"
+      "method_key": "naibod_longitude_proxy",
+      "key": "naibod",
+      "key_rate_deg_per_year": 0.9856,
+      "age_from_signed_arc": 2.9865,
+      "direction": "direct"
     },
     {
       "id": "pd-SUN-MC-conjunction",
@@ -1255,14 +1267,16 @@
       "direction_type": "direct",
       "arc_signed": 0.5966,
       "arc_abs": 0.5966,
-      "age_from_abs_arc": 0.61,
-      "event_date_after_birth": "1990-08-10",
+      "age_from_abs_arc": 0.5966,
+      "event_date_after_birth": "1990-08-07",
       "symbolic_date_from_signed_arc": null,
-      "key": "ptolemy",
-      "key_rate_deg_per_year": 1.0,
       "method_profile": "ptolemy_key_proxy",
       "algorithm_name": "same_arc_engine_with_ptolemy_key_1deg_per_year",
-      "method_key": "ptolemy_key_proxy"
+      "method_key": "ptolemy_key_proxy",
+      "key": "ptolemy",
+      "key_rate_deg_per_year": 1.0,
+      "age_from_signed_arc": 0.5966,
+      "direction": "direct"
     },
     {
       "id": "pd-MC-SUN-conjunction",
@@ -1277,14 +1291,16 @@
       "direction_type": "converse",
       "arc_signed": -0.5966,
       "arc_abs": 0.5966,
-      "age_from_abs_arc": 0.61,
-      "event_date_after_birth": "1990-08-10",
-      "symbolic_date_from_signed_arc": "1989-05-25",
-      "key": "ptolemy",
-      "key_rate_deg_per_year": 1.0,
+      "age_from_abs_arc": 0.5966,
+      "event_date_after_birth": "1990-08-07",
+      "symbolic_date_from_signed_arc": "1989-05-28",
       "method_profile": "ptolemy_key_proxy",
       "algorithm_name": "same_arc_engine_with_ptolemy_key_1deg_per_year",
-      "method_key": "ptolemy_key_proxy"
+      "method_key": "ptolemy_key_proxy",
+      "key": "ptolemy",
+      "key_rate_deg_per_year": 1.0,
+      "age_from_signed_arc": -0.5966,
+      "direction": "converse"
     },
     {
       "id": "pd-VENUS-MARS-sextile",
@@ -1299,14 +1315,16 @@
       "direction_type": "direct",
       "arc_signed": 2.9435,
       "arc_abs": 2.9435,
-      "age_from_abs_arc": 2.99,
-      "event_date_after_birth": "1992-12-27",
+      "age_from_abs_arc": 2.9435,
+      "event_date_after_birth": "1992-12-11",
       "symbolic_date_from_signed_arc": null,
-      "key": "ptolemy",
-      "key_rate_deg_per_year": 1.0,
       "method_profile": "ptolemy_key_proxy",
       "algorithm_name": "same_arc_engine_with_ptolemy_key_1deg_per_year",
-      "method_key": "ptolemy_key_proxy"
+      "method_key": "ptolemy_key_proxy",
+      "key": "ptolemy",
+      "key_rate_deg_per_year": 1.0,
+      "age_from_signed_arc": 2.9435,
+      "direction": "direct"
     },
     {
       "id": "pd-SUN-MC-conjunction",
@@ -1318,17 +1336,19 @@
       "aspect_name": "合相",
       "natal_promissor_lon": 280.4744,
       "natal_significator_lon": 281.0576,
-      "direction_type": "direct",
-      "arc_signed": 0.5966,
+      "direction_type": "converse",
+      "arc_signed": -0.5966,
       "arc_abs": 0.5966,
-      "age_from_abs_arc": 0.61,
+      "age_from_abs_arc": 0.6053,
       "event_date_after_birth": "1990-08-10",
-      "symbolic_date_from_signed_arc": null,
-      "direction": "converse",
-      "key": "naibod_converse",
+      "symbolic_date_from_signed_arc": "1989-05-25",
       "method_profile": "converse_naibod_proxy",
-      "algorithm_name": "same_arc_engine_with_negated_arc_label",
-      "method_key": "converse_naibod_proxy"
+      "algorithm_name": "same_arc_engine_with_negated_arc_converse",
+      "method_key": "converse_naibod_proxy",
+      "key": "naibod_converse",
+      "key_rate_deg_per_year": 0.9856,
+      "age_from_signed_arc": -0.6053,
+      "direction": "converse"
     },
     {
       "id": "pd-MC-SUN-conjunction",
@@ -1340,17 +1360,19 @@
       "aspect_name": "合相",
       "natal_promissor_lon": 281.0576,
       "natal_significator_lon": 280.4744,
-      "direction_type": "converse",
-      "arc_signed": -0.5966,
+      "direction_type": "direct",
+      "arc_signed": 0.5966,
       "arc_abs": 0.5966,
-      "age_from_abs_arc": 0.61,
+      "age_from_abs_arc": 0.6053,
       "event_date_after_birth": "1990-08-10",
-      "symbolic_date_from_signed_arc": "1989-05-25",
-      "direction": "converse",
-      "key": "naibod_converse",
+      "symbolic_date_from_signed_arc": null,
       "method_profile": "converse_naibod_proxy",
-      "algorithm_name": "same_arc_engine_with_negated_arc_label",
-      "method_key": "converse_naibod_proxy"
+      "algorithm_name": "same_arc_engine_with_negated_arc_converse",
+      "method_key": "converse_naibod_proxy",
+      "key": "naibod_converse",
+      "key_rate_deg_per_year": 0.9856,
+      "age_from_signed_arc": 0.6053,
+      "direction": "direct"
     },
     {
       "id": "pd-VENUS-MARS-sextile",
@@ -1362,24 +1384,27 @@
       "aspect_name": "六合",
       "natal_promissor_lon": 306.2631,
       "natal_significator_lon": 249.7655,
-      "direction_type": "direct",
-      "arc_signed": 2.9435,
+      "direction_type": "converse",
+      "arc_signed": -2.9435,
       "arc_abs": 2.9435,
-      "age_from_abs_arc": 2.99,
+      "age_from_abs_arc": 2.9865,
       "event_date_after_birth": "1992-12-27",
-      "symbolic_date_from_signed_arc": null,
-      "direction": "converse",
-      "key": "naibod_converse",
+      "symbolic_date_from_signed_arc": "1987-01-06",
       "method_profile": "converse_naibod_proxy",
-      "algorithm_name": "same_arc_engine_with_negated_arc_label",
-      "method_key": "converse_naibod_proxy"
+      "algorithm_name": "same_arc_engine_with_negated_arc_converse",
+      "method_key": "converse_naibod_proxy",
+      "key": "naibod_converse",
+      "key_rate_deg_per_year": 0.9856,
+      "age_from_signed_arc": -2.9865,
+      "direction": "converse"
     }
   ],
   "warnings": [],
   "section_errors": null,
   "calculation_assumptions": [
     "Distributions/circumambulations for ASC/MC/planets with Egyptian and Ptolemaic bounds.",
-    "PD multi-profile: Naibod baseline, Ptolemy key re-age, converse label — explicit proxies on shared arc engine.",
+    "PD multi-profile recomputes ages from arc_signed: Naibod rate, Ptolemy 1°/year, converse = negated arc + Naibod.",
+    "Still a simplified longitude/Naibod-family proxy engine (see B16 audit); not full Placidus/Regio PD.",
     "Depends on B16 audit naming of baseline simplified PD algorithm."
   ]
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-07-19 — B13–B20 skeptic remediation（审查 REQUEST CHANGES 闭环）
+
+- **B14**：Fortune/Spirit 按 classical lot id（`fortune`/`spirit`）取黄经，禁止 ASC 静默替代；ZR 顶层 `l4_periods` + `current_active_level` 可达 L4；concordance 稳定英文 body_id。
+- **B17**：PD multi-profile 用 `arc_signed` 重算 — Naibod / Ptolemy(1°/y) 年龄分化，converse 取反弧。
+- **B15**：armc_361 诚实为 ecliptic ARMC-family proxy；三 progression MC 两两分化 + 公式复算测试。
+- **B19**：`circular_midpoint`；nod_aps 标注 `geocentric`。
+- **B20**：强制 lat/lon；非法时区拒绝，无静默 0,0/UTC。
+- **Swift B13–B20**：八模式 Codable/Views/Markdown/CSV 保留核心结果；default tabs 对齐；fixtures 重生成；BackendContract 断言非空核心数组。
+- 交接：`docs/b13-b20-skeptic-remediation-handoff-2026-07.md`。
+
 ## 2026-07-19 — B11–B20 skeptic 修复：parans / syzygy_chart / method profiles / 定义性测试
 
 - B18：`compute_star_positions` 输出赤道 `ra` / `right_ascension`；`calculate_prenatal_syzygy` 返回 `exact_jd`/`jd`，使 `syzygy_chart` 与 `fixed_star_parans` 非空。

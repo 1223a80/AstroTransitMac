@@ -123,6 +123,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .prenatalParans: return "packet"
         case .orbitalDial: return "dial"
         case .mundaneElectional: return "ingresses"
+        // Tab ids must match each pane's (id, title) list (AGENTS result-tab contract).
         case .astrocartography: return "lines"
         case .localSpace: return "directions"
         }

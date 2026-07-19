@@ -3,13 +3,16 @@ import SwiftUI
 struct OrbitalDialResultPane: View {
     let result: OrbitalDialResult
     @Binding var selectedTab: String
+    private var tabs: [(String, String)] { [("dial", "轨道点"), ("pictures", "Dial Pictures")] }
+    private var more: [(String, String)] { [("assumptions", "假设"), ("diagnostics", "诊断"), ("json", "JSON")] }
+
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             ResultPaneToolbar(
                 selection: $selectedTab,
-                tabs: [("summary", "摘要"), ("assumptions", "假设")],
-                moreTabs: [("diagnostics", "诊断"), ("json", "JSON")],
-                currentTabTitle: resultTabTitle(selectedTab, in: [("summary", "摘要"), ("assumptions", "假设")], [("diagnostics", "诊断"), ("json", "JSON")]),
+                tabs: tabs,
+                moreTabs: more,
+                currentTabTitle: resultTabTitle(selectedTab, in: tabs, more),
                 markdownProvider: { MarkdownExportBuilder.orbitalDial(result) },
                 jsonProvider: { TextExportBuilder.orbitalDialJSON(result) },
                 csvProvider: { TextExportBuilder.csv(result) },
@@ -17,6 +20,13 @@ struct OrbitalDialResultPane: View {
             )
             Group {
                 switch selectedTab {
+                case "pictures":
+                    Table(result.dialPictures) {
+                        TableColumn("Picture") { Text($0.picture ?? "—") }
+                        TableColumn("Mid°") { Text($0.midpointLongitude.map { String(format: "%.3f", $0) } ?? "—").monospacedDigit() }
+                        TableColumn("Mod") { Text($0.modulus.map(String.init) ?? "—") }
+                        TableColumn("Method") { Text($0.methodKey ?? "").font(.caption) }
+                    }
                 case "assumptions":
                     ScrollView {
                         VStack(alignment: .leading, spacing: TS.Spacing.md) {
@@ -30,10 +40,12 @@ struct OrbitalDialResultPane: View {
                 case "json":
                     RawJSONView(value: result)
                 default:
-                    VStack(alignment: .leading, spacing: TS.Spacing.md) {
-                        Text("Method: \(result.meta.method)")
-                        Text("Assumptions: \(result.calculationAssumptions?.count ?? 0)")
-                        Text("Warnings: \(result.warnings.count)")
+                    Table(result.orbitalPoints) {
+                        TableColumn("Body") { Text($0.bodyId ?? "—") }
+                        TableColumn("Kind") { Text($0.pointKind ?? "—") }
+                        TableColumn("Lon") { Text($0.longitude.map { String(format: "%.3f", $0) } ?? "—").monospacedDigit() }
+                        TableColumn("Center") { Text($0.coordinateCenter ?? "—") }
+                        TableColumn("System") { Text($0.coordinateSystem ?? "—") }
                     }
                 }
             }.frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -47,4 +47,3 @@ def test_calculate_defining_facts():
         assert p.get("planet_ra") is not None
         assert p.get("star_ra") is not None
         assert p.get("method_key") == "fixed_star_paran_ra_proxy_v1"
-

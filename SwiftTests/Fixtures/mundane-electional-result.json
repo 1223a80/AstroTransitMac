@@ -7,7 +7,12 @@
     "end_utc": "2026-06-29T16:00:00Z",
     "ingress_count": 2,
     "candidate_count": 181,
-    "ephemeris": "Swiss Ephemeris"
+    "ephemeris": "Swiss Ephemeris",
+    "display_timezone": "Asia/Shanghai",
+    "location": {
+      "latitude": 31.2304,
+      "longitude": 121.4737
+    }
   },
   "requested_config": {
     "location": {
@@ -17,7 +22,8 @@
       "timezone": "Asia/Shanghai"
     },
     "topic_house": 7,
-    "scan_step_hours": 24
+    "scan_step_hours": 24,
+    "display_timezone": "Asia/Shanghai"
   },
   "effective_config": {
     "ingress_targets": [
@@ -27,7 +33,10 @@
       "capricorn"
     ],
     "house_system": "whole_sign",
-    "method": "mundane_electional_v1"
+    "method": "mundane_electional_v1",
+    "display_timezone": "Asia/Shanghai",
+    "latitude": 31.2304,
+    "longitude": 121.4737
   },
   "mundane_ingresses": [
     {
@@ -5334,6 +5343,7 @@
   "calculation_assumptions": [
     "Mundane: Sun cardinal ingresses via relative longitude roots.",
     "Electional scanner emits evidence matrix only; does not rank or pick lucky times.",
+    "location.latitude/longitude required; invalid/missing timezone raises (no silent UTC/0,0).",
     "Planetary hour attached when rise/set available; polar cases status=unavailable."
   ]
 }

@@ -8,9 +8,20 @@ All of B13–B20 implemented with independent backends, samples, fixtures, Swift
 |---|---|---|
 | B18 star RA | ✅ | `compute_star_positions` 写入 `ra`/`right_ascension` |
 | B18 syzygy exact_jd | ✅ | prenatal syzygy 返回 `exact_jd`/`jd` → `syzygy_chart` |
-| B15 profile 分化 | ✅ | ASC/MC：Naibod / true solar arc / 361°/year |
-| B13–B20 定义性测试 | ✅ | 非空关键结果 + method key 差异 |
-| smoke 证据 | ✅ | B11–B20 transit_calc 成功 JSON（parans≥1, chart 有, MC 三 profile 不同） |
+| B15 profile 分化 | ✅ | ASC/MC 两两分化；armc 诚实为 ecliptic proxy（非完整 361° RAMC） |
+| B13–B20 定义性测试 | ✅ | lot 黄经、PD arc 分化、circular mid、B20 reject、Swift 核心数组 |
+| smoke 证据 | ✅ | B11–B20 transit_calc + check_vibe 全绿 |
+
+## Review REQUEST CHANGES 闭环（2026-07-19）
+
+| 项 | 状态 | 说明 |
+|---|---|---|
+| B14 lot + L4 | ✅ | fortune/spirit 真 lot；无 ASC 替代；l4_periods + current_active_level |
+| B17 PD profiles | ✅ | arc_signed → Naibod/Ptolemy/converse 真实重算 |
+| B19/B20 | ✅ | circular midpoint + geocentric nodes；location/tz 校验 |
+| Swift 八模式载荷 | ✅ | Models/Views/Exports + fixtures + BackendContract |
+| 门禁 | ✅ | pytest 839 / swift 103 / check_vibe |
+| 交接文档 | ✅ | `docs/b13-b20-skeptic-remediation-handoff-2026-07.md` |
 
 ---
 

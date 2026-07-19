@@ -24,6 +24,13 @@ struct ModernTabStateTests {
         #expect(ModernSubMode.hellenisticConditionAudit.defaultResultTab == "conditions")
         #expect(ModernSubMode.draconicHeliocentric.defaultResultTab == "draconic")
         #expect(ModernSubMode.classicalDerivatives.defaultResultTab == "dodeka")
+        #expect(ModernSubMode.timeLordsExtended.defaultResultTab == "concordance")
+        #expect(ModernSubMode.methodFamilies.defaultResultTab == "profiles")
+        #expect(ModernSubMode.primaryDirectionsAudit.defaultResultTab == "audit")
+        #expect(ModernSubMode.distributionsPd.defaultResultTab == "distributions")
+        #expect(ModernSubMode.prenatalParans.defaultResultTab == "packet")
+        #expect(ModernSubMode.orbitalDial.defaultResultTab == "dial")
+        #expect(ModernSubMode.mundaneElectional.defaultResultTab == "ingresses")
         #expect(ModernSubMode.astrocartography.defaultResultTab == "lines")
         #expect(ModernSubMode.localSpace.defaultResultTab == "directions")
     }

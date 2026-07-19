@@ -3,13 +3,16 @@ import SwiftUI
 struct PrenatalParansResultPane: View {
     let result: PrenatalParansResult
     @Binding var selectedTab: String
+    private var tabs: [(String, String)] { [("packet", "朔望包"), ("parans", "Parans proxy")] }
+    private var more: [(String, String)] { [("assumptions", "假设"), ("diagnostics", "诊断"), ("json", "JSON")] }
+
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             ResultPaneToolbar(
                 selection: $selectedTab,
-                tabs: [("summary", "摘要"), ("assumptions", "假设")],
-                moreTabs: [("diagnostics", "诊断"), ("json", "JSON")],
-                currentTabTitle: resultTabTitle(selectedTab, in: [("summary", "摘要"), ("assumptions", "假设")], [("diagnostics", "诊断"), ("json", "JSON")]),
+                tabs: tabs,
+                moreTabs: more,
+                currentTabTitle: resultTabTitle(selectedTab, in: tabs, more),
                 markdownProvider: { MarkdownExportBuilder.prenatalParans(result) },
                 jsonProvider: { TextExportBuilder.prenatalParansJSON(result) },
                 csvProvider: { TextExportBuilder.csv(result) },
@@ -17,6 +20,14 @@ struct PrenatalParansResultPane: View {
             )
             Group {
                 switch selectedTab {
+                case "parans":
+                    Table(result.fixedStarParans) {
+                        TableColumn("Planet") { Text($0.planetName ?? $0.planetId ?? "—") }
+                        TableColumn("Star") { Text($0.starName ?? "—") }
+                        TableColumn("ΔRA") { Text($0.raDeltaDeg.map { String(format: "%.3f", $0) } ?? "—").monospacedDigit() }
+                        TableColumn("Class") { Text($0.paranClass ?? "—") }
+                        TableColumn("Method") { Text($0.methodKey ?? "").font(.caption) }
+                    }
                 case "assumptions":
                     ScrollView {
                         VStack(alignment: .leading, spacing: TS.Spacing.md) {
@@ -30,13 +41,25 @@ struct PrenatalParansResultPane: View {
                 case "json":
                     RawJSONView(value: result)
                 default:
-                    VStack(alignment: .leading, spacing: TS.Spacing.md) {
-                        Text("Method: \(result.meta.method)")
-                        Text("Assumptions: \(result.calculationAssumptions?.count ?? 0)")
-                        Text("Warnings: \(result.warnings.count)")
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                            Text("Paran count: \(result.meta.paranCount ?? result.fixedStarParans.count)")
+                            if let packet = result.prenatalPacket {
+                                Text(nestedPreview(packet)).font(.system(.caption, design: .monospaced))
+                            } else {
+                                Text("prenatal_packet missing").foregroundStyle(.secondary)
+                            }
+                        }.frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
         }.padding(TS.Padding.resultContent)
+    }
+
+    private func nestedPreview(_ value: NestedJSON) -> String {
+        let enc = JSONEncoder()
+        enc.outputFormatting = [.prettyPrinted, .sortedKeys]
+        guard let data = try? enc.encode(value), let s = String(data: data, encoding: .utf8) else { return "—" }
+        return String(s.prefix(4000))
     }
 }

@@ -6,15 +6,14 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from astro_backend_core import (
-    BODY_REGISTRY,
     moment_to_local_datetime,
+    resolve_timezone,
     set_zodiac_mode,
     signed_orb,
 )
 from astro_backend_ephemeris import body_longitude_at, build_houses, calculate_positions, resolve_bodies
 from astro_backend_modern_timing import _find_roots, _step_for
-from astro_backend_visibility import _planetary_hours, _sun_rise_set
-from zoneinfo import ZoneInfo
+from astro_backend_visibility import _planetary_hours
 
 METHOD = "mundane_electional_v1"
 INGRESS_TARGETS = {
@@ -30,14 +29,22 @@ def calculate_mundane_electional(request: dict[str, Any], warnings: list[str]) -
     end = moment_to_local_datetime(request["end"]).astimezone(timezone.utc)
     if end <= start:
         raise ValueError("end must be after start")
-    location = request.get("location") or {}
-    lat = float(location.get("latitude", 0.0))
-    lon = float(location.get("longitude", 0.0))
-    display_timezone = str(request.get("display_timezone") or location.get("timezone") or "UTC")
+    location = request.get("location")
+    if not isinstance(location, dict):
+        raise ValueError("location must be an object with latitude/longitude")
+    if "latitude" not in location or "longitude" not in location:
+        raise ValueError("location.latitude and location.longitude are required")
+    lat = float(location["latitude"])
+    lon = float(location["longitude"])
+    if not (-90.0 <= lat <= 90.0 and -180.0 <= lon <= 180.0):
+        raise ValueError("location coordinates out of range")
+    display_timezone = str(request.get("display_timezone") or location.get("timezone") or "").strip()
+    if not display_timezone:
+        raise ValueError("display_timezone or location.timezone is required")
     try:
-        zone = ZoneInfo(display_timezone)
-    except Exception:
-        zone = timezone.utc  # type: ignore
+        zone = resolve_timezone(display_timezone)
+    except ValueError as exc:
+        raise ValueError(str(exc)) from exc
     zodiac = request.get("zodiac", "tropical")
     sidereal = set_zodiac_mode(str(zodiac), warnings)
     hs = request.get("house_system", "whole_sign")
@@ -58,7 +65,14 @@ def calculate_mundane_electional(request: dict[str, Any], warnings: list[str]) -
             from astro_backend_core import jd_from_datetime
 
             jd = jd_from_datetime(exact)
-            positions = calculate_positions(jd, resolve_bodies(["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"], [], warnings), warnings, sidereal=sidereal)
+            positions = calculate_positions(
+                jd,
+                resolve_bodies(
+                    ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"], [], warnings
+                ),
+                warnings,
+                sidereal=sidereal,
+            )
             cusps, angles, label = build_houses(jd, lat, lon, hs, sidereal, warnings)
             ingresses.append(
                 {
@@ -92,7 +106,6 @@ def calculate_mundane_electional(request: dict[str, Any], warnings: list[str]) -
         moon = by.get("MOON")
         sunp = by.get("SUN")
         cusps, angles, _ = build_houses(jd, lat, lon, hs, sidereal, warnings)
-        # moon next aspect rough: distance to each planet
         next_aspects = []
         if moon:
             for pid, p in by.items():
@@ -101,13 +114,12 @@ def calculate_mundane_electional(request: dict[str, Any], warnings: list[str]) -
                 sep = abs(signed_orb(float(moon["longitude"]), float(p["longitude"])))
                 next_aspects.append({"body_id": pid, "separation_deg": round(sep, 4)})
             next_aspects.sort(key=lambda x: x["separation_deg"])
-        # planetary hour at candidate
         ph = _planetary_hours(
             reference_utc=cursor,
             latitude=lat,
             longitude=lon,
-            altitude_m=0.0,
-            display_zone=zone,  # type: ignore
+            altitude_m=float(location.get("altitude_m") or 0.0),
+            display_zone=zone,  # type: ignore[arg-type]
             warnings=warnings,
         )
         candidates.append(
@@ -143,16 +155,22 @@ def calculate_mundane_electional(request: dict[str, Any], warnings: list[str]) -
             "ingress_count": len(ingresses),
             "candidate_count": len(candidates),
             "ephemeris": "Swiss Ephemeris",
+            "display_timezone": display_timezone,
+            "location": {"latitude": lat, "longitude": lon},
         },
         "requested_config": {
             "location": location,
             "topic_house": topic_house,
             "scan_step_hours": request.get("scan_step_hours", 24),
+            "display_timezone": request.get("display_timezone"),
         },
         "effective_config": {
             "ingress_targets": list(INGRESS_TARGETS),
             "house_system": hs,
             "method": METHOD,
+            "display_timezone": display_timezone,
+            "latitude": lat,
+            "longitude": lon,
         },
         "mundane_ingresses": ingresses,
         "electional_candidates": candidates,
@@ -161,6 +179,7 @@ def calculate_mundane_electional(request: dict[str, Any], warnings: list[str]) -
         "calculation_assumptions": [
             "Mundane: Sun cardinal ingresses via relative longitude roots.",
             "Electional scanner emits evidence matrix only; does not rank or pick lucky times.",
+            "location.latitude/longitude required; invalid/missing timezone raises (no silent UTC/0,0).",
             "Planetary hour attached when rise/set available; polar cases status=unavailable.",
         ],
     }
