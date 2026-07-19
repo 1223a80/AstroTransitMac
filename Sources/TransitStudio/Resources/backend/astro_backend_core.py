@@ -138,16 +138,38 @@ def fail(message: str, code: int = 1) -> None:
     raise SystemExit(code)
 
 
-def moment_to_local_datetime(moment: dict[str, Any]) -> datetime:
-    zone_text = str(moment.get("timezone", "")).strip()
-    offset_match = re.fullmatch(r"(?:GMT|UTC)?\s*([+-])\s*(\d{1,2})(?::?(\d{2}))?", zone_text, re.IGNORECASE)
+def resolve_timezone(zone_text: Any):
+    """Resolve IANA names and project GMT/UTC±offset labels to a tzinfo.
+
+    Matches the offset grammar used by ``moment_to_local_datetime`` so Swift
+    ``GMTOffset`` labels (e.g. ``GMT+8``) work at call sites that previously
+    used ZoneInfo alone (which rejects those labels).
+    """
+    text = str(zone_text if zone_text is not None else "").strip()
+    if text.upper() == "UTC":
+        return timezone.utc
+    offset_match = re.fullmatch(r"(?:GMT|UTC)?\s*([+-])\s*(\d{1,2})(?::?(\d{2}))?", text, re.IGNORECASE)
     if offset_match:
         sign = 1 if offset_match.group(1) == "+" else -1
         hours = int(offset_match.group(2))
         minutes = int(offset_match.group(3) or "0")
         if hours > 14 or minutes >= 60 or (hours == 14 and minutes != 0):
-            raise ValueError(f"未知时区：{moment.get('timezone')}")
-        zone = timezone(sign * timedelta(hours=hours, minutes=minutes), name=f"GMT{offset_match.group(1)}{hours:g}")
+            raise ValueError(f"未知时区：{zone_text}")
+        return timezone(
+            sign * timedelta(hours=hours, minutes=minutes),
+            name=f"GMT{offset_match.group(1)}{hours:g}",
+        )
+    try:
+        return ZoneInfo(text)
+    except ZoneInfoNotFoundError as exc:
+        raise ValueError(f"未知时区：{zone_text}") from exc
+
+
+def moment_to_local_datetime(moment: dict[str, Any]) -> datetime:
+    zone_text = str(moment.get("timezone", "")).strip()
+    offset_match = re.fullmatch(r"(?:GMT|UTC)?\s*([+-])\s*(\d{1,2})(?::?(\d{2}))?", zone_text, re.IGNORECASE)
+    if offset_match:
+        zone = resolve_timezone(zone_text)
         return datetime(
             int(moment["year"]),
             int(moment["month"]),
@@ -156,11 +178,11 @@ def moment_to_local_datetime(moment: dict[str, Any]) -> datetime:
             int(moment["minute"]),
             tzinfo=zone,
         )
-    else:
-        try:
-            zone = ZoneInfo(zone_text)
-        except ZoneInfoNotFoundError as exc:
-            raise ValueError(f"未知时区：{moment.get('timezone')}") from exc
+
+    try:
+        zone = resolve_timezone(zone_text)
+    except ValueError as exc:
+        raise ValueError(f"未知时区：{moment.get('timezone')}") from exc
 
     naive = datetime(
         int(moment["year"]),

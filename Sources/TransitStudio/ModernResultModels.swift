@@ -11,6 +11,10 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
     case returnChart = "return"
     case midpoint = "midpoint"
     case progressedComposite = "progressed_composite"
+    case relocation = "relocation"
+    case modernCycles = "modern_cycles"
+    case astrocartography = "astrocartography"
+    case localSpace = "local_space"
 
     var id: String { rawValue }
 
@@ -26,6 +30,10 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .returnChart: return "返照盘"
         case .midpoint: return "中点"
         case .progressedComposite: return "推进组合盘"
+        case .relocation: return "迁移盘"
+        case .modernCycles: return "朔望食相"
+        case .astrocartography: return "天体地图"
+        case .localSpace: return "Local Space"
         }
     }
 
@@ -41,6 +49,10 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .returnChart: return "arrow.clockwise.circle"
         case .midpoint: return "circle.grid.cross"
         case .progressedComposite: return "arrow.triangle.2.circlepath.circle"
+        case .relocation: return "airplane.departure"
+        case .modernCycles: return "moon.stars"
+        case .astrocartography: return "globe.americas"
+        case .localSpace: return "location.north.line"
         }
     }
 
@@ -57,6 +69,10 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .returnChart: return "current_return"
         case .midpoint: return "axes"
         case .progressedComposite: return "radix_composite_planets"
+        case .relocation: return "biwheel"
+        case .modernCycles: return "events"
+        case .astrocartography: return "lines"
+        case .localSpace: return "directions"
         }
     }
 }
@@ -71,6 +87,10 @@ enum ModernResultData {
     case returnChart(ModernReturnResult)
     case midpoint(MidpointResult)
     case progressedComposite(ProgressedCompositeResult)
+    case relocation(RelocationResult)
+    case modernCycles(ModernCyclesResult)
+    case astrocartography(AstrocartographyResult)
+    case localSpace(LocalSpaceResult)
 }
 
 struct PatternResult: Codable, Identifiable {

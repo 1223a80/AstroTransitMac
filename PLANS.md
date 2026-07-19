@@ -1,3 +1,50 @@
+# 现代占星扩展 — B6ABC 地理与周期全量施工（2026-07-19）
+
+## 分支
+
+`codex/feature-modern-completeness`（自 B5A `d110b45` / 暂停文档 `2187a4e` 继续）
+
+## 范围
+
+按蓝图 12A–12C 一次完成：
+
+| 子批 | 状态 | 交付 |
+|---|---|---|
+| B6A Relocation | ✅ | `mode=relocation` backend + Swift UI/export + tests/fixtures/smoke |
+| B6B modern_cycles | ✅ | 朔望/食相 + visibility + contacts + timing_events |
+| B6C spike + product | ✅ | 方法答案写入 handoff/map 模块 docstring；ACG/LS 可计算几何与导出；MapKit 完整交互 UI 后续 |
+| 5B | 排除 | 决策门不变 |
+
+## 工作包
+
+| 包 | 状态 |
+|---|---|
+| 6A-B Backend | ✅ `astro_backend_relocation.py` |
+| 6A-C/U Swift | ✅ models/export/views + ContentView 接线 |
+| 6B Backend/Swift | ✅ `astro_backend_cycles.py` + UI |
+| 6C map | ✅ `astro_backend_map.py` + UI + unverified 清单 |
+| 6-I 集成 | ✅ API/samples/fixtures/CI/check_vibe |
+| 6-V 验收 | ✅ 聚焦 pytest + BackendContract + `bash check_vibe_changes.sh`（778 Python / 89 Swift） |
+
+## 交接
+
+`docs/b6abc-geo-cycles-handoff-2026-07.md`
+
+## 明确非目标（仍成立）
+
+- 5B Composite/Progression 方法争议
+- interpretive eclipse windows、parans、固定星线、自动选址
+- 模糊生时降级
+- 新模式 AI 分析
+
+---
+
+# 现代占星扩展实际施工 — 第 6A 批 Relocation Chart（2026-07-13）— 已由 2026-07-19 B6ABC 全量交付 supersede
+
+原暂停交接内容保留供历史；状态以本节上方 B6ABC 条目为准。
+
+---
+
 # Horary 审计问题全量修复（2026-07-11）
 
 ## 分支
@@ -30,6 +77,45 @@
 # PLANS
 
 按 `AGENTS.md` 约定：开始任务前在此写计划，执行中更新状态；已完结的历史任务批次归档到 `docs/archive/`（如 `plans-frontend-refactor-2026-06.md`）。
+
+---
+
+# B6ABC 分支复审、合并与推送（2026-07-19）
+
+## 目标
+
+- 复审当前 `codex/feature-modern-completeness` 相对 `main` 的提交与未提交改动，重点复核上一轮审查记录的 4 项问题。
+- 若存在阻断问题，在当前任务边界内完成修复、测试与提交；若无阻断问题或修复通过，则合并到 `main` 并推送远端。
+- 合并后核对本地/远端同步状态，并按项目要求清理构建与测试缓存。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 分支、远端与任务边界确认 | ✅ | 已确认 B6ABC 工作树边界；外部宠物计划条目属于无关改动，不纳入提交 |
+| 02 完整 diff 与既有 findings 复审 | ✅ | 四项既有 finding 均已复核；另发现并修复地图物理坐标误受 ayanamsha 影响 |
+| 03 必要修复与变更记录 | ✅ | 方位、黄纬、reference、exact_orb、GMT offset、地图 physical frame 均有回归与 changelog |
+| 04 本地验收与缓存清理 | ✅ | `check_vibe_changes.sh` 全绿：778 Python / 89 Swift / 全 smoke；已清理 386MB `.build` 与 Python 测试缓存 |
+| 05 提交、合并与推送 | 进行中 | 提交任务分支，合并 `main`，推送并验证远端同步 |
+
+---
+
+# B6A/B6B/B6C 交付代码审查（2026-07-19）
+
+## 范围
+
+- 只审查当前 `codex/feature-modern-completeness` 工作树中的 Relocation、modern cycles、ACG / Local Space 及其交接文档，不实现修复、不打包、不推送。
+- 以 `d110b45` 后的 B6ABC 未提交 diff 为主要边界，同时核对 API/Swift Codable/UI/导出/fixtures/tests/CI 的端到端契约。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 规则、边界与交接核对 | ✅ | 已读取 `AGENTS.md`、仓库状态、现有计划与 B6ABC handoff |
+| 02 后端算法与 API 审查 | ✅ | 确认 Local Space 方位基准、ACG 黄纬遗漏、旧模式 reference 校验缩进回归、cycles 时间线 orb 语义问题 |
+| 03 Swift/UI/导出契约审查 | ✅ | 已核对 Codable、请求映射、tab switch、状态隔离与导出接线；未发现额外阻断项 |
+| 04 测试与门禁复核 | ✅ | 聚焦 pytest 17 项、Swift 89 项通过；四个最小探针复现现有测试未覆盖的问题；已清理 `.build`/pycache |
+| 05 Findings 交付 | ✅ | 按严重度报告 4 项可操作问题并附精确文件/行号；本轮不实施修复 |
 
 ---
 
@@ -968,11 +1054,11 @@
 
 | 工作包 | 内容 | 写集 | 状态 |
 |---|---|---|---|
-| 6A-B Backend | same-JD 双地点 houses/angles、point set、overlay/change、fallback/meta | 新 relocation module + Python tests/sample | 已暂停；草稿未保留，明日重启（GPT-5.6 Sol / medium） |
-| 6A-C Swift contract/export | request/result Codable、backend client、Markdown/CSV/JSON、fixture contract | models/client/new exports/Swift tests | 已暂停；草稿未保留，明日重启（GPT-5.6 Luna / xhigh） |
-| 6A-U Swift UI | submode/state/sidebar/run/result tabs、biwheel/compare、stale result/AI 边界 | ContentView/ModernResultViews/new view/UI tests | 已暂停；草稿未保留，明日重启（GPT-5.6 Luna / xhigh） |
-| 6A-I 主线集成 | API/constants/validation、CI/smoke、真实 fixture、跨写集审查 | API/constants/scripts/docs/fixtures | 已暂停；不得在 calculation module 完成前登记可用入口 |
-| 6A-V 验收 | UTC/JD/longitude invariance、DST/±180°/高纬 fallback、导出与完整 gate | tests/PLANS/CHANGELOG | 待执行 |
+| 6A-B Backend | same-JD 双地点 houses/angles、point set、overlay/change、fallback/meta | 新 relocation module + Python tests/sample | ✅ 2026-07-19 |
+| 6A-C Swift contract/export | request/result Codable、backend client、Markdown/CSV/JSON、fixture contract | models/client/new exports/Swift tests | ✅ 2026-07-19 |
+| 6A-U Swift UI | submode/state/sidebar/run/result tabs、biwheel/compare、stale result/AI 边界 | ContentView/ModernResultViews/new view/UI tests | ✅ 2026-07-19 |
+| 6A-I 主线集成 | API/constants/validation、CI/smoke、真实 fixture、跨写集审查 | API/constants/scripts/docs/fixtures | ✅ 2026-07-19 |
+| 6A-V 验收 | UTC/JD/longitude invariance、DST/±180°/高纬 fallback、导出与完整 gate | tests/PLANS/CHANGELOG | ✅ 与 B6B/B6C 一并验收 |
 
 ## 测试矩阵与 DoD
 

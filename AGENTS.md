@@ -122,6 +122,10 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-timing-composite-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-timing-davison-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-progressed-composite-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-relocation-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-cycles-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-astrocartography-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-local-space-request.json
 ```
 
 For rectify mode smoke test:

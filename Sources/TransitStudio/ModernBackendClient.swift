@@ -39,4 +39,23 @@ extension BackendClient {
     ) async throws -> ProgressedCompositeResult {
         try await run(request: request, pythonPath: pythonPath)
     }
+
+    static func relocation(request: RelocationRequest, pythonPath: String) async throws -> RelocationResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
+    static func modernCycles(request: ModernCyclesRequest, pythonPath: String) async throws -> ModernCyclesResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
+    static func astrocartography(
+        request: AstrocartographyRequest,
+        pythonPath: String
+    ) async throws -> AstrocartographyResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
+    static func localSpace(request: LocalSpaceRequest, pythonPath: String) async throws -> LocalSpaceResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
 }

@@ -44,6 +44,10 @@ extension ContentView {
             case .returnChart: return "计算返照盘"
             case .midpoint: return "计算中点"
             case .progressedComposite: return "计算推进组合盘"
+            case .relocation: return "计算迁移盘"
+            case .modernCycles: return "扫描朔望食相"
+            case .astrocartography: return "计算天体地图线"
+            case .localSpace: return "计算 Local Space"
             }
         case .horary:
             return "Horary 起盘"
@@ -114,6 +118,21 @@ extension ContentView {
                     || parseDouble(birthLongitude) == nil
                     || midpointSelectedPointIDs.count < 2
                     || midpointEffectiveFocusPointIDs.isEmpty
+            case .relocation:
+                return parseDouble(birthLatitude) == nil
+                    || parseDouble(birthLongitude) == nil
+                    || parseDouble(relocationLatitude) == nil
+                    || parseDouble(relocationLongitude) == nil
+                    || relocationPlaceName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    || relocationTimezone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            case .modernCycles:
+                return cyclesSelectedTypes.isEmpty
+            case .astrocartography:
+                return mapBodies.isEmpty
+            case .localSpace:
+                let lat = localSpaceLatitude.isEmpty ? birthLatitude : localSpaceLatitude
+                let lon = localSpaceLongitude.isEmpty ? birthLongitude : localSpaceLongitude
+                return parseDouble(lat) == nil || parseDouble(lon) == nil || mapBodies.isEmpty
             }
         case .horary:
             return parseDouble(horaryLatitude) == nil
@@ -198,6 +217,10 @@ extension ContentView {
             case .composite: return AnyView(compositeResultsPane)
             case .davison: return AnyView(davisonResultsPane)
             case .progressedComposite: return AnyView(progressedCompositeResultsPane)
+            case .relocation: return AnyView(relocationResultsPane)
+            case .modernCycles: return AnyView(modernCyclesResultsPane)
+            case .astrocartography: return AnyView(astrocartographyResultsPane)
+            case .localSpace: return AnyView(localSpaceResultsPane)
             case .progression: return AnyView(progressionResultsPane)
             case .solarArc: return AnyView(solarArcResultsPane)
             case .harmonic: return AnyView(harmonicResultsPane)

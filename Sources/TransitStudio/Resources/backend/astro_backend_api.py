@@ -736,6 +736,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "moment", "classical", "vedic", "horary", "scan", "rectify",
         "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
         "modern_return", "modern_timing", "midpoint", "progressed_composite",
+        "relocation", "modern_cycles", "astrocartography", "local_space",
     }
     if mode not in supported_modes:
         return {"error": f"不支持的 mode：{mode or '<empty>'}", "mode": mode}
@@ -755,6 +756,10 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "modern_timing": ["birth", "start", "end", "display_timezone", "techniques"],
         "midpoint": ["birth", "point_set", "focus_point_ids", "activation_sources"],
         "progressed_composite": ["person_a", "person_b", "reference", "point_set"],
+        "relocation": ["birth", "relocation"],
+        "modern_cycles": ["start", "end", "display_timezone"],
+        "astrocartography": ["moment"],
+        "local_space": ["moment", "location"],
     }
     default_required = ["natal", "transit"]
     required = required_by_mode.get(mode, default_required)
@@ -921,7 +926,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                 if value not in (None, []):
                     invalid.append(f"point_set.{field} is not supported by progressed_composite v1")
         validate_aspect_specs(request.get("aspects", []), "aspects")
-    if mode in ("progression", "solar_arc", "harmonic", "vedic", "modern_return", "modern_timing", "midpoint"):
+    if mode in ("progression", "solar_arc", "harmonic", "vedic", "modern_return", "modern_timing", "midpoint", "relocation"):
         if "birth" in request:
             b = request["birth"]
             if isinstance(b, dict):
@@ -935,6 +940,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                     for f in required_fields:
                         if f not in moment:
                             missing.append(f"birth.moment.{f}")
+        # Shared exact-reference checks for time-based modern modes (not map modes).
         reference_field = "reference" if "reference" in request else None
         if reference_field is not None:
             ref = request[reference_field]
@@ -947,6 +953,72 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                 for f in ref_fields:
                     if f not in ref:
                         missing.append(f"reference.{f}")
+    if mode == "relocation":
+        relocation = request.get("relocation")
+        if not isinstance(relocation, dict):
+            invalid.append("relocation must be an object")
+        else:
+            for field in ("name", "latitude", "longitude", "timezone"):
+                if field not in relocation:
+                    missing.append(f"relocation.{field}")
+            latitude = relocation.get("latitude")
+            longitude = relocation.get("longitude")
+            if latitude is not None and (
+                isinstance(latitude, bool)
+                or not isinstance(latitude, (int, float))
+                or not math.isfinite(float(latitude))
+                or not -90 <= float(latitude) <= 90
+            ):
+                invalid.append("relocation.latitude must be a finite number in [-90, 90]")
+            if longitude is not None and (
+                isinstance(longitude, bool)
+                or not isinstance(longitude, (int, float))
+                or not math.isfinite(float(longitude))
+                or not -180 <= float(longitude) <= 180
+            ):
+                invalid.append("relocation.longitude must be a finite number in [-180, 180]")
+            timezone_text = relocation.get("timezone")
+            if timezone_text is not None and (not isinstance(timezone_text, str) or not timezone_text.strip()):
+                invalid.append("relocation.timezone must be a non-empty string")
+    if mode == "modern_cycles":
+        for field in ("start", "end"):
+            moment = request.get(field)
+            if not isinstance(moment, dict):
+                invalid.append(f"{field} must be an object with an exact moment")
+                continue
+            for key in _PERSON_MOMENT_FIELDS:
+                if key not in moment:
+                    missing.append(f"{field}.{key}")
+        display_timezone = request.get("display_timezone")
+        if display_timezone is not None and (not isinstance(display_timezone, str) or not display_timezone.strip()):
+            invalid.append("display_timezone must be a non-empty string")
+        visibility = request.get("visibility", "global")
+        if visibility not in (None, "global", "location"):
+            invalid.append("visibility must be global or location")
+        if visibility == "location":
+            location = request.get("location")
+            if not isinstance(location, dict):
+                missing.append("location")
+            else:
+                for field in ("latitude", "longitude"):
+                    if field not in location:
+                        missing.append(f"location.{field}")
+    if mode in ("astrocartography", "local_space"):
+        moment = request.get("moment")
+        if not isinstance(moment, dict):
+            invalid.append("moment must be an object with an exact moment")
+        else:
+            for key in _PERSON_MOMENT_FIELDS:
+                if key not in moment:
+                    missing.append(f"moment.{key}")
+        if mode == "local_space":
+            location = request.get("location")
+            if not isinstance(location, dict):
+                invalid.append("location must be an object")
+            else:
+                for field in ("latitude", "longitude"):
+                    if field not in location:
+                        missing.append(f"location.{field}")
     if mode == "midpoint":
         birth = request.get("birth")
         if isinstance(birth, dict):
@@ -1280,7 +1352,8 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                     invalid.append("location.longitude must be a number in [-180, 180]")
                 validate_timezone_text(location.get("timezone"), "location.timezone")
     modern_point_modes = {
-        "moment", "synastry", "composite", "davison", "progression", "solar_arc", "harmonic", "modern_return", "midpoint", "progressed_composite",
+        "moment", "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
+        "modern_return", "midpoint", "progressed_composite", "relocation",
     }
     if mode in modern_point_modes and "point_set" in request:
         point_set_value = request.get("point_set")
@@ -1377,6 +1450,15 @@ def main() -> None:
         elif mode == "progressed_composite":
             from astro_backend_progressed_composite import calculate_progressed_composite
             response = calculate_progressed_composite(request, warnings)
+        elif mode == "relocation":
+            from astro_backend_relocation import calculate_relocation
+            response = calculate_relocation(request, warnings)
+        elif mode == "modern_cycles":
+            from astro_backend_cycles import calculate_modern_cycles
+            response = calculate_modern_cycles(request, warnings)
+        elif mode in {"astrocartography", "local_space"}:
+            from astro_backend_map import calculate_map_mode
+            response = calculate_map_mode(request, warnings)
         else:
             response = calculate_moment(request, warnings)
 

@@ -117,6 +117,62 @@ extension ContentView {
         }
     }
 
+    var relocationResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .relocation(let r) = result {
+                RelocationResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(
+                    title: "等待迁移盘计算",
+                    systemImage: "airplane.departure",
+                    description: "填写本命与迁移地点后开始计算。"
+                )
+            }
+        }
+    }
+
+    var modernCyclesResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .modernCycles(let r) = result {
+                ModernCyclesResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(
+                    title: "等待朔望/食相扫描",
+                    systemImage: "moon.stars",
+                    description: "设定时间窗与周期类型后开始扫描。"
+                )
+            }
+        }
+    }
+
+    var astrocartographyResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .astrocartography(let r) = result {
+                AstrocartographyResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(
+                    title: "等待天体地图计算",
+                    systemImage: "globe.americas",
+                    description: "选择时刻与天体后计算 A*C*G 线。"
+                )
+            }
+        }
+    }
+
+    var localSpaceResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .localSpace(let r) = result {
+                LocalSpaceResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(
+                    title: "等待 Local Space 计算",
+                    systemImage: "location.north.line",
+                    description: "选择观察点与天体后计算方位。"
+                )
+            }
+        }
+    }
+
     func openMidpointAxesInTiming(result: MidpointResult, axisIDs: [String]) {
         let selectedIDs = Set(axisIDs)
         let pairs = result.axes

@@ -237,6 +237,64 @@ struct BackendContractTests {
         #expect(!result.houses.isEmpty)
     }
 
+    @Test func decodeRelocationFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(RelocationResult.self, from: fixtureData("relocation-result"))
+        #expect(result.meta.method == "same_birth_utc_new_location_houses")
+        #expect(!result.natalChart.planets.isEmpty)
+        #expect(result.natalChart.planets.count == result.relocatedChart.planets.count)
+        for (natal, relocated) in zip(result.natalChart.planets, result.relocatedChart.planets) {
+            #expect(natal.bodyID == relocated.bodyID)
+            #expect(abs(natal.longitude - relocated.longitude) < 1e-9)
+        }
+        #expect(!result.planetHouseChanges.isEmpty)
+        #expect(!result.relocatedAnglesInNatalHouses.isEmpty)
+        let markdown = MarkdownExportBuilder.relocation(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(markdown.contains(result.meta.birthUTC))
+        #expect(markdown.contains("London") || markdown.contains(result.meta.relocation.name ?? "London"))
+        #expect(csv.contains("planet_house_change"))
+        #expect(csv.contains(result.meta.birthUTC))
+    }
+
+    @Test func decodeModernCyclesFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(ModernCyclesResult.self, from: fixtureData("modern-cycles-result"))
+        #expect(result.meta.method == "swiss_ephemeris_cycles_v1")
+        #expect(!result.events.isEmpty)
+        let types = Set(result.events.map(\.cycleType))
+        #expect(types.contains("new_moon"))
+        #expect(types.contains("full_moon"))
+        let lunationIDs = Set(result.events.filter { $0.cycleType == "new_moon" || $0.cycleType == "full_moon" }.map(\.id))
+        let eclipseIDs = Set(result.events.filter { $0.cycleType.contains("eclipse") }.map(\.id))
+        #expect(lunationIDs.isDisjoint(with: eclipseIDs))
+        #expect(result.timingEvents?.isEmpty == false)
+        let markdown = MarkdownExportBuilder.modernCycles(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(markdown.contains("Modern Cycles"))
+        #expect(csv.contains("cycle_event"))
+    }
+
+    @Test func decodeAstrocartographyFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(AstrocartographyResult.self, from: fixtureData("astrocartography-result"))
+        #expect(result.meta.method.contains("acg"))
+        #expect(result.meta.coordinateFrame == "tropical_true_of_date_physical_sky")
+        #expect(!result.lines.isEmpty)
+        #expect(result.lines.contains { $0.angleKind == "MC" && $0.longitude != nil })
+        let markdown = MarkdownExportBuilder.astrocartography(result)
+        #expect(markdown.contains("Astrocartography"))
+        #expect(TextExportBuilder.csv(result).contains("acg_line"))
+    }
+
+    @Test func decodeLocalSpaceFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(LocalSpaceResult.self, from: fixtureData("local-space-result"))
+        #expect(result.meta.method.contains("local_space"))
+        #expect(result.meta.coordinateFrame == "tropical_true_of_date_physical_sky")
+        #expect(!result.directions.isEmpty)
+        #expect(result.directions.allSatisfy { $0.azimuthDeg >= 0 })
+        let markdown = MarkdownExportBuilder.localSpace(result)
+        #expect(markdown.contains("Local Space"))
+        #expect(TextExportBuilder.csv(result).contains("local_space_direction"))
+    }
+
     @Test func decodeModernReturnFixtures() throws {
         let solar = try JSONDecoder().decode(ModernReturnResult.self, from: fixtureData("modern-solar-return-result"))
         #expect(solar.meta.returnBodyID == "SUN")

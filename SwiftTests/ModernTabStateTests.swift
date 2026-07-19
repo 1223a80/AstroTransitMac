@@ -15,6 +15,10 @@ struct ModernTabStateTests {
         #expect(ModernSubMode.returnChart.defaultResultTab == "current_return")
         #expect(ModernSubMode.midpoint.defaultResultTab == "axes")
         #expect(ModernSubMode.progressedComposite.defaultResultTab == "radix_composite_planets")
+        #expect(ModernSubMode.relocation.defaultResultTab == "biwheel")
+        #expect(ModernSubMode.modernCycles.defaultResultTab == "events")
+        #expect(ModernSubMode.astrocartography.defaultResultTab == "lines")
+        #expect(ModernSubMode.localSpace.defaultResultTab == "directions")
     }
 
     @Test func resetModernSelectedTabUsesSubModeDefault() {

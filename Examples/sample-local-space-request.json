@@ -1,0 +1,21 @@
+{
+  "mode": "local_space",
+  "moment": {
+    "year": 1990,
+    "month": 1,
+    "day": 1,
+    "hour": 12,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "location": {
+    "name": "Shanghai",
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "altitude_m": 0
+  },
+  "body_ids": ["SUN", "MOON", "MERCURY", "VENUS", "MARS"],
+  "zodiac": "tropical",
+  "no_asteroids": true,
+  "require_ephemeris": "warn"
+}

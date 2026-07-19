@@ -69,6 +69,10 @@ extension ContentView {
                 case .returnChart: await runModernReturn()
                 case .midpoint: await runMidpoint()
                 case .progressedComposite: await runProgressedComposite()
+                case .relocation: await runRelocation()
+                case .modernCycles: await runModernCycles()
+                case .astrocartography: await runAstrocartography()
+                case .localSpace: await runLocalSpace()
                 }
             }
         case .horary:
@@ -369,6 +373,167 @@ extension ContentView {
                 pythonPath: appState.pythonPath
             )
             calcVM.modernResultData = .progressedComposite(result)
+        }
+    }
+
+    @MainActor
+    func runRelocation() async {
+        guard let birthCoords = requireCoordinates(birthLatitude, birthLongitude),
+              let relocLat = parseDouble(relocationLatitude),
+              let relocLon = parseDouble(relocationLongitude) else { return }
+        let placeName = relocationPlaceName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let placeTZ = relocationTimezone.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !placeName.isEmpty, !placeTZ.isEmpty else {
+            calcVM.errorMessage = "迁移地点需要名称与时区。"
+            return
+        }
+        await performRun(progressLabel: "迁移盘") {
+            let pointSet = ModernPointSet(
+                bodyIDs: sortedBodyIDs(relocationBodies),
+                includeNodes: false,
+                nodeMode: modernNodeMode,
+                customAsteroids: [],
+                angleIDs: ["ASC", "MC", "DSC", "IC"],
+                houseCusps: [],
+                lotIDs: []
+            )
+            let request = RelocationRequest(
+                birth: RelocationBirth(
+                    name: "Birth place",
+                    moment: makeMoment(from: natalDate),
+                    latitude: birthCoords.latitude,
+                    longitude: birthCoords.longitude
+                ),
+                relocation: GeoPlace(
+                    name: placeName,
+                    latitude: relocLat,
+                    longitude: relocLon,
+                    timezone: placeTZ
+                ),
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                nodeMode: modernNodeMode,
+                pointSet: pointSet,
+                aspects: selectedAspectRequests(orb: globalOrb),
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.relocation(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .relocation(result)
+        }
+    }
+
+    @MainActor
+    func runModernCycles() async {
+        guard !cyclesSelectedTypes.isEmpty else {
+            calcVM.errorMessage = "请至少选择一种周期类型。"
+            return
+        }
+        await performRun(progressLabel: "朔望食相") {
+            var location: GeoPlace?
+            if cyclesVisibility == "location" {
+                guard let coords = requireCoordinates(birthLatitude, birthLongitude) else {
+                    throw NSError(
+                        domain: "TransitStudio",
+                        code: 1,
+                        userInfo: [NSLocalizedDescriptionKey: "地点可见性需要本命经纬度作为观察点。"]
+                    )
+                }
+                location = GeoPlace(
+                    name: "Observer",
+                    latitude: coords.latitude,
+                    longitude: coords.longitude,
+                    timezone: timezoneLabel
+                )
+            }
+            var birth: RelocationBirth?
+            var targetPointSet: ModernPointSet?
+            if cyclesIncludeNatalContacts, let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                birth = RelocationBirth(
+                    name: "Natal",
+                    moment: makeMoment(from: natalDate),
+                    latitude: coords.latitude,
+                    longitude: coords.longitude
+                )
+                targetPointSet = ModernPointSet(
+                    bodyIDs: ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"],
+                    includeNodes: false,
+                    nodeMode: modernNodeMode,
+                    customAsteroids: [],
+                    angleIDs: [],
+                    houseCusps: [],
+                    lotIDs: []
+                )
+            }
+            let request = ModernCyclesRequest(
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                cycleTypes: Array(cyclesSelectedTypes).sorted(),
+                visibility: cyclesVisibility,
+                location: location,
+                birth: birth,
+                targetPointSet: targetPointSet,
+                contactAspects: selectedAspectRequests(orb: globalOrb),
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.modernCycles(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .modernCycles(result)
+        }
+    }
+
+    @MainActor
+    func runAstrocartography() async {
+        guard !mapBodies.isEmpty else {
+            calcVM.errorMessage = "请至少选择一个天体。"
+            return
+        }
+        await performRun(progressLabel: "天体地图") {
+            let request = AstrocartographyRequest(
+                moment: makeMoment(from: natalDate),
+                bodyIDs: sortedBodyIDs(mapBodies),
+                angleKinds: ["ASC", "DSC", "MC", "IC"],
+                zodiac: "tropical",
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.astrocartography(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .astrocartography(result)
+        }
+    }
+
+    @MainActor
+    func runLocalSpace() async {
+        let latText = localSpaceLatitude.isEmpty ? birthLatitude : localSpaceLatitude
+        let lonText = localSpaceLongitude.isEmpty ? birthLongitude : localSpaceLongitude
+        guard let coords = requireCoordinates(latText, lonText) else { return }
+        guard !mapBodies.isEmpty else {
+            calcVM.errorMessage = "请至少选择一个天体。"
+            return
+        }
+        await performRun(progressLabel: "Local Space") {
+            let name = localSpaceName.trimmingCharacters(in: .whitespacesAndNewlines)
+            let request = LocalSpaceRequest(
+                moment: makeMoment(from: natalDate),
+                location: GeoPlace(
+                    name: name.isEmpty ? "Observer" : name,
+                    latitude: coords.latitude,
+                    longitude: coords.longitude,
+                    timezone: timezoneLabel
+                ),
+                bodyIDs: sortedBodyIDs(mapBodies),
+                zodiac: "tropical",
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.localSpace(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .localSpace(result)
         }
     }
 

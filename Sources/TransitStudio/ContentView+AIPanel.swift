@@ -135,6 +135,8 @@ extension ContentView {
                 return nil
             case .progressedComposite:
                 return nil
+            case .relocation, .modernCycles, .astrocartography, .localSpace:
+                return nil
             }
         case .horary:
             return AIPanelContext(

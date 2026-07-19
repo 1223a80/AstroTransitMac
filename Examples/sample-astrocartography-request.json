@@ -1,0 +1,16 @@
+{
+  "mode": "astrocartography",
+  "moment": {
+    "year": 1990,
+    "month": 1,
+    "day": 1,
+    "hour": 12,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "body_ids": ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"],
+  "angle_kinds": ["ASC", "DSC", "MC", "IC"],
+  "zodiac": "tropical",
+  "no_asteroids": true,
+  "require_ephemeris": "warn"
+}

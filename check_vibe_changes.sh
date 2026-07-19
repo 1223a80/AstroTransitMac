@@ -50,6 +50,10 @@ echo "3. 关键 smoke 测试（legacy + modern return/timing/midpoint + rectify�
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-timing-composite-request.json > /dev/null 2>&1 && echo "✅ timing composite smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-timing-davison-request.json > /dev/null 2>&1 && echo "✅ timing davison smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-progressed-composite-request.json > /dev/null && echo "✅ progressed composite smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-relocation-request.json > /dev/null && echo "✅ relocation smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-cycles-request.json > /dev/null && echo "✅ modern cycles smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-astrocartography-request.json > /dev/null && echo "✅ astrocartography smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-local-space-request.json > /dev/null && echo "✅ local space smoke OK"
 
 # rectify 简单 smoke（不要求完整 UI）
 echo '{"mode":"rectify","birth_date":"2000-01-01","center_time":"12:00","timezone":"Asia/Shanghai","latitude":31.23,"longitude":121.47,"house_system":"whole_sign","zodiac":"tropical","bounds_system":"egyptian","triplicity_system":"dorothean","max_age":30,"window_minutes":5,"step_minutes":5}' | "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py 2>/dev/null | "$PY" -c 'import json,sys; data=json.load(sys.stdin); assert data.get("total_candidates") == 3' && echo "✅ rectify smoke OK"

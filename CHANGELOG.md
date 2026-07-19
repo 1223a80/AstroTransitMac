@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-07-19 — B6 合并复审：地图物理坐标系修复
+
+- **ACG / Local Space**：物理天空几何统一使用 tropical true-of-date 坐标；sidereal/ayanamsha 仅属黄道标签选择，不再错误移动 MC/IC、ASC/DSC 或 Local Space 方位。
+- 响应新增 `zodiac_requested` 与 `coordinate_frame=tropical_true_of_date_physical_sky` 以便审计；Swift 模型、Markdown 导出与真实 fixture 契约同步更新。
+- 新增 tropical / sidereal 地图输出完全一致的 Python 回归，并移除 ACG 侧栏中会误导用户的黄道选择器。
+
+## 2026-07-19 — B6 复审：GMT±N 本地时显示（P2）
+
+- **modern_cycles**：`maximum_local` / timing `exact_local` 改用 `resolve_timezone`，支持 Swift `GMTOffset` 标签（如 `GMT+8`）；禁止 ZoneInfo 失败后静默回落 UTC。
+- **relocation**：迁移地显示时区同样接受 GMT/UTC±offset；与 `moment_to_local_datetime` 语法一致。
+- **core**：新增 `resolve_timezone()`，供 moment / cycles / relocation 共用。
+
+## 2026-07-19 — B6 审查四项修复（方位 / 黄纬 / reference / exact_orb）
+
+- **Local Space**：`swe.azalt` 方位按 SE 约定（南点起向西）转换为北起顺时针 `(az+180)%360`；trace 保留原始 SE 值。
+- **ACG ASC/DSC**：改回真高度≈0 求根，完整使用 `(ecl_lon, ecl_lat, dist)`，覆盖 Moon/Pluto 等非零黄纬；升降用北起顺时针方位东/西分类。
+- **API**：`reference` 精确字段校验移回 progression/solar_arc/harmonic/vedic/modern_return/modern_timing/midpoint/relocation 公共块，不再误缩进进地图模式。
+- **modern_cycles timing_events**：`exact_orb` 改为相对 0°/180° 目标角的残差（满月/月食≈0，不再写 separation≈180）。
+- 新增/加强回归：`test_map_modes`、`test_modern_cycles`；相关 fixtures 已重生成。
+
+## 2026-07-19 — B6C ACG ASC/DSC 分类修正
+
+- ASC/DSC 线一度改为「行星黄经 = chart ASC/DSC」以纠正标签对调；后续审查指出该法忽略黄纬，已由上一节真高度求根取代。
+
+## 2026-07-19 — B6A/B6B/B6C 地理与周期全量交付
+
+- 在 `codex/feature-modern-completeness` 上完成蓝图第 6 批：Relocation、`modern_cycles`、A\*C\*G / Local Space（含 spike 记录与可计算产品路径）。
+- **B6A** `mode=relocation`：`same_birth_utc_new_location_houses`；共享 birth JD/行星黄经；双地点 houses/angles；`planet_house_changes` 与双向 angle overlays；Swift 子模式 + Markdown/CSV/JSON 导出。
+- **B6B** `mode=modern_cycles`：New/Full Moon + Solar/Lunar Eclipse；global/location 可见性分离；可选本命接触不改 cycle UTC；`timing_events` 供时间线注册；pyswisseph eclipse binding 签名写入 meta。
+- **B6C** `mode=astrocartography` / `local_space`：MC/IC 子午线与 ASC/DSC 采样曲线、Local Space azalt 方位；未验证的第三方交叉与测地远点显式列入 `meta.unverified`；MapKit 完整交互地图列为后续 UI。
+- 新增 samples/fixtures、Python 聚焦测试、Swift BackendContract 解码、CI/`check_vibe_changes.sh` smoke；交接见 `docs/b6abc-geo-cycles-handoff-2026-07.md`。
+- 一键门禁：Python 778、Swift 89/20 suites、含 relocation/cycles/acg/local_space 的 smoke 全绿。
+- 5B 决策项与食相 interpretive windows 仍排除；新模式 AI tab 延后。
+
 ## 2026-07-13 — 现代占星后续施工暂停交接（仅文档）
 
 - 按用户要求暂停 B6A；已停止全部 sub agent，并撤回尚未形成完整闭环的 Relocation 代码草稿，待打包源码保持在已验收的 B0–B5A 能力边界。

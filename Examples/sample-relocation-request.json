@@ -1,0 +1,44 @@
+{
+  "mode": "relocation",
+  "birth": {
+    "name": "Shanghai birth",
+    "moment": {
+      "year": 1990,
+      "month": 1,
+      "day": 1,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737
+  },
+  "relocation": {
+    "name": "London",
+    "latitude": 51.5074,
+    "longitude": -0.1278,
+    "timezone": "Europe/London"
+  },
+  "house_system": "placidus",
+  "zodiac": "tropical",
+  "node_mode": "true_node",
+  "point_set": {
+    "body_ids": [
+      "SUN",
+      "MOON",
+      "MERCURY",
+      "VENUS",
+      "MARS",
+      "JUPITER",
+      "SATURN"
+    ],
+    "include_nodes": false,
+    "custom_asteroids": [],
+    "angle_ids": ["ASC", "MC", "DSC", "IC"],
+    "house_cusps": [],
+    "lot_ids": []
+  },
+  "aspects": [],
+  "no_asteroids": true,
+  "require_ephemeris": "warn"
+}

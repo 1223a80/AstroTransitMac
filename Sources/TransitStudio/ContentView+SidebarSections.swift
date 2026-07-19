@@ -653,6 +653,116 @@ extension ContentView {
                 returnSidebar
             case .midpoint:
                 midpointSidebar
+            case .relocation:
+                relocationSidebar
+            case .modernCycles:
+                modernCyclesSidebar
+            case .astrocartography:
+                astrocartographySidebar
+            case .localSpace:
+                localSpaceSidebar
+            }
+        }
+    }
+
+    private var relocationSidebar: some View {
+        Group {
+            collapsible("本命盘") { natalSettingsSection }
+            collapsible("迁移地点") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    TextField("地点名", text: $relocationPlaceName)
+                    TextField("纬度", text: $relocationLatitude)
+                    TextField("经度", text: $relocationLongitude)
+                    TextField("时区 (IANA)", text: $relocationTimezone)
+                    Text("出生时刻只在出生地时区解释一次；新地点时区仅用于当地显示。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            collapsible("宫制/黄道") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    pickerRow("宫制", selection: $selectedHouseSystem, options: Self.houseSystemOptions)
+                    pickerRow("黄道", selection: $selectedZodiac, options: Self.zodiacOptions)
+                }
+            }
+            collapsible("点集") {
+                bodySection(title: "行星", selection: $relocationBodies)
+            }
+        }
+    }
+
+    private var modernCyclesSidebar: some View {
+        Group {
+            collapsible("时间窗") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    DateTimeInput(date: $scanStartDate, timeZone: selectedTimeZone)
+                    DateTimeInput(date: $scanEndDate, timeZone: selectedTimeZone)
+                    Text("使用扫描窗口的起止时间。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            collapsible("周期类型") {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                    ForEach(["new_moon", "full_moon", "solar_eclipse", "lunar_eclipse"], id: \.self) { type in
+                        Toggle(type, isOn: Binding(
+                            get: { cyclesSelectedTypes.contains(type) },
+                            set: { enabled in
+                                if enabled { cyclesSelectedTypes.insert(type) }
+                                else { cyclesSelectedTypes.remove(type) }
+                            }
+                        ))
+                    }
+                }
+            }
+            collapsible("可见性 / 本命接触") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    Picker("可见性", selection: $cyclesVisibility) {
+                        Text("全球").tag("global")
+                        Text("地点").tag("location")
+                    }
+                    .pickerStyle(.segmented)
+                    Toggle("计算对本命点接触", isOn: $cyclesIncludeNatalContacts)
+                    if cyclesVisibility == "location" {
+                        Text("观察点使用本命经纬度。")
+                            .font(TS.Font.label)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+    }
+
+    private var astrocartographySidebar: some View {
+        Group {
+            collapsible("时刻") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    DateTimeInput(date: $natalDate, timeZone: selectedTimeZone)
+                    Text("使用本命时刻作为地图参考 UT。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            collapsible("天体（最多 10）") {
+                bodySection(title: "行星", selection: $mapBodies)
+            }
+        }
+    }
+
+    private var localSpaceSidebar: some View {
+        Group {
+            collapsible("时刻") {
+                DateTimeInput(date: $natalDate, timeZone: selectedTimeZone)
+            }
+            collapsible("观察点") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    TextField("名称（可选）", text: $localSpaceName)
+                    TextField("纬度（空=本命）", text: $localSpaceLatitude)
+                    TextField("经度（空=本命）", text: $localSpaceLongitude)
+                }
+            }
+            collapsible("天体（最多 10）") {
+                bodySection(title: "行星", selection: $mapBodies)
             }
         }
     }

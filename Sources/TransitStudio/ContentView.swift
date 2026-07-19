@@ -133,6 +133,22 @@ struct ContentView: View {
     @State var progressedCompositeIncludeNodes = true
     @State var progressedCompositeUseCustomAsteroids = true
     @State var progressedCompositeReferenceGmtOffset = 8.0
+    @State var relocationPlaceName = "London"
+    @State var relocationLatitude = "51.5074"
+    @State var relocationLongitude = "-0.1278"
+    @State var relocationTimezone = "Europe/London"
+    @State var relocationBodies: Set<String> = [
+        "SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"
+    ]
+    @State var cyclesVisibility = "global"
+    @State var cyclesIncludeNatalContacts = true
+    @State var cyclesSelectedTypes: Set<String> = ["new_moon", "full_moon", "solar_eclipse", "lunar_eclipse"]
+    @State var mapBodies: Set<String> = [
+        "SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"
+    ]
+    @State var localSpaceLatitude = ""
+    @State var localSpaceLongitude = ""
+    @State var localSpaceName = ""
 
     // Vedic astrology state
     @State var vedicAyanamsha = "lahiri"

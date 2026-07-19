@@ -1,0 +1,204 @@
+{
+  "meta": {
+    "mode": "local_space",
+    "method": "local_space_azalt_great_circle_v1",
+    "schema_version": 1,
+    "moment_utc": "1990-01-01T04:00:00+00:00",
+    "moment_jd": 2447892.6666666665,
+    "location": {
+      "name": "Shanghai",
+      "latitude": 31.2304,
+      "longitude": 121.4737,
+      "altitude_m": 0.0
+    },
+    "zodiac": "tropical",
+    "zodiac_requested": "tropical",
+    "coordinate_frame": "tropical_true_of_date_physical_sky",
+    "body_ids": [
+      "SUN",
+      "MOON",
+      "MERCURY",
+      "VENUS",
+      "MARS"
+    ],
+    "ephemeris": "Swiss Ephemeris",
+    "unverified": [
+      "great_circle_far_point_is_approximate",
+      "third_party_azimuth_cross_check"
+    ]
+  },
+  "directions": [
+    {
+      "id": "local_space|SUN",
+      "body_id": "SUN",
+      "body_name": "太阳",
+      "azimuth_deg": 180.71602257575972,
+      "altitude_deg": 35.73722448167012,
+      "ecliptic_longitude": 280.47443215639436,
+      "ecliptic_latitude": -1.445637353192865e-07,
+      "observer": {
+        "name": "Shanghai",
+        "latitude": 31.2304,
+        "longitude": 121.4737,
+        "altitude_m": 0.0
+      },
+      "great_circle_points": [
+        {
+          "latitude": 31.2304,
+          "longitude": 121.4737
+        },
+        {
+          "latitude": -13.766086135322976,
+          "longitude": 120.81605150850521
+        }
+      ],
+      "method_key": "local_space_azalt_great_circle_v1",
+      "trace": {
+        "azalt_flag": "ECL2HOR",
+        "formula": "swe.azalt SE az (from south westwards) → (az+180)%360 north-clockwise",
+        "se_azimuth_from_south_westward": 0.7160225757597232,
+        "azimuth_north_clockwise": 180.71602257575972,
+        "far_point_note": "approximate equirectangular sample, not geodesic library",
+        "display_ray_deg": 45.0
+      }
+    },
+    {
+      "id": "local_space|MOON",
+      "body_id": "MOON",
+      "body_name": "月亮",
+      "azimuth_deg": 124.13029618190126,
+      "altitude_deg": 27.27018802611469,
+      "ecliptic_longitude": 328.78862928105195,
+      "ecliptic_latitude": 1.0760957094851973,
+      "observer": {
+        "name": "Shanghai",
+        "latitude": 31.2304,
+        "longitude": 121.4737,
+        "altitude_m": 0.0
+      },
+      "great_circle_points": [
+        {
+          "latitude": 31.2304,
+          "longitude": 121.4737
+        },
+        {
+          "latitude": 5.981945436526111,
+          "longitude": 165.0356652162592
+        }
+      ],
+      "method_key": "local_space_azalt_great_circle_v1",
+      "trace": {
+        "azalt_flag": "ECL2HOR",
+        "formula": "swe.azalt SE az (from south westwards) → (az+180)%360 north-clockwise",
+        "se_azimuth_from_south_westward": 304.13029618190126,
+        "azimuth_north_clockwise": 124.13029618190126,
+        "far_point_note": "approximate equirectangular sample, not geodesic library",
+        "display_ray_deg": 45.0
+      }
+    },
+    {
+      "id": "local_space|MERCURY",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "azimuth_deg": 161.8002765265527,
+      "altitude_deg": 36.164220614221904,
+      "ecliptic_longitude": 295.76004331432523,
+      "ecliptic_latitude": 0.5264157494465393,
+      "observer": {
+        "name": "Shanghai",
+        "latitude": 31.2304,
+        "longitude": 121.4737,
+        "altitude_m": 0.0
+      },
+      "great_circle_points": [
+        {
+          "latitude": 31.2304,
+          "longitude": 121.4737
+        },
+        {
+          "latitude": -11.51841015208559,
+          "longitude": 137.9104221785612
+        }
+      ],
+      "method_key": "local_space_azalt_great_circle_v1",
+      "trace": {
+        "azalt_flag": "ECL2HOR",
+        "formula": "swe.azalt SE az (from south westwards) → (az+180)%360 north-clockwise",
+        "se_azimuth_from_south_westward": 341.8002765265527,
+        "azimuth_north_clockwise": 161.8002765265527,
+        "far_point_note": "approximate equirectangular sample, not geodesic library",
+        "display_ray_deg": 45.0
+      }
+    },
+    {
+      "id": "local_space|VENUS",
+      "body_id": "VENUS",
+      "body_name": "金星",
+      "azimuth_deg": 148.7408864825773,
+      "altitude_deg": 35.67033298124622,
+      "ecliptic_longitude": 306.26305240442406,
+      "ecliptic_latitude": 1.819410982703759,
+      "observer": {
+        "name": "Shanghai",
+        "latitude": 31.2304,
+        "longitude": 121.4737,
+        "altitude_m": 0.0
+      },
+      "great_circle_points": [
+        {
+          "latitude": 31.2304,
+          "longitude": 121.4737
+        },
+        {
+          "latitude": -7.236920449611741,
+          "longitude": 148.78186064412637
+        }
+      ],
+      "method_key": "local_space_azalt_great_circle_v1",
+      "trace": {
+        "azalt_flag": "ECL2HOR",
+        "formula": "swe.azalt SE az (from south westwards) → (az+180)%360 north-clockwise",
+        "se_azimuth_from_south_westward": 328.7408864825773,
+        "azimuth_north_clockwise": 148.7408864825773,
+        "far_point_note": "approximate equirectangular sample, not geodesic library",
+        "display_ray_deg": 45.0
+      }
+    },
+    {
+      "id": "local_space|MARS",
+      "body_id": "MARS",
+      "body_name": "火星",
+      "azimuth_deg": 215.76115692587678,
+      "altitude_deg": 27.67022801851467,
+      "ecliptic_longitude": 249.76552957456767,
+      "ecliptic_latitude": -0.02927884615672335,
+      "observer": {
+        "name": "Shanghai",
+        "latitude": 31.2304,
+        "longitude": 121.4737,
+        "altitude_m": 0.0
+      },
+      "great_circle_points": [
+        {
+          "latitude": 31.2304,
+          "longitude": 121.4737
+        },
+        {
+          "latitude": -5.285308932944485,
+          "longitude": 90.71861226862734
+        }
+      ],
+      "method_key": "local_space_azalt_great_circle_v1",
+      "trace": {
+        "azalt_flag": "ECL2HOR",
+        "formula": "swe.azalt SE az (from south westwards) → (az+180)%360 north-clockwise",
+        "se_azimuth_from_south_westward": 35.761156925876776,
+        "azimuth_north_clockwise": 215.76115692587678,
+        "far_point_note": "approximate equirectangular sample, not geodesic library",
+        "display_ray_deg": 45.0
+      }
+    }
+  ],
+  "warnings": [],
+  "section_errors": null
+}
