@@ -1,3 +1,23 @@
+# B6 后现代 / 古典技法路线写回仓库（2026-07-19）
+
+## 范围
+
+- 将项目外完成的现代 / 古典占星计算扩展讨论稿整理为仓库路线文档。
+- 更新根 `README.md`：补齐 B1–B6 已交付现代能力，并增加明确标注为“规划中、尚未实现”的后续路线摘要。
+- 更新 `docs/README.md` 索引与 `CHANGELOG.md`；不修改计算代码、JSON 契约、版本和安装包。
+- 保留现有未提交的外部宠物计划条目，不纳入本任务边界。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 现状与边界确认 | ✅ | B6 已提交并同步，HEAD 与 main/origin/main 一致；仅有无关宠物计划改动 |
+| 02 路线文档写回 | ✅ | 完整规划进入 `docs/roadmap/`，去除项目外临时状态说明 |
+| 03 README 与索引更新 | ✅ | 用户首页保留能力现状与精简路线，详细规格走文档链接 |
+| 04 文档校验与 diff 复核 | ✅ | 相对链接、标题、围栏、`git diff --check` 与完整 diff/stat 均已复核；纯文档改动未运行代码构建 |
+
+---
+
 # 现代占星扩展 — B6ABC 地理与周期全量施工（2026-07-19）
 
 ## 分支
@@ -1087,3 +1107,8 @@
 3. 主线先查现有接口，随后实现严格 exact birth/location API；不得先登记一个没有 calculation module 的 dispatch。
 4. 用真实 sample 生成 fixture，禁止手改；完成 Python/Swift 聚焦测试、smoke、双路 review 和 `bash check_vibe_changes.sh`。
 5. 检查完整 diff/stat、清理 `.build`/pytest/`__pycache__`，更新本计划状态与 changelog，再形成 B6A 独立 commit。
+# 外部宠物升级 — プリルン（2026-07-19）
+
+- [completed] 保留 `~/.codex/pets/mint-patchi` 的既有 8×9 动画，升级为带 16 个环视方向的 v2 8×11 图集。
+- [completed] 完成方向语义、连续性、三路隔离盲测、v2 图集与色键清理校验。
+- [completed] 将显示名改为「プリルン」，通过校验后覆盖原宠物包并清理中间缓存。

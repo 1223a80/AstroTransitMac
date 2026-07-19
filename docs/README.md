@@ -11,6 +11,7 @@ Use these files before changing the project:
 - `project-audit-2026-07-06.md` - current folder hygiene notes, technical debt, potential hidden bugs, and next-step recommendations.
 - `modern-astrology-expansion-assessment-2026-07.md` - current modern-astrology baseline, missing techniques, feasibility, priorities, and recommended implementation sequence.
 - `modern-astrology-expansion-implementation-blueprint-2026-07.md` - docs-only execution blueprint for the seven modern-astrology batches, including contract drafts, calculation rules, file touchpoints, tests, acceptance gates, and decision register.
+- `roadmap/modern-classical-techniques-after-b6-2026-07.md` - post-B6 roadmap for locally computed modern and classical techniques, Markdown-first output contracts, priorities, method boundaries, and staged delivery batches; roadmap entries are not current features.
 - `opencode-next-step-requirements.md` - scoped product requirement for config preset management.
 - `frontend-refactor/` - 2026-06 frontend refactor module specs and handoff notes (completed, kept for reference).
 - `archive/` - completed planning documents (vedic AI port plan, classical roadmap, finished PLANS batches).

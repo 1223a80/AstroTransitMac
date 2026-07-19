@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-19 — B6 后现代 / 古典计算路线写回文档
+
+- 根 `README.md` 补齐 B1–B6 已交付的现代 point set、返照、综合时间线、中点、关系动态、Relocation、周期与地图计算能力，并同步扩展后端示例命令和导出范围。
+- README 新增明确标注为“规划中、尚未实现”的 B7+ 摘要，优先动态赤纬、任意行星返照 / 逆行周期、古典 heliacal phases / planetary hours 与任意行星对会合周期。
+- 新增 `docs/roadmap/modern-classical-techniques-after-b6-2026-07.md`，记录现代 M1–M13、古典 C0–C16、共用计算原语、施工批次和逐批 Definition of Done；文档索引已接入。
+- 本轮仅更新文档，不改变计算代码、JSON 契约、版本或安装包。
+
 ## 2026-07-19 — B6 合并复审：地图物理坐标系修复
 
 - **ACG / Local Space**：物理天空几何统一使用 tropical true-of-date 坐标；sidereal/ayanamsha 仅属黄道标签选择，不再错误移动 MC/IC、ASC/DSC 或 Local Space 方位。
