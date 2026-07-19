@@ -14,6 +14,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
     case relocation = "relocation"
     case modernCycles = "modern_cycles"
     case declinationTiming = "declination_timing"
+    case retrogradeCycles = "retrograde_cycles"
     case astrocartography = "astrocartography"
     case localSpace = "local_space"
 
@@ -34,6 +35,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .relocation: return "迁移盘"
         case .modernCycles: return "朔望食相"
         case .declinationTiming: return "赤纬事件"
+        case .retrogradeCycles: return "逆行阴影"
         case .astrocartography: return "天体地图"
         case .localSpace: return "Local Space"
         }
@@ -54,6 +56,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .relocation: return "airplane.departure"
         case .modernCycles: return "moon.stars"
         case .declinationTiming: return "arrow.up.and.down.circle"
+        case .retrogradeCycles: return "arrow.uturn.backward.circle"
         case .astrocartography: return "globe.americas"
         case .localSpace: return "location.north.line"
         }
@@ -75,6 +78,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .relocation: return "biwheel"
         case .modernCycles: return "events"
         case .declinationTiming: return "events"
+        case .retrogradeCycles: return "cycles"
         case .astrocartography: return "lines"
         case .localSpace: return "directions"
         }
@@ -94,6 +98,7 @@ enum ModernResultData {
     case relocation(RelocationResult)
     case modernCycles(ModernCyclesResult)
     case declinationTiming(DeclinationTimingResult)
+    case retrogradeCycles(RetrogradeCyclesResult)
     case astrocartography(AstrocartographyResult)
     case localSpace(LocalSpaceResult)
 }
@@ -408,6 +413,22 @@ struct ReturnHouseOverlay: Codable, Identifiable {
     }
 }
 
+struct ReturnCrossing: Codable, Identifiable {
+    let passIndexInWindow: Int?
+    let passCountInWindow: Int?
+    let exactUTC: String
+    let relationToReference: String?
+
+    var id: String { exactUTC }
+
+    enum CodingKeys: String, CodingKey {
+        case passIndexInWindow = "pass_index_in_window"
+        case passCountInWindow = "pass_count_in_window"
+        case exactUTC = "exact_utc"
+        case relationToReference = "relation_to_reference"
+    }
+}
+
 struct ModernReturnOccurrence: Codable, Identifiable {
     let label: String
     let exactUTC: String
@@ -418,8 +439,11 @@ struct ModernReturnOccurrence: Codable, Identifiable {
     let returnToNatalAspects: [AspectHit]
     let houseOverlay: [ReturnHouseOverlay]
     let error: String?
+    let cycleCrossings: [ReturnCrossing]?
+    let passIndexInWindow: Int?
+    let passCountInWindow: Int?
 
-    var id: String { "(label):(exactUTC)" }
+    var id: String { "\(label):\(exactUTC)" }
 
     init(
         label: String,
@@ -430,7 +454,10 @@ struct ModernReturnOccurrence: Codable, Identifiable {
         chart: ModernReturnChartSnapshot? = nil,
         returnToNatalAspects: [AspectHit] = [],
         houseOverlay: [ReturnHouseOverlay] = [],
-        error: String? = nil
+        error: String? = nil,
+        cycleCrossings: [ReturnCrossing]? = nil,
+        passIndexInWindow: Int? = nil,
+        passCountInWindow: Int? = nil
     ) {
         self.label = label
         self.exactUTC = exactUTC
@@ -441,6 +468,9 @@ struct ModernReturnOccurrence: Codable, Identifiable {
         self.returnToNatalAspects = returnToNatalAspects
         self.houseOverlay = houseOverlay
         self.error = error
+        self.cycleCrossings = cycleCrossings
+        self.passIndexInWindow = passIndexInWindow
+        self.passCountInWindow = passCountInWindow
     }
 
     enum CodingKeys: String, CodingKey {
@@ -453,6 +483,9 @@ struct ModernReturnOccurrence: Codable, Identifiable {
         case returnToNatalAspects = "return_to_natal_aspects"
         case houseOverlay = "house_overlay"
         case error
+        case cycleCrossings = "cycle_crossings"
+        case passIndexInWindow = "pass_index_in_window"
+        case passCountInWindow = "pass_count_in_window"
     }
 }
 
@@ -467,6 +500,10 @@ struct ModernReturnResult: Codable {
     let searchEndLocal: String?
     let warnings: [String]
     let sectionErrors: [String: String]?
+    let allCrossings: [ReturnCrossing]?
+    let calculationAssumptions: [String]?
+    let requestedConfig: [String: NestedJSON]?
+    let effectiveConfig: [String: NestedJSON]?
 
     init(
         meta: ModernReturnMeta,
@@ -478,7 +515,11 @@ struct ModernReturnResult: Codable {
         searchStartLocal: String? = nil,
         searchEndLocal: String? = nil,
         warnings: [String] = [],
-        sectionErrors: [String: String]? = nil
+        sectionErrors: [String: String]? = nil,
+        allCrossings: [ReturnCrossing]? = nil,
+        calculationAssumptions: [String]? = nil,
+        requestedConfig: [String: NestedJSON]? = nil,
+        effectiveConfig: [String: NestedJSON]? = nil
     ) {
         self.meta = meta
         self.previousReturn = previousReturn
@@ -490,6 +531,10 @@ struct ModernReturnResult: Codable {
         self.searchEndLocal = searchEndLocal
         self.warnings = warnings
         self.sectionErrors = sectionErrors
+        self.allCrossings = allCrossings
+        self.calculationAssumptions = calculationAssumptions
+        self.requestedConfig = requestedConfig
+        self.effectiveConfig = effectiveConfig
     }
 
     enum CodingKeys: String, CodingKey {
@@ -497,6 +542,10 @@ struct ModernReturnResult: Codable {
         case previousReturn = "previous_return"
         case currentCycleReturn = "current_cycle_return"
         case nextReturn = "next_return"
+        case allCrossings = "all_crossings"
+        case calculationAssumptions = "calculation_assumptions"
+        case requestedConfig = "requested_config"
+        case effectiveConfig = "effective_config"
         case noHitInUserWindow = "no_hit_in_user_window"
         case suggestedWindow = "suggested_window"
         case searchStartLocal = "search_start_local"

@@ -18,6 +18,7 @@ struct ModernTabStateTests {
         #expect(ModernSubMode.relocation.defaultResultTab == "biwheel")
         #expect(ModernSubMode.modernCycles.defaultResultTab == "events")
         #expect(ModernSubMode.declinationTiming.defaultResultTab == "events")
+        #expect(ModernSubMode.retrogradeCycles.defaultResultTab == "cycles")
         #expect(ModernSubMode.astrocartography.defaultResultTab == "lines")
         #expect(ModernSubMode.localSpace.defaultResultTab == "directions")
     }

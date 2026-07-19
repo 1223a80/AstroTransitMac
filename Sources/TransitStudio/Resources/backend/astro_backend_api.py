@@ -737,7 +737,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
         "modern_return", "modern_timing", "midpoint", "progressed_composite",
         "relocation", "modern_cycles", "astrocartography", "local_space",
-        "declination_timing",
+        "declination_timing", "retrograde_cycles",
     }
     if mode not in supported_modes:
         return {"error": f"不支持的 mode：{mode or '<empty>'}", "mode": mode}
@@ -762,6 +762,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "astrocartography": ["moment"],
         "local_space": ["moment", "location"],
         "declination_timing": ["birth", "start", "end", "display_timezone"],
+        "retrograde_cycles": ["start", "end", "display_timezone"],
     }
     default_required = ["natal", "transit"]
     required = required_by_mode.get(mode, default_required)
@@ -1064,6 +1065,39 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             or not 0 <= float(declination_orb) <= 5
         ):
             invalid.append("declination_orb must be a finite number in [0, 5]")
+    if mode == "retrograde_cycles":
+        parsed_moments: dict[str, datetime] = {}
+        for field in ("start", "end"):
+            moment = request.get(field)
+            if not isinstance(moment, dict):
+                invalid.append(f"{field} must be an object with an exact moment")
+                continue
+            for key in _PERSON_MOMENT_FIELDS:
+                if key not in moment:
+                    missing.append(f"{field}.{key}")
+            if all(key in moment for key in _PERSON_MOMENT_FIELDS):
+                try:
+                    parsed_moments[field] = moment_to_local_datetime(moment)
+                except Exception as exc:
+                    invalid.append(f"{field} is invalid: {exc}")
+        if "start" in parsed_moments and "end" in parsed_moments:
+            if parsed_moments["end"] <= parsed_moments["start"]:
+                invalid.append("end must be later than start")
+        display_timezone = request.get("display_timezone")
+        if not isinstance(display_timezone, str) or not display_timezone.strip():
+            invalid.append("display_timezone must be a non-empty string")
+        body_ids = request.get("body_ids")
+        if body_ids is not None:
+            if not isinstance(body_ids, list) or not body_ids:
+                invalid.append("body_ids must be a non-empty array when provided")
+            else:
+                supported = {
+                    "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN",
+                    "URANUS", "NEPTUNE", "PLUTO", "CHIRON",
+                }
+                for index, item in enumerate(body_ids):
+                    if item not in supported:
+                        invalid.append(f"body_ids[{index}] is unsupported: {item}")
     if mode in ("astrocartography", "local_space"):
         moment = request.get("moment")
         if not isinstance(moment, dict):
@@ -1373,8 +1407,15 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                 invalid.append(f"{label} is invalid: {exc}")
 
         return_body_id = request.get("return_body_id")
-        if return_body_id not in {"SUN", "MOON"}:
-            invalid.append("return_body_id must be SUN or MOON")
+        supported_return_bodies = {
+            "SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN",
+            "URANUS", "NEPTUNE", "PLUTO", "CHIRON",
+        }
+        if return_body_id not in supported_return_bodies:
+            invalid.append(
+                "return_body_id must be one of "
+                + ", ".join(sorted(supported_return_bodies))
+            )
         location_source = request.get("location_source", "birth")
         if location_source not in {"birth", "custom"}:
             invalid.append("location_source must be birth or custom")
@@ -1520,6 +1561,9 @@ def main() -> None:
         elif mode == "declination_timing":
             from astro_backend_declination_timing import calculate_declination_timing
             response = calculate_declination_timing(request, warnings)
+        elif mode == "retrograde_cycles":
+            from astro_backend_retrograde_cycles import calculate_retrograde_cycles
+            response = calculate_retrograde_cycles(request, warnings)
         elif mode in {"astrocartography", "local_space"}:
             from astro_backend_map import calculate_map_mode
             response = calculate_map_mode(request, warnings)

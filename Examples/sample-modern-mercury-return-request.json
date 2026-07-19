@@ -1,0 +1,45 @@
+{
+  "mode": "modern_return",
+  "return_body_id": "MERCURY",
+  "birth": {
+    "moment": {
+      "year": 1990,
+      "month": 1,
+      "day": 1,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737
+  },
+  "reference": {
+    "year": 2026,
+    "month": 5,
+    "day": 5,
+    "hour": 12,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "location_source": "birth",
+  "house_system": "placidus",
+  "zodiac": "tropical",
+  "node_mode": "true_node",
+  "point_set": {
+    "body_ids": ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"],
+    "include_nodes": false,
+    "custom_asteroids": [],
+    "angle_ids": ["ASC", "MC"],
+    "house_cusps": [],
+    "lot_ids": []
+  },
+  "aspects": [
+    {"id": "conjunction", "name": "合相", "angle": 0, "orb": 3},
+    {"id": "opposition", "name": "冲相", "angle": 180, "orb": 3},
+    {"id": "square", "name": "刑相", "angle": 90, "orb": 3}
+  ],
+  "precession_correction": "none",
+  "ephemeris_path": null,
+  "no_asteroids": false,
+  "require_ephemeris": "warn"
+}

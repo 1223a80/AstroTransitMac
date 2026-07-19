@@ -1,3 +1,23 @@
+# B8 任意行星返照与逆行阴影（2026-07-19）
+
+## 范围
+
+- 扩展 modern_return：水星至冥王星（可选 CHIRON）返照；保留全部精确穿越与 previous/current/next。
+- 新 mode=`retrograde_cycles`：基于真实站度的前阴影 / 逆行区间 / 后阴影与重复触发。
+- 复用 return_solver、scan station 求根；JSON/Swift/Markdown/CSV/sample/fixture/测试/门禁。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 契约发现 | ✅ | modern_return / return_solver / station / UI |
+| 02 返照扩展 | ✅ | 多行星 half-window + multi-pass |
+| 03 逆行阴影 | ✅ | retrograde_cycles 模块 |
+| 04 测试与 Swift | ✅ | pytest/sample/fixture/Swift |
+| 05 门禁与提交 | ✅ | 全门禁 + 独立 commit |
+
+---
+
 # B7 动态赤纬事件与 OOB 时间线（2026-07-19）
 
 ## 范围

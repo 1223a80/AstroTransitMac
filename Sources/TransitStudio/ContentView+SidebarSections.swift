@@ -659,6 +659,8 @@ extension ContentView {
                 modernCyclesSidebar
             case .declinationTiming:
                 declinationTimingSidebar
+            case .retrogradeCycles:
+                retrogradeCyclesSidebar
             case .astrocartography:
                 astrocartographySidebar
             case .localSpace:
@@ -731,6 +733,28 @@ extension ContentView {
                             .foregroundStyle(.secondary)
                     }
                 }
+            }
+        }
+    }
+
+    private var retrogradeCyclesSidebar: some View {
+        Group {
+            collapsible("时间窗") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    DateTimeInput(date: $scanStartDate, timeZone: selectedTimeZone)
+                    DateTimeInput(date: $scanEndDate, timeZone: selectedTimeZone)
+                    Text("阴影端点可在窗口外 pad 内解析；站度以窗口内为准。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            collapsible("天体") {
+                bodySection(title: "逆行体", selection: $retrogradeBodies)
+            }
+            collapsible("说明") {
+                Text("前/后阴影黄经取自真实顺行站与逆行站度数，不是固定天数。")
+                    .font(TS.Font.label)
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -1058,10 +1082,18 @@ extension ContentView {
             collapsible("返照参数") {
                 VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                     Picker("类型", selection: $modernReturnBodyID) {
-                        Text("Solar Return").tag("SUN")
-                        Text("Lunar Return").tag("MOON")
+                        Text("太阳").tag("SUN")
+                        Text("月亮").tag("MOON")
+                        Text("水星").tag("MERCURY")
+                        Text("金星").tag("VENUS")
+                        Text("火星").tag("MARS")
+                        Text("木星").tag("JUPITER")
+                        Text("土星").tag("SATURN")
+                        Text("天王").tag("URANUS")
+                        Text("海王").tag("NEPTUNE")
+                        Text("冥王").tag("PLUTO")
+                        Text("凯龙").tag("CHIRON")
                     }
-                    .pickerStyle(.segmented)
                     Picker("地点来源", selection: $modernReturnLocationSource) {
                         Text("出生地").tag("birth")
                         Text("自定义地点").tag("custom")

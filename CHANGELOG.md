@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-19 — B8 任意行星返照与逆行阴影
+
+- 扩展 `modern_return`：支持水星至冥王星与 CHIRON；自适应搜索窗与步长；输出窗口内全部穿越、pass 编号、`requested_config` / `effective_config` / `calculation_assumptions`。
+- 新增 mode=`retrograde_cycles`：基于真实站度的前阴影 / 逆行区间 / 后阴影（非固定天数），含站度表与 Markdown/CSV。
+- Swift 返照选择器扩展；新「逆行阴影」子模式、契约 fixture 与聚焦测试；CI / check_vibe smoke 纳入 mercury return 与 retrograde cycles。
+
 ## 2026-07-19 — B7 动态赤纬事件与 OOB 时间线
 
 - 新增后端 mode=`declination_timing`：行运体对本命 point set 的平行 / 反平行、OOB 进入与离开、赤纬停滞（最大南北赤纬），带 entering / exact / leaving、pass 编号与真实黄赤交角 OOB 阈值。

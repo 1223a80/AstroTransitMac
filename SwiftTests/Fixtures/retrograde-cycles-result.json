@@ -1,0 +1,589 @@
+{
+  "meta": {
+    "mode": "retrograde_cycles",
+    "method": "retrograde_shadow_from_true_stations_v1",
+    "schema_version": 1,
+    "start_utc": "2024-12-31T16:00:00.000Z",
+    "end_utc": "2025-12-31T15:59:00.000Z",
+    "display_timezone": "Asia/Shanghai",
+    "body_ids": [
+      "MERCURY",
+      "VENUS",
+      "MARS",
+      "JUPITER",
+      "SATURN"
+    ],
+    "cycle_count": 8,
+    "station_count": 13,
+    "zodiac": "tropical",
+    "ephemeris": "Swiss Ephemeris",
+    "search_pad_days": 120
+  },
+  "requested_config": {
+    "mode": "retrograde_cycles",
+    "start": {
+      "year": 2025,
+      "month": 1,
+      "day": 1,
+      "hour": 0,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "end": {
+      "year": 2025,
+      "month": 12,
+      "day": 31,
+      "hour": 23,
+      "minute": 59,
+      "timezone": "Asia/Shanghai"
+    },
+    "display_timezone": "Asia/Shanghai",
+    "body_ids": [
+      "MERCURY",
+      "VENUS",
+      "MARS",
+      "JUPITER",
+      "SATURN"
+    ],
+    "zodiac": "tropical"
+  },
+  "effective_config": {
+    "mode": "retrograde_cycles",
+    "start_utc": "2024-12-31T16:00:00.000Z",
+    "end_utc": "2025-12-31T15:59:00.000Z",
+    "display_timezone": "Asia/Shanghai",
+    "body_ids": [
+      "MERCURY",
+      "VENUS",
+      "MARS",
+      "JUPITER",
+      "SATURN"
+    ],
+    "zodiac": "tropical",
+    "search_pad_days": 120,
+    "method": "retrograde_shadow_from_true_stations_v1"
+  },
+  "stations": [
+    {
+      "id": "JUPITER|direct_station|2025-02-04T09:40:23.467Z",
+      "body_id": "JUPITER",
+      "body_name": "木星",
+      "station_kind": "direct_station",
+      "exact_utc": "2025-02-04T09:40:23.467Z",
+      "exact_local": "2025-02-04T17:40:23.467+08:00",
+      "longitude": 71.278359306,
+      "speed": -1.04e-09,
+      "exact_orb": 1.0396586719009065e-09,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "MARS|direct_station|2025-02-24T01:59:48.265Z",
+      "body_id": "MARS",
+      "body_name": "火星",
+      "station_kind": "direct_station",
+      "exact_utc": "2025-02-24T01:59:48.265Z",
+      "exact_local": "2025-02-24T09:59:48.265+08:00",
+      "longitude": 107.015207945,
+      "speed": -3.357e-09,
+      "exact_orb": 3.3565965731525115e-09,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "VENUS|retrograde_station|2025-03-02T00:36:08.076Z",
+      "body_id": "VENUS",
+      "body_name": "金星",
+      "station_kind": "retrograde_station",
+      "exact_utc": "2025-03-02T00:36:08.076Z",
+      "exact_local": "2025-03-02T08:36:08.076+08:00",
+      "longitude": 10.835728612,
+      "speed": -7.5e-11,
+      "exact_orb": 7.476274904910113e-11,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "MERCURY|retrograde_station|2025-03-15T06:46:06.117Z",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "station_kind": "retrograde_station",
+      "exact_utc": "2025-03-15T06:46:06.117Z",
+      "exact_local": "2025-03-15T14:46:06.117+08:00",
+      "longitude": 9.58892709,
+      "speed": -2.3978e-08,
+      "exact_orb": 2.3977862944946707e-08,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "MERCURY|direct_station|2025-04-07T11:07:37.477Z",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "station_kind": "direct_station",
+      "exact_utc": "2025-04-07T11:07:37.477Z",
+      "exact_local": "2025-04-07T19:07:37.477+08:00",
+      "longitude": 356.826354679,
+      "speed": -1.1193e-08,
+      "exact_orb": 1.1192561549796528e-08,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "VENUS|direct_station|2025-04-13T01:02:17.212Z",
+      "body_id": "VENUS",
+      "body_name": "金星",
+      "station_kind": "direct_station",
+      "exact_utc": "2025-04-13T01:02:17.212Z",
+      "exact_local": "2025-04-13T09:02:17.212+08:00",
+      "longitude": 354.624899342,
+      "speed": 7.728e-09,
+      "exact_orb": 7.72764693802224e-09,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "SATURN|retrograde_station|2025-07-13T04:07:19.755Z",
+      "body_id": "SATURN",
+      "body_name": "土星",
+      "station_kind": "retrograde_station",
+      "exact_utc": "2025-07-13T04:07:19.755Z",
+      "exact_local": "2025-07-13T12:07:19.755+08:00",
+      "longitude": 1.934416588,
+      "speed": 5e-11,
+      "exact_orb": 4.98598932612781e-11,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "MERCURY|retrograde_station|2025-07-18T04:45:01.256Z",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "station_kind": "retrograde_station",
+      "exact_utc": "2025-07-18T04:45:01.256Z",
+      "exact_local": "2025-07-18T12:45:01.256+08:00",
+      "longitude": 135.575192291,
+      "speed": 2.4052e-08,
+      "exact_orb": 2.4051558025650934e-08,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "MERCURY|direct_station|2025-08-11T07:29:52.906Z",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "station_kind": "direct_station",
+      "exact_utc": "2025-08-11T07:29:52.906Z",
+      "exact_local": "2025-08-11T15:29:52.906+08:00",
+      "longitude": 124.249447269,
+      "speed": -3.8753e-08,
+      "exact_orb": 3.875298291962245e-08,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "MERCURY|retrograde_station|2025-11-09T19:01:42.811Z",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "station_kind": "retrograde_station",
+      "exact_utc": "2025-11-09T19:01:42.811Z",
+      "exact_local": "2025-11-10T03:01:42.811+08:00",
+      "longitude": 246.861883341,
+      "speed": -8.898e-09,
+      "exact_orb": 8.897972542620402e-09,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "JUPITER|retrograde_station|2025-11-11T16:41:24.716Z",
+      "body_id": "JUPITER",
+      "body_name": "木星",
+      "station_kind": "retrograde_station",
+      "exact_utc": "2025-11-11T16:41:24.716Z",
+      "exact_local": "2025-11-12T00:41:24.716+08:00",
+      "longitude": 115.152549547,
+      "speed": 6.676e-09,
+      "exact_orb": 6.675801078555808e-09,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "SATURN|direct_station|2025-11-28T03:51:33.976Z",
+      "body_id": "SATURN",
+      "body_name": "土星",
+      "station_kind": "direct_station",
+      "exact_utc": "2025-11-28T03:51:33.976Z",
+      "exact_local": "2025-11-28T11:51:33.976+08:00",
+      "longitude": 355.157559767,
+      "speed": -1.45e-10,
+      "exact_orb": 1.448802255506447e-10,
+      "method_key": "longitude_speed_zero_bisection"
+    },
+    {
+      "id": "MERCURY|direct_station|2025-11-29T17:38:27.135Z",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "station_kind": "direct_station",
+      "exact_utc": "2025-11-29T17:38:27.135Z",
+      "exact_local": "2025-11-30T01:38:27.135+08:00",
+      "longitude": 230.706873015,
+      "speed": -2.9378e-08,
+      "exact_orb": 2.9377960346450756e-08,
+      "method_key": "longitude_speed_zero_bisection"
+    }
+  ],
+  "cycles": [
+    {
+      "id": "JUPITER|retro_cycle|2024-10-09T07:04:37.617Z",
+      "body_id": "JUPITER",
+      "body_name": "木星",
+      "cycle_index_in_window": 1,
+      "pre_shadow_start_utc": null,
+      "pre_shadow_start_local": null,
+      "retrograde_station_utc": "2024-10-09T07:04:37.617Z",
+      "retrograde_station_local": "2024-10-09T15:04:37.617+08:00",
+      "direct_station_utc": "2025-02-04T09:40:23.467Z",
+      "direct_station_local": "2025-02-04T17:40:23.467+08:00",
+      "post_shadow_end_utc": "2025-04-30T20:10:30.162Z",
+      "post_shadow_end_local": "2025-05-01T04:10:30.162+08:00",
+      "retrograde_station_longitude": 81.3377341,
+      "direct_station_longitude": 71.278359306,
+      "shadow_longitude_pre": 71.278359306,
+      "shadow_longitude_post": 81.3377341,
+      "retrograde_duration_days": 118.10817,
+      "method_key": "retrograde_shadow_from_true_stations_v1",
+      "window_clipped": {
+        "pre_shadow_start_clipped": true,
+        "post_shadow_end_clipped": false
+      },
+      "phases": [
+        {
+          "phase": "pre_shadow",
+          "start_utc": null,
+          "end_utc": "2024-10-09T07:04:37.617Z",
+          "definition": "body reaches direct-station longitude while still direct, until retrograde station"
+        },
+        {
+          "phase": "retrograde",
+          "start_utc": "2024-10-09T07:04:37.617Z",
+          "end_utc": "2025-02-04T09:40:23.467Z",
+          "definition": "retrograde station to direct station"
+        },
+        {
+          "phase": "post_shadow",
+          "start_utc": "2025-02-04T09:40:23.467Z",
+          "end_utc": "2025-04-30T20:10:30.162Z",
+          "definition": "direct station until body re-crosses retrograde-station longitude"
+        }
+      ]
+    },
+    {
+      "id": "MARS|retro_cycle|2024-12-06T23:33:11.471Z",
+      "body_id": "MARS",
+      "body_name": "火星",
+      "cycle_index_in_window": 1,
+      "pre_shadow_start_utc": "2024-10-05T04:40:14.348Z",
+      "pre_shadow_start_local": "2024-10-05T12:40:14.348+08:00",
+      "retrograde_station_utc": "2024-12-06T23:33:11.471Z",
+      "retrograde_station_local": "2024-12-07T07:33:11.471+08:00",
+      "direct_station_utc": "2025-02-24T01:59:48.265Z",
+      "direct_station_local": "2025-02-24T09:59:48.265+08:00",
+      "post_shadow_end_utc": "2025-05-02T06:06:31.401Z",
+      "post_shadow_end_local": "2025-05-02T14:06:31.401+08:00",
+      "retrograde_station_longitude": 126.171065591,
+      "direct_station_longitude": 107.015207945,
+      "shadow_longitude_pre": 107.015207945,
+      "shadow_longitude_post": 126.171065591,
+      "retrograde_duration_days": 79.101815,
+      "method_key": "retrograde_shadow_from_true_stations_v1",
+      "window_clipped": {
+        "pre_shadow_start_clipped": false,
+        "post_shadow_end_clipped": false
+      },
+      "phases": [
+        {
+          "phase": "pre_shadow",
+          "start_utc": "2024-10-05T04:40:14.348Z",
+          "end_utc": "2024-12-06T23:33:11.471Z",
+          "definition": "body reaches direct-station longitude while still direct, until retrograde station"
+        },
+        {
+          "phase": "retrograde",
+          "start_utc": "2024-12-06T23:33:11.471Z",
+          "end_utc": "2025-02-24T01:59:48.265Z",
+          "definition": "retrograde station to direct station"
+        },
+        {
+          "phase": "post_shadow",
+          "start_utc": "2025-02-24T01:59:48.265Z",
+          "end_utc": "2025-05-02T06:06:31.401Z",
+          "definition": "direct station until body re-crosses retrograde-station longitude"
+        }
+      ]
+    },
+    {
+      "id": "VENUS|retro_cycle|2025-03-02T00:36:08.076Z",
+      "body_id": "VENUS",
+      "body_name": "金星",
+      "cycle_index_in_window": 1,
+      "pre_shadow_start_utc": "2025-01-28T13:22:37.353Z",
+      "pre_shadow_start_local": "2025-01-28T21:22:37.353+08:00",
+      "retrograde_station_utc": "2025-03-02T00:36:08.076Z",
+      "retrograde_station_local": "2025-03-02T08:36:08.076+08:00",
+      "direct_station_utc": "2025-04-13T01:02:17.212Z",
+      "direct_station_local": "2025-04-13T09:02:17.212+08:00",
+      "post_shadow_end_utc": "2025-05-16T06:03:43.434Z",
+      "post_shadow_end_local": "2025-05-16T14:03:43.434+08:00",
+      "retrograde_station_longitude": 10.835728612,
+      "direct_station_longitude": 354.624899342,
+      "shadow_longitude_pre": 354.624899342,
+      "shadow_longitude_post": 10.835728612,
+      "retrograde_duration_days": 42.018161,
+      "method_key": "retrograde_shadow_from_true_stations_v1",
+      "window_clipped": {
+        "pre_shadow_start_clipped": false,
+        "post_shadow_end_clipped": false
+      },
+      "phases": [
+        {
+          "phase": "pre_shadow",
+          "start_utc": "2025-01-28T13:22:37.353Z",
+          "end_utc": "2025-03-02T00:36:08.076Z",
+          "definition": "body reaches direct-station longitude while still direct, until retrograde station"
+        },
+        {
+          "phase": "retrograde",
+          "start_utc": "2025-03-02T00:36:08.076Z",
+          "end_utc": "2025-04-13T01:02:17.212Z",
+          "definition": "retrograde station to direct station"
+        },
+        {
+          "phase": "post_shadow",
+          "start_utc": "2025-04-13T01:02:17.212Z",
+          "end_utc": "2025-05-16T06:03:43.434Z",
+          "definition": "direct station until body re-crosses retrograde-station longitude"
+        }
+      ]
+    },
+    {
+      "id": "MERCURY|retro_cycle|2025-03-15T06:46:06.117Z",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "cycle_index_in_window": 1,
+      "pre_shadow_start_utc": "2025-03-01T07:58:34.519Z",
+      "pre_shadow_start_local": "2025-03-01T15:58:34.519+08:00",
+      "retrograde_station_utc": "2025-03-15T06:46:06.117Z",
+      "retrograde_station_local": "2025-03-15T14:46:06.117+08:00",
+      "direct_station_utc": "2025-04-07T11:07:37.477Z",
+      "direct_station_local": "2025-04-07T19:07:37.477+08:00",
+      "post_shadow_end_utc": "2025-04-26T08:28:08.928Z",
+      "post_shadow_end_local": "2025-04-26T16:28:08.928+08:00",
+      "retrograde_station_longitude": 9.58892709,
+      "direct_station_longitude": 356.826354679,
+      "shadow_longitude_pre": 356.826354679,
+      "shadow_longitude_post": 9.58892709,
+      "retrograde_duration_days": 23.181613,
+      "method_key": "retrograde_shadow_from_true_stations_v1",
+      "window_clipped": {
+        "pre_shadow_start_clipped": false,
+        "post_shadow_end_clipped": false
+      },
+      "phases": [
+        {
+          "phase": "pre_shadow",
+          "start_utc": "2025-03-01T07:58:34.519Z",
+          "end_utc": "2025-03-15T06:46:06.117Z",
+          "definition": "body reaches direct-station longitude while still direct, until retrograde station"
+        },
+        {
+          "phase": "retrograde",
+          "start_utc": "2025-03-15T06:46:06.117Z",
+          "end_utc": "2025-04-07T11:07:37.477Z",
+          "definition": "retrograde station to direct station"
+        },
+        {
+          "phase": "post_shadow",
+          "start_utc": "2025-04-07T11:07:37.477Z",
+          "end_utc": "2025-04-26T08:28:08.928Z",
+          "definition": "direct station until body re-crosses retrograde-station longitude"
+        }
+      ]
+    },
+    {
+      "id": "SATURN|retro_cycle|2025-07-13T04:07:19.755Z",
+      "body_id": "SATURN",
+      "body_name": "土星",
+      "cycle_index_in_window": 1,
+      "pre_shadow_start_utc": "2025-04-06T14:49:13.832Z",
+      "pre_shadow_start_local": "2025-04-06T22:49:13.832+08:00",
+      "retrograde_station_utc": "2025-07-13T04:07:19.755Z",
+      "retrograde_station_local": "2025-07-13T12:07:19.755+08:00",
+      "direct_station_utc": "2025-11-28T03:51:33.976Z",
+      "direct_station_local": "2025-11-28T11:51:33.976+08:00",
+      "post_shadow_end_utc": "2026-03-02T18:12:59.246Z",
+      "post_shadow_end_local": "2026-03-03T02:12:59.246+08:00",
+      "retrograde_station_longitude": 1.934416588,
+      "direct_station_longitude": 355.157559767,
+      "shadow_longitude_pre": 355.157559767,
+      "shadow_longitude_post": 1.934416588,
+      "retrograde_duration_days": 137.989053,
+      "method_key": "retrograde_shadow_from_true_stations_v1",
+      "window_clipped": {
+        "pre_shadow_start_clipped": false,
+        "post_shadow_end_clipped": false
+      },
+      "phases": [
+        {
+          "phase": "pre_shadow",
+          "start_utc": "2025-04-06T14:49:13.832Z",
+          "end_utc": "2025-07-13T04:07:19.755Z",
+          "definition": "body reaches direct-station longitude while still direct, until retrograde station"
+        },
+        {
+          "phase": "retrograde",
+          "start_utc": "2025-07-13T04:07:19.755Z",
+          "end_utc": "2025-11-28T03:51:33.976Z",
+          "definition": "retrograde station to direct station"
+        },
+        {
+          "phase": "post_shadow",
+          "start_utc": "2025-11-28T03:51:33.976Z",
+          "end_utc": "2026-03-02T18:12:59.246Z",
+          "definition": "direct station until body re-crosses retrograde-station longitude"
+        }
+      ]
+    },
+    {
+      "id": "MERCURY|retro_cycle|2025-07-18T04:45:01.256Z",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "cycle_index_in_window": 2,
+      "pre_shadow_start_utc": "2025-06-30T05:53:42.283Z",
+      "pre_shadow_start_local": "2025-06-30T13:53:42.283+08:00",
+      "retrograde_station_utc": "2025-07-18T04:45:01.256Z",
+      "retrograde_station_local": "2025-07-18T12:45:01.256+08:00",
+      "direct_station_utc": "2025-08-11T07:29:52.906Z",
+      "direct_station_local": "2025-08-11T15:29:52.906+08:00",
+      "post_shadow_end_utc": "2025-08-25T08:36:26.567Z",
+      "post_shadow_end_local": "2025-08-25T16:36:26.567+08:00",
+      "retrograde_station_longitude": 135.575192291,
+      "direct_station_longitude": 124.249447269,
+      "shadow_longitude_pre": 124.249447269,
+      "shadow_longitude_post": 135.575192291,
+      "retrograde_duration_days": 24.114487,
+      "method_key": "retrograde_shadow_from_true_stations_v1",
+      "window_clipped": {
+        "pre_shadow_start_clipped": false,
+        "post_shadow_end_clipped": false
+      },
+      "phases": [
+        {
+          "phase": "pre_shadow",
+          "start_utc": "2025-06-30T05:53:42.283Z",
+          "end_utc": "2025-07-18T04:45:01.256Z",
+          "definition": "body reaches direct-station longitude while still direct, until retrograde station"
+        },
+        {
+          "phase": "retrograde",
+          "start_utc": "2025-07-18T04:45:01.256Z",
+          "end_utc": "2025-08-11T07:29:52.906Z",
+          "definition": "retrograde station to direct station"
+        },
+        {
+          "phase": "post_shadow",
+          "start_utc": "2025-08-11T07:29:52.906Z",
+          "end_utc": "2025-08-25T08:36:26.567Z",
+          "definition": "direct station until body re-crosses retrograde-station longitude"
+        }
+      ]
+    },
+    {
+      "id": "MERCURY|retro_cycle|2025-11-09T19:01:42.811Z",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "cycle_index_in_window": 3,
+      "pre_shadow_start_utc": "2025-10-21T11:10:27.710Z",
+      "pre_shadow_start_local": "2025-10-21T19:10:27.710+08:00",
+      "retrograde_station_utc": "2025-11-09T19:01:42.811Z",
+      "retrograde_station_local": "2025-11-10T03:01:42.811+08:00",
+      "direct_station_utc": "2025-11-29T17:38:27.135Z",
+      "direct_station_local": "2025-11-30T01:38:27.135+08:00",
+      "post_shadow_end_utc": "2025-12-17T03:55:31.095Z",
+      "post_shadow_end_local": "2025-12-17T11:55:31.095+08:00",
+      "retrograde_station_longitude": 246.861883341,
+      "direct_station_longitude": 230.706873015,
+      "shadow_longitude_pre": 230.706873015,
+      "shadow_longitude_post": 246.861883341,
+      "retrograde_duration_days": 19.94218,
+      "method_key": "retrograde_shadow_from_true_stations_v1",
+      "window_clipped": {
+        "pre_shadow_start_clipped": false,
+        "post_shadow_end_clipped": false
+      },
+      "phases": [
+        {
+          "phase": "pre_shadow",
+          "start_utc": "2025-10-21T11:10:27.710Z",
+          "end_utc": "2025-11-09T19:01:42.811Z",
+          "definition": "body reaches direct-station longitude while still direct, until retrograde station"
+        },
+        {
+          "phase": "retrograde",
+          "start_utc": "2025-11-09T19:01:42.811Z",
+          "end_utc": "2025-11-29T17:38:27.135Z",
+          "definition": "retrograde station to direct station"
+        },
+        {
+          "phase": "post_shadow",
+          "start_utc": "2025-11-29T17:38:27.135Z",
+          "end_utc": "2025-12-17T03:55:31.095Z",
+          "definition": "direct station until body re-crosses retrograde-station longitude"
+        }
+      ]
+    },
+    {
+      "id": "JUPITER|retro_cycle|2025-11-11T16:41:24.716Z",
+      "body_id": "JUPITER",
+      "body_name": "木星",
+      "cycle_index_in_window": 2,
+      "pre_shadow_start_utc": "2025-08-17T07:34:17.526Z",
+      "pre_shadow_start_local": "2025-08-17T15:34:17.526+08:00",
+      "retrograde_station_utc": "2025-11-11T16:41:24.716Z",
+      "retrograde_station_local": "2025-11-12T00:41:24.716+08:00",
+      "direct_station_utc": "2026-03-11T03:29:51.025Z",
+      "direct_station_local": "2026-03-11T11:29:51.025+08:00",
+      "post_shadow_end_utc": null,
+      "post_shadow_end_local": null,
+      "retrograde_station_longitude": 115.152549547,
+      "direct_station_longitude": 105.087281583,
+      "shadow_longitude_pre": 105.087281583,
+      "shadow_longitude_post": 115.152549547,
+      "retrograde_duration_days": 119.450305,
+      "method_key": "retrograde_shadow_from_true_stations_v1",
+      "window_clipped": {
+        "pre_shadow_start_clipped": false,
+        "post_shadow_end_clipped": true
+      },
+      "phases": [
+        {
+          "phase": "pre_shadow",
+          "start_utc": "2025-08-17T07:34:17.526Z",
+          "end_utc": "2025-11-11T16:41:24.716Z",
+          "definition": "body reaches direct-station longitude while still direct, until retrograde station"
+        },
+        {
+          "phase": "retrograde",
+          "start_utc": "2025-11-11T16:41:24.716Z",
+          "end_utc": "2026-03-11T03:29:51.025Z",
+          "definition": "retrograde station to direct station"
+        },
+        {
+          "phase": "post_shadow",
+          "start_utc": "2026-03-11T03:29:51.025Z",
+          "end_utc": null,
+          "definition": "direct station until body re-crosses retrograde-station longitude"
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "section_errors": null,
+  "calculation_assumptions": [
+    "站度由黄经速度过零的 bracket + bisection 求根得到。",
+    "前阴影起点：逆行站之前，行运体最后一次到达“顺行站黄经”的时刻。",
+    "逆行区间：逆行站 → 顺行站。",
+    "后阴影终点：顺行站之后，行运体首次再次到达“逆行站黄经”的时刻。",
+    "阴影边界使用真实站度，不是固定天数近似。",
+    "窗口外若无法解析阴影端点，则对应字段为 null 并在 window_clipped 中标记。",
+    "结果为可复算时间与坐标事实，不含解释性论断。"
+  ]
+}

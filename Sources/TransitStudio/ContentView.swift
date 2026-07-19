@@ -150,6 +150,7 @@ struct ContentView: View {
         "parallel", "contraparallel", "oob_entry", "oob_exit", "declination_station",
     ]
     @State var declinationOrb: Double = 1.0
+    @State var retrogradeBodies: Set<String> = ["MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"]
     @State var mapBodies: Set<String> = [
         "SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"
     ]

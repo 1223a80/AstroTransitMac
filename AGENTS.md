@@ -127,6 +127,8 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-astrocartography-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-local-space-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-declination-timing-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-mercury-return-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-retrograde-cycles-request.json
 ```
 
 For rectify mode smoke test:

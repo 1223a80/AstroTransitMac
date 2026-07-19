@@ -90,13 +90,25 @@ def test_dst_local_offset_and_sidereal_target_are_explicit() -> None:
 
 def test_invalid_return_request_is_rejected_at_api_boundary() -> None:
     request = _request("SUN")
-    request["return_body_id"] = "SATURN"
+    request["return_body_id"] = "NOT_A_PLANET"
     request["precession_correction"] = "with_precession"
     error = validate_required_fields(request)
 
     assert error is not None
     assert any("return_body_id" in item for item in error["invalid"])
     assert any("precession" in item for item in error["invalid"])
+
+
+def test_mercury_return_is_supported() -> None:
+    request = _request("SUN")
+    request["return_body_id"] = "MERCURY"
+    assert validate_required_fields(request) is None
+    result = calculate_modern_return(request, [])
+    assert result["meta"]["return_body_id"] == "MERCURY"
+    assert result["current_cycle_return"] is not None
+    assert result["current_cycle_return"]["exact_error"] <= 1e-4
+    assert result["all_crossings"]
+    assert result["calculation_assumptions"]
 
     invalid_timezone = _request("SUN")
     invalid_timezone["birth"]["moment"]["timezone"] = "Not/AZone"

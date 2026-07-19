@@ -159,6 +159,20 @@ extension ContentView {
         }
     }
 
+    var retrogradeCyclesResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .retrogradeCycles(let r) = result {
+                RetrogradeCyclesResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(
+                    title: "等待逆行阴影扫描",
+                    systemImage: "arrow.uturn.backward.circle",
+                    description: "设定时间窗与天体后计算前阴影 / 逆行 / 后阴影。"
+                )
+            }
+        }
+    }
+
     var astrocartographyResultsPane: some View {
         Group {
             if let result = calcVM.modernResultData, case .astrocartography(let r) = result {

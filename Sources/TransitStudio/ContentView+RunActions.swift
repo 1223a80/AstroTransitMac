@@ -72,6 +72,7 @@ extension ContentView {
                 case .relocation: await runRelocation()
                 case .modernCycles: await runModernCycles()
                 case .declinationTiming: await runDeclinationTiming()
+                case .retrogradeCycles: await runRetrogradeCycles()
                 case .astrocartography: await runAstrocartography()
                 case .localSpace: await runLocalSpace()
                 }
@@ -529,6 +530,31 @@ extension ContentView {
                 pythonPath: appState.pythonPath
             )
             calcVM.modernResultData = .declinationTiming(result)
+        }
+    }
+
+    @MainActor
+    func runRetrogradeCycles() async {
+        guard !retrogradeBodies.isEmpty else {
+            calcVM.errorMessage = "请至少选择一个会逆行的天体。"
+            return
+        }
+        await performRun(progressLabel: "逆行阴影") {
+            let request = RetrogradeCyclesRequest(
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                bodyIDs: sortedBodyIDs(retrogradeBodies),
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.retrogradeCycles(
+                request: request,
+                pythonPath: appState.pythonPath
+            )
+            calcVM.modernResultData = .retrogradeCycles(result)
         }
     }
 

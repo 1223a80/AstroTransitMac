@@ -56,8 +56,91 @@
         "TRUE_NODE",
         "SOUTH_TRUE_NODE"
       ]
-    }
+    },
+    "search_half_days": 120,
+    "search_step_hours": 2.0,
+    "crossing_count_in_window": 9
   },
+  "requested_config": {
+    "return_body_id": "MOON",
+    "location_source": "birth",
+    "house_system": "placidus",
+    "zodiac": "tropical",
+    "node_mode": "true_node",
+    "precession_correction": "none"
+  },
+  "effective_config": {
+    "return_body_id": "MOON",
+    "target_longitude": 328.7886292810519,
+    "search_half_days": 120,
+    "search_step_hours": 2.0,
+    "location_source": "birth",
+    "display_timezone": "Asia/Shanghai"
+  },
+  "all_crossings": [
+    {
+      "pass_index_in_window": 1,
+      "pass_count_in_window": 9,
+      "exact_utc": "2026-01-21T04:34:57.736893Z",
+      "relation_to_reference": "at_or_before_reference"
+    },
+    {
+      "pass_index_in_window": 2,
+      "pass_count_in_window": 9,
+      "exact_utc": "2026-02-17T11:56:45.227422Z",
+      "relation_to_reference": "at_or_before_reference"
+    },
+    {
+      "pass_index_in_window": 3,
+      "pass_count_in_window": 9,
+      "exact_utc": "2026-03-16T21:03:52.941698Z",
+      "relation_to_reference": "at_or_before_reference"
+    },
+    {
+      "pass_index_in_window": 4,
+      "pass_count_in_window": 9,
+      "exact_utc": "2026-04-13T06:41:53.037157Z",
+      "relation_to_reference": "at_or_before_reference"
+    },
+    {
+      "pass_index_in_window": 5,
+      "pass_count_in_window": 9,
+      "exact_utc": "2026-05-10T15:22:25.541095Z",
+      "relation_to_reference": "after_reference"
+    },
+    {
+      "pass_index_in_window": 6,
+      "pass_count_in_window": 9,
+      "exact_utc": "2026-06-06T22:22:58.541922Z",
+      "relation_to_reference": "after_reference"
+    },
+    {
+      "pass_index_in_window": 7,
+      "pass_count_in_window": 9,
+      "exact_utc": "2026-07-04T04:09:38.789376Z",
+      "relation_to_reference": "after_reference"
+    },
+    {
+      "pass_index_in_window": 8,
+      "pass_count_in_window": 9,
+      "exact_utc": "2026-07-31T09:54:29.321179Z",
+      "relation_to_reference": "after_reference"
+    },
+    {
+      "pass_index_in_window": 9,
+      "pass_count_in_window": 9,
+      "exact_utc": "2026-08-27T16:46:01.203503Z",
+      "relation_to_reference": "after_reference"
+    }
+  ],
+  "calculation_assumptions": [
+    "返照 exact 为行运 MOON 黄经与本命目标黄经差的 bracket + bisection 求根。",
+    "搜索半窗 120 天，采样步长 2.0 小时（按行星自适应）。",
+    "previous / current_cycle / next 相对 reference 时刻选取；同一窗口内全部穿越见 cycle_crossings。",
+    "返照地点仅影响宫位与轴点，不改变 exact UTC。",
+    "precession_correction=none；sidereal 时目标与搜索共用 set_zodiac_mode。",
+    "结果为可复算时间与盘面事实，不含解释性论断。"
+  ],
   "previous_return": {
     "label": "previous_return",
     "exact_utc": "2026-03-16T21:03:52.941698Z",
@@ -1662,7 +1745,65 @@
         "return_house": 1,
         "natal_house": 6
       }
-    ]
+    ],
+    "cycle_crossings": [
+      {
+        "pass_index_in_window": 1,
+        "pass_count_in_window": 9,
+        "exact_utc": "2026-01-21T04:34:57.736893Z",
+        "relation_to_reference": "at_or_before_reference"
+      },
+      {
+        "pass_index_in_window": 2,
+        "pass_count_in_window": 9,
+        "exact_utc": "2026-02-17T11:56:45.227422Z",
+        "relation_to_reference": "at_or_before_reference"
+      },
+      {
+        "pass_index_in_window": 3,
+        "pass_count_in_window": 9,
+        "exact_utc": "2026-03-16T21:03:52.941698Z",
+        "relation_to_reference": "at_or_before_reference"
+      },
+      {
+        "pass_index_in_window": 4,
+        "pass_count_in_window": 9,
+        "exact_utc": "2026-04-13T06:41:53.037157Z",
+        "relation_to_reference": "at_or_before_reference"
+      },
+      {
+        "pass_index_in_window": 5,
+        "pass_count_in_window": 9,
+        "exact_utc": "2026-05-10T15:22:25.541095Z",
+        "relation_to_reference": "after_reference"
+      },
+      {
+        "pass_index_in_window": 6,
+        "pass_count_in_window": 9,
+        "exact_utc": "2026-06-06T22:22:58.541922Z",
+        "relation_to_reference": "after_reference"
+      },
+      {
+        "pass_index_in_window": 7,
+        "pass_count_in_window": 9,
+        "exact_utc": "2026-07-04T04:09:38.789376Z",
+        "relation_to_reference": "after_reference"
+      },
+      {
+        "pass_index_in_window": 8,
+        "pass_count_in_window": 9,
+        "exact_utc": "2026-07-31T09:54:29.321179Z",
+        "relation_to_reference": "after_reference"
+      },
+      {
+        "pass_index_in_window": 9,
+        "pass_count_in_window": 9,
+        "exact_utc": "2026-08-27T16:46:01.203503Z",
+        "relation_to_reference": "after_reference"
+      }
+    ],
+    "pass_count_in_window": 9,
+    "pass_index_in_window": 4
   },
   "next_return": {
     "label": "next_return",
@@ -2474,8 +2615,8 @@
   },
   "no_hit_in_user_window": false,
   "suggested_window": null,
-  "search_start_local": "2026-01-25T12:00:00+08:00",
-  "search_end_local": "2026-08-13T12:00:00+08:00",
+  "search_start_local": "2026-01-05T12:00:00+08:00",
+  "search_end_local": "2026-09-02T12:00:00+08:00",
   "warnings": [],
   "section_errors": null
 }

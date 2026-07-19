@@ -57,8 +57,61 @@
         "TRUE_NODE",
         "SOUTH_TRUE_NODE"
       ]
-    }
+    },
+    "search_half_days": 800,
+    "search_step_hours": 6.0,
+    "crossing_count_in_window": 4
   },
+  "requested_config": {
+    "return_body_id": "SUN",
+    "location_source": "birth",
+    "house_system": "placidus",
+    "zodiac": "tropical",
+    "node_mode": "true_node",
+    "precession_correction": "none"
+  },
+  "effective_config": {
+    "return_body_id": "SUN",
+    "target_longitude": 280.47443215639436,
+    "search_half_days": 800,
+    "search_step_hours": 6.0,
+    "location_source": "birth",
+    "display_timezone": "Asia/Shanghai"
+  },
+  "all_crossings": [
+    {
+      "pass_index_in_window": 1,
+      "pass_count_in_window": 4,
+      "exact_utc": "2024-12-31T16:00:59.678937Z",
+      "relation_to_reference": "at_or_before_reference"
+    },
+    {
+      "pass_index_in_window": 2,
+      "pass_count_in_window": 4,
+      "exact_utc": "2025-12-31T21:46:55.684319Z",
+      "relation_to_reference": "at_or_before_reference"
+    },
+    {
+      "pass_index_in_window": 3,
+      "pass_count_in_window": 4,
+      "exact_utc": "2027-01-01T03:37:41.934759Z",
+      "relation_to_reference": "after_reference"
+    },
+    {
+      "pass_index_in_window": 4,
+      "pass_count_in_window": 4,
+      "exact_utc": "2028-01-01T09:21:18.469563Z",
+      "relation_to_reference": "after_reference"
+    }
+  ],
+  "calculation_assumptions": [
+    "返照 exact 为行运 SUN 黄经与本命目标黄经差的 bracket + bisection 求根。",
+    "搜索半窗 800 天，采样步长 6.0 小时（按行星自适应）。",
+    "previous / current_cycle / next 相对 reference 时刻选取；同一窗口内全部穿越见 cycle_crossings。",
+    "返照地点仅影响宫位与轴点，不改变 exact UTC。",
+    "precession_correction=none；sidereal 时目标与搜索共用 set_zodiac_mode。",
+    "结果为可复算时间与盘面事实，不含解释性论断。"
+  ],
   "previous_return": {
     "label": "previous_return",
     "exact_utc": "2024-12-31T16:00:59.678937Z",
@@ -2064,7 +2117,29 @@
         "return_house": 9,
         "natal_house": 6
       }
-    ]
+    ],
+    "cycle_crossings": [
+      {
+        "pass_index_in_window": 1,
+        "pass_count_in_window": 4,
+        "exact_utc": "2024-12-31T16:00:59.678937Z",
+        "relation_to_reference": "at_or_before_reference"
+      },
+      {
+        "pass_index_in_window": 2,
+        "pass_count_in_window": 4,
+        "exact_utc": "2025-12-31T21:46:55.684319Z",
+        "relation_to_reference": "at_or_before_reference"
+      },
+      {
+        "pass_index_in_window": 3,
+        "pass_count_in_window": 4,
+        "exact_utc": "2027-01-01T03:37:41.934759Z",
+        "relation_to_reference": "after_reference"
+      }
+    ],
+    "pass_count_in_window": 4,
+    "pass_index_in_window": 2
   },
   "next_return": {
     "label": "next_return",

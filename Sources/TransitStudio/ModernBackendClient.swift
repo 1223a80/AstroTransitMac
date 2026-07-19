@@ -55,6 +55,13 @@ extension BackendClient {
         try await run(request: request, pythonPath: pythonPath)
     }
 
+    static func retrogradeCycles(
+        request: RetrogradeCyclesRequest,
+        pythonPath: String
+    ) async throws -> RetrogradeCyclesResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
     static func astrocartography(
         request: AstrocartographyRequest,
         pythonPath: String

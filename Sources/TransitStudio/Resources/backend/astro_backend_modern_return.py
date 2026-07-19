@@ -108,6 +108,28 @@ def _location(request: dict[str, Any], birth: dict[str, Any]) -> tuple[str, dict
     )
 
 
+# Search half-windows sized for at least ~2 synodic/orbital cycles of context
+# so previous/current/next can be labelled around an arbitrary reference.
+RETURN_BODY_SEARCH: dict[str, tuple[int, float]] = {
+    # body_id -> (half_window_days, step_hours)
+    # Step sizes keep total iterations under return_solver's default cap while
+    # still bracketing the body's mean motion for reliable root refinement.
+    "MOON": (120, 2.0),
+    "SUN": (800, 6.0),
+    "MERCURY": (200, 3.0),
+    "VENUS": (500, 4.0),
+    "MARS": (900, 6.0),
+    "JUPITER": (4500, 24.0),
+    "SATURN": (11000, 48.0),
+    "URANUS": (32000, 96.0),
+    "NEPTUNE": (60000, 168.0),
+    "PLUTO": (90000, 240.0),
+    "CHIRON": (20000, 72.0),
+}
+
+SUPPORTED_RETURN_BODIES = set(RETURN_BODY_SEARCH.keys())
+
+
 def _search_exacts(
     return_body_id: str,
     target_longitude: float,
@@ -116,10 +138,8 @@ def _search_exacts(
     warnings: list[str],
 ) -> tuple[list[datetime], datetime, datetime]:
     """Find all target crossings in a generous UTC window and refine them."""
-    # Solar previous/current/next needs roughly two annual cycles around a
-    # mid-year reference; Lunar only needs a few months.
-    half_days = 800 if return_body_id == "SUN" else 100
-    step = timedelta(hours=6 if return_body_id == "SUN" else 2)
+    half_days, step_hours = RETURN_BODY_SEARCH.get(return_body_id, (800, 6.0))
+    step = timedelta(hours=step_hours)
     start = reference_dt - timedelta(days=half_days)
     end = reference_dt + timedelta(days=half_days)
     specs = resolve_bodies([return_body_id], [], warnings)
@@ -277,12 +297,42 @@ def _occurrence(
     return snapshot, {"effective_point_set": effective, "house_system_effective": house_effective}
 
 
+def _group_cycle_crossings(
+    exacts: list[datetime],
+    reference_dt: datetime,
+) -> list[dict[str, Any]]:
+    """Label every refined crossing with pass index within the search window.
+
+    Outer-planet returns may hit the natal longitude more than once near a
+    station.  Callers keep previous/current/next semantics while also receiving
+    the full multi-pass list for audit.
+    """
+    ordered = sorted(exacts)
+    rows: list[dict[str, Any]] = []
+    total = len(ordered)
+    for index, exact in enumerate(ordered, start=1):
+        relation = "at_or_before_reference" if exact <= reference_dt else "after_reference"
+        rows.append(
+            {
+                "pass_index_in_window": index,
+                "pass_count_in_window": total,
+                "exact_utc": _iso_utc(exact),
+                "relation_to_reference": relation,
+            }
+        )
+    return rows
+
+
 def calculate_modern_return(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
     return_body_id = request.get("return_body_id")
-    if return_body_id not in {"SUN", "MOON"}:
-        raise ValueError("现代返照 v1 只支持 return_body_id=SUN 或 MOON")
+    if return_body_id not in SUPPORTED_RETURN_BODIES:
+        raise ValueError(
+            "现代返照支持 return_body_id="
+            + ", ".join(sorted(SUPPORTED_RETURN_BODIES))
+            + f"；收到 {return_body_id}"
+        )
     if request.get("precession_correction", "none") != "none":
-        raise ValueError("现代返照 v1 的 precession_correction 只支持 none")
+        raise ValueError("现代返照的 precession_correction 只支持 none")
 
     birth = request["birth"]
     reference = request["reference"]
@@ -350,6 +400,40 @@ def calculate_modern_return(request: dict[str, Any], warnings: list[str]) -> dic
         warnings.append("reference 之后没有找到下一次返照；请扩大搜索窗口。")
 
     eph = {"Swiss Ephemeris"}
+    half_days, step_hours = RETURN_BODY_SEARCH[return_body_id]
+    cycle_crossings = _group_cycle_crossings(exacts, reference_dt)
+    # Attach multi-pass facts onto the current occurrence when multiple roots
+    # cluster within one orbital period of the reference (common near stations).
+    if occurrences["current_cycle_return"] is not None and cycle_crossings and current_exact is not None:
+        near = [
+            row
+            for row in cycle_crossings
+            if abs(
+                (
+                    datetime.fromisoformat(row["exact_utc"].replace("Z", "+00:00"))
+                    - current_exact
+                ).total_seconds()
+            )
+            <= 400 * 86400
+        ]
+        occurrences["current_cycle_return"]["cycle_crossings"] = near or cycle_crossings
+        occurrences["current_cycle_return"]["pass_count_in_window"] = len(exacts)
+        for row in cycle_crossings:
+            if row["exact_utc"] == _iso_utc(current_exact):
+                occurrences["current_cycle_return"]["pass_index_in_window"] = row[
+                    "pass_index_in_window"
+                ]
+                break
+
+    calculation_assumptions = [
+        f"返照 exact 为行运 {return_body_id} 黄经与本命目标黄经差的 bracket + bisection 求根。",
+        f"搜索半窗 {half_days} 天，采样步长 {step_hours} 小时（按行星自适应）。",
+        "previous / current_cycle / next 相对 reference 时刻选取；同一窗口内全部穿越见 cycle_crossings。",
+        "返照地点仅影响宫位与轴点，不改变 exact UTC。",
+        "precession_correction=none；sidereal 时目标与搜索共用 set_zodiac_mode。",
+        "结果为可复算时间与盘面事实，不含解释性论断。",
+    ]
+
     return {
         "meta": {
             "method": "planetary_return_longitude_bisection",
@@ -366,7 +450,28 @@ def calculate_modern_return(request: dict[str, Any], warnings: list[str]) -> dic
             "precession_correction": "none",
             "ephemeris": ", ".join(sorted(eph)),
             "effective_point_set": effective_point_set,
+            "search_half_days": half_days,
+            "search_step_hours": step_hours,
+            "crossing_count_in_window": len(exacts),
         },
+        "requested_config": {
+            "return_body_id": return_body_id,
+            "location_source": location_source,
+            "house_system": request.get("house_system", "whole_sign"),
+            "zodiac": zodiac,
+            "node_mode": node_mode,
+            "precession_correction": request.get("precession_correction", "none"),
+        },
+        "effective_config": {
+            "return_body_id": return_body_id,
+            "target_longitude": target_longitude,
+            "search_half_days": half_days,
+            "search_step_hours": step_hours,
+            "location_source": location_source,
+            "display_timezone": display_timezone,
+        },
+        "all_crossings": cycle_crossings,
+        "calculation_assumptions": calculation_assumptions,
         **occurrences,
         "no_hit_in_user_window": not bool(exacts),
         "suggested_window": f"建议搜索窗口 {search_start.date()} 至 {search_end.date()}" if not exacts else None,

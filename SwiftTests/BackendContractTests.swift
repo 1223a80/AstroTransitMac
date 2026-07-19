@@ -333,6 +333,8 @@ struct BackendContractTests {
         #expect(solar.nextReturn != nil)
         #expect(solar.currentCycleReturn?.chart?.planets.isEmpty == false)
         #expect(solar.currentCycleReturn?.chart?.declinationAspects != nil)
+        #expect(solar.allCrossings?.isEmpty == false)
+        #expect(solar.calculationAssumptions?.isEmpty == false)
         if let chart = solar.currentCycleReturn?.chart {
             let wheel = ChartWheelData(modernReturnChart: chart, returnToNatalAspects: solar.currentCycleReturn?.returnToNatalAspects ?? [])
             #expect(wheel.points.contains { $0.id == "return-SUN" })
@@ -343,6 +345,7 @@ struct BackendContractTests {
         #expect(markdown.contains("宫制 requested"))
         #expect(markdown.contains("Asia/Shanghai"))
         #expect(markdown.contains("求根误差"))
+        #expect(markdown.contains("计算假设"))
         let csv = TextExportBuilder.csv(solar)
         #expect(csv.contains("house_system_requested"))
         #expect(csv.contains("current_return"))
@@ -351,6 +354,38 @@ struct BackendContractTests {
         #expect(lunar.meta.returnBodyID == "MOON")
         #expect(lunar.currentCycleReturn != nil)
         #expect(lunar.currentCycleReturn?.exactLocal.contains("+08:00") == true)
+
+        let mercury = try JSONDecoder().decode(
+            ModernReturnResult.self,
+            from: fixtureData("modern-mercury-return-result")
+        )
+        #expect(mercury.meta.returnBodyID == "MERCURY")
+        #expect(mercury.currentCycleReturn != nil)
+        #expect(mercury.currentCycleReturn?.exactError ?? 1 < 1e-4)
+        #expect(mercury.allCrossings?.isEmpty == false)
+        let mercuryMarkdown = MarkdownModernExportBuilder.modernReturn(mercury)
+        #expect(mercuryMarkdown.contains("MERCURY Return") || mercuryMarkdown.contains("Mercury") || mercuryMarkdown.contains("MERCURY"))
+    }
+
+    @Test func decodeRetrogradeCyclesFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(
+            RetrogradeCyclesResult.self,
+            from: fixtureData("retrograde-cycles-result")
+        )
+        #expect(result.meta.method == "retrograde_shadow_from_true_stations_v1")
+        #expect(!result.cycles.isEmpty)
+        #expect(!result.stations.isEmpty)
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        let mercury = result.cycles.filter { $0.bodyID == "MERCURY" }
+        #expect(!mercury.isEmpty)
+        #expect(mercury[0].shadowLongitudePre == mercury[0].directStationLongitude)
+        #expect(mercury[0].shadowLongitudePost == mercury[0].retrogradeStationLongitude)
+        let markdown = MarkdownExportBuilder.retrogradeCycles(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(markdown.contains("逆行周期"))
+        #expect(markdown.contains("计算假设"))
+        #expect(csv.contains("retrograde_cycle"))
+        #expect(csv.contains("station"))
     }
 
     @Test func decodeHoraryResultFromRealOutput() throws {

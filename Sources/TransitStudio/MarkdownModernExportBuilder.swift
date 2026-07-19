@@ -158,8 +158,31 @@ enum MarkdownModernExportBuilder {
     }
 
     static func modernReturn(_ result: ModernReturnResult) -> String {
-        var lines: [String] = ["# \(result.meta.returnBodyID == "MOON" ? "Lunar Return" : "Solar Return")"]
+        let bodyTitle: String
+        switch result.meta.returnBodyID {
+        case "SUN": bodyTitle = "Solar Return"
+        case "MOON": bodyTitle = "Lunar Return"
+        case let body?: bodyTitle = "\(body) Return"
+        default: bodyTitle = "Planetary Return"
+        }
+        var lines: [String] = ["# \(bodyTitle)"]
         lines.append(contentsOf: metaLines(result.meta))
+        if let assumptions = result.calculationAssumptions, !assumptions.isEmpty {
+            lines.append("")
+            lines.append("## 计算假设")
+            for item in assumptions {
+                lines.append("- \(item)")
+            }
+        }
+        if let crossings = result.allCrossings, !crossings.isEmpty {
+            lines.append("")
+            lines.append("## 窗口内全部穿越")
+            for row in crossings {
+                let pass = [row.passIndexInWindow, row.passCountInWindow].compactMap { $0 }.map(String.init)
+                let passText = pass.count == 2 ? "\(pass[0])/\(pass[1])" : ""
+                lines.append("- \(row.exactUTC) \(passText) \(row.relationToReference ?? "")".trimmingCharacters(in: .whitespaces))
+            }
+        }
         if let zodiac = result.meta.zodiac {
             lines.append("- 黄道：\(zodiac)")
         }
