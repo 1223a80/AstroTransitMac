@@ -96,7 +96,7 @@
 | 02 完整 diff 与既有 findings 复审 | ✅ | 四项既有 finding 均已复核；另发现并修复地图物理坐标误受 ayanamsha 影响 |
 | 03 必要修复与变更记录 | ✅ | 方位、黄纬、reference、exact_orb、GMT offset、地图 physical frame 均有回归与 changelog |
 | 04 本地验收与缓存清理 | ✅ | `check_vibe_changes.sh` 全绿：778 Python / 89 Swift / 全 smoke；已清理 386MB `.build` 与 Python 测试缓存 |
-| 05 提交、合并与推送 | 进行中 | 提交任务分支，合并 `main`，推送并验证远端同步 |
+| 05 提交、合并与推送 | ✅ | B6ABC 提交 `ea00675`；功能分支与快进后的 `main` 已推送，随后补交本计划收尾状态 |
 
 ---
 
