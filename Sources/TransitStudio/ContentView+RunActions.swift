@@ -77,6 +77,14 @@ extension ContentView {
                 case .planetarySynodic: await runPlanetarySynodic()
                 case .hellenisticConditionAudit: await runHellenisticConditionAudit()
                 case .draconicHeliocentric: await runDraconicHeliocentric()
+                                case .classicalDerivatives: await runClassicalDerivatives()
+                case .timeLordsExtended: await runTimeLordsExtended()
+                case .methodFamilies: await runMethodFamilies()
+                case .primaryDirectionsAudit: await runPrimaryDirectionsAudit()
+                case .distributionsPd: await runDistributionsPd()
+                case .prenatalParans: await runPrenatalParans()
+                case .orbitalDial: await runOrbitalDial()
+                case .mundaneElectional: await runMundaneElectional()
                 case .astrocartography: await runAstrocartography()
                 case .localSpace: await runLocalSpace()
                 }
@@ -691,6 +699,342 @@ extension ContentView {
             )
             let result = try await BackendClient.draconicHeliocentric(request: request, pythonPath: appState.pythonPath)
             calcVM.modernResultData = .draconicHeliocentric(result)
+        }
+    }
+
+
+    @MainActor
+    func runClassicalDerivatives() async {
+        await performRun(progressLabel: "派生盘/尊贵") {
+            var birth: BirthSettings? = nil
+            if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                birth = makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude)
+            }
+            let request = ExpansionGenericRequest(
+                mode: "classical_derivatives",
+                birth: birth,
+                reference: makeMoment(from: natalDate),
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                location: {
+                    if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                        return GeoPlace(name: "Observer", latitude: coords.latitude, longitude: coords.longitude, timezone: timezoneLabel)
+                    }
+                    return nil
+                }(),
+                bodyIDs: sortedBodyIDs(selectedNatalBodies),
+                modulus: 90,
+                maxAge: 90,
+                topicHouse: 7,
+                scanStepHours: 24,
+                solarArcRateDegPerYear: 1.0,
+                aspectOrb: globalOrb,
+                significators: ["ASC", "SUN", "MOON"],
+                paranRaOrbDeg: 1.0,
+                pictureOrb: 1.0,
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.classicalDerivatives(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .classicalDerivatives(result)
+        }
+    }
+
+
+    @MainActor
+    func runTimeLordsExtended() async {
+        await performRun(progressLabel: "时间主扩展") {
+            var birth: BirthSettings? = nil
+            if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                birth = makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude)
+            }
+            let request = ExpansionGenericRequest(
+                mode: "time_lords_extended",
+                birth: birth,
+                reference: makeMoment(from: natalDate),
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                location: {
+                    if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                        return GeoPlace(name: "Observer", latitude: coords.latitude, longitude: coords.longitude, timezone: timezoneLabel)
+                    }
+                    return nil
+                }(),
+                bodyIDs: sortedBodyIDs(selectedNatalBodies),
+                modulus: 90,
+                maxAge: 90,
+                topicHouse: 7,
+                scanStepHours: 24,
+                solarArcRateDegPerYear: 1.0,
+                aspectOrb: globalOrb,
+                significators: ["ASC", "SUN", "MOON"],
+                paranRaOrbDeg: 1.0,
+                pictureOrb: 1.0,
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.timeLordsExtended(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .timeLordsExtended(result)
+        }
+    }
+
+
+    @MainActor
+    func runMethodFamilies() async {
+        await performRun(progressLabel: "推运方法族") {
+            var birth: BirthSettings? = nil
+            if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                birth = makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude)
+            }
+            let request = ExpansionGenericRequest(
+                mode: "method_families",
+                birth: birth,
+                reference: makeMoment(from: natalDate),
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                location: {
+                    if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                        return GeoPlace(name: "Observer", latitude: coords.latitude, longitude: coords.longitude, timezone: timezoneLabel)
+                    }
+                    return nil
+                }(),
+                bodyIDs: sortedBodyIDs(selectedNatalBodies),
+                modulus: 90,
+                maxAge: 90,
+                topicHouse: 7,
+                scanStepHours: 24,
+                solarArcRateDegPerYear: 1.0,
+                aspectOrb: globalOrb,
+                significators: ["ASC", "SUN", "MOON"],
+                paranRaOrbDeg: 1.0,
+                pictureOrb: 1.0,
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.methodFamilies(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .methodFamilies(result)
+        }
+    }
+
+
+    @MainActor
+    func runPrimaryDirectionsAudit() async {
+        await performRun(progressLabel: "主限审计") {
+            var birth: BirthSettings? = nil
+            if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                birth = makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude)
+            }
+            let request = ExpansionGenericRequest(
+                mode: "primary_directions_audit",
+                birth: birth,
+                reference: makeMoment(from: natalDate),
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                location: {
+                    if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                        return GeoPlace(name: "Observer", latitude: coords.latitude, longitude: coords.longitude, timezone: timezoneLabel)
+                    }
+                    return nil
+                }(),
+                bodyIDs: sortedBodyIDs(selectedNatalBodies),
+                modulus: 90,
+                maxAge: 90,
+                topicHouse: 7,
+                scanStepHours: 24,
+                solarArcRateDegPerYear: 1.0,
+                aspectOrb: globalOrb,
+                significators: ["ASC", "SUN", "MOON"],
+                paranRaOrbDeg: 1.0,
+                pictureOrb: 1.0,
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.primaryDirectionsAudit(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .primaryDirectionsAudit(result)
+        }
+    }
+
+
+    @MainActor
+    func runDistributionsPd() async {
+        await performRun(progressLabel: "沿界/主限扩展") {
+            var birth: BirthSettings? = nil
+            if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                birth = makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude)
+            }
+            let request = ExpansionGenericRequest(
+                mode: "distributions_pd",
+                birth: birth,
+                reference: makeMoment(from: natalDate),
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                location: {
+                    if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                        return GeoPlace(name: "Observer", latitude: coords.latitude, longitude: coords.longitude, timezone: timezoneLabel)
+                    }
+                    return nil
+                }(),
+                bodyIDs: sortedBodyIDs(selectedNatalBodies),
+                modulus: 90,
+                maxAge: 90,
+                topicHouse: 7,
+                scanStepHours: 24,
+                solarArcRateDegPerYear: 1.0,
+                aspectOrb: globalOrb,
+                significators: ["ASC", "SUN", "MOON"],
+                paranRaOrbDeg: 1.0,
+                pictureOrb: 1.0,
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.distributionsPd(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .distributionsPd(result)
+        }
+    }
+
+
+    @MainActor
+    func runPrenatalParans() async {
+        await performRun(progressLabel: "产前朔望/Parans") {
+            var birth: BirthSettings? = nil
+            if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                birth = makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude)
+            }
+            let request = ExpansionGenericRequest(
+                mode: "prenatal_parans",
+                birth: birth,
+                reference: makeMoment(from: natalDate),
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                location: {
+                    if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                        return GeoPlace(name: "Observer", latitude: coords.latitude, longitude: coords.longitude, timezone: timezoneLabel)
+                    }
+                    return nil
+                }(),
+                bodyIDs: sortedBodyIDs(selectedNatalBodies),
+                modulus: 90,
+                maxAge: 90,
+                topicHouse: 7,
+                scanStepHours: 24,
+                solarArcRateDegPerYear: 1.0,
+                aspectOrb: globalOrb,
+                significators: ["ASC", "SUN", "MOON"],
+                paranRaOrbDeg: 1.0,
+                pictureOrb: 1.0,
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.prenatalParans(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .prenatalParans(result)
+        }
+    }
+
+
+    @MainActor
+    func runOrbitalDial() async {
+        await performRun(progressLabel: "轨道点/Dial") {
+            var birth: BirthSettings? = nil
+            if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                birth = makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude)
+            }
+            let request = ExpansionGenericRequest(
+                mode: "orbital_dial",
+                birth: birth,
+                reference: makeMoment(from: natalDate),
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                location: {
+                    if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                        return GeoPlace(name: "Observer", latitude: coords.latitude, longitude: coords.longitude, timezone: timezoneLabel)
+                    }
+                    return nil
+                }(),
+                bodyIDs: sortedBodyIDs(selectedNatalBodies),
+                modulus: 90,
+                maxAge: 90,
+                topicHouse: 7,
+                scanStepHours: 24,
+                solarArcRateDegPerYear: 1.0,
+                aspectOrb: globalOrb,
+                significators: ["ASC", "SUN", "MOON"],
+                paranRaOrbDeg: 1.0,
+                pictureOrb: 1.0,
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.orbitalDial(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .orbitalDial(result)
+        }
+    }
+
+
+    @MainActor
+    func runMundaneElectional() async {
+        await performRun(progressLabel: "世俗/择时事实") {
+            var birth: BirthSettings? = nil
+            if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                birth = makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude)
+            }
+            let request = ExpansionGenericRequest(
+                mode: "mundane_electional",
+                birth: birth,
+                reference: makeMoment(from: natalDate),
+                start: makeMoment(from: scanStartDate),
+                end: makeMoment(from: scanEndDate),
+                displayTimezone: timezoneLabel,
+                location: {
+                    if let coords = requireCoordinates(birthLatitude, birthLongitude) {
+                        return GeoPlace(name: "Observer", latitude: coords.latitude, longitude: coords.longitude, timezone: timezoneLabel)
+                    }
+                    return nil
+                }(),
+                bodyIDs: sortedBodyIDs(selectedNatalBodies),
+                modulus: 90,
+                maxAge: 90,
+                topicHouse: 7,
+                scanStepHours: 24,
+                solarArcRateDegPerYear: 1.0,
+                aspectOrb: globalOrb,
+                significators: ["ASC", "SUN", "MOON"],
+                paranRaOrbDeg: 1.0,
+                pictureOrb: 1.0,
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.mundaneElectional(request: request, pythonPath: appState.pythonPath)
+            calcVM.modernResultData = .mundaneElectional(result)
         }
     }
 

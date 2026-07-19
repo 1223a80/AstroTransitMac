@@ -19,6 +19,14 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
     case planetarySynodic = "planetary_synodic"
     case hellenisticConditionAudit = "hellenistic_condition_audit"
     case draconicHeliocentric = "draconic_heliocentric"
+    case classicalDerivatives = "classical_derivatives"
+    case timeLordsExtended = "time_lords_extended"
+    case methodFamilies = "method_families"
+    case primaryDirectionsAudit = "primary_directions_audit"
+    case distributionsPd = "distributions_pd"
+    case prenatalParans = "prenatal_parans"
+    case orbitalDial = "orbital_dial"
+    case mundaneElectional = "mundane_electional"
     case astrocartography = "astrocartography"
     case localSpace = "local_space"
 
@@ -44,6 +52,14 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .planetarySynodic: return "会合周期"
         case .hellenisticConditionAudit: return "希腊状态审计"
         case .draconicHeliocentric: return "Draconic/日心"
+        case .classicalDerivatives: return "派生盘/尊贵"
+        case .timeLordsExtended: return "时间主扩展"
+        case .methodFamilies: return "推运方法族"
+        case .primaryDirectionsAudit: return "主限审计"
+        case .distributionsPd: return "沿界/主限扩展"
+        case .prenatalParans: return "产前朔望/Parans"
+        case .orbitalDial: return "轨道点/Dial"
+        case .mundaneElectional: return "世俗/择时事实"
         case .astrocartography: return "天体地图"
         case .localSpace: return "Local Space"
         }
@@ -69,6 +85,10 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .planetarySynodic: return "arrow.triangle.2.circlepath"
         case .hellenisticConditionAudit: return "list.bullet.rectangle"
         case .draconicHeliocentric: return "arrow.triangle.swap"
+        case .classicalDerivatives, .timeLordsExtended, .methodFamilies,
+             .primaryDirectionsAudit, .distributionsPd, .prenatalParans,
+             .orbitalDial, .mundaneElectional:
+            return "star"
         case .astrocartography: return "globe.americas"
         case .localSpace: return "location.north.line"
         }
@@ -95,6 +115,14 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .planetarySynodic: return "events"
         case .hellenisticConditionAudit: return "conditions"
         case .draconicHeliocentric: return "draconic"
+        case .classicalDerivatives: return "dodeka"
+        case .timeLordsExtended: return "concordance"
+        case .methodFamilies: return "profiles"
+        case .primaryDirectionsAudit: return "audit"
+        case .distributionsPd: return "distributions"
+        case .prenatalParans: return "packet"
+        case .orbitalDial: return "dial"
+        case .mundaneElectional: return "ingresses"
         case .astrocartography: return "lines"
         case .localSpace: return "directions"
         }
@@ -119,6 +147,14 @@ enum ModernResultData {
     case planetarySynodic(PlanetarySynodicResult)
     case hellenisticConditionAudit(HellenisticConditionAuditResult)
     case draconicHeliocentric(DraconicHeliocentricResult)
+    case classicalDerivatives(ClassicalDerivativesResult)
+    case timeLordsExtended(TimeLordsExtendedResult)
+    case methodFamilies(MethodFamiliesResult)
+    case primaryDirectionsAudit(PrimaryDirectionsAuditResult)
+    case distributionsPd(DistributionsPdResult)
+    case prenatalParans(PrenatalParansResult)
+    case orbitalDial(OrbitalDialResult)
+    case mundaneElectional(MundaneElectionalResult)
     case astrocartography(AstrocartographyResult)
     case localSpace(LocalSpaceResult)
 }

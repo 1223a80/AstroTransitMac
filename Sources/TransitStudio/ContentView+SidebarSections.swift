@@ -669,6 +669,22 @@ extension ContentView {
                 collapsible("本命盘") { natalSettingsSection }
             case .draconicHeliocentric:
                 collapsible("本命盘") { natalSettingsSection }
+            case .classicalDerivatives:
+                collapsible("本命盘") { natalSettingsSection }
+            case .timeLordsExtended:
+                collapsible("本命盘") { natalSettingsSection }
+            case .methodFamilies:
+                collapsible("本命盘") { natalSettingsSection }
+            case .primaryDirectionsAudit:
+                collapsible("本命盘") { natalSettingsSection }
+            case .distributionsPd:
+                collapsible("本命盘") { natalSettingsSection }
+            case .prenatalParans:
+                collapsible("本命盘") { natalSettingsSection }
+            case .orbitalDial:
+                collapsible("本命盘") { natalSettingsSection }
+            case .mundaneElectional:
+                collapsible("本命盘") { natalSettingsSection }
             case .astrocartography:
                 astrocartographySidebar
             case .localSpace:

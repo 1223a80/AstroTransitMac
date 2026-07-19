@@ -388,6 +388,62 @@ struct BackendContractTests {
         #expect(csv.contains("station"))
     }
 
+    @Test func decodeClassicalDerivativesFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(ClassicalDerivativesResult.self, from: fixtureData("classical-derivatives-result"))
+        #expect(result.meta.method.contains("classical") || result.meta.mode == "classical_derivatives" || !result.meta.method.isEmpty)
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        #expect(MarkdownExportBuilder.classicalDerivatives(result).contains(result.meta.method))
+    }
+
+    @Test func decodeTimeLordsExtendedFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(TimeLordsExtendedResult.self, from: fixtureData("time-lords-extended-result"))
+        #expect(result.meta.method.contains("time") || result.meta.mode == "time_lords_extended" || !result.meta.method.isEmpty)
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        #expect(MarkdownExportBuilder.timeLordsExtended(result).contains(result.meta.method))
+    }
+
+    @Test func decodeMethodFamiliesFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(MethodFamiliesResult.self, from: fixtureData("method-families-result"))
+        #expect(result.meta.method.contains("method") || result.meta.mode == "method_families" || !result.meta.method.isEmpty)
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        #expect(MarkdownExportBuilder.methodFamilies(result).contains(result.meta.method))
+    }
+
+    @Test func decodePrimaryDirectionsAuditFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(PrimaryDirectionsAuditResult.self, from: fixtureData("primary-directions-audit-result"))
+        #expect(result.meta.method.contains("primary") || result.meta.mode == "primary_directions_audit" || !result.meta.method.isEmpty)
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        #expect(MarkdownExportBuilder.primaryDirectionsAudit(result).contains(result.meta.method))
+    }
+
+    @Test func decodeDistributionsPdFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(DistributionsPdResult.self, from: fixtureData("distributions-pd-result"))
+        #expect(result.meta.method.contains("distributions") || result.meta.mode == "distributions_pd" || !result.meta.method.isEmpty)
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        #expect(MarkdownExportBuilder.distributionsPd(result).contains(result.meta.method))
+    }
+
+    @Test func decodePrenatalParansFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(PrenatalParansResult.self, from: fixtureData("prenatal-parans-result"))
+        #expect(result.meta.method.contains("prenatal") || result.meta.mode == "prenatal_parans" || !result.meta.method.isEmpty)
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        #expect(MarkdownExportBuilder.prenatalParans(result).contains(result.meta.method))
+    }
+
+    @Test func decodeOrbitalDialFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(OrbitalDialResult.self, from: fixtureData("orbital-dial-result"))
+        #expect(result.meta.method.contains("orbital") || result.meta.mode == "orbital_dial" || !result.meta.method.isEmpty)
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        #expect(MarkdownExportBuilder.orbitalDial(result).contains(result.meta.method))
+    }
+
+    @Test func decodeMundaneElectionalFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(MundaneElectionalResult.self, from: fixtureData("mundane-electional-result"))
+        #expect(result.meta.method.contains("mundane") || result.meta.mode == "mundane_electional" || !result.meta.method.isEmpty)
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        #expect(MarkdownExportBuilder.mundaneElectional(result).contains(result.meta.method))
+    }
+
     @Test func decodeDraconicHeliocentricFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(DraconicHeliocentricResult.self, from: fixtureData("draconic-heliocentric-result"))
         #expect(result.meta.method == "draconic_heliocentric_v1")

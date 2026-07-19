@@ -1,0 +1,3229 @@
+{
+  "meta": {
+    "mode": "classical_derivatives",
+    "method": "classical_derivatives_v1",
+    "schema_version": 1,
+    "birth_utc": "1990-01-01T04:00:00+00:00",
+    "ephemeris": "Swiss Ephemeris",
+    "dodeka_count": 67,
+    "monomoiria_count": 67,
+    "topical_count": 12
+  },
+  "requested_config": {
+    "zodiac": "tropical"
+  },
+  "effective_config": {
+    "zodiac": "tropical",
+    "house_system": "whole_sign",
+    "bounds_system": "egyptian",
+    "triplicity_system": "dorothean",
+    "method": "classical_derivatives_v1",
+    "monomoiria_profile": "sign_domicile_ruler_per_degree_v1"
+  },
+  "dodekatemoria": [
+    {
+      "source_id": "SUN",
+      "source_name": "太阳",
+      "source_kind": "planet",
+      "natal_longitude": 280.474432156,
+      "dodekatemorion_longitude": 35.6932,
+      "dodekatemorion_sign_index": 1,
+      "dodekatemorion_ruler": "金星",
+      "sign": "金牛",
+      "degree_text": "05°41'36\" 金牛",
+      "house": 10,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "MOON",
+      "source_name": "月亮",
+      "source_kind": "planet",
+      "natal_longitude": 328.788629281,
+      "dodekatemorion_longitude": 285.4636,
+      "dodekatemorion_sign_index": 9,
+      "dodekatemorion_ruler": "土星",
+      "sign": "摩羯",
+      "degree_text": "15°27'49\" 摩羯",
+      "house": 11,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "MERCURY",
+      "source_name": "水星",
+      "source_kind": "planet",
+      "natal_longitude": 295.760043314,
+      "dodekatemorion_longitude": 219.1205,
+      "dodekatemorion_sign_index": 7,
+      "dodekatemorion_ruler": "火星",
+      "sign": "天蝎",
+      "degree_text": "09°07'14\" 天蝎",
+      "house": 10,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "VENUS",
+      "source_name": "金星",
+      "source_kind": "planet",
+      "natal_longitude": 306.263052404,
+      "dodekatemorion_longitude": 15.1566,
+      "dodekatemorion_sign_index": 0,
+      "dodekatemorion_ruler": "火星",
+      "sign": "白羊",
+      "degree_text": "15°09'24\" 白羊",
+      "house": 11,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "MARS",
+      "source_name": "火星",
+      "source_kind": "planet",
+      "natal_longitude": 249.765529575,
+      "dodekatemorion_longitude": 357.1864,
+      "dodekatemorion_sign_index": 11,
+      "dodekatemorion_ruler": "木星",
+      "sign": "双鱼",
+      "degree_text": "27°11'11\" 双鱼",
+      "house": 9,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "JUPITER",
+      "source_name": "木星",
+      "source_kind": "planet",
+      "natal_longitude": 95.193650338,
+      "dodekatemorion_longitude": 152.3238,
+      "dodekatemorion_sign_index": 5,
+      "dodekatemorion_ruler": "水星",
+      "sign": "处女",
+      "degree_text": "02°19'26\" 处女",
+      "house": 4,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "SATURN",
+      "source_name": "土星",
+      "source_kind": "planet",
+      "natal_longitude": 285.618079555,
+      "dodekatemorion_longitude": 97.417,
+      "dodekatemorion_sign_index": 3,
+      "dodekatemorion_ruler": "月亮",
+      "sign": "巨蟹",
+      "degree_text": "07°25'01\" 巨蟹",
+      "house": 10,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "ASC",
+      "source_name": "ASC",
+      "source_kind": "angle",
+      "natal_longitude": 17.616017304,
+      "dodekatemorion_longitude": 211.3922,
+      "dodekatemorion_sign_index": 7,
+      "dodekatemorion_ruler": "火星",
+      "sign": "天蝎",
+      "degree_text": "01°23'32\" 天蝎",
+      "house": 1,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "MC",
+      "source_name": "MC",
+      "source_kind": "angle",
+      "natal_longitude": 281.05763211,
+      "dodekatemorion_longitude": 42.6916,
+      "dodekatemorion_sign_index": 1,
+      "dodekatemorion_ruler": "金星",
+      "sign": "金牛",
+      "degree_text": "12°41'30\" 金牛",
+      "house": 10,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "DSC",
+      "source_name": "DSC",
+      "source_kind": "angle",
+      "natal_longitude": 197.616017304,
+      "dodekatemorion_longitude": 31.3922,
+      "dodekatemorion_sign_index": 1,
+      "dodekatemorion_ruler": "金星",
+      "sign": "金牛",
+      "degree_text": "01°23'32\" 金牛",
+      "house": 7,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "IC",
+      "source_name": "IC",
+      "source_kind": "angle",
+      "natal_longitude": 101.05763211,
+      "dodekatemorion_longitude": 222.6916,
+      "dodekatemorion_sign_index": 7,
+      "dodekatemorion_ruler": "火星",
+      "sign": "天蝎",
+      "degree_text": "12°41'30\" 天蝎",
+      "house": 4,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "fortune",
+      "source_name": "福点",
+      "source_kind": "lot",
+      "natal_longitude": 65.930214429,
+      "dodekatemorion_longitude": 131.1626,
+      "dodekatemorion_sign_index": 4,
+      "dodekatemorion_ruler": "太阳",
+      "sign": "狮子",
+      "degree_text": "11°09'45\" 狮子",
+      "house": 3,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "spirit",
+      "source_name": "精神点",
+      "source_kind": "lot",
+      "natal_longitude": 329.30182018,
+      "dodekatemorion_longitude": 291.6218,
+      "dodekatemorion_sign_index": 9,
+      "dodekatemorion_ruler": "土星",
+      "sign": "摩羯",
+      "degree_text": "21°37'18\" 摩羯",
+      "house": 11,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "eros",
+      "source_name": "爱欲点",
+      "source_kind": "lot",
+      "natal_longitude": 354.577249529,
+      "dodekatemorion_longitude": 264.927,
+      "dodekatemorion_sign_index": 8,
+      "dodekatemorion_ruler": "木星",
+      "sign": "射手",
+      "degree_text": "24°55'37\" 射手",
+      "house": 12,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "necessity",
+      "source_name": "必然点",
+      "source_kind": "lot",
+      "natal_longitude": 147.786188419,
+      "dodekatemorion_longitude": 93.4343,
+      "dodekatemorion_sign_index": 3,
+      "dodekatemorion_ruler": "月亮",
+      "sign": "巨蟹",
+      "degree_text": "03°26'03\" 巨蟹",
+      "house": 5,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "courage",
+      "source_name": "勇气点",
+      "source_kind": "lot",
+      "natal_longitude": 193.780702159,
+      "dodekatemorion_longitude": 345.3684,
+      "dodekatemorion_sign_index": 11,
+      "dodekatemorion_ruler": "木星",
+      "sign": "双鱼",
+      "degree_text": "15°22'06\" 双鱼",
+      "house": 7,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "victory",
+      "source_name": "胜利点",
+      "source_kind": "lot",
+      "natal_longitude": 143.507847462,
+      "dodekatemorion_longitude": 42.0942,
+      "dodekatemorion_sign_index": 1,
+      "dodekatemorion_ruler": "金星",
+      "sign": "金牛",
+      "degree_text": "12°05'39\" 金牛",
+      "house": 5,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "nemesis",
+      "source_name": "复仇点",
+      "source_kind": "lot",
+      "natal_longitude": 157.928152178,
+      "dodekatemorion_longitude": 245.1378,
+      "dodekatemorion_sign_index": 8,
+      "dodekatemorion_ruler": "木星",
+      "sign": "射手",
+      "degree_text": "05°08'16\" 射手",
+      "house": 6,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "basis",
+      "source_name": "基础点",
+      "source_kind": "lot",
+      "natal_longitude": 114.244411554,
+      "dodekatemorion_longitude": 20.9329,
+      "dodekatemorion_sign_index": 0,
+      "dodekatemorion_ruler": "火星",
+      "sign": "白羊",
+      "degree_text": "20°55'58\" 白羊",
+      "house": 4,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "marriage",
+      "source_name": "婚姻点",
+      "source_kind": "lot",
+      "natal_longitude": 356.971044455,
+      "dodekatemorion_longitude": 293.6525,
+      "dodekatemorion_sign_index": 9,
+      "dodekatemorion_ruler": "土星",
+      "sign": "摩羯",
+      "degree_text": "23°39'09\" 摩羯",
+      "house": 12,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "father",
+      "source_name": "父亲点",
+      "source_kind": "lot",
+      "natal_longitude": 22.759664703,
+      "dodekatemorion_longitude": 273.116,
+      "dodekatemorion_sign_index": 9,
+      "dodekatemorion_ruler": "土星",
+      "sign": "摩羯",
+      "degree_text": "03°06'58\" 摩羯",
+      "house": 1,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "mother",
+      "source_name": "母亲点",
+      "source_kind": "lot",
+      "natal_longitude": 40.141594181,
+      "dodekatemorion_longitude": 151.6991,
+      "dodekatemorion_sign_index": 5,
+      "dodekatemorion_ruler": "水星",
+      "sign": "处女",
+      "degree_text": "01°41'57\" 处女",
+      "house": 2,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "siblings",
+      "source_name": "兄弟点",
+      "source_kind": "lot",
+      "natal_longitude": 187.191588087,
+      "dodekatemorion_longitude": 266.2991,
+      "dodekatemorion_sign_index": 8,
+      "dodekatemorion_ruler": "木星",
+      "sign": "射手",
+      "degree_text": "26°17'57\" 射手",
+      "house": 7,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "friends",
+      "source_name": "朋友点",
+      "source_kind": "lot",
+      "natal_longitude": 344.587431338,
+      "dodekatemorion_longitude": 145.0492,
+      "dodekatemorion_sign_index": 4,
+      "dodekatemorion_ruler": "太阳",
+      "sign": "狮子",
+      "degree_text": "25°02'57\" 狮子",
+      "house": 12,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "enemies",
+      "source_name": "敌人点",
+      "source_kind": "lot",
+      "natal_longitude": 7.474053545,
+      "dodekatemorion_longitude": 89.6886,
+      "dodekatemorion_sign_index": 2,
+      "dodekatemorion_ruler": "水星",
+      "sign": "双子",
+      "degree_text": "29°41'19\" 双子",
+      "house": 1,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "death",
+      "source_name": "死亡点",
+      "source_kind": "lot",
+      "natal_longitude": 258.827388023,
+      "dodekatemorion_longitude": 105.9287,
+      "dodekatemorion_sign_index": 3,
+      "dodekatemorion_ruler": "月亮",
+      "sign": "巨蟹",
+      "degree_text": "15°55'43\" 巨蟹",
+      "house": 9,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "illness",
+      "source_name": "疾病点",
+      "source_kind": "lot",
+      "natal_longitude": 341.763467324,
+      "dodekatemorion_longitude": 111.1616,
+      "dodekatemorion_sign_index": 3,
+      "dodekatemorion_ruler": "月亮",
+      "sign": "巨蟹",
+      "degree_text": "21°09'42\" 巨蟹",
+      "house": 12,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "acute_illness",
+      "source_name": "急病点",
+      "source_kind": "lot",
+      "natal_longitude": 298.592917598,
+      "dodekatemorion_longitude": 253.115,
+      "dodekatemorion_sign_index": 8,
+      "dodekatemorion_ruler": "木星",
+      "sign": "射手",
+      "degree_text": "13°06'54\" 射手",
+      "house": 10,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "travel",
+      "source_name": "旅行点",
+      "source_kind": "lot",
+      "natal_longitude": 162.422366967,
+      "dodekatemorion_longitude": 299.0684,
+      "dodekatemorion_sign_index": 9,
+      "dodekatemorion_ruler": "土星",
+      "sign": "摩羯",
+      "degree_text": "29°04'06\" 摩羯",
+      "house": 6,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "captivity",
+      "source_name": "牢狱点",
+      "source_kind": "lot",
+      "natal_longitude": 61.997937749,
+      "dodekatemorion_longitude": 83.9753,
+      "dodekatemorion_sign_index": 2,
+      "dodekatemorion_ruler": "水星",
+      "sign": "双子",
+      "degree_text": "23°58'31\" 双子",
+      "house": 3,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "debt",
+      "source_name": "债务点",
+      "source_kind": "lot",
+      "natal_longitude": 7.474053545,
+      "dodekatemorion_longitude": 89.6886,
+      "dodekatemorion_sign_index": 2,
+      "dodekatemorion_ruler": "水星",
+      "sign": "双子",
+      "degree_text": "29°41'19\" 双子",
+      "house": 1,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "property",
+      "source_name": "不动产点",
+      "source_kind": "lot",
+      "natal_longitude": 181.997937749,
+      "dodekatemorion_longitude": 203.9753,
+      "dodekatemorion_sign_index": 6,
+      "dodekatemorion_ruler": "金星",
+      "sign": "天秤",
+      "degree_text": "23°58'31\" 天秤",
+      "house": 7,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "inheritance",
+      "source_name": "遗产点",
+      "source_kind": "lot",
+      "natal_longitude": 60.78656703,
+      "dodekatemorion_longitude": 69.4388,
+      "dodekatemorion_sign_index": 2,
+      "dodekatemorion_ruler": "水星",
+      "sign": "双子",
+      "degree_text": "09°26'20\" 双子",
+      "house": 3,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "danger",
+      "source_name": "危险点",
+      "source_kind": "lot",
+      "natal_longitude": 27.757981064,
+      "dodekatemorion_longitude": 333.0958,
+      "dodekatemorion_sign_index": 11,
+      "dodekatemorion_ruler": "木星",
+      "sign": "双鱼",
+      "degree_text": "03°05'45\" 双鱼",
+      "house": 1,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "peril",
+      "source_name": "劫难点",
+      "source_kind": "lot",
+      "natal_longitude": 301.997937749,
+      "dodekatemorion_longitude": 323.9753,
+      "dodekatemorion_sign_index": 10,
+      "dodekatemorion_ruler": "土星",
+      "sign": "水瓶",
+      "degree_text": "23°58'31\" 水瓶",
+      "house": 11,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "lost_objects",
+      "source_name": "失物点",
+      "source_kind": "lot",
+      "natal_longitude": 40.141594181,
+      "dodekatemorion_longitude": 151.6991,
+      "dodekatemorion_sign_index": 5,
+      "dodekatemorion_ruler": "水星",
+      "sign": "处女",
+      "degree_text": "01°41'57\" 处女",
+      "house": 2,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "theft",
+      "source_name": "盗窃点",
+      "source_kind": "lot",
+      "natal_longitude": 331.621503565,
+      "dodekatemorion_longitude": 349.458,
+      "dodekatemorion_sign_index": 11,
+      "dodekatemorion_ruler": "木星",
+      "sign": "双鱼",
+      "degree_text": "19°27'29\" 双鱼",
+      "house": 12,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "murder",
+      "source_name": "谋杀点",
+      "source_kind": "lot",
+      "natal_longitude": 187.191588087,
+      "dodekatemorion_longitude": 266.2991,
+      "dodekatemorion_sign_index": 8,
+      "dodekatemorion_ruler": "木星",
+      "sign": "射手",
+      "degree_text": "26°17'57\" 射手",
+      "house": 7,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "servants",
+      "source_name": "仆役点",
+      "source_kind": "lot",
+      "natal_longitude": 344.587431338,
+      "dodekatemorion_longitude": 145.0492,
+      "dodekatemorion_sign_index": 4,
+      "dodekatemorion_ruler": "太阳",
+      "sign": "狮子",
+      "degree_text": "25°02'57\" 狮子",
+      "house": 12,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "return",
+      "source_name": "归返点",
+      "source_kind": "lot",
+      "natal_longitude": 27.757981064,
+      "dodekatemorion_longitude": 333.0958,
+      "dodekatemorion_sign_index": 11,
+      "dodekatemorion_ruler": "木星",
+      "sign": "双鱼",
+      "degree_text": "03°05'45\" 双鱼",
+      "house": 1,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "water_travel",
+      "source_name": "水路旅行",
+      "source_kind": "lot",
+      "natal_longitude": 196.997937749,
+      "dodekatemorion_longitude": 23.9753,
+      "dodekatemorion_sign_index": 0,
+      "dodekatemorion_ruler": "火星",
+      "sign": "白羊",
+      "degree_text": "23°58'31\" 白羊",
+      "house": 7,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "happiness",
+      "source_name": "幸福点",
+      "source_kind": "lot",
+      "natal_longitude": 166.546615238,
+      "dodekatemorion_longitude": 348.5594,
+      "dodekatemorion_sign_index": 11,
+      "dodekatemorion_ruler": "木星",
+      "sign": "双鱼",
+      "degree_text": "18°33'34\" 双鱼",
+      "house": 6,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "kingship",
+      "source_name": "王权点",
+      "source_kind": "lot",
+      "natal_longitude": 65.930214429,
+      "dodekatemorion_longitude": 131.1626,
+      "dodekatemorion_sign_index": 4,
+      "dodekatemorion_ruler": "太阳",
+      "sign": "狮子",
+      "degree_text": "11°09'45\" 狮子",
+      "house": 3,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "honor",
+      "source_name": "荣誉点",
+      "source_kind": "lot",
+      "natal_longitude": 116.141585148,
+      "dodekatemorion_longitude": 43.699,
+      "dodekatemorion_sign_index": 1,
+      "dodekatemorion_ruler": "金星",
+      "sign": "金牛",
+      "degree_text": "13°41'56\" 金牛",
+      "house": 4,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "nobility",
+      "source_name": "贵族点",
+      "source_kind": "lot",
+      "natal_longitude": 144.021038361,
+      "dodekatemorion_longitude": 48.2525,
+      "dodekatemorion_sign_index": 1,
+      "dodekatemorion_ruler": "金星",
+      "sign": "金牛",
+      "degree_text": "18°15'09\" 金牛",
+      "house": 5,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "profession",
+      "source_name": "职业点",
+      "source_kind": "lot",
+      "natal_longitude": 2.330406146,
+      "dodekatemorion_longitude": 27.9649,
+      "dodekatemorion_sign_index": 0,
+      "dodekatemorion_ruler": "火星",
+      "sign": "白羊",
+      "degree_text": "27°57'54\" 白羊",
+      "house": 1,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "magistery",
+      "source_name": "权威点",
+      "source_kind": "lot",
+      "natal_longitude": 18.199217258,
+      "dodekatemorion_longitude": 218.3906,
+      "dodekatemorion_sign_index": 7,
+      "dodekatemorion_ruler": "火星",
+      "sign": "天蝎",
+      "degree_text": "08°23'26\" 天蝎",
+      "house": 1,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "dignity",
+      "source_name": "尊荣点",
+      "source_kind": "lot",
+      "natal_longitude": 12.472369906,
+      "dodekatemorion_longitude": 149.6684,
+      "dodekatemorion_sign_index": 4,
+      "dodekatemorion_ruler": "太阳",
+      "sign": "狮子",
+      "degree_text": "29°40'06\" 狮子",
+      "house": 1,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "fame",
+      "source_name": "名声点",
+      "source_kind": "lot",
+      "natal_longitude": 192.335235486,
+      "dodekatemorion_longitude": 328.0228,
+      "dodekatemorion_sign_index": 10,
+      "dodekatemorion_ruler": "土星",
+      "sign": "水瓶",
+      "degree_text": "28°01'22\" 水瓶",
+      "house": 7,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "success",
+      "source_name": "成功点",
+      "source_kind": "lot",
+      "natal_longitude": 46.879453213,
+      "dodekatemorion_longitude": 232.5534,
+      "dodekatemorion_sign_index": 7,
+      "dodekatemorion_ruler": "火星",
+      "sign": "天蝎",
+      "degree_text": "22°33'12\" 天蝎",
+      "house": 2,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "commerce",
+      "source_name": "商业点",
+      "source_kind": "lot",
+      "natal_longitude": 32.901628462,
+      "dodekatemorion_longitude": 64.8195,
+      "dodekatemorion_sign_index": 2,
+      "dodekatemorion_ruler": "水星",
+      "sign": "双子",
+      "degree_text": "04°49'10\" 双子",
+      "house": 2,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "justice",
+      "source_name": "司法点",
+      "source_kind": "lot",
+      "natal_longitude": 177.049624328,
+      "dodekatemorion_longitude": 114.5955,
+      "dodekatemorion_sign_index": 3,
+      "dodekatemorion_ruler": "月亮",
+      "sign": "巨蟹",
+      "degree_text": "24°35'44\" 巨蟹",
+      "house": 6,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "speculation",
+      "source_name": "投机点",
+      "source_kind": "lot",
+      "natal_longitude": 228.685419371,
+      "dodekatemorion_longitude": 74.225,
+      "dodekatemorion_sign_index": 2,
+      "dodekatemorion_ruler": "水星",
+      "sign": "双子",
+      "degree_text": "14°13'30\" 双子",
+      "house": 8,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "boldness",
+      "source_name": "勇敢点",
+      "source_kind": "lot",
+      "natal_longitude": 298.592917598,
+      "dodekatemorion_longitude": 253.115,
+      "dodekatemorion_sign_index": 8,
+      "dodekatemorion_ruler": "木星",
+      "sign": "射手",
+      "degree_text": "13°06'54\" 射手",
+      "house": 10,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "faith",
+      "source_name": "信仰点",
+      "source_kind": "lot",
+      "natal_longitude": 344.587431338,
+      "dodekatemorion_longitude": 145.0492,
+      "dodekatemorion_sign_index": 4,
+      "dodekatemorion_ruler": "太阳",
+      "sign": "狮子",
+      "degree_text": "25°02'57\" 狮子",
+      "house": 12,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "understanding",
+      "source_name": "理解点",
+      "source_kind": "lot",
+      "natal_longitude": 2.330406146,
+      "dodekatemorion_longitude": 27.9649,
+      "dodekatemorion_sign_index": 0,
+      "dodekatemorion_ruler": "火星",
+      "sign": "白羊",
+      "degree_text": "27°57'54\" 白羊",
+      "house": 1,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "reason",
+      "source_name": "理性点",
+      "source_kind": "lot",
+      "natal_longitude": 344.587431338,
+      "dodekatemorion_longitude": 145.0492,
+      "dodekatemorion_sign_index": 4,
+      "dodekatemorion_ruler": "太阳",
+      "sign": "狮子",
+      "degree_text": "25°02'57\" 狮子",
+      "house": 12,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "love_concord",
+      "source_name": "爱和点",
+      "source_kind": "lot",
+      "natal_longitude": 166.546615238,
+      "dodekatemorion_longitude": 348.5594,
+      "dodekatemorion_sign_index": 11,
+      "dodekatemorion_ruler": "木星",
+      "sign": "双鱼",
+      "degree_text": "18°33'34\" 双鱼",
+      "house": 6,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "discord",
+      "source_name": "纷争点",
+      "source_kind": "lot",
+      "natal_longitude": 172.187896541,
+      "dodekatemorion_longitude": 56.2548,
+      "dodekatemorion_sign_index": 1,
+      "dodekatemorion_ruler": "金星",
+      "sign": "金牛",
+      "degree_text": "26°15'17\" 金牛",
+      "house": 6,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "lawsuits",
+      "source_name": "诉讼点",
+      "source_kind": "lot",
+      "natal_longitude": 223.044138068,
+      "dodekatemorion_longitude": 6.5297,
+      "dodekatemorion_sign_index": 0,
+      "dodekatemorion_ruler": "火星",
+      "sign": "白羊",
+      "degree_text": "06°31'47\" 白羊",
+      "house": 8,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "secret_enemies",
+      "source_name": "暗敌点",
+      "source_kind": "lot",
+      "natal_longitude": 51.85597399,
+      "dodekatemorion_longitude": 292.2717,
+      "dodekatemorion_sign_index": 9,
+      "dodekatemorion_ruler": "土星",
+      "sign": "摩羯",
+      "degree_text": "22°16'18\" 摩羯",
+      "house": 2,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "treachery",
+      "source_name": "背叛点",
+      "source_kind": "lot",
+      "natal_longitude": 22.759664703,
+      "dodekatemorion_longitude": 273.116,
+      "dodekatemorion_sign_index": 9,
+      "dodekatemorion_ruler": "土星",
+      "sign": "摩羯",
+      "degree_text": "03°06'58\" 摩羯",
+      "house": 1,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "praise",
+      "source_name": "赞誉点",
+      "source_kind": "lot",
+      "natal_longitude": 228.685419371,
+      "dodekatemorion_longitude": 74.225,
+      "dodekatemorion_sign_index": 2,
+      "dodekatemorion_ruler": "水星",
+      "sign": "双子",
+      "degree_text": "14°13'30\" 双子",
+      "house": 8,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "piety",
+      "source_name": "虔诚点",
+      "source_kind": "lot",
+      "natal_longitude": 177.049624328,
+      "dodekatemorion_longitude": 114.5955,
+      "dodekatemorion_sign_index": 3,
+      "dodekatemorion_ruler": "月亮",
+      "sign": "巨蟹",
+      "degree_text": "24°35'44\" 巨蟹",
+      "house": 6,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "exaltation_old",
+      "source_name": "擢升度点",
+      "source_kind": "lot",
+      "natal_longitude": 279.090449461,
+      "dodekatemorion_longitude": 19.0854,
+      "dodekatemorion_sign_index": 0,
+      "dodekatemorion_ruler": "火星",
+      "sign": "白羊",
+      "degree_text": "19°05'07\" 白羊",
+      "house": 10,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "acquisition_old",
+      "source_name": "获取点",
+      "source_kind": "lot",
+      "natal_longitude": 280.987623055,
+      "dodekatemorion_longitude": 41.8515,
+      "dodekatemorion_sign_index": 1,
+      "dodekatemorion_ruler": "金星",
+      "sign": "金牛",
+      "degree_text": "11°51'05\" 金牛",
+      "house": 10,
+      "method_key": "calc_dodekatemorion"
+    },
+    {
+      "source_id": "children_old",
+      "source_name": "子女点(旧)",
+      "source_kind": "lot",
+      "natal_longitude": 187.191588087,
+      "dodekatemorion_longitude": 266.2991,
+      "dodekatemorion_sign_index": 8,
+      "dodekatemorion_ruler": "木星",
+      "sign": "射手",
+      "degree_text": "26°17'57\" 射手",
+      "house": 7,
+      "method_key": "calc_dodekatemorion"
+    }
+  ],
+  "dodekatemoria_contacts": [
+    {
+      "a": "SUN",
+      "b": "MC",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "SUN",
+      "b": "DSC",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "SUN",
+      "b": "victory",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "SUN",
+      "b": "honor",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "SUN",
+      "b": "nobility",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "SUN",
+      "b": "discord",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "SUN",
+      "b": "acquisition_old",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MOON",
+      "b": "spirit",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MOON",
+      "b": "marriage",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MOON",
+      "b": "father",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MOON",
+      "b": "travel",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MOON",
+      "b": "secret_enemies",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MOON",
+      "b": "treachery",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MERCURY",
+      "b": "ASC",
+      "relation": "same_sign",
+      "sign": "天蝎",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MERCURY",
+      "b": "IC",
+      "relation": "same_sign",
+      "sign": "天蝎",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MERCURY",
+      "b": "magistery",
+      "relation": "same_sign",
+      "sign": "天蝎",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MERCURY",
+      "b": "success",
+      "relation": "same_sign",
+      "sign": "天蝎",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "VENUS",
+      "b": "basis",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "VENUS",
+      "b": "water_travel",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "VENUS",
+      "b": "profession",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "VENUS",
+      "b": "understanding",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "VENUS",
+      "b": "lawsuits",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "VENUS",
+      "b": "exaltation_old",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MARS",
+      "b": "courage",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MARS",
+      "b": "danger",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MARS",
+      "b": "theft",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MARS",
+      "b": "return",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MARS",
+      "b": "happiness",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MARS",
+      "b": "love_concord",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "JUPITER",
+      "b": "mother",
+      "relation": "same_sign",
+      "sign": "处女",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "JUPITER",
+      "b": "lost_objects",
+      "relation": "same_sign",
+      "sign": "处女",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "SATURN",
+      "b": "necessity",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "SATURN",
+      "b": "death",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "SATURN",
+      "b": "illness",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "SATURN",
+      "b": "justice",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "SATURN",
+      "b": "piety",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "ASC",
+      "b": "IC",
+      "relation": "same_sign",
+      "sign": "天蝎",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "ASC",
+      "b": "magistery",
+      "relation": "same_sign",
+      "sign": "天蝎",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "ASC",
+      "b": "success",
+      "relation": "same_sign",
+      "sign": "天蝎",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MC",
+      "b": "DSC",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MC",
+      "b": "victory",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MC",
+      "b": "honor",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MC",
+      "b": "nobility",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MC",
+      "b": "discord",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "MC",
+      "b": "acquisition_old",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "DSC",
+      "b": "victory",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "DSC",
+      "b": "honor",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "DSC",
+      "b": "nobility",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "DSC",
+      "b": "discord",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "DSC",
+      "b": "acquisition_old",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "IC",
+      "b": "magistery",
+      "relation": "same_sign",
+      "sign": "天蝎",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "IC",
+      "b": "success",
+      "relation": "same_sign",
+      "sign": "天蝎",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "fortune",
+      "b": "friends",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "fortune",
+      "b": "servants",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "fortune",
+      "b": "kingship",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "fortune",
+      "b": "dignity",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "fortune",
+      "b": "faith",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "fortune",
+      "b": "reason",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "spirit",
+      "b": "marriage",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "spirit",
+      "b": "father",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "spirit",
+      "b": "travel",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "spirit",
+      "b": "secret_enemies",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "spirit",
+      "b": "treachery",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "eros",
+      "b": "nemesis",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "eros",
+      "b": "siblings",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "eros",
+      "b": "acute_illness",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "eros",
+      "b": "murder",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "eros",
+      "b": "boldness",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "eros",
+      "b": "children_old",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "necessity",
+      "b": "death",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "necessity",
+      "b": "illness",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "necessity",
+      "b": "justice",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "necessity",
+      "b": "piety",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "courage",
+      "b": "danger",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "courage",
+      "b": "theft",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "courage",
+      "b": "return",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "courage",
+      "b": "happiness",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "courage",
+      "b": "love_concord",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "victory",
+      "b": "honor",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "victory",
+      "b": "nobility",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "victory",
+      "b": "discord",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "victory",
+      "b": "acquisition_old",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "nemesis",
+      "b": "siblings",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "nemesis",
+      "b": "acute_illness",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "nemesis",
+      "b": "murder",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "nemesis",
+      "b": "boldness",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "nemesis",
+      "b": "children_old",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "basis",
+      "b": "water_travel",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "basis",
+      "b": "profession",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "basis",
+      "b": "understanding",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "basis",
+      "b": "lawsuits",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "basis",
+      "b": "exaltation_old",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "marriage",
+      "b": "father",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "marriage",
+      "b": "travel",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "marriage",
+      "b": "secret_enemies",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "marriage",
+      "b": "treachery",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "father",
+      "b": "travel",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "father",
+      "b": "secret_enemies",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "father",
+      "b": "treachery",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "mother",
+      "b": "lost_objects",
+      "relation": "same_sign",
+      "sign": "处女",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "siblings",
+      "b": "acute_illness",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "siblings",
+      "b": "murder",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "siblings",
+      "b": "boldness",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "siblings",
+      "b": "children_old",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "friends",
+      "b": "servants",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "friends",
+      "b": "kingship",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "friends",
+      "b": "dignity",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "friends",
+      "b": "faith",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "friends",
+      "b": "reason",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "enemies",
+      "b": "captivity",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "enemies",
+      "b": "debt",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "enemies",
+      "b": "inheritance",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "enemies",
+      "b": "commerce",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "enemies",
+      "b": "speculation",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "enemies",
+      "b": "praise",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "death",
+      "b": "illness",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "death",
+      "b": "justice",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "death",
+      "b": "piety",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "illness",
+      "b": "justice",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "illness",
+      "b": "piety",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "acute_illness",
+      "b": "murder",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "acute_illness",
+      "b": "boldness",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "acute_illness",
+      "b": "children_old",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "travel",
+      "b": "secret_enemies",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "travel",
+      "b": "treachery",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "captivity",
+      "b": "debt",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "captivity",
+      "b": "inheritance",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "captivity",
+      "b": "commerce",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "captivity",
+      "b": "speculation",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "captivity",
+      "b": "praise",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "debt",
+      "b": "inheritance",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "debt",
+      "b": "commerce",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "debt",
+      "b": "speculation",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "debt",
+      "b": "praise",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "inheritance",
+      "b": "commerce",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "inheritance",
+      "b": "speculation",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "inheritance",
+      "b": "praise",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "danger",
+      "b": "theft",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "danger",
+      "b": "return",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "danger",
+      "b": "happiness",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "danger",
+      "b": "love_concord",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "peril",
+      "b": "fame",
+      "relation": "same_sign",
+      "sign": "水瓶",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "theft",
+      "b": "return",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "theft",
+      "b": "happiness",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "theft",
+      "b": "love_concord",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "murder",
+      "b": "boldness",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "murder",
+      "b": "children_old",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "servants",
+      "b": "kingship",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "servants",
+      "b": "dignity",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "servants",
+      "b": "faith",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "servants",
+      "b": "reason",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "return",
+      "b": "happiness",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "return",
+      "b": "love_concord",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "water_travel",
+      "b": "profession",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "water_travel",
+      "b": "understanding",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "water_travel",
+      "b": "lawsuits",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "water_travel",
+      "b": "exaltation_old",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "happiness",
+      "b": "love_concord",
+      "relation": "same_sign",
+      "sign": "双鱼",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "kingship",
+      "b": "dignity",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "kingship",
+      "b": "faith",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "kingship",
+      "b": "reason",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "honor",
+      "b": "nobility",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "honor",
+      "b": "discord",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "honor",
+      "b": "acquisition_old",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "nobility",
+      "b": "discord",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "nobility",
+      "b": "acquisition_old",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "profession",
+      "b": "understanding",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "profession",
+      "b": "lawsuits",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "profession",
+      "b": "exaltation_old",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "magistery",
+      "b": "success",
+      "relation": "same_sign",
+      "sign": "天蝎",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "dignity",
+      "b": "faith",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "dignity",
+      "b": "reason",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "commerce",
+      "b": "speculation",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "commerce",
+      "b": "praise",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "justice",
+      "b": "piety",
+      "relation": "same_sign",
+      "sign": "巨蟹",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "speculation",
+      "b": "praise",
+      "relation": "same_sign",
+      "sign": "双子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "boldness",
+      "b": "children_old",
+      "relation": "same_sign",
+      "sign": "射手",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "faith",
+      "b": "reason",
+      "relation": "same_sign",
+      "sign": "狮子",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "understanding",
+      "b": "lawsuits",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "understanding",
+      "b": "exaltation_old",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "discord",
+      "b": "acquisition_old",
+      "relation": "same_sign",
+      "sign": "金牛",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "lawsuits",
+      "b": "exaltation_old",
+      "relation": "same_sign",
+      "sign": "白羊",
+      "method_key": "dodeka_sign_based_contact"
+    },
+    {
+      "a": "secret_enemies",
+      "b": "treachery",
+      "relation": "same_sign",
+      "sign": "摩羯",
+      "method_key": "dodeka_sign_based_contact"
+    }
+  ],
+  "monomoiria": [
+    {
+      "source_id": "SUN",
+      "source_name": "太阳",
+      "source_kind": "planet",
+      "longitude": 280.474432156,
+      "degree_index": 11,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "MOON",
+      "source_name": "月亮",
+      "source_kind": "planet",
+      "longitude": 328.788629281,
+      "degree_index": 29,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "MERCURY",
+      "source_name": "水星",
+      "source_kind": "planet",
+      "longitude": 295.760043314,
+      "degree_index": 26,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "VENUS",
+      "source_name": "金星",
+      "source_kind": "planet",
+      "longitude": 306.263052404,
+      "degree_index": 7,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "MARS",
+      "source_name": "火星",
+      "source_kind": "planet",
+      "longitude": 249.765529575,
+      "degree_index": 10,
+      "monomoiria_ruler": "JUPITER",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "JUPITER",
+      "source_name": "木星",
+      "source_kind": "planet",
+      "longitude": 95.193650338,
+      "degree_index": 6,
+      "monomoiria_ruler": "MOON",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "SATURN",
+      "source_name": "土星",
+      "source_kind": "planet",
+      "longitude": 285.618079555,
+      "degree_index": 16,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "ASC",
+      "source_name": "ASC",
+      "source_kind": "angle",
+      "longitude": 17.616017304,
+      "degree_index": 18,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "MC",
+      "source_name": "MC",
+      "source_kind": "angle",
+      "longitude": 281.05763211,
+      "degree_index": 12,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "DSC",
+      "source_name": "DSC",
+      "source_kind": "angle",
+      "longitude": 197.616017304,
+      "degree_index": 18,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "IC",
+      "source_name": "IC",
+      "source_kind": "angle",
+      "longitude": 101.05763211,
+      "degree_index": 12,
+      "monomoiria_ruler": "MOON",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "fortune",
+      "source_name": "福点",
+      "source_kind": "lot",
+      "longitude": 65.930214429,
+      "degree_index": 6,
+      "monomoiria_ruler": "MERCURY",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "spirit",
+      "source_name": "精神点",
+      "source_kind": "lot",
+      "longitude": 329.30182018,
+      "degree_index": 30,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "eros",
+      "source_name": "爱欲点",
+      "source_kind": "lot",
+      "longitude": 354.577249529,
+      "degree_index": 25,
+      "monomoiria_ruler": "JUPITER",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "necessity",
+      "source_name": "必然点",
+      "source_kind": "lot",
+      "longitude": 147.786188419,
+      "degree_index": 28,
+      "monomoiria_ruler": "SUN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "courage",
+      "source_name": "勇气点",
+      "source_kind": "lot",
+      "longitude": 193.780702159,
+      "degree_index": 14,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "victory",
+      "source_name": "胜利点",
+      "source_kind": "lot",
+      "longitude": 143.507847462,
+      "degree_index": 24,
+      "monomoiria_ruler": "SUN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "nemesis",
+      "source_name": "复仇点",
+      "source_kind": "lot",
+      "longitude": 157.928152178,
+      "degree_index": 8,
+      "monomoiria_ruler": "MERCURY",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "basis",
+      "source_name": "基础点",
+      "source_kind": "lot",
+      "longitude": 114.244411554,
+      "degree_index": 25,
+      "monomoiria_ruler": "MOON",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "marriage",
+      "source_name": "婚姻点",
+      "source_kind": "lot",
+      "longitude": 356.971044455,
+      "degree_index": 27,
+      "monomoiria_ruler": "JUPITER",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "father",
+      "source_name": "父亲点",
+      "source_kind": "lot",
+      "longitude": 22.759664703,
+      "degree_index": 23,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "mother",
+      "source_name": "母亲点",
+      "source_kind": "lot",
+      "longitude": 40.141594181,
+      "degree_index": 11,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "siblings",
+      "source_name": "兄弟点",
+      "source_kind": "lot",
+      "longitude": 187.191588087,
+      "degree_index": 8,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "friends",
+      "source_name": "朋友点",
+      "source_kind": "lot",
+      "longitude": 344.587431338,
+      "degree_index": 15,
+      "monomoiria_ruler": "JUPITER",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "enemies",
+      "source_name": "敌人点",
+      "source_kind": "lot",
+      "longitude": 7.474053545,
+      "degree_index": 8,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "death",
+      "source_name": "死亡点",
+      "source_kind": "lot",
+      "longitude": 258.827388023,
+      "degree_index": 19,
+      "monomoiria_ruler": "JUPITER",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "illness",
+      "source_name": "疾病点",
+      "source_kind": "lot",
+      "longitude": 341.763467324,
+      "degree_index": 12,
+      "monomoiria_ruler": "JUPITER",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "acute_illness",
+      "source_name": "急病点",
+      "source_kind": "lot",
+      "longitude": 298.592917598,
+      "degree_index": 29,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "travel",
+      "source_name": "旅行点",
+      "source_kind": "lot",
+      "longitude": 162.422366967,
+      "degree_index": 13,
+      "monomoiria_ruler": "MERCURY",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "captivity",
+      "source_name": "牢狱点",
+      "source_kind": "lot",
+      "longitude": 61.997937749,
+      "degree_index": 2,
+      "monomoiria_ruler": "MERCURY",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "debt",
+      "source_name": "债务点",
+      "source_kind": "lot",
+      "longitude": 7.474053545,
+      "degree_index": 8,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "property",
+      "source_name": "不动产点",
+      "source_kind": "lot",
+      "longitude": 181.997937749,
+      "degree_index": 2,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "inheritance",
+      "source_name": "遗产点",
+      "source_kind": "lot",
+      "longitude": 60.78656703,
+      "degree_index": 1,
+      "monomoiria_ruler": "MERCURY",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "danger",
+      "source_name": "危险点",
+      "source_kind": "lot",
+      "longitude": 27.757981064,
+      "degree_index": 28,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "peril",
+      "source_name": "劫难点",
+      "source_kind": "lot",
+      "longitude": 301.997937749,
+      "degree_index": 2,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "lost_objects",
+      "source_name": "失物点",
+      "source_kind": "lot",
+      "longitude": 40.141594181,
+      "degree_index": 11,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "theft",
+      "source_name": "盗窃点",
+      "source_kind": "lot",
+      "longitude": 331.621503565,
+      "degree_index": 2,
+      "monomoiria_ruler": "JUPITER",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "murder",
+      "source_name": "谋杀点",
+      "source_kind": "lot",
+      "longitude": 187.191588087,
+      "degree_index": 8,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "servants",
+      "source_name": "仆役点",
+      "source_kind": "lot",
+      "longitude": 344.587431338,
+      "degree_index": 15,
+      "monomoiria_ruler": "JUPITER",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "return",
+      "source_name": "归返点",
+      "source_kind": "lot",
+      "longitude": 27.757981064,
+      "degree_index": 28,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "water_travel",
+      "source_name": "水路旅行",
+      "source_kind": "lot",
+      "longitude": 196.997937749,
+      "degree_index": 17,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "happiness",
+      "source_name": "幸福点",
+      "source_kind": "lot",
+      "longitude": 166.546615238,
+      "degree_index": 17,
+      "monomoiria_ruler": "MERCURY",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "kingship",
+      "source_name": "王权点",
+      "source_kind": "lot",
+      "longitude": 65.930214429,
+      "degree_index": 6,
+      "monomoiria_ruler": "MERCURY",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "honor",
+      "source_name": "荣誉点",
+      "source_kind": "lot",
+      "longitude": 116.141585148,
+      "degree_index": 27,
+      "monomoiria_ruler": "MOON",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "nobility",
+      "source_name": "贵族点",
+      "source_kind": "lot",
+      "longitude": 144.021038361,
+      "degree_index": 25,
+      "monomoiria_ruler": "SUN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "profession",
+      "source_name": "职业点",
+      "source_kind": "lot",
+      "longitude": 2.330406146,
+      "degree_index": 3,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "magistery",
+      "source_name": "权威点",
+      "source_kind": "lot",
+      "longitude": 18.199217258,
+      "degree_index": 19,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "dignity",
+      "source_name": "尊荣点",
+      "source_kind": "lot",
+      "longitude": 12.472369906,
+      "degree_index": 13,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "fame",
+      "source_name": "名声点",
+      "source_kind": "lot",
+      "longitude": 192.335235486,
+      "degree_index": 13,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "success",
+      "source_name": "成功点",
+      "source_kind": "lot",
+      "longitude": 46.879453213,
+      "degree_index": 17,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "commerce",
+      "source_name": "商业点",
+      "source_kind": "lot",
+      "longitude": 32.901628462,
+      "degree_index": 3,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "justice",
+      "source_name": "司法点",
+      "source_kind": "lot",
+      "longitude": 177.049624328,
+      "degree_index": 28,
+      "monomoiria_ruler": "MERCURY",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "speculation",
+      "source_name": "投机点",
+      "source_kind": "lot",
+      "longitude": 228.685419371,
+      "degree_index": 19,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "boldness",
+      "source_name": "勇敢点",
+      "source_kind": "lot",
+      "longitude": 298.592917598,
+      "degree_index": 29,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "faith",
+      "source_name": "信仰点",
+      "source_kind": "lot",
+      "longitude": 344.587431338,
+      "degree_index": 15,
+      "monomoiria_ruler": "JUPITER",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "understanding",
+      "source_name": "理解点",
+      "source_kind": "lot",
+      "longitude": 2.330406146,
+      "degree_index": 3,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "reason",
+      "source_name": "理性点",
+      "source_kind": "lot",
+      "longitude": 344.587431338,
+      "degree_index": 15,
+      "monomoiria_ruler": "JUPITER",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "love_concord",
+      "source_name": "爱和点",
+      "source_kind": "lot",
+      "longitude": 166.546615238,
+      "degree_index": 17,
+      "monomoiria_ruler": "MERCURY",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "discord",
+      "source_name": "纷争点",
+      "source_kind": "lot",
+      "longitude": 172.187896541,
+      "degree_index": 23,
+      "monomoiria_ruler": "MERCURY",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "lawsuits",
+      "source_name": "诉讼点",
+      "source_kind": "lot",
+      "longitude": 223.044138068,
+      "degree_index": 14,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "secret_enemies",
+      "source_name": "暗敌点",
+      "source_kind": "lot",
+      "longitude": 51.85597399,
+      "degree_index": 22,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "treachery",
+      "source_name": "背叛点",
+      "source_kind": "lot",
+      "longitude": 22.759664703,
+      "degree_index": 23,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "praise",
+      "source_name": "赞誉点",
+      "source_kind": "lot",
+      "longitude": 228.685419371,
+      "degree_index": 19,
+      "monomoiria_ruler": "MARS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "piety",
+      "source_name": "虔诚点",
+      "source_kind": "lot",
+      "longitude": 177.049624328,
+      "degree_index": 28,
+      "monomoiria_ruler": "MERCURY",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "exaltation_old",
+      "source_name": "擢升度点",
+      "source_kind": "lot",
+      "longitude": 279.090449461,
+      "degree_index": 10,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "acquisition_old",
+      "source_name": "获取点",
+      "source_kind": "lot",
+      "longitude": 280.987623055,
+      "degree_index": 11,
+      "monomoiria_ruler": "SATURN",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    },
+    {
+      "source_id": "children_old",
+      "source_name": "子女点(旧)",
+      "source_kind": "lot",
+      "longitude": 187.191588087,
+      "degree_index": 8,
+      "monomoiria_ruler": "VENUS",
+      "method_profile": "sign_domicile_ruler_per_degree_v1",
+      "method_key": "monomoiria_domicile_proxy"
+    }
+  ],
+  "topical_almutens": [
+    {
+      "topic_id": "house_1",
+      "topic_name": "House 1 cusp almuten",
+      "longitude": 0.0,
+      "winner_id": "MARS",
+      "winner_score": 2,
+      "candidates": [
+        {
+          "body_id": "MARS",
+          "score": 2
+        },
+        {
+          "body_id": "SUN",
+          "score": 2
+        },
+        {
+          "body_id": "JUPITER",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "MARS",
+        "exaltation": "SUN",
+        "triplicity": "SUN",
+        "bound": "JUPITER",
+        "decan": "MARS"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    },
+    {
+      "topic_id": "house_2",
+      "topic_name": "House 2 cusp almuten",
+      "longitude": 30.0,
+      "winner_id": "VENUS",
+      "winner_score": 3,
+      "candidates": [
+        {
+          "body_id": "VENUS",
+          "score": 3
+        },
+        {
+          "body_id": "MOON",
+          "score": 1
+        },
+        {
+          "body_id": "MERCURY",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "VENUS",
+        "exaltation": "MOON",
+        "triplicity": "VENUS",
+        "bound": "VENUS",
+        "decan": "MERCURY"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    },
+    {
+      "topic_id": "house_3",
+      "topic_name": "House 3 cusp almuten",
+      "longitude": 60.0,
+      "winner_id": "MERCURY",
+      "winner_score": 2,
+      "candidates": [
+        {
+          "body_id": "MERCURY",
+          "score": 2
+        },
+        {
+          "body_id": "SATURN",
+          "score": 1
+        },
+        {
+          "body_id": "JUPITER",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "MERCURY",
+        "exaltation": "",
+        "triplicity": "SATURN",
+        "bound": "MERCURY",
+        "decan": "JUPITER"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    },
+    {
+      "topic_id": "house_4",
+      "topic_name": "House 4 cusp almuten",
+      "longitude": 90.0,
+      "winner_id": "VENUS",
+      "winner_score": 2,
+      "candidates": [
+        {
+          "body_id": "VENUS",
+          "score": 2
+        },
+        {
+          "body_id": "MOON",
+          "score": 1
+        },
+        {
+          "body_id": "JUPITER",
+          "score": 1
+        },
+        {
+          "body_id": "MARS",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "MOON",
+        "exaltation": "JUPITER",
+        "triplicity": "VENUS",
+        "bound": "MARS",
+        "decan": "VENUS"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    },
+    {
+      "topic_id": "house_5",
+      "topic_name": "House 5 cusp almuten",
+      "longitude": 120.0,
+      "winner_id": "SUN",
+      "winner_score": 2,
+      "candidates": [
+        {
+          "body_id": "SUN",
+          "score": 2
+        },
+        {
+          "body_id": "JUPITER",
+          "score": 1
+        },
+        {
+          "body_id": "SATURN",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "SUN",
+        "exaltation": "",
+        "triplicity": "SUN",
+        "bound": "JUPITER",
+        "decan": "SATURN"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    },
+    {
+      "topic_id": "house_6",
+      "topic_name": "House 6 cusp almuten",
+      "longitude": 150.0,
+      "winner_id": "MERCURY",
+      "winner_score": 3,
+      "candidates": [
+        {
+          "body_id": "MERCURY",
+          "score": 3
+        },
+        {
+          "body_id": "VENUS",
+          "score": 1
+        },
+        {
+          "body_id": "SUN",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "MERCURY",
+        "exaltation": "MERCURY",
+        "triplicity": "VENUS",
+        "bound": "MERCURY",
+        "decan": "SUN"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    },
+    {
+      "topic_id": "house_7",
+      "topic_name": "House 7 cusp almuten",
+      "longitude": 180.0,
+      "winner_id": "SATURN",
+      "winner_score": 3,
+      "candidates": [
+        {
+          "body_id": "SATURN",
+          "score": 3
+        },
+        {
+          "body_id": "VENUS",
+          "score": 1
+        },
+        {
+          "body_id": "MOON",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "VENUS",
+        "exaltation": "SATURN",
+        "triplicity": "SATURN",
+        "bound": "SATURN",
+        "decan": "MOON"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    },
+    {
+      "topic_id": "house_8",
+      "topic_name": "House 8 cusp almuten",
+      "longitude": 210.0,
+      "winner_id": "MARS",
+      "winner_score": 3,
+      "candidates": [
+        {
+          "body_id": "MARS",
+          "score": 3
+        },
+        {
+          "body_id": "VENUS",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "MARS",
+        "exaltation": "",
+        "triplicity": "VENUS",
+        "bound": "MARS",
+        "decan": "MARS"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    },
+    {
+      "topic_id": "house_9",
+      "topic_name": "House 9 cusp almuten",
+      "longitude": 240.0,
+      "winner_id": "JUPITER",
+      "winner_score": 2,
+      "candidates": [
+        {
+          "body_id": "JUPITER",
+          "score": 2
+        },
+        {
+          "body_id": "SUN",
+          "score": 1
+        },
+        {
+          "body_id": "MERCURY",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "JUPITER",
+        "exaltation": "",
+        "triplicity": "SUN",
+        "bound": "JUPITER",
+        "decan": "MERCURY"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    },
+    {
+      "topic_id": "house_10",
+      "topic_name": "House 10 cusp almuten",
+      "longitude": 270.0,
+      "winner_id": "SATURN",
+      "winner_score": 1,
+      "candidates": [
+        {
+          "body_id": "SATURN",
+          "score": 1
+        },
+        {
+          "body_id": "MARS",
+          "score": 1
+        },
+        {
+          "body_id": "VENUS",
+          "score": 1
+        },
+        {
+          "body_id": "MERCURY",
+          "score": 1
+        },
+        {
+          "body_id": "JUPITER",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "SATURN",
+        "exaltation": "MARS",
+        "triplicity": "VENUS",
+        "bound": "MERCURY",
+        "decan": "JUPITER"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    },
+    {
+      "topic_id": "house_11",
+      "topic_name": "House 11 cusp almuten",
+      "longitude": 300.0,
+      "winner_id": "SATURN",
+      "winner_score": 2,
+      "candidates": [
+        {
+          "body_id": "SATURN",
+          "score": 2
+        },
+        {
+          "body_id": "MERCURY",
+          "score": 1
+        },
+        {
+          "body_id": "VENUS",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "SATURN",
+        "exaltation": "",
+        "triplicity": "SATURN",
+        "bound": "MERCURY",
+        "decan": "VENUS"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    },
+    {
+      "topic_id": "house_12",
+      "topic_name": "House 12 cusp almuten",
+      "longitude": 330.0,
+      "winner_id": "VENUS",
+      "winner_score": 3,
+      "candidates": [
+        {
+          "body_id": "VENUS",
+          "score": 3
+        },
+        {
+          "body_id": "JUPITER",
+          "score": 1
+        },
+        {
+          "body_id": "SATURN",
+          "score": 1
+        }
+      ],
+      "rulers_detail": {
+        "domicile": "JUPITER",
+        "exaltation": "VENUS",
+        "triplicity": "VENUS",
+        "bound": "VENUS",
+        "decan": "SATURN"
+      },
+      "method_key": "topical_almuten_essential_count_v1",
+      "note": "Highest essential-dignity contribution count; not an interpretive judgment."
+    }
+  ],
+  "warnings": [],
+  "section_errors": null,
+  "calculation_assumptions": [
+    "Dodekatemorion uses shipped calc_dodekatemorion().",
+    "Monomoiria v1 uses domicile ruler of the sign for each degree (explicit proxy profile).",
+    "Topical almutens count essential dignity rulers on house cusps; winner is max count.",
+    "结果为派生坐标与尊贵贡献事实，非解释结论。"
+  ]
+}

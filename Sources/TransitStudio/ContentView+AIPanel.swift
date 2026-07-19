@@ -135,7 +135,7 @@ extension ContentView {
                 return nil
             case .progressedComposite:
                 return nil
-            case .relocation, .modernCycles, .declinationTiming, .retrogradeCycles, .classicalVisibility, .planetarySynodic, .hellenisticConditionAudit, .draconicHeliocentric, .astrocartography, .localSpace:
+            case .relocation, .modernCycles, .declinationTiming, .retrogradeCycles, .classicalVisibility, .planetarySynodic, .hellenisticConditionAudit, .draconicHeliocentric, .classicalDerivatives, .timeLordsExtended, .methodFamilies, .primaryDirectionsAudit, .distributionsPd, .prenatalParans, .orbitalDial, .mundaneElectional, .astrocartography, .localSpace:
                 return nil
             }
         case .horary:

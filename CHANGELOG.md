@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-19 — B13–B20 古典/现代扩展批次
+
+- B13 `classical_derivatives`：Dodekatemoria / Monomoiria / Topical Almutens。
+- B14 `time_lords_extended`：日小限代理、ZR L4、技法 concordance。
+- B15 `method_families`：次限与太阳弧多 method_profile。
+- B16 `primary_directions_audit`：命名算法与限制审计。
+- B17 `distributions_pd`：沿界多 significator + 多 PD profile。
+- B18 `prenatal_parans`：产前朔望盘包 + 恒星 RA paran 代理。
+- B19 `orbital_dial`：轨道点 + dial/planetary pictures。
+- B20 `mundane_electional`：四至点 ingress + 择时事实扫描（不排序吉时）。
+
 ## 2026-07-19 — B12 Draconic 与日心对照
 
 - 新增 mode=`draconic_heliocentric`：Draconic 移位盘（真/平交点）与 heliocentric 坐标对照，明确 coordinate_center / coordinate_system。

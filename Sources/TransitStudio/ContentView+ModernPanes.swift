@@ -225,6 +225,86 @@ extension ContentView {
         }
     }
 
+    var classicalDerivativesResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .classicalDerivatives(let r) = result {
+                ClassicalDerivativesResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(title: "等待派生盘/尊贵", systemImage: "star", description: "运行计算。")
+            }
+        }
+    }
+
+    var timeLordsExtendedResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .timeLordsExtended(let r) = result {
+                TimeLordsExtendedResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(title: "等待时间主扩展", systemImage: "star", description: "运行计算。")
+            }
+        }
+    }
+
+    var methodFamiliesResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .methodFamilies(let r) = result {
+                MethodFamiliesResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(title: "等待推运方法族", systemImage: "star", description: "运行计算。")
+            }
+        }
+    }
+
+    var primaryDirectionsAuditResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .primaryDirectionsAudit(let r) = result {
+                PrimaryDirectionsAuditResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(title: "等待主限审计", systemImage: "star", description: "运行计算。")
+            }
+        }
+    }
+
+    var distributionsPdResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .distributionsPd(let r) = result {
+                DistributionsPdResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(title: "等待沿界/主限扩展", systemImage: "star", description: "运行计算。")
+            }
+        }
+    }
+
+    var prenatalParansResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .prenatalParans(let r) = result {
+                PrenatalParansResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(title: "等待产前朔望/Parans", systemImage: "star", description: "运行计算。")
+            }
+        }
+    }
+
+    var orbitalDialResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .orbitalDial(let r) = result {
+                OrbitalDialResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(title: "等待轨道点/Dial", systemImage: "star", description: "运行计算。")
+            }
+        }
+    }
+
+    var mundaneElectionalResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .mundaneElectional(let r) = result {
+                MundaneElectionalResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(title: "等待世俗/择时事实", systemImage: "star", description: "运行计算。")
+            }
+        }
+    }
+
     var astrocartographyResultsPane: some View {
         Group {
             if let result = calcVM.modernResultData, case .astrocartography(let r) = result {

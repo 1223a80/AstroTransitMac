@@ -23,6 +23,7 @@ struct ModernTabStateTests {
         #expect(ModernSubMode.planetarySynodic.defaultResultTab == "events")
         #expect(ModernSubMode.hellenisticConditionAudit.defaultResultTab == "conditions")
         #expect(ModernSubMode.draconicHeliocentric.defaultResultTab == "draconic")
+        #expect(ModernSubMode.classicalDerivatives.defaultResultTab == "dodeka")
         #expect(ModernSubMode.astrocartography.defaultResultTab == "lines")
         #expect(ModernSubMode.localSpace.defaultResultTab == "directions")
     }

@@ -90,6 +90,38 @@ extension BackendClient {
         try await run(request: request, pythonPath: pythonPath)
     }
 
+    static func classicalDerivatives(request: ExpansionGenericRequest, pythonPath: String) async throws -> ClassicalDerivativesResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
+    static func timeLordsExtended(request: ExpansionGenericRequest, pythonPath: String) async throws -> TimeLordsExtendedResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
+    static func methodFamilies(request: ExpansionGenericRequest, pythonPath: String) async throws -> MethodFamiliesResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
+    static func primaryDirectionsAudit(request: ExpansionGenericRequest, pythonPath: String) async throws -> PrimaryDirectionsAuditResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
+    static func distributionsPd(request: ExpansionGenericRequest, pythonPath: String) async throws -> DistributionsPdResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
+    static func prenatalParans(request: ExpansionGenericRequest, pythonPath: String) async throws -> PrenatalParansResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
+    static func orbitalDial(request: ExpansionGenericRequest, pythonPath: String) async throws -> OrbitalDialResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
+    static func mundaneElectional(request: ExpansionGenericRequest, pythonPath: String) async throws -> MundaneElectionalResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
     static func astrocartography(
         request: AstrocartographyRequest,
         pythonPath: String

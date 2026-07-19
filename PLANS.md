@@ -1,3 +1,9 @@
+# B13–B20 expansion batches (2026-07-19)
+
+All of B13–B20 implemented with independent backends, samples, fixtures, Swift panes, and gates.
+
+---
+
 # B12 Draconic/日心（2026-07-19）
 
 | 阶段 | 状态 |

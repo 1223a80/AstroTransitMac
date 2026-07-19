@@ -61,6 +61,14 @@ echo "3. 关键 smoke 测试（legacy + modern return/timing/midpoint + rectify�
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-planetary-synodic-request.json > /dev/null && echo "✅ planetary synodic smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-hellenistic-condition-audit-request.json > /dev/null && echo "✅ hellenistic condition audit smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-draconic-heliocentric-request.json > /dev/null && echo "✅ draconic heliocentric smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-mundane-electional-request.json > /dev/null && echo "✅ mundane_electional smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-orbital-dial-request.json > /dev/null && echo "✅ orbital_dial smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-prenatal-parans-request.json > /dev/null && echo "✅ prenatal_parans smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-distributions-pd-request.json > /dev/null && echo "✅ distributions_pd smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-primary-directions-audit-request.json > /dev/null && echo "✅ primary_directions_audit smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-method-families-request.json > /dev/null && echo "✅ method_families smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-time-lords-extended-request.json > /dev/null && echo "✅ time_lords_extended smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-derivatives-request.json > /dev/null && echo "✅ classical_derivatives smoke OK"
 
 # rectify 简单 smoke（不要求完整 UI）
 echo '{"mode":"rectify","birth_date":"2000-01-01","center_time":"12:00","timezone":"Asia/Shanghai","latitude":31.23,"longitude":121.47,"house_system":"whole_sign","zodiac":"tropical","bounds_system":"egyptian","triplicity_system":"dorothean","max_age":30,"window_minutes":5,"step_minutes":5}' | "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py 2>/dev/null | "$PY" -c 'import json,sys; data=json.load(sys.stdin); assert data.get("total_candidates") == 3' && echo "✅ rectify smoke OK"

@@ -52,6 +52,14 @@ extension ContentView {
             case .planetarySynodic: return "扫描会合周期"
             case .hellenisticConditionAudit: return "计算希腊状态审计"
             case .draconicHeliocentric: return "计算 Draconic/日心"
+            case .classicalDerivatives: return "计算派生盘/尊贵"
+            case .timeLordsExtended: return "计算时间主扩展"
+            case .methodFamilies: return "计算推运方法族"
+            case .primaryDirectionsAudit: return "计算主限审计"
+            case .distributionsPd: return "计算沿界/主限扩展"
+            case .prenatalParans: return "计算产前朔望/Parans"
+            case .orbitalDial: return "计算轨道点/Dial"
+            case .mundaneElectional: return "计算世俗/择时"
             case .astrocartography: return "计算天体地图线"
             case .localSpace: return "计算 Local Space"
             }
@@ -149,6 +157,22 @@ extension ContentView {
             case .hellenisticConditionAudit:
                 return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
             case .draconicHeliocentric:
+                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+            case .classicalDerivatives:
+                return false
+            case .methodFamilies:
+                return false
+            case .primaryDirectionsAudit:
+                return false
+            case .distributionsPd:
+                return false
+            case .prenatalParans:
+                return false
+            case .orbitalDial:
+                return false
+            case .mundaneElectional:
+                return false
+            case .timeLordsExtended, .methodFamilies, .primaryDirectionsAudit, .distributionsPd, .prenatalParans, .orbitalDial, .mundaneElectional, .classicalDerivatives, .hellenisticConditionAudit, .draconicHeliocentric:
                 return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
             case .astrocartography:
                 return mapBodies.isEmpty
@@ -248,6 +272,14 @@ extension ContentView {
             case .planetarySynodic: return AnyView(planetarySynodicResultsPane)
             case .hellenisticConditionAudit: return AnyView(hellenisticConditionAuditResultsPane)
             case .draconicHeliocentric: return AnyView(draconicHeliocentricResultsPane)
+            case .classicalDerivatives: return AnyView(classicalDerivativesResultsPane)
+            case .timeLordsExtended: return AnyView(timeLordsExtendedResultsPane)
+            case .methodFamilies: return AnyView(methodFamiliesResultsPane)
+            case .primaryDirectionsAudit: return AnyView(primaryDirectionsAuditResultsPane)
+            case .distributionsPd: return AnyView(distributionsPdResultsPane)
+            case .prenatalParans: return AnyView(prenatalParansResultsPane)
+            case .orbitalDial: return AnyView(orbitalDialResultsPane)
+            case .mundaneElectional: return AnyView(mundaneElectionalResultsPane)
             case .astrocartography: return AnyView(astrocartographyResultsPane)
             case .localSpace: return AnyView(localSpaceResultsPane)
             case .progression: return AnyView(progressionResultsPane)

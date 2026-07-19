@@ -738,11 +738,25 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "modern_return", "modern_timing", "midpoint", "progressed_composite",
         "relocation", "modern_cycles", "astrocartography", "local_space",
         "declination_timing", "retrograde_cycles", "classical_visibility",
-        "planetary_synodic", "hellenistic_condition_audit", "draconic_heliocentric",
+        "planetary_synodic", "hellenistic_condition_audit", "draconic_heliocentric", "classical_derivatives",
+        "time_lords_extended",
+        "method_families",
+        "primary_directions_audit",
+        "distributions_pd",
+        "prenatal_parans",
+        "orbital_dial",
+        "mundane_electional",
     }
     if mode not in supported_modes:
         return {"error": f"不支持的 mode：{mode or '<empty>'}", "mode": mode}
     required_by_mode: dict[str, list[str]] = {
+        "mundane_electional": ["start", "end", "location"],
+        "orbital_dial": ["birth"],
+        "prenatal_parans": ["birth"],
+        "distributions_pd": ["birth"],
+        "primary_directions_audit": ["birth"],
+        "method_families": ["birth", "reference"],
+        "time_lords_extended": ["birth", "reference"],
         "classical": ["birth", "reference"],
         "vedic": ["birth"],
         "horary": ["chart"],
@@ -768,6 +782,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "planetary_synodic": ["start", "end", "display_timezone", "pair"],
         "hellenistic_condition_audit": ["birth"],
         "draconic_heliocentric": ["birth"],
+        "classical_derivatives": ["birth"],
     }
     default_required = ["natal", "transit"]
     required = required_by_mode.get(mode, default_required)
@@ -1612,6 +1627,30 @@ def main() -> None:
         elif mode == "draconic_heliocentric":
             from astro_backend_draconic_heliocentric import calculate_draconic_heliocentric
             response = calculate_draconic_heliocentric(request, warnings)
+        elif mode == "classical_derivatives":
+            from astro_backend_classical_derivatives import calculate_classical_derivatives
+            response = calculate_classical_derivatives(request, warnings)
+        elif mode == "time_lords_extended":
+            from astro_backend_time_lords_extended import calculate_time_lords_extended
+            response = calculate_time_lords_extended(request, warnings)
+        elif mode == "method_families":
+            from astro_backend_method_families import calculate_method_families
+            response = calculate_method_families(request, warnings)
+        elif mode == "primary_directions_audit":
+            from astro_backend_pd_audit import calculate_primary_directions_audit
+            response = calculate_primary_directions_audit(request, warnings)
+        elif mode == "distributions_pd":
+            from astro_backend_distributions_pd import calculate_distributions_pd
+            response = calculate_distributions_pd(request, warnings)
+        elif mode == "prenatal_parans":
+            from astro_backend_prenatal_parans import calculate_prenatal_parans
+            response = calculate_prenatal_parans(request, warnings)
+        elif mode == "orbital_dial":
+            from astro_backend_orbital_dial import calculate_orbital_dial
+            response = calculate_orbital_dial(request, warnings)
+        elif mode == "mundane_electional":
+            from astro_backend_mundane_electional import calculate_mundane_electional
+            response = calculate_mundane_electional(request, warnings)
         elif mode in {"astrocartography", "local_space"}:
             from astro_backend_map import calculate_map_mode
             response = calculate_map_mode(request, warnings)
