@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-19 — B11 Hellenistic 行星状态审计
+
+- 新增 mode=`hellenistic_condition_audit`：oriental/occidental、superior/inferior、sect/hayz、angularity、overcoming、enclosure、solar phase、chariot proxy 等证据行。
+- 输出条件列表与 evidence，不合成吉凶分数；含 Swift/Markdown/CSV/sample/fixture/测试。
+
 ## 2026-07-19 — B10 行星会合周期
 
 - 新增 mode=`planetary_synodic`：任意两星合/冲/四分等相对黄经相位、会合周期、相对速度、多次命中 pass、对本命 point set 接触。

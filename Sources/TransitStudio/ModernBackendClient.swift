@@ -76,6 +76,13 @@ extension BackendClient {
         try await run(request: request, pythonPath: pythonPath)
     }
 
+    static func hellenisticConditionAudit(
+        request: HellenisticConditionAuditRequest,
+        pythonPath: String
+    ) async throws -> HellenisticConditionAuditResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
     static func astrocartography(
         request: AstrocartographyRequest,
         pythonPath: String

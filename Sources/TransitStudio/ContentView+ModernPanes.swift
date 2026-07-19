@@ -201,6 +201,20 @@ extension ContentView {
         }
     }
 
+    var hellenisticConditionAuditResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .hellenisticConditionAudit(let r) = result {
+                HellenisticConditionAuditResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(
+                    title: "等待希腊状态审计",
+                    systemImage: "list.bullet.rectangle",
+                    description: "填写本命后计算 Hellenistic 条件证据表。"
+                )
+            }
+        }
+    }
+
     var astrocartographyResultsPane: some View {
         Group {
             if let result = calcVM.modernResultData, case .astrocartography(let r) = result {

@@ -388,6 +388,20 @@ struct BackendContractTests {
         #expect(csv.contains("station"))
     }
 
+    @Test func decodeHellenisticConditionAuditFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(
+            HellenisticConditionAuditResult.self,
+            from: fixtureData("hellenistic-condition-audit-result")
+        )
+        #expect(result.meta.method == "hellenistic_condition_audit_v1")
+        #expect(!result.conditions.isEmpty)
+        #expect(result.conditions.allSatisfy { !($0.evidence ?? []).isEmpty || $0.conditionID.count > 0 })
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        let markdown = MarkdownExportBuilder.hellenisticConditionAudit(result)
+        #expect(markdown.contains("条件证据") || markdown.contains("Hellenistic"))
+        #expect(TextExportBuilder.csv(result).contains("condition"))
+    }
+
     @Test func decodePlanetarySynodicFixtureFromRealOutput() throws {
         let result = try JSONDecoder().decode(
             PlanetarySynodicResult.self,

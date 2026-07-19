@@ -75,6 +75,7 @@ extension ContentView {
                 case .retrogradeCycles: await runRetrogradeCycles()
                 case .classicalVisibility: await runClassicalVisibility()
                 case .planetarySynodic: await runPlanetarySynodic()
+                case .hellenisticConditionAudit: await runHellenisticConditionAudit()
                 case .astrocartography: await runAstrocartography()
                 case .localSpace: await runLocalSpace()
                 }
@@ -642,6 +643,26 @@ extension ContentView {
                 pythonPath: appState.pythonPath
             )
             calcVM.modernResultData = .planetarySynodic(result)
+        }
+    }
+
+
+    @MainActor
+    func runHellenisticConditionAudit() async {
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        await performRun(progressLabel: "希腊状态审计") {
+            let request = HellenisticConditionAuditRequest(
+                birth: makeBirthSettings(latitude: coords.latitude, longitude: coords.longitude),
+                aspectOrb: globalOrb,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.hellenisticConditionAudit(
+                request: request,
+                pythonPath: appState.pythonPath
+            )
+            calcVM.modernResultData = .hellenisticConditionAudit(result)
         }
     }
 

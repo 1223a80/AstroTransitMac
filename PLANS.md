@@ -1,3 +1,16 @@
+# B11 Hellenistic 行星状态审计（2026-07-19）
+
+## 范围
+- mode=`hellenistic_condition_audit`：oriental/occidental、superior/inferior、overcoming、enclosure、bonification/maltreatment 证据行等。
+- 证据列表，非吉凶分数；profile 显式；JSON/Swift/Markdown/CSV/sample/fixture/测试/门禁。
+
+## 执行计划
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 实现 | ✅ | 后端 + API + Swift + 测试 + 门禁 |
+
+---
+
 # B10 行星会合周期（2026-07-19）
 
 ## 范围

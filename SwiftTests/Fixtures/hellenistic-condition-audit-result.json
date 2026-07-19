@@ -1,0 +1,844 @@
+{
+  "meta": {
+    "mode": "hellenistic_condition_audit",
+    "method": "hellenistic_condition_audit_v1",
+    "schema_version": 1,
+    "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+    "birth_utc": "1990-01-01T04:00:00+00:00",
+    "is_day": true,
+    "zodiac": "tropical",
+    "house_system": "whole_sign",
+    "condition_count": 40,
+    "ephemeris": "Swiss Ephemeris"
+  },
+  "requested_config": {
+    "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+    "aspect_orb": 3.0,
+    "zodiac": "tropical"
+  },
+  "effective_config": {
+    "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+    "aspect_orb": 3.0,
+    "zodiac": "tropical",
+    "house_system": "whole_sign",
+    "bounds_system": "egyptian",
+    "triplicity_system": "dorothean",
+    "method": "hellenistic_condition_audit_v1"
+  },
+  "conditions": [
+    {
+      "condition_id": "sect_agreement",
+      "subject": "SUN",
+      "actors": [],
+      "geometry": "chart_sect=day",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "sect_label=合昼派",
+        "trace={'label': 'sect', 'score': 2, 'value': '合昼派', 'chart_sect': 'day', 'planet_sect': 'day', 'sect_agreement': True}"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "合昼派",
+      "trace": {
+        "label": "sect",
+        "score": 2,
+        "value": "合昼派",
+        "chart_sect": "day",
+        "planet_sect": "day",
+        "sect_agreement": true
+      }
+    },
+    {
+      "condition_id": "angularity",
+      "subject": "SUN",
+      "actors": [],
+      "geometry": "house=10",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "house=10",
+        "angular"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "angular",
+      "house": 10
+    },
+    {
+      "condition_id": "enclosure_besiegement",
+      "subject": "SUN",
+      "actors": [
+        "MARS",
+        "SATURN"
+      ],
+      "geometry": "between_two_malefics_by_longitude",
+      "applying_separating": null,
+      "orb": 35.85255,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "太阳 is between malefics ['MARS', 'SATURN']",
+        "no intervening-body check beyond nearest neighbors"
+      ],
+      "method_key": "hellenistic_condition_audit_v1"
+    },
+    {
+      "condition_id": "essential_dignity_present",
+      "subject": "SUN",
+      "actors": [],
+      "geometry": "essential_dignity",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "dignities=['bound', 'decan']"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "bound,decan"
+    },
+    {
+      "condition_id": "oriental_occidental",
+      "subject": "MOON",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "occidental to Sun",
+      "applying_separating": null,
+      "orb": 48.314197,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "月亮 is occidental (sets after Sun)",
+        "sun_lon=280.4744 body_lon=328.7886"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "occidental"
+    },
+    {
+      "condition_id": "sect_agreement",
+      "subject": "MOON",
+      "actors": [],
+      "geometry": "chart_sect=day",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "sect_label=违昼派",
+        "trace={'label': 'sect', 'score': -1, 'value': '违昼派', 'chart_sect': 'day', 'planet_sect': 'night', 'sect_agreement': False}"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "违昼派",
+      "trace": {
+        "label": "sect",
+        "score": -1,
+        "value": "违昼派",
+        "chart_sect": "day",
+        "planet_sect": "night",
+        "sect_agreement": false
+      }
+    },
+    {
+      "condition_id": "solar_phase",
+      "subject": "MOON",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "visible",
+      "applying_separating": null,
+      "orb": 48.3142,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "solar_phase=可见",
+        "distance=48.3142°"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "visible",
+      "trace": {
+        "label": "solar_phase",
+        "score": 0,
+        "value": "可见",
+        "solar_condition": "visible",
+        "sun_distance_deg": 48.3142,
+        "threshold_profile": {
+          "cazimi_arcmin": 17.0,
+          "combust_deg": 8.5,
+          "under_beams_deg": 15.0
+        }
+      }
+    },
+    {
+      "condition_id": "angularity",
+      "subject": "MOON",
+      "actors": [],
+      "geometry": "house=11",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "house=11",
+        "succeedent"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "succeedent",
+      "house": 11
+    },
+    {
+      "condition_id": "essential_dignity_present",
+      "subject": "MOON",
+      "actors": [],
+      "geometry": "essential_dignity",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "dignities=['bound', 'decan']"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "bound,decan"
+    },
+    {
+      "condition_id": "oriental_occidental",
+      "subject": "MERCURY",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "occidental to Sun",
+      "applying_separating": null,
+      "orb": 15.285611,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "水星 is occidental (sets after Sun)",
+        "sun_lon=280.4744 body_lon=295.7600"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "occidental"
+    },
+    {
+      "condition_id": "inferior_planet",
+      "subject": "MERCURY",
+      "actors": [],
+      "geometry": "heliocentric_class=inferior",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "水星 is an inferior planet (Mercury/Venus class)"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "inferior"
+    },
+    {
+      "condition_id": "sect_agreement",
+      "subject": "MERCURY",
+      "actors": [],
+      "geometry": "chart_sect=day",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "sect_label=随夜",
+        "trace={'label': 'sect', 'score': -1, 'value': '随夜', 'mercury_condition': 'occidental', 'chart_sect': 'day', 'planet_sect': 'night', 'sect_agreement': False}"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "随夜",
+      "trace": {
+        "label": "sect",
+        "score": -1,
+        "value": "随夜",
+        "mercury_condition": "occidental",
+        "chart_sect": "day",
+        "planet_sect": "night",
+        "sect_agreement": false
+      }
+    },
+    {
+      "condition_id": "solar_phase",
+      "subject": "MERCURY",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "visible",
+      "applying_separating": null,
+      "orb": 15.2856,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "solar_phase=可见",
+        "distance=15.2856°"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "visible",
+      "trace": {
+        "label": "solar_phase",
+        "score": 0,
+        "value": "可见",
+        "solar_condition": "visible",
+        "sun_distance_deg": 15.2856,
+        "threshold_profile": {
+          "cazimi_arcmin": 17.0,
+          "combust_deg": 8.5,
+          "under_beams_deg": 15.0
+        }
+      }
+    },
+    {
+      "condition_id": "angularity",
+      "subject": "MERCURY",
+      "actors": [],
+      "geometry": "house=10",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "house=10",
+        "angular"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "angular",
+      "house": 10
+    },
+    {
+      "condition_id": "essential_dignity_present",
+      "subject": "MERCURY",
+      "actors": [],
+      "geometry": "essential_dignity",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "dignities=['bound', 'decan']"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "bound,decan"
+    },
+    {
+      "condition_id": "oriental_occidental",
+      "subject": "VENUS",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "occidental to Sun",
+      "applying_separating": null,
+      "orb": 25.78862,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "金星 is occidental (sets after Sun)",
+        "sun_lon=280.4744 body_lon=306.2631"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "occidental"
+    },
+    {
+      "condition_id": "inferior_planet",
+      "subject": "VENUS",
+      "actors": [],
+      "geometry": "heliocentric_class=inferior",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "金星 is an inferior planet (Mercury/Venus class)"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "inferior"
+    },
+    {
+      "condition_id": "sect_agreement",
+      "subject": "VENUS",
+      "actors": [],
+      "geometry": "chart_sect=day",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "sect_label=违昼派",
+        "trace={'label': 'sect', 'score': -1, 'value': '违昼派', 'chart_sect': 'day', 'planet_sect': 'night', 'sect_agreement': False}"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "违昼派",
+      "trace": {
+        "label": "sect",
+        "score": -1,
+        "value": "违昼派",
+        "chart_sect": "day",
+        "planet_sect": "night",
+        "sect_agreement": false
+      }
+    },
+    {
+      "condition_id": "solar_phase",
+      "subject": "VENUS",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "visible",
+      "applying_separating": null,
+      "orb": 25.7886,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "solar_phase=可见",
+        "distance=25.7886°"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "visible",
+      "trace": {
+        "label": "solar_phase",
+        "score": 0,
+        "value": "可见",
+        "solar_condition": "visible",
+        "sun_distance_deg": 25.7886,
+        "threshold_profile": {
+          "cazimi_arcmin": 17.0,
+          "combust_deg": 8.5,
+          "under_beams_deg": 15.0
+        }
+      }
+    },
+    {
+      "condition_id": "angularity",
+      "subject": "VENUS",
+      "actors": [],
+      "geometry": "house=11",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "house=11",
+        "succeedent"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "succeedent",
+      "house": 11
+    },
+    {
+      "condition_id": "essential_dignity_present",
+      "subject": "VENUS",
+      "actors": [],
+      "geometry": "essential_dignity",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "dignities=['bound', 'decan']"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "bound,decan"
+    },
+    {
+      "condition_id": "oriental_occidental",
+      "subject": "MARS",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "oriental to Sun",
+      "applying_separating": null,
+      "orb": 30.708903,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "火星 is oriental (rises before Sun)",
+        "sun_lon=280.4744 body_lon=249.7655"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "oriental"
+    },
+    {
+      "condition_id": "superior_planet",
+      "subject": "MARS",
+      "actors": [],
+      "geometry": "heliocentric_class=superior",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "火星 is a superior planet (Mars–Saturn class)"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "superior"
+    },
+    {
+      "condition_id": "sect_agreement",
+      "subject": "MARS",
+      "actors": [],
+      "geometry": "chart_sect=day",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "sect_label=违昼派",
+        "trace={'label': 'sect', 'score': -1, 'value': '违昼派', 'chart_sect': 'day', 'planet_sect': 'night', 'sect_agreement': False}"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "违昼派",
+      "trace": {
+        "label": "sect",
+        "score": -1,
+        "value": "违昼派",
+        "chart_sect": "day",
+        "planet_sect": "night",
+        "sect_agreement": false
+      }
+    },
+    {
+      "condition_id": "solar_phase",
+      "subject": "MARS",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "visible",
+      "applying_separating": null,
+      "orb": 30.7089,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "solar_phase=可见",
+        "distance=30.7089°"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "visible",
+      "trace": {
+        "label": "solar_phase",
+        "score": 0,
+        "value": "可见",
+        "solar_condition": "visible",
+        "sun_distance_deg": 30.7089,
+        "threshold_profile": {
+          "cazimi_arcmin": 17.0,
+          "combust_deg": 8.5,
+          "under_beams_deg": 15.0
+        }
+      }
+    },
+    {
+      "condition_id": "angularity",
+      "subject": "MARS",
+      "actors": [],
+      "geometry": "house=9",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "house=9",
+        "cadent"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "cadent",
+      "house": 9
+    },
+    {
+      "condition_id": "essential_dignity_present",
+      "subject": "MARS",
+      "actors": [],
+      "geometry": "essential_dignity",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "dignities=['bound', 'decan']"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "bound,decan"
+    },
+    {
+      "condition_id": "oriental_occidental",
+      "subject": "JUPITER",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "occidental to Sun",
+      "applying_separating": null,
+      "orb": 174.719218,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "木星 is occidental (sets after Sun)",
+        "sun_lon=280.4744 body_lon=95.1937"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "occidental"
+    },
+    {
+      "condition_id": "superior_planet",
+      "subject": "JUPITER",
+      "actors": [],
+      "geometry": "heliocentric_class=superior",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "木星 is a superior planet (Mars–Saturn class)"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "superior"
+    },
+    {
+      "condition_id": "sect_agreement",
+      "subject": "JUPITER",
+      "actors": [],
+      "geometry": "chart_sect=day",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "sect_label=合昼派",
+        "trace={'label': 'sect', 'score': 2, 'value': '合昼派', 'chart_sect': 'day', 'planet_sect': 'day', 'sect_agreement': True}"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "合昼派",
+      "trace": {
+        "label": "sect",
+        "score": 2,
+        "value": "合昼派",
+        "chart_sect": "day",
+        "planet_sect": "day",
+        "sect_agreement": true
+      }
+    },
+    {
+      "condition_id": "solar_phase",
+      "subject": "JUPITER",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "visible",
+      "applying_separating": null,
+      "orb": 174.7192,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "solar_phase=可见",
+        "distance=174.7192°"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "visible",
+      "trace": {
+        "label": "solar_phase",
+        "score": 0,
+        "value": "可见",
+        "solar_condition": "visible",
+        "sun_distance_deg": 174.7192,
+        "threshold_profile": {
+          "cazimi_arcmin": 17.0,
+          "combust_deg": 8.5,
+          "under_beams_deg": 15.0
+        }
+      }
+    },
+    {
+      "condition_id": "angularity",
+      "subject": "JUPITER",
+      "actors": [],
+      "geometry": "house=4",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "house=4",
+        "angular"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "angular",
+      "house": 4
+    },
+    {
+      "condition_id": "essential_dignity_present",
+      "subject": "JUPITER",
+      "actors": [],
+      "geometry": "essential_dignity",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "dignities=['exaltation', 'bound', 'decan']"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "exaltation,bound,decan"
+    },
+    {
+      "condition_id": "chariot_proxy",
+      "subject": "JUPITER",
+      "actors": [],
+      "geometry": "domicile_or_exaltation_and_not_combust",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "domicile=False",
+        "exaltation=True",
+        "solar_condition=visible",
+        "chariot-like protection proxy (not full Hellenistic chariot definition set)"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "chariot_proxy"
+    },
+    {
+      "condition_id": "oriental_occidental",
+      "subject": "SATURN",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "occidental to Sun",
+      "applying_separating": null,
+      "orb": 5.143647,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "土星 is occidental (sets after Sun)",
+        "sun_lon=280.4744 body_lon=285.6181"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "occidental"
+    },
+    {
+      "condition_id": "superior_planet",
+      "subject": "SATURN",
+      "actors": [],
+      "geometry": "heliocentric_class=superior",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "土星 is a superior planet (Mars–Saturn class)"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "superior"
+    },
+    {
+      "condition_id": "sect_agreement",
+      "subject": "SATURN",
+      "actors": [],
+      "geometry": "chart_sect=day",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "sect_label=合昼派",
+        "trace={'label': 'sect', 'score': 2, 'value': '合昼派', 'chart_sect': 'day', 'planet_sect': 'day', 'sect_agreement': True}"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "合昼派",
+      "trace": {
+        "label": "sect",
+        "score": 2,
+        "value": "合昼派",
+        "chart_sect": "day",
+        "planet_sect": "day",
+        "sect_agreement": true
+      }
+    },
+    {
+      "condition_id": "solar_phase",
+      "subject": "SATURN",
+      "actors": [
+        "SUN"
+      ],
+      "geometry": "combust",
+      "applying_separating": null,
+      "orb": 5.1436,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "solar_phase=燃烧",
+        "distance=5.1436°"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "combust",
+      "trace": {
+        "label": "solar_phase",
+        "score": -5,
+        "value": "燃烧",
+        "solar_condition": "combust",
+        "sun_distance_deg": 5.1436,
+        "threshold_profile": {
+          "cazimi_arcmin": 17.0,
+          "combust_deg": 8.5,
+          "under_beams_deg": 15.0
+        }
+      }
+    },
+    {
+      "condition_id": "angularity",
+      "subject": "SATURN",
+      "actors": [],
+      "geometry": "house=10",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "house=10",
+        "angular"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "angular",
+      "house": 10
+    },
+    {
+      "condition_id": "essential_dignity_present",
+      "subject": "SATURN",
+      "actors": [],
+      "geometry": "essential_dignity",
+      "applying_separating": null,
+      "orb": null,
+      "source_profile": "hellenistic_audit_v1_dorothean_sect_and_geometry",
+      "evidence": [
+        "dignities=['domicile', 'bound', 'decan']"
+      ],
+      "method_key": "hellenistic_condition_audit_v1",
+      "value": "domicile,bound,decan"
+    }
+  ],
+  "planets_summary": [
+    {
+      "body_id": "SUN",
+      "name": "太阳",
+      "longitude": 280.47443215639436,
+      "house": 10,
+      "speed": 1.0194945783077702
+    },
+    {
+      "body_id": "MOON",
+      "name": "月亮",
+      "longitude": 328.7886292810519,
+      "house": 11,
+      "speed": 13.404180913740246
+    },
+    {
+      "body_id": "MERCURY",
+      "name": "水星",
+      "longitude": 295.76004331432523,
+      "house": 10,
+      "speed": -0.22880361192425597
+    },
+    {
+      "body_id": "VENUS",
+      "name": "金星",
+      "longitude": 306.263052404424,
+      "house": 11,
+      "speed": -0.11626876496077103
+    },
+    {
+      "body_id": "MARS",
+      "name": "火星",
+      "longitude": 249.76552957456767,
+      "house": 9,
+      "speed": 0.7035767154001349
+    },
+    {
+      "body_id": "JUPITER",
+      "name": "木星",
+      "longitude": 95.19365033765915,
+      "house": 4,
+      "speed": -0.13465584572111175
+    },
+    {
+      "body_id": "SATURN",
+      "name": "土星",
+      "longitude": 285.61807955515644,
+      "house": 10,
+      "speed": 0.11824040929465734
+    }
+  ],
+  "warnings": [],
+  "section_errors": null,
+  "calculation_assumptions": [
+    "输出为可审计证据行，不合成吉/凶分数。",
+    "source_profile=hellenistic_audit_v1_dorothean_sect_and_geometry",
+    "oriental/occidental 使用 (sun_lon - body_lon) mod 360 < 180 判定。",
+    "overcoming 使用 whole-sign 第 10 宫关系代理。",
+    "enclosure 使用经度排序最近两颗邻居均为凶星的代理，不做完整射线 enclosure。",
+    "chariot 为 domicile/exaltation 且非燃烧的简化代理，非完整传统定义集。",
+    "sect/hayz/solar_phase 复用现有 classical_dignity 实现。"
+  ]
+}

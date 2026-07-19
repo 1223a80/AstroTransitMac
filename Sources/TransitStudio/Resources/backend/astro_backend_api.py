@@ -738,7 +738,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "modern_return", "modern_timing", "midpoint", "progressed_composite",
         "relocation", "modern_cycles", "astrocartography", "local_space",
         "declination_timing", "retrograde_cycles", "classical_visibility",
-        "planetary_synodic",
+        "planetary_synodic", "hellenistic_condition_audit",
     }
     if mode not in supported_modes:
         return {"error": f"不支持的 mode：{mode or '<empty>'}", "mode": mode}
@@ -766,6 +766,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "retrograde_cycles": ["start", "end", "display_timezone"],
         "classical_visibility": ["moment", "location"],
         "planetary_synodic": ["start", "end", "display_timezone", "pair"],
+        "hellenistic_condition_audit": ["birth"],
     }
     default_required = ["natal", "transit"]
     required = required_by_mode.get(mode, default_required)
@@ -1604,6 +1605,9 @@ def main() -> None:
         elif mode == "planetary_synodic":
             from astro_backend_planetary_synodic import calculate_planetary_synodic
             response = calculate_planetary_synodic(request, warnings)
+        elif mode == "hellenistic_condition_audit":
+            from astro_backend_hellenistic_audit import calculate_hellenistic_condition_audit
+            response = calculate_hellenistic_condition_audit(request, warnings)
         elif mode in {"astrocartography", "local_space"}:
             from astro_backend_map import calculate_map_mode
             response = calculate_map_mode(request, warnings)

@@ -665,6 +665,8 @@ extension ContentView {
                 classicalVisibilitySidebar
             case .planetarySynodic:
                 planetarySynodicSidebar
+            case .hellenisticConditionAudit:
+                collapsible("本命盘") { natalSettingsSection }
             case .astrocartography:
                 astrocartographySidebar
             case .localSpace:
