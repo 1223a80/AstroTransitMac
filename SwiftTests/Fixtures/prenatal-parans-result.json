@@ -1,0 +1,52 @@
+{
+  "meta": {
+    "mode": "prenatal_parans",
+    "method": "prenatal_parans_v1",
+    "schema_version": 1,
+    "birth_utc": "1990-01-01T04:00:00+00:00",
+    "paran_count": 0,
+    "ephemeris": "Swiss Ephemeris"
+  },
+  "requested_config": {
+    "paran_ra_orb_deg": 1.0
+  },
+  "effective_config": {
+    "paran_class": "co_culmination_ra_proxy",
+    "method": "prenatal_parans_v1"
+  },
+  "prenatal_packet": {
+    "prenatal_syzygy": {
+      "syzygy_type": "new_moon",
+      "exact_utc": "1989-12-28 03:20",
+      "longitude": 276.3677,
+      "sun_position": 276.3677,
+      "moon_position": 276.3677,
+      "sign": "摩羯",
+      "degree": 6.37,
+      "ruler": "土星",
+      "ruler_id": "SATURN",
+      "dignity_rulers": {
+        "domicile": "SATURN",
+        "exaltation": "MARS",
+        "triplicity": "VENUS",
+        "bound": "MERCURY",
+        "decan": "JUPITER"
+      },
+      "syzygy_degree_used": "Sun degree (sun_position; Moon conjunct)",
+      "method_variant": "prenatal_syzygy_nearest_before_birth",
+      "ephemeris": "Swiss Ephemeris",
+      "_method": "prenatal_syzygy_swiss_ephemeris_bracketed_bisection",
+      "_source_tradition": "Hellenistic"
+    }
+  },
+  "fixed_star_parans": [],
+  "warnings": [
+    "prenatal syzygy payload missing jd; chart packet limited"
+  ],
+  "section_errors": null,
+  "calculation_assumptions": [
+    "Prenatal syzygy from calculate_prenatal_syzygy; chart rebuilt at exact jd when available.",
+    "Parans v1 use equatorial RA proximity as co-culmination proxy; not full rise/set pairing.",
+    "Polar missing events surface as empty lists + warnings."
+  ]
+}
