@@ -1,0 +1,19 @@
+{
+  "mode": "primary_directions_audit",
+  "birth": {
+    "moment": {
+      "year": 1990,
+      "month": 1,
+      "day": 1,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "houseSystem": "whole_sign",
+    "zodiac": "tropical",
+    "boundsSystem": "egyptian",
+    "triplicitySystem": "dorothean"
+  }
+}

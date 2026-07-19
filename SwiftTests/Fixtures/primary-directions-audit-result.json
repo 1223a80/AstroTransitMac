@@ -1,0 +1,118 @@
+{
+  "meta": {
+    "mode": "primary_directions_audit",
+    "method": "primary_directions_audit_v1",
+    "schema_version": 1,
+    "algorithm_name": "simplified_longitude_semi_arc_proxy_naibod",
+    "birth_utc": "1990-01-01T04:00:00+00:00",
+    "direction_count": 3,
+    "ephemeris": "Swiss Ephemeris",
+    "naibod_rate": 0.9856
+  },
+  "requested_config": {
+    "max_age": 90,
+    "window_years": 3.0
+  },
+  "effective_config": {
+    "algorithm_name": "simplified_longitude_semi_arc_proxy_naibod",
+    "key": "naibod",
+    "key_rate_deg_per_year": 0.9856,
+    "method": "primary_directions_audit_v1"
+  },
+  "algorithm_description": {
+    "name": "simplified_longitude_semi_arc_proxy_naibod",
+    "key": "naibod",
+    "known_limits": [
+      "Uses ecliptic longitude derived RA/Dec without full planetary latitude in mundane sense.",
+      "Single key: Naibod mean motion; no Placidus semi-arc vs Regiomontanus method switch in this audit baseline.",
+      "Not a complete traditional primary directions suite; multi-method expansion is B17 after this audit.",
+      "Directions outside age window are filtered rather than marked as algorithmic failure."
+    ],
+    "external_crosscheck_status": "local_se_consistent_only",
+    "external_crosscheck_note": "No third-party PD reference tables are bundled. This audit names the algorithm and its limits; numeric checks use in-repo SE positions."
+  },
+  "directions": [
+    {
+      "id": "pd-SUN-MC-conjunction",
+      "promissor": "太阳",
+      "promissor_id": "SUN",
+      "significator": "MC",
+      "significator_id": "MC",
+      "aspect_type": "conjunction",
+      "aspect_name": "合相",
+      "natal_promissor_lon": 280.4744,
+      "natal_significator_lon": 281.0576,
+      "direction_type": "direct",
+      "arc_signed": 0.5966,
+      "arc_abs": 0.5966,
+      "age_from_abs_arc": 0.61,
+      "event_date_after_birth": "1990-08-10",
+      "symbolic_date_from_signed_arc": null,
+      "algorithm_name": "simplified_longitude_semi_arc_proxy_naibod",
+      "key": "naibod",
+      "key_rate_deg_per_year": 0.9856,
+      "latitude_mode": "ignored_or_longitude_proxy",
+      "direction_class": "zodiacal_proxy",
+      "method_key": "simplified_longitude_semi_arc_proxy_naibod",
+      "audit_note": "Baseline simplified PD; not multi-tradition complete."
+    },
+    {
+      "id": "pd-MC-SUN-conjunction",
+      "promissor": "MC",
+      "promissor_id": "MC",
+      "significator": "太阳",
+      "significator_id": "SUN",
+      "aspect_type": "conjunction",
+      "aspect_name": "合相",
+      "natal_promissor_lon": 281.0576,
+      "natal_significator_lon": 280.4744,
+      "direction_type": "converse",
+      "arc_signed": -0.5966,
+      "arc_abs": 0.5966,
+      "age_from_abs_arc": 0.61,
+      "event_date_after_birth": "1990-08-10",
+      "symbolic_date_from_signed_arc": "1989-05-25",
+      "algorithm_name": "simplified_longitude_semi_arc_proxy_naibod",
+      "key": "naibod",
+      "key_rate_deg_per_year": 0.9856,
+      "latitude_mode": "ignored_or_longitude_proxy",
+      "direction_class": "zodiacal_proxy",
+      "method_key": "simplified_longitude_semi_arc_proxy_naibod",
+      "audit_note": "Baseline simplified PD; not multi-tradition complete."
+    },
+    {
+      "id": "pd-VENUS-MARS-sextile",
+      "promissor": "金星",
+      "promissor_id": "VENUS",
+      "significator": "火星",
+      "significator_id": "MARS",
+      "aspect_type": "sextile",
+      "aspect_name": "六合",
+      "natal_promissor_lon": 306.2631,
+      "natal_significator_lon": 249.7655,
+      "direction_type": "direct",
+      "arc_signed": 2.9435,
+      "arc_abs": 2.9435,
+      "age_from_abs_arc": 2.99,
+      "event_date_after_birth": "1992-12-27",
+      "symbolic_date_from_signed_arc": null,
+      "algorithm_name": "simplified_longitude_semi_arc_proxy_naibod",
+      "key": "naibod",
+      "key_rate_deg_per_year": 0.9856,
+      "latitude_mode": "ignored_or_longitude_proxy",
+      "direction_class": "zodiacal_proxy",
+      "method_key": "simplified_longitude_semi_arc_proxy_naibod",
+      "audit_note": "Baseline simplified PD; not multi-tradition complete."
+    }
+  ],
+  "warnings": [],
+  "section_errors": null,
+  "calculation_assumptions": [
+    "Uses ecliptic longitude derived RA/Dec without full planetary latitude in mundane sense.",
+    "Single key: Naibod mean motion; no Placidus semi-arc vs Regiomontanus method switch in this audit baseline.",
+    "Not a complete traditional primary directions suite; multi-method expansion is B17 after this audit.",
+    "Directions outside age window are filtered rather than marked as algorithmic failure.",
+    "This mode is an AUDIT of the current simplified PD implementation.",
+    "B17 expands methods only with explicit method_profile per direction."
+  ]
+}
