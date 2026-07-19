@@ -6,16 +6,16 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from astro_backend_core import moment_to_jd, moment_to_local_datetime, norm360, set_zodiac_mode
-from astro_backend_ephemeris import body_longitude_at, calculate_positions, resolve_bodies
+from astro_backend_ephemeris import body_longitude_at, build_houses, calculate_positions, resolve_bodies
 from astro_backend_progressions import _calc_progressed_dt
 from astro_backend_solar_arc import true_solar_arc_value
 
 METHOD = "method_families_v1"
 
 PROGRESSION_PROFILES = {
-    "secondary_naibod": "Secondary progression; angles by Naibod mean (placeholder uses secondary day-for-year).",
-    "secondary_solar_arc_mc": "Secondary progression; MC advanced by true solar arc (approx via sun arc).",
-    "secondary_armc_361": "Secondary progression; ARMC+361°/year proxy via sun mean motion * year fraction.",
+    "secondary_naibod": "Secondary planets; ASC/MC advanced by Naibod mean (0.98564733°/year).",
+    "secondary_solar_arc_mc": "Secondary planets; ASC/MC advanced by true solar arc.",
+    "secondary_armc_361": "Secondary planets; ASC/MC advanced by 361°/year proxy.",
 }
 
 SOLAR_ARC_PROFILES = {
@@ -73,19 +73,32 @@ def calculate_method_families(request: dict[str, Any], warnings: list[str]) -> d
     custom_rate = float(request.get("solar_arc_rate_deg_per_year") or 1.0)
     custom_arc = custom_rate * age_years
 
+    lat = float(birth["latitude"])
+    lon_geo = float(birth["longitude"])
+    hs = birth.get("houseSystem", birth.get("house_system", "whole_sign"))
+    _, natal_angles, _ = build_houses(birth_jd, lat, lon_geo, hs, sidereal, warnings)
+    armc_rate = 361.0 / 365.2422
+
+    def _angle_progressed(profile_id: str, natal_lon: float) -> float:
+        if profile_id == "secondary_naibod":
+            return norm360(natal_lon + naibod_arc)
+        if profile_id == "secondary_solar_arc_mc":
+            return norm360(natal_lon + true_arc)
+        # secondary_armc_361
+        return norm360(natal_lon + age_years * armc_rate)
+
     progression_profiles_out = []
     for profile_id, desc in PROGRESSION_PROFILES.items():
         rows = []
         for body_id in body_ids:
+            if body_id in {"ASC", "MC", "DSC", "IC"}:
+                continue
             natal_row = natal_by.get(body_id)
             prog_row = prog_by.get(body_id)
             if not natal_row or not prog_row:
                 continue
+            # Planets: pure secondary for all progression profiles.
             lon = float(prog_row["longitude"])
-            if profile_id == "secondary_solar_arc_mc" and body_id in {"ASC", "MC"}:
-                lon = norm360(float(natal_row["longitude"]) + true_arc)
-            elif profile_id == "secondary_armc_361":
-                lon = norm360(float(natal_row["longitude"]) + age_years * (361.0 / 365.2422))
             rows.append(
                 {
                     "body_id": body_id,
@@ -93,6 +106,23 @@ def calculate_method_families(request: dict[str, Any], warnings: list[str]) -> d
                     "natal_longitude": round(float(natal_row["longitude"]), 9),
                     "progressed_longitude": round(lon, 9),
                     "method_key": profile_id,
+                    "component": "secondary_planet",
+                }
+            )
+        # Angles always included; profile methods diverge here by design.
+        for aid in ("ASC", "MC"):
+            if aid not in natal_angles:
+                continue
+            natal_lon = float(natal_angles[aid])
+            lon = _angle_progressed(profile_id, natal_lon)
+            rows.append(
+                {
+                    "body_id": aid,
+                    "name": aid,
+                    "natal_longitude": round(natal_lon, 9),
+                    "progressed_longitude": round(lon, 9),
+                    "method_key": profile_id,
+                    "component": "angle",
                 }
             )
         progression_profiles_out.append(
@@ -160,7 +190,8 @@ def calculate_method_families(request: dict[str, Any], warnings: list[str]) -> d
         "warnings": list(dict.fromkeys(warnings)),
         "section_errors": None,
         "calculation_assumptions": [
-            "Secondary progression uses day-for-year via _calc_progressed_dt.",
+            "Secondary progression uses day-for-year via _calc_progressed_dt for planets.",
+            "Progression profile divergence is on ASC/MC: Naibod mean vs true solar arc vs 361°/year.",
             "Solar arc true_sun uses true_solar_arc_value(natal_sun, progressed_sun).",
             "Naibod mean uses 0.98564733°/year * age_years.",
             "custom_rate uses request.solar_arc_rate_deg_per_year (default 1).",

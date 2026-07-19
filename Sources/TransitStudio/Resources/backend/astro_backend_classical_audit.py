@@ -138,6 +138,8 @@ def calculate_prenatal_syzygy(
     return {
         "syzygy_type": syzygy_type,
         "exact_utc": syzygy_dt_utc_rounded.strftime("%Y-%m-%d %H:%M"),
+        "exact_jd": float(syzygy_jd),
+        "jd": float(syzygy_jd),
         "longitude": round(syzygy_degree_used, 4),
         "sun_position": round(syzygy_sun_lon, 4),
         "moon_position": round(syzygy_moon_lon, 4),

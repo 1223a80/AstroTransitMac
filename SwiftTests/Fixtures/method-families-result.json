@@ -35,7 +35,7 @@
   "progression_profiles": [
     {
       "profile_id": "secondary_naibod",
-      "description": "Secondary progression; angles by Naibod mean (placeholder uses secondary day-for-year).",
+      "description": "Secondary planets; ASC/MC advanced by Naibod mean (0.98564733°/year).",
       "progressed_utc": "1990-02-06T12:09:59.289348Z",
       "rows": [
         {
@@ -43,41 +43,62 @@
           "name": "太阳",
           "natal_longitude": 280.474432156,
           "progressed_longitude": 317.446594678,
-          "method_key": "secondary_naibod"
+          "method_key": "secondary_naibod",
+          "component": "secondary_planet"
         },
         {
           "body_id": "MOON",
           "name": "月亮",
           "natal_longitude": 328.788629281,
           "progressed_longitude": 96.205819704,
-          "method_key": "secondary_naibod"
+          "method_key": "secondary_naibod",
+          "component": "secondary_planet"
         },
         {
           "body_id": "MERCURY",
           "name": "水星",
           "natal_longitude": 295.760043314,
           "progressed_longitude": 292.886474072,
-          "method_key": "secondary_naibod"
+          "method_key": "secondary_naibod",
+          "component": "secondary_planet"
         },
         {
           "body_id": "VENUS",
           "name": "金星",
           "natal_longitude": 306.263052404,
           "progressed_longitude": 290.993078419,
-          "method_key": "secondary_naibod"
+          "method_key": "secondary_naibod",
+          "component": "secondary_planet"
         },
         {
           "body_id": "MARS",
           "name": "火星",
           "natal_longitude": 249.765529575,
           "progressed_longitude": 275.716183854,
-          "method_key": "secondary_naibod"
+          "method_key": "secondary_naibod",
+          "component": "secondary_planet"
+        },
+        {
+          "body_id": "ASC",
+          "name": "ASC",
+          "natal_longitude": 17.616017304,
+          "progressed_longitude": 53.43470696,
+          "method_key": "secondary_naibod",
+          "component": "angle"
+        },
+        {
+          "body_id": "MC",
+          "name": "MC",
+          "natal_longitude": 281.05763211,
+          "progressed_longitude": 316.876321766,
+          "method_key": "secondary_naibod",
+          "component": "angle"
         }
       ]
     },
     {
       "profile_id": "secondary_solar_arc_mc",
-      "description": "Secondary progression; MC advanced by true solar arc (approx via sun arc).",
+      "description": "Secondary planets; ASC/MC advanced by true solar arc.",
       "progressed_utc": "1990-02-06T12:09:59.289348Z",
       "rows": [
         {
@@ -85,77 +106,119 @@
           "name": "太阳",
           "natal_longitude": 280.474432156,
           "progressed_longitude": 317.446594678,
-          "method_key": "secondary_solar_arc_mc"
+          "method_key": "secondary_solar_arc_mc",
+          "component": "secondary_planet"
         },
         {
           "body_id": "MOON",
           "name": "月亮",
           "natal_longitude": 328.788629281,
           "progressed_longitude": 96.205819704,
-          "method_key": "secondary_solar_arc_mc"
+          "method_key": "secondary_solar_arc_mc",
+          "component": "secondary_planet"
         },
         {
           "body_id": "MERCURY",
           "name": "水星",
           "natal_longitude": 295.760043314,
           "progressed_longitude": 292.886474072,
-          "method_key": "secondary_solar_arc_mc"
+          "method_key": "secondary_solar_arc_mc",
+          "component": "secondary_planet"
         },
         {
           "body_id": "VENUS",
           "name": "金星",
           "natal_longitude": 306.263052404,
           "progressed_longitude": 290.993078419,
-          "method_key": "secondary_solar_arc_mc"
+          "method_key": "secondary_solar_arc_mc",
+          "component": "secondary_planet"
         },
         {
           "body_id": "MARS",
           "name": "火星",
           "natal_longitude": 249.765529575,
           "progressed_longitude": 275.716183854,
-          "method_key": "secondary_solar_arc_mc"
+          "method_key": "secondary_solar_arc_mc",
+          "component": "secondary_planet"
+        },
+        {
+          "body_id": "ASC",
+          "name": "ASC",
+          "natal_longitude": 17.616017304,
+          "progressed_longitude": 54.588179826,
+          "method_key": "secondary_solar_arc_mc",
+          "component": "angle"
+        },
+        {
+          "body_id": "MC",
+          "name": "MC",
+          "natal_longitude": 281.05763211,
+          "progressed_longitude": 318.029794632,
+          "method_key": "secondary_solar_arc_mc",
+          "component": "angle"
         }
       ]
     },
     {
       "profile_id": "secondary_armc_361",
-      "description": "Secondary progression; ARMC+361°/year proxy via sun mean motion * year fraction.",
+      "description": "Secondary planets; ASC/MC advanced by 361°/year proxy.",
       "progressed_utc": "1990-02-06T12:09:59.289348Z",
       "rows": [
         {
           "body_id": "SUN",
           "name": "太阳",
           "natal_longitude": 280.474432156,
-          "progressed_longitude": 316.392618249,
-          "method_key": "secondary_armc_361"
+          "progressed_longitude": 317.446594678,
+          "method_key": "secondary_armc_361",
+          "component": "secondary_planet"
         },
         {
           "body_id": "MOON",
           "name": "月亮",
           "natal_longitude": 328.788629281,
-          "progressed_longitude": 4.706815374,
-          "method_key": "secondary_armc_361"
+          "progressed_longitude": 96.205819704,
+          "method_key": "secondary_armc_361",
+          "component": "secondary_planet"
         },
         {
           "body_id": "MERCURY",
           "name": "水星",
           "natal_longitude": 295.760043314,
-          "progressed_longitude": 331.678229407,
-          "method_key": "secondary_armc_361"
+          "progressed_longitude": 292.886474072,
+          "method_key": "secondary_armc_361",
+          "component": "secondary_planet"
         },
         {
           "body_id": "VENUS",
           "name": "金星",
           "natal_longitude": 306.263052404,
-          "progressed_longitude": 342.181238497,
-          "method_key": "secondary_armc_361"
+          "progressed_longitude": 290.993078419,
+          "method_key": "secondary_armc_361",
+          "component": "secondary_planet"
         },
         {
           "body_id": "MARS",
           "name": "火星",
           "natal_longitude": 249.765529575,
-          "progressed_longitude": 285.683715667,
-          "method_key": "secondary_armc_361"
+          "progressed_longitude": 275.716183854,
+          "method_key": "secondary_armc_361",
+          "component": "secondary_planet"
+        },
+        {
+          "body_id": "ASC",
+          "name": "ASC",
+          "natal_longitude": 17.616017304,
+          "progressed_longitude": 53.534203397,
+          "method_key": "secondary_armc_361",
+          "component": "angle"
+        },
+        {
+          "body_id": "MC",
+          "name": "MC",
+          "natal_longitude": 281.05763211,
+          "progressed_longitude": 316.975818203,
+          "method_key": "secondary_armc_361",
+          "component": "angle"
         }
       ]
     }
@@ -311,7 +374,8 @@
   "warnings": [],
   "section_errors": null,
   "calculation_assumptions": [
-    "Secondary progression uses day-for-year via _calc_progressed_dt.",
+    "Secondary progression uses day-for-year via _calc_progressed_dt for planets.",
+    "Progression profile divergence is on ASC/MC: Naibod mean vs true solar arc vs 361°/year.",
     "Solar arc true_sun uses true_solar_arc_value(natal_sun, progressed_sun).",
     "Naibod mean uses 0.98564733°/year * age_years.",
     "custom_rate uses request.solar_arc_rate_deg_per_year (default 1).",

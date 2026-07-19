@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-19 — B11–B20 skeptic 修复：parans / syzygy_chart / method profiles / 定义性测试
+
+- B18：`compute_star_positions` 输出赤道 `ra` / `right_ascension`；`calculate_prenatal_syzygy` 返回 `exact_jd`/`jd`，使 `syzygy_chart` 与 `fixed_star_parans` 非空。
+- B15：progression profiles 对 ASC/MC 按 Naibod / true solar arc / 361°/year 分化；行星保持次限。
+- B13–B20 聚焦 pytest 改为定义性断言（非空关键数组、method key 差异）；刷新 prenatal/method_families fixtures。
+
 ## 2026-07-19 — B13–B20 古典/现代扩展批次
 
 - B13 `classical_derivatives`：Dodekatemoria / Monomoiria / Topical Almutens。

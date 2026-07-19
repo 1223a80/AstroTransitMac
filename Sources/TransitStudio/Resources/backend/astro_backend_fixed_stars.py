@@ -70,7 +70,8 @@ def compute_star_positions(
     Uses ``swe.fixstar_ut()`` with Swiss Ephemeris.
     Requires ``sefstars.txt`` in the Swiss Ephemeris path.
     Returns list of dicts with ``name``, ``longitude``, ``latitude``,
-    ``declination``, ``mag``, ``nature`` (from catalog) and ``orb``.
+    ``ra`` / ``right_ascension``, ``declination``, ``mag``, ``nature``
+    (from catalog) and ``orb``.
     """
     if stars is None:
         stars = STAR_CATALOG
@@ -86,9 +87,10 @@ def compute_star_positions(
             values, name_str, _ = swe.fixstar_ut(star["swe_name"], jd_ut, longitude_flags)
             lon = norm360(values[0])
             lat = values[1]
-            # Declination from equatorial coordinates
+            # Equatorial: RA = eq_vals[0], declination = eq_vals[1]
             eq_vals, _, _ = swe.fixstar_ut(star["swe_name"], jd_ut, swe.FLG_SWIEPH | swe.FLG_EQUATORIAL)
-            dec = eq_vals[1]
+            ra = float(eq_vals[0])
+            dec = float(eq_vals[1])
         except Exception as exc:
             message = str(exc)
             if "sefstars" in message.lower():
@@ -103,6 +105,8 @@ def compute_star_positions(
             "swe_name": star["swe_name"],
             "longitude": round(lon, 4),
             "latitude": round(lat, 4),
+            "ra": round(ra, 4),
+            "right_ascension": round(ra, 4),
             "declination": round(dec, 4),
             "mag": star["mag"],
             "nature": star["nature"],

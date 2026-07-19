@@ -4,7 +4,7 @@
     "method": "prenatal_parans_v1",
     "schema_version": 1,
     "birth_utc": "1990-01-01T04:00:00+00:00",
-    "paran_count": 0,
+    "paran_count": 3,
     "ephemeris": "Swiss Ephemeris"
   },
   "requested_config": {
@@ -18,6 +18,8 @@
     "prenatal_syzygy": {
       "syzygy_type": "new_moon",
       "exact_utc": "1989-12-28 03:20",
+      "exact_jd": 2447888.6386041767,
+      "jd": 2447888.6386041767,
       "longitude": 276.3677,
       "sun_position": 276.3677,
       "moon_position": 276.3677,
@@ -37,12 +39,274 @@
       "ephemeris": "Swiss Ephemeris",
       "_method": "prenatal_syzygy_swiss_ephemeris_bracketed_bisection",
       "_source_tradition": "Hellenistic"
+    },
+    "syzygy_chart": {
+      "planets": [
+        {
+          "body_id": "SUN",
+          "name": "太阳",
+          "longitude": 276.36769388025067,
+          "latitude": -0.0001499877239398366,
+          "declination": -23.2893,
+          "out_of_bounds": false,
+          "speed": 1.019489011167717,
+          "sign": "摩羯",
+          "degree_text": "06°22'04\" 摩羯",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "MOON",
+          "name": "月亮",
+          "longitude": 276.3676965202039,
+          "latitude": -3.3597799384735856,
+          "declination": -26.6449,
+          "out_of_bounds": true,
+          "speed": 12.62277617839295,
+          "sign": "摩羯",
+          "degree_text": "06°22'04\" 摩羯",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "MERCURY",
+          "name": "水星",
+          "longitude": 295.1850417621398,
+          "latitude": -0.5958303137250569,
+          "declination": -21.6866,
+          "out_of_bounds": false,
+          "speed": 0.4816281918802924,
+          "sign": "摩羯",
+          "degree_text": "25°11'06\" 摩羯",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "VENUS",
+          "name": "金星",
+          "longitude": 306.39429523375946,
+          "latitude": 0.8746047201997994,
+          "declination": -17.8297,
+          "out_of_bounds": false,
+          "speed": 0.049720798128646715,
+          "sign": "水瓶",
+          "degree_text": "06°23'39\" 水瓶",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "MARS",
+          "name": "火星",
+          "longitude": 246.9359529920233,
+          "latitude": 0.014471733321957156,
+          "declination": -21.4565,
+          "out_of_bounds": false,
+          "speed": 0.7013320606699431,
+          "sign": "射手",
+          "degree_text": "06°56'09\" 射手",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "JUPITER",
+          "name": "木星",
+          "longitude": 95.7389926269145,
+          "latitude": -0.12751624406819786,
+          "declination": 23.1905,
+          "out_of_bounds": false,
+          "speed": -0.1358281268917849,
+          "sign": "巨蟹",
+          "degree_text": "05°44'20\" 巨蟹",
+          "_ephemeris": "Swiss Ephemeris"
+        },
+        {
+          "body_id": "SATURN",
+          "name": "土星",
+          "longitude": 285.14279980863444,
+          "latitude": 0.2986965286812742,
+          "declination": -22.2856,
+          "out_of_bounds": false,
+          "speed": 0.11767929819949839,
+          "sign": "摩羯",
+          "degree_text": "15°08'34\" 摩羯",
+          "_ephemeris": "Swiss Ephemeris"
+        }
+      ],
+      "angles": [
+        {
+          "id": "ASC",
+          "name": "ASC",
+          "longitude": 356.9720098350882,
+          "sign": "双鱼",
+          "degree_text": "26°58'19\" 双鱼",
+          "house": 1,
+          "ruler": "木星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "MC",
+          "name": "MC",
+          "longitude": 268.12071267475665,
+          "sign": "射手",
+          "degree_text": "28°07'15\" 射手",
+          "house": 10,
+          "ruler": "木星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "DSC",
+          "name": "DSC",
+          "longitude": 176.97200983508822,
+          "sign": "处女",
+          "degree_text": "26°58'19\" 处女",
+          "house": 7,
+          "ruler": "水星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        },
+        {
+          "id": "IC",
+          "name": "IC",
+          "longitude": 88.12071267475665,
+          "sign": "双子",
+          "degree_text": "28°07'15\" 双子",
+          "house": 4,
+          "ruler": "水星",
+          "formula": null,
+          "formula_day": null,
+          "formula_night": null,
+          "used_formula": null
+        }
+      ],
+      "houses": [
+        {
+          "house": 1,
+          "sign": "双鱼",
+          "cusp_longitude": 330.0,
+          "cusp_text": "00°00'00\" 双鱼",
+          "ruler": "木星"
+        },
+        {
+          "house": 2,
+          "sign": "白羊",
+          "cusp_longitude": 0.0,
+          "cusp_text": "00°00'00\" 白羊",
+          "ruler": "火星"
+        },
+        {
+          "house": 3,
+          "sign": "金牛",
+          "cusp_longitude": 30.0,
+          "cusp_text": "00°00'00\" 金牛",
+          "ruler": "金星"
+        },
+        {
+          "house": 4,
+          "sign": "双子",
+          "cusp_longitude": 60.0,
+          "cusp_text": "00°00'00\" 双子",
+          "ruler": "水星"
+        },
+        {
+          "house": 5,
+          "sign": "巨蟹",
+          "cusp_longitude": 90.0,
+          "cusp_text": "00°00'00\" 巨蟹",
+          "ruler": "月亮"
+        },
+        {
+          "house": 6,
+          "sign": "狮子",
+          "cusp_longitude": 120.0,
+          "cusp_text": "00°00'00\" 狮子",
+          "ruler": "太阳"
+        },
+        {
+          "house": 7,
+          "sign": "处女",
+          "cusp_longitude": 150.0,
+          "cusp_text": "00°00'00\" 处女",
+          "ruler": "水星"
+        },
+        {
+          "house": 8,
+          "sign": "天秤",
+          "cusp_longitude": 180.0,
+          "cusp_text": "00°00'00\" 天秤",
+          "ruler": "金星"
+        },
+        {
+          "house": 9,
+          "sign": "天蝎",
+          "cusp_longitude": 210.0,
+          "cusp_text": "00°00'00\" 天蝎",
+          "ruler": "火星"
+        },
+        {
+          "house": 10,
+          "sign": "射手",
+          "cusp_longitude": 240.0,
+          "cusp_text": "00°00'00\" 射手",
+          "ruler": "木星"
+        },
+        {
+          "house": 11,
+          "sign": "摩羯",
+          "cusp_longitude": 270.0,
+          "cusp_text": "00°00'00\" 摩羯",
+          "ruler": "土星"
+        },
+        {
+          "house": 12,
+          "sign": "水瓶",
+          "cusp_longitude": 300.0,
+          "cusp_text": "00°00'00\" 水瓶",
+          "ruler": "土星"
+        }
+      ],
+      "house_system": "Whole Sign",
+      "method_key": "syzygy_chart_from_exact_jd"
     }
   },
-  "fixed_star_parans": [],
-  "warnings": [
-    "prenatal syzygy payload missing jd; chart packet limited"
+  "fixed_star_parans": [
+    {
+      "planet_id": "MERCURY",
+      "planet_name": "水星",
+      "star_name": "Altair",
+      "planet_ra": 297.639059,
+      "star_ra": 297.571,
+      "ra_delta_deg": 0.068059,
+      "paran_class": "co_culmination_ra_proxy",
+      "method_key": "fixed_star_paran_ra_proxy_v1",
+      "note": "RA co-culmination proxy, not full local rise-pair paran."
+    },
+    {
+      "planet_id": "MARS",
+      "planet_name": "火星",
+      "star_name": "Antares",
+      "planet_ra": 248.106355,
+      "star_ra": 247.1962,
+      "ra_delta_deg": 0.910155,
+      "paran_class": "co_culmination_ra_proxy",
+      "method_key": "fixed_star_paran_ra_proxy_v1",
+      "note": "RA co-culmination proxy, not full local rise-pair paran."
+    },
+    {
+      "planet_id": "JUPITER",
+      "planet_name": "木星",
+      "star_name": "Canopus",
+      "planet_ra": 95.652961,
+      "star_ra": 95.943,
+      "ra_delta_deg": 0.290039,
+      "paran_class": "co_culmination_ra_proxy",
+      "method_key": "fixed_star_paran_ra_proxy_v1",
+      "note": "RA co-culmination proxy, not full local rise-pair paran."
+    }
   ],
+  "warnings": [],
   "section_errors": null,
   "calculation_assumptions": [
     "Prenatal syzygy from calculate_prenatal_syzygy; chart rebuilt at exact jd when available.",

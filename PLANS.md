@@ -2,6 +2,16 @@
 
 All of B13–B20 implemented with independent backends, samples, fixtures, Swift panes, and gates.
 
+## Skeptic remediation (2026-07-19)
+
+| 项 | 状态 | 说明 |
+|---|---|---|
+| B18 star RA | ✅ | `compute_star_positions` 写入 `ra`/`right_ascension` |
+| B18 syzygy exact_jd | ✅ | prenatal syzygy 返回 `exact_jd`/`jd` → `syzygy_chart` |
+| B15 profile 分化 | ✅ | ASC/MC：Naibod / true solar arc / 361°/year |
+| B13–B20 定义性测试 | ✅ | 非空关键结果 + method key 差异 |
+| smoke 证据 | ✅ | B11–B20 transit_calc 成功 JSON（parans≥1, chart 有, MC 三 profile 不同） |
+
 ---
 
 # B12 Draconic/日心（2026-07-19）
