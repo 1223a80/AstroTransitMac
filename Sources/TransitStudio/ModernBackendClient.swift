@@ -62,6 +62,13 @@ extension BackendClient {
         try await run(request: request, pythonPath: pythonPath)
     }
 
+    static func classicalVisibility(
+        request: ClassicalVisibilityRequest,
+        pythonPath: String
+    ) async throws -> ClassicalVisibilityResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
     static func astrocartography(
         request: AstrocartographyRequest,
         pythonPath: String

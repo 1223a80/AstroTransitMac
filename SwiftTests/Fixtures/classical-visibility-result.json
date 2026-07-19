@@ -1,0 +1,642 @@
+{
+  "meta": {
+    "mode": "classical_visibility",
+    "method": "classical_visibility_v1",
+    "schema_version": 1,
+    "reference_utc": "2026-05-05T04:00:00.000Z",
+    "display_timezone": "Asia/Shanghai",
+    "location": {
+      "name": "Shanghai",
+      "latitude": 31.2304,
+      "longitude": 121.4737,
+      "altitude_m": 10.0,
+      "timezone": "Asia/Shanghai"
+    },
+    "body_ids": [
+      "MERCURY",
+      "VENUS",
+      "MARS",
+      "JUPITER",
+      "SATURN"
+    ],
+    "heliacal_event_types": [
+      "heliacal_rising",
+      "heliacal_setting"
+    ],
+    "include": [
+      "heliacal",
+      "planetary_hours",
+      "rise_set"
+    ],
+    "ephemeris": "Swiss Ephemeris"
+  },
+  "requested_config": {
+    "moment": {
+      "year": 2026,
+      "month": 5,
+      "day": 5,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "location": {
+      "name": "Shanghai",
+      "latitude": 31.2304,
+      "longitude": 121.4737,
+      "altitude_m": 10,
+      "timezone": "Asia/Shanghai"
+    },
+    "body_ids": [
+      "MERCURY",
+      "VENUS",
+      "MARS",
+      "JUPITER",
+      "SATURN"
+    ],
+    "heliacal_event_types": [
+      "heliacal_rising",
+      "heliacal_setting"
+    ],
+    "include": [
+      "heliacal",
+      "planetary_hours",
+      "rise_set"
+    ],
+    "observer_age": 36.0
+  },
+  "effective_config": {
+    "display_timezone": "Asia/Shanghai",
+    "body_ids": [
+      "MERCURY",
+      "VENUS",
+      "MARS",
+      "JUPITER",
+      "SATURN"
+    ],
+    "heliacal_event_types": [
+      "heliacal_rising",
+      "heliacal_setting"
+    ],
+    "include": [
+      "heliacal",
+      "planetary_hours",
+      "rise_set"
+    ],
+    "observer_age": 36.0,
+    "atmosphere_defaults": {
+      "pressure_hpa": 1013.25,
+      "temperature_c": 15.0,
+      "rh": 40.0
+    }
+  },
+  "heliacal_events": [
+    {
+      "id": "MERCURY|heliacal_rising|2026-07-27T20:06:27.751Z",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "event_type": "heliacal_rising",
+      "exact_utc": "2026-07-27T20:06:27.751Z",
+      "exact_local": "2026-07-28T04:06:27.751+08:00",
+      "visibility_start_jd": 2461249.3378211963,
+      "optimum_jd": 2461249.3458883227,
+      "visibility_end_jd": 2461249.3543836907,
+      "status": "ok",
+      "method_key": "swe.heliacal_ut",
+      "observer_age": 36.0,
+      "atmosphere": {
+        "pressure_hpa": 1013.25,
+        "temperature_c": 15.0,
+        "relative_humidity": 40.0
+      }
+    },
+    {
+      "id": "MERCURY|heliacal_setting|2026-06-25T11:43:18.240Z",
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "event_type": "heliacal_setting",
+      "exact_utc": "2026-06-25T11:43:18.240Z",
+      "exact_local": "2026-06-25T19:43:18.240+08:00",
+      "visibility_start_jd": 2461216.9884055634,
+      "optimum_jd": 2461216.996762043,
+      "visibility_end_jd": 2461217.0039263926,
+      "status": "ok",
+      "method_key": "swe.heliacal_ut",
+      "observer_age": 36.0,
+      "atmosphere": {
+        "pressure_hpa": 1013.25,
+        "temperature_c": 15.0,
+        "relative_humidity": 40.0
+      }
+    },
+    {
+      "id": "VENUS|heliacal_rising|2026-10-29T21:33:34.160Z",
+      "body_id": "VENUS",
+      "body_name": "金星",
+      "event_type": "heliacal_rising",
+      "exact_utc": "2026-10-29T21:33:34.160Z",
+      "exact_local": "2026-10-30T05:33:34.160+08:00",
+      "visibility_start_jd": 2461343.398312047,
+      "optimum_jd": 2461343.4027796374,
+      "visibility_end_jd": 2461343.414758801,
+      "status": "ok",
+      "method_key": "swe.heliacal_ut",
+      "observer_age": 36.0,
+      "atmosphere": {
+        "pressure_hpa": 1013.25,
+        "temperature_c": 15.0,
+        "relative_humidity": 40.0
+      }
+    },
+    {
+      "id": "VENUS|heliacal_setting|2026-10-11T09:41:41.043Z",
+      "body_id": "VENUS",
+      "body_name": "金星",
+      "event_type": "heliacal_setting",
+      "exact_utc": "2026-10-11T09:41:41.043Z",
+      "exact_local": "2026-10-11T17:41:41.043+08:00",
+      "visibility_start_jd": 2461324.903947267,
+      "optimum_jd": 2461324.9057065253,
+      "visibility_end_jd": 2461324.90669032,
+      "status": "ok",
+      "method_key": "swe.heliacal_ut",
+      "observer_age": 36.0,
+      "atmosphere": {
+        "pressure_hpa": 1013.25,
+        "temperature_c": 15.0,
+        "relative_humidity": 40.0
+      }
+    },
+    {
+      "id": "MARS|heliacal_rising|2028-06-16T19:55:16.639Z",
+      "body_id": "MARS",
+      "body_name": "火星",
+      "event_type": "heliacal_rising",
+      "exact_utc": "2028-06-16T19:55:16.639Z",
+      "exact_local": "2028-06-17T03:55:16.639+08:00",
+      "visibility_start_jd": 2461939.3300536955,
+      "optimum_jd": 2461939.3320328607,
+      "visibility_end_jd": 2461939.333491193,
+      "status": "ok",
+      "method_key": "swe.heliacal_ut",
+      "observer_age": 36.0,
+      "atmosphere": {
+        "pressure_hpa": 1013.25,
+        "temperature_c": 15.0,
+        "relative_humidity": 40.0
+      }
+    },
+    {
+      "id": "MARS|heliacal_setting|2028-01-09T09:53:20.118Z",
+      "body_id": "MARS",
+      "body_name": "火星",
+      "event_type": "heliacal_setting",
+      "exact_utc": "2028-01-09T09:53:20.118Z",
+      "exact_local": "2028-01-09T17:53:20.118+08:00",
+      "visibility_start_jd": 2461779.9120384078,
+      "optimum_jd": 2461779.9154411834,
+      "visibility_end_jd": 2461779.917732848,
+      "status": "ok",
+      "method_key": "swe.heliacal_ut",
+      "observer_age": 36.0,
+      "atmosphere": {
+        "pressure_hpa": 1013.25,
+        "temperature_c": 15.0,
+        "relative_humidity": 40.0
+      }
+    },
+    {
+      "id": "JUPITER|heliacal_rising|2026-08-11T20:38:02.434Z",
+      "body_id": "JUPITER",
+      "body_name": "木星",
+      "event_type": "heliacal_rising",
+      "exact_utc": "2026-08-11T20:38:02.434Z",
+      "exact_local": "2026-08-12T04:38:02.434+08:00",
+      "visibility_start_jd": 2461264.3597503942,
+      "optimum_jd": 2461264.3629216887,
+      "visibility_end_jd": 2461264.367412427,
+      "status": "ok",
+      "method_key": "swe.heliacal_ut",
+      "observer_age": 36.0,
+      "atmosphere": {
+        "pressure_hpa": 1013.25,
+        "temperature_c": 15.0,
+        "relative_humidity": 40.0
+      }
+    },
+    {
+      "id": "JUPITER|heliacal_setting|2026-07-11T11:26:59.045Z",
+      "body_id": "JUPITER",
+      "body_name": "木星",
+      "event_type": "heliacal_setting",
+      "exact_utc": "2026-07-11T11:26:59.045Z",
+      "exact_local": "2026-07-11T19:26:59.045+08:00",
+      "visibility_start_jd": 2461232.977072286,
+      "optimum_jd": 2461232.9832875617,
+      "visibility_end_jd": 2461232.9889820036,
+      "status": "ok",
+      "method_key": "swe.heliacal_ut",
+      "observer_age": 36.0,
+      "atmosphere": {
+        "pressure_hpa": 1013.25,
+        "temperature_c": 15.0,
+        "relative_humidity": 40.0
+      }
+    },
+    {
+      "id": "SATURN|heliacal_rising|2027-05-06T20:13:08.812Z",
+      "body_id": "SATURN",
+      "body_name": "土星",
+      "event_type": "heliacal_rising",
+      "exact_utc": "2027-05-06T20:13:08.812Z",
+      "exact_local": "2027-05-07T04:13:08.812+08:00",
+      "visibility_start_jd": 2461532.342463109,
+      "optimum_jd": 2461532.3475094037,
+      "visibility_end_jd": 2461532.3538982905,
+      "status": "ok",
+      "method_key": "swe.heliacal_ut",
+      "observer_age": 36.0,
+      "atmosphere": {
+        "pressure_hpa": 1013.25,
+        "temperature_c": 15.0,
+        "relative_humidity": 40.0
+      }
+    },
+    {
+      "id": "SATURN|heliacal_setting|2027-03-21T10:39:58.608Z",
+      "body_id": "SATURN",
+      "body_name": "土星",
+      "event_type": "heliacal_setting",
+      "exact_utc": "2027-03-21T10:39:58.608Z",
+      "exact_local": "2027-03-21T18:39:58.608+08:00",
+      "visibility_start_jd": 2461485.9444283443,
+      "optimum_jd": 2461485.9519862123,
+      "visibility_end_jd": 2461485.958791765,
+      "status": "ok",
+      "method_key": "swe.heliacal_ut",
+      "observer_age": 36.0,
+      "atmosphere": {
+        "pressure_hpa": 1013.25,
+        "temperature_c": 15.0,
+        "relative_humidity": 40.0
+      }
+    }
+  ],
+  "rise_set": [
+    {
+      "body_id": "SUN",
+      "body_name": "太阳",
+      "rise_utc": "2026-05-05T21:06:44.477Z",
+      "set_utc": "2026-05-05T10:34:27.249Z",
+      "method_key": "swe.rise_trans_disc_center",
+      "rise_local": "2026-05-06T05:06:44.477+08:00",
+      "set_local": "2026-05-05T18:34:27.249+08:00"
+    },
+    {
+      "body_id": "MERCURY",
+      "body_name": "水星",
+      "rise_utc": "2026-05-05T20:40:46.482Z",
+      "set_utc": "2026-05-05T09:43:18.176Z",
+      "method_key": "swe.rise_trans_disc_center",
+      "rise_local": "2026-05-06T04:40:46.482+08:00",
+      "set_local": "2026-05-05T17:43:18.176+08:00"
+    },
+    {
+      "body_id": "VENUS",
+      "body_name": "金星",
+      "rise_utc": "2026-05-05T22:45:33.360Z",
+      "set_utc": "2026-05-05T12:53:42.069Z",
+      "method_key": "swe.rise_trans_disc_center",
+      "rise_local": "2026-05-06T06:45:33.360+08:00",
+      "set_local": "2026-05-05T20:53:42.069+08:00"
+    },
+    {
+      "body_id": "MARS",
+      "body_name": "火星",
+      "rise_utc": "2026-05-05T19:54:51.266Z",
+      "set_utc": "2026-05-05T08:34:44.642Z",
+      "method_key": "swe.rise_trans_disc_center",
+      "rise_local": "2026-05-06T03:54:51.266+08:00",
+      "set_local": "2026-05-05T16:34:44.642+08:00"
+    },
+    {
+      "body_id": "JUPITER",
+      "body_name": "木星",
+      "rise_utc": "2026-05-06T01:22:53.905Z",
+      "set_utc": "2026-05-05T15:25:52.270Z",
+      "method_key": "swe.rise_trans_disc_center",
+      "rise_local": "2026-05-06T09:22:53.905+08:00",
+      "set_local": "2026-05-05T23:25:52.270+08:00"
+    },
+    {
+      "body_id": "SATURN",
+      "body_name": "土星",
+      "rise_utc": "2026-05-05T19:31:19.672Z",
+      "set_utc": "2026-05-05T07:47:07.137Z",
+      "method_key": "swe.rise_trans_disc_center",
+      "rise_local": "2026-05-06T03:31:19.672+08:00",
+      "set_local": "2026-05-05T15:47:07.137+08:00"
+    }
+  ],
+  "planetary_hours": {
+    "status": "ok",
+    "method_key": "unequal_planetary_hours_chaldean",
+    "weekday_local": "Tuesday",
+    "day_ruler_id": "MARS",
+    "day_ruler_name": "火星",
+    "sunrise_utc": "2026-05-04T21:07:35.452Z",
+    "sunset_utc": "2026-05-05T10:34:27.249Z",
+    "next_sunrise_utc": "2026-05-05T21:06:44.477Z",
+    "sunrise_local": "2026-05-05T05:07:35.452+08:00",
+    "sunset_local": "2026-05-05T18:34:27.249+08:00",
+    "next_sunrise_local": "2026-05-06T05:06:44.477+08:00",
+    "day_hour_minutes": 67.2386,
+    "night_hour_minutes": 52.6906,
+    "current_hour": {
+      "hour_index": 7,
+      "period": "day",
+      "ruler_id": "JUPITER",
+      "ruler_name": "木星",
+      "start_utc": "2026-05-05T03:51:01.350Z",
+      "end_utc": "2026-05-05T04:58:15.667Z",
+      "start_local": "2026-05-05T11:51:01.350+08:00",
+      "end_local": "2026-05-05T12:58:15.667+08:00",
+      "duration_minutes": 67.2386
+    },
+    "hours": [
+      {
+        "hour_index": 1,
+        "period": "day",
+        "ruler_id": "MARS",
+        "ruler_name": "火星",
+        "start_utc": "2026-05-04T21:07:35.452Z",
+        "end_utc": "2026-05-04T22:14:49.768Z",
+        "start_local": "2026-05-05T05:07:35.452+08:00",
+        "end_local": "2026-05-05T06:14:49.768+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 2,
+        "period": "day",
+        "ruler_id": "SUN",
+        "ruler_name": "太阳",
+        "start_utc": "2026-05-04T22:14:49.768Z",
+        "end_utc": "2026-05-04T23:22:04.084Z",
+        "start_local": "2026-05-05T06:14:49.768+08:00",
+        "end_local": "2026-05-05T07:22:04.084+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 3,
+        "period": "day",
+        "ruler_id": "VENUS",
+        "ruler_name": "金星",
+        "start_utc": "2026-05-04T23:22:04.084Z",
+        "end_utc": "2026-05-05T00:29:18.401Z",
+        "start_local": "2026-05-05T07:22:04.084+08:00",
+        "end_local": "2026-05-05T08:29:18.401+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 4,
+        "period": "day",
+        "ruler_id": "MERCURY",
+        "ruler_name": "水星",
+        "start_utc": "2026-05-05T00:29:18.401Z",
+        "end_utc": "2026-05-05T01:36:32.717Z",
+        "start_local": "2026-05-05T08:29:18.401+08:00",
+        "end_local": "2026-05-05T09:36:32.717+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 5,
+        "period": "day",
+        "ruler_id": "MOON",
+        "ruler_name": "月亮",
+        "start_utc": "2026-05-05T01:36:32.717Z",
+        "end_utc": "2026-05-05T02:43:47.034Z",
+        "start_local": "2026-05-05T09:36:32.717+08:00",
+        "end_local": "2026-05-05T10:43:47.034+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 6,
+        "period": "day",
+        "ruler_id": "SATURN",
+        "ruler_name": "土星",
+        "start_utc": "2026-05-05T02:43:47.034Z",
+        "end_utc": "2026-05-05T03:51:01.350Z",
+        "start_local": "2026-05-05T10:43:47.034+08:00",
+        "end_local": "2026-05-05T11:51:01.350+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 7,
+        "period": "day",
+        "ruler_id": "JUPITER",
+        "ruler_name": "木星",
+        "start_utc": "2026-05-05T03:51:01.350Z",
+        "end_utc": "2026-05-05T04:58:15.667Z",
+        "start_local": "2026-05-05T11:51:01.350+08:00",
+        "end_local": "2026-05-05T12:58:15.667+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 8,
+        "period": "day",
+        "ruler_id": "MARS",
+        "ruler_name": "火星",
+        "start_utc": "2026-05-05T04:58:15.667Z",
+        "end_utc": "2026-05-05T06:05:29.983Z",
+        "start_local": "2026-05-05T12:58:15.667+08:00",
+        "end_local": "2026-05-05T14:05:29.983+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 9,
+        "period": "day",
+        "ruler_id": "SUN",
+        "ruler_name": "太阳",
+        "start_utc": "2026-05-05T06:05:29.983Z",
+        "end_utc": "2026-05-05T07:12:44.300Z",
+        "start_local": "2026-05-05T14:05:29.983+08:00",
+        "end_local": "2026-05-05T15:12:44.300+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 10,
+        "period": "day",
+        "ruler_id": "VENUS",
+        "ruler_name": "金星",
+        "start_utc": "2026-05-05T07:12:44.300Z",
+        "end_utc": "2026-05-05T08:19:58.616Z",
+        "start_local": "2026-05-05T15:12:44.300+08:00",
+        "end_local": "2026-05-05T16:19:58.616+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 11,
+        "period": "day",
+        "ruler_id": "MERCURY",
+        "ruler_name": "水星",
+        "start_utc": "2026-05-05T08:19:58.616Z",
+        "end_utc": "2026-05-05T09:27:12.932Z",
+        "start_local": "2026-05-05T16:19:58.616+08:00",
+        "end_local": "2026-05-05T17:27:12.932+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 12,
+        "period": "day",
+        "ruler_id": "MOON",
+        "ruler_name": "月亮",
+        "start_utc": "2026-05-05T09:27:12.932Z",
+        "end_utc": "2026-05-05T10:34:27.249Z",
+        "start_local": "2026-05-05T17:27:12.932+08:00",
+        "end_local": "2026-05-05T18:34:27.249+08:00",
+        "duration_minutes": 67.2386
+      },
+      {
+        "hour_index": 1,
+        "period": "night",
+        "ruler_id": "SATURN",
+        "ruler_name": "土星",
+        "start_utc": "2026-05-05T10:34:27.249Z",
+        "end_utc": "2026-05-05T11:27:08.685Z",
+        "start_local": "2026-05-05T18:34:27.249+08:00",
+        "end_local": "2026-05-05T19:27:08.685+08:00",
+        "duration_minutes": 52.6906
+      },
+      {
+        "hour_index": 2,
+        "period": "night",
+        "ruler_id": "JUPITER",
+        "ruler_name": "木星",
+        "start_utc": "2026-05-05T11:27:08.685Z",
+        "end_utc": "2026-05-05T12:19:50.120Z",
+        "start_local": "2026-05-05T19:27:08.685+08:00",
+        "end_local": "2026-05-05T20:19:50.120+08:00",
+        "duration_minutes": 52.6906
+      },
+      {
+        "hour_index": 3,
+        "period": "night",
+        "ruler_id": "MARS",
+        "ruler_name": "火星",
+        "start_utc": "2026-05-05T12:19:50.120Z",
+        "end_utc": "2026-05-05T13:12:31.556Z",
+        "start_local": "2026-05-05T20:19:50.120+08:00",
+        "end_local": "2026-05-05T21:12:31.556+08:00",
+        "duration_minutes": 52.6906
+      },
+      {
+        "hour_index": 4,
+        "period": "night",
+        "ruler_id": "SUN",
+        "ruler_name": "太阳",
+        "start_utc": "2026-05-05T13:12:31.556Z",
+        "end_utc": "2026-05-05T14:05:12.991Z",
+        "start_local": "2026-05-05T21:12:31.556+08:00",
+        "end_local": "2026-05-05T22:05:12.991+08:00",
+        "duration_minutes": 52.6906
+      },
+      {
+        "hour_index": 5,
+        "period": "night",
+        "ruler_id": "VENUS",
+        "ruler_name": "金星",
+        "start_utc": "2026-05-05T14:05:12.991Z",
+        "end_utc": "2026-05-05T14:57:54.427Z",
+        "start_local": "2026-05-05T22:05:12.991+08:00",
+        "end_local": "2026-05-05T22:57:54.427+08:00",
+        "duration_minutes": 52.6906
+      },
+      {
+        "hour_index": 6,
+        "period": "night",
+        "ruler_id": "MERCURY",
+        "ruler_name": "水星",
+        "start_utc": "2026-05-05T14:57:54.427Z",
+        "end_utc": "2026-05-05T15:50:35.863Z",
+        "start_local": "2026-05-05T22:57:54.427+08:00",
+        "end_local": "2026-05-05T23:50:35.863+08:00",
+        "duration_minutes": 52.6906
+      },
+      {
+        "hour_index": 7,
+        "period": "night",
+        "ruler_id": "MOON",
+        "ruler_name": "月亮",
+        "start_utc": "2026-05-05T15:50:35.863Z",
+        "end_utc": "2026-05-05T16:43:17.298Z",
+        "start_local": "2026-05-05T23:50:35.863+08:00",
+        "end_local": "2026-05-06T00:43:17.298+08:00",
+        "duration_minutes": 52.6906
+      },
+      {
+        "hour_index": 8,
+        "period": "night",
+        "ruler_id": "SATURN",
+        "ruler_name": "土星",
+        "start_utc": "2026-05-05T16:43:17.298Z",
+        "end_utc": "2026-05-05T17:35:58.734Z",
+        "start_local": "2026-05-06T00:43:17.298+08:00",
+        "end_local": "2026-05-06T01:35:58.734+08:00",
+        "duration_minutes": 52.6906
+      },
+      {
+        "hour_index": 9,
+        "period": "night",
+        "ruler_id": "JUPITER",
+        "ruler_name": "木星",
+        "start_utc": "2026-05-05T17:35:58.734Z",
+        "end_utc": "2026-05-05T18:28:40.170Z",
+        "start_local": "2026-05-06T01:35:58.734+08:00",
+        "end_local": "2026-05-06T02:28:40.170+08:00",
+        "duration_minutes": 52.6906
+      },
+      {
+        "hour_index": 10,
+        "period": "night",
+        "ruler_id": "MARS",
+        "ruler_name": "火星",
+        "start_utc": "2026-05-05T18:28:40.170Z",
+        "end_utc": "2026-05-05T19:21:21.605Z",
+        "start_local": "2026-05-06T02:28:40.170+08:00",
+        "end_local": "2026-05-06T03:21:21.605+08:00",
+        "duration_minutes": 52.6906
+      },
+      {
+        "hour_index": 11,
+        "period": "night",
+        "ruler_id": "SUN",
+        "ruler_name": "太阳",
+        "start_utc": "2026-05-05T19:21:21.605Z",
+        "end_utc": "2026-05-05T20:14:03.041Z",
+        "start_local": "2026-05-06T03:21:21.605+08:00",
+        "end_local": "2026-05-06T04:14:03.041+08:00",
+        "duration_minutes": 52.6906
+      },
+      {
+        "hour_index": 12,
+        "period": "night",
+        "ruler_id": "VENUS",
+        "ruler_name": "金星",
+        "start_utc": "2026-05-05T20:14:03.041Z",
+        "end_utc": "2026-05-05T21:06:44.477Z",
+        "start_local": "2026-05-06T04:14:03.041+08:00",
+        "end_local": "2026-05-06T05:06:44.477+08:00",
+        "duration_minutes": 52.6906
+      }
+    ]
+  },
+  "warnings": [],
+  "section_errors": null,
+  "calculation_assumptions": [
+    "heliacal 使用 swe.heliacal_ut，默认大气 1013.25 hPa / 15°C / RH 40%。",
+    "地方升落使用 swe.rise_trans + BIT_DISC_CENTER（含折射默认）。",
+    "行星时为日出至日落 12 个不等昼时 + 日落至次日日出 12 个不等夜时。",
+    "行星时主星按迦勒底序，以当地日出 weekday 的日主起算。",
+    "极区或升落失败时不生成伪造小时，写入 section_errors/warnings。",
+    "结果为可复算时间与坐标事实，不含解释性论断。"
+  ]
+}

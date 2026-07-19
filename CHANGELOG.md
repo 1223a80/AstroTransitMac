@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-19 — B9 古典 heliacal 与行星时
+
+- 新增 mode=`classical_visibility`：Swiss Ephemeris heliacal rising/setting、地方升落、昼夜不等行星时（迦勒底序）。
+- 极区/无升落通过 `section_errors` 与 warnings 降级，不伪造小时。
+- Swift 子模式、Markdown/CSV、sample、fixture 与聚焦 pytest；纳入 CI / check_vibe smoke。
+
 ## 2026-07-19 — B8 任意行星返照与逆行阴影
 
 - 扩展 `modern_return`：支持水星至冥王星与 CHIRON；自适应搜索窗与步长；输出窗口内全部穿越、pass 编号、`requested_config` / `effective_config` / `calculation_assumptions`。

@@ -151,6 +151,9 @@ struct ContentView: View {
     ]
     @State var declinationOrb: Double = 1.0
     @State var retrogradeBodies: Set<String> = ["MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"]
+    @State var visibilityBodies: Set<String> = ["MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"]
+    @State var visibilityHeliacalTypes: Set<String> = ["heliacal_rising", "heliacal_setting"]
+    @State var visibilityInclude: Set<String> = ["heliacal", "rise_set", "planetary_hours"]
     @State var mapBodies: Set<String> = [
         "SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"
     ]

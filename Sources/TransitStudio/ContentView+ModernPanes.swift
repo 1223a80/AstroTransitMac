@@ -173,6 +173,20 @@ extension ContentView {
         }
     }
 
+    var classicalVisibilityResultsPane: some View {
+        Group {
+            if let result = calcVM.modernResultData, case .classicalVisibility(let r) = result {
+                ClassicalVisibilityResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
+            } else {
+                EmptyStateView(
+                    title: "等待可见相位计算",
+                    systemImage: "eye",
+                    description: "设定观察点与段落后计算 heliacal / 升落 / 行星时。"
+                )
+            }
+        }
+    }
+
     var astrocartographyResultsPane: some View {
         Group {
             if let result = calcVM.modernResultData, case .astrocartography(let r) = result {

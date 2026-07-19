@@ -737,7 +737,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
         "modern_return", "modern_timing", "midpoint", "progressed_composite",
         "relocation", "modern_cycles", "astrocartography", "local_space",
-        "declination_timing", "retrograde_cycles",
+        "declination_timing", "retrograde_cycles", "classical_visibility",
     }
     if mode not in supported_modes:
         return {"error": f"不支持的 mode：{mode or '<empty>'}", "mode": mode}
@@ -763,6 +763,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "local_space": ["moment", "location"],
         "declination_timing": ["birth", "start", "end", "display_timezone"],
         "retrograde_cycles": ["start", "end", "display_timezone"],
+        "classical_visibility": ["moment", "location"],
     }
     default_required = ["natal", "transit"]
     required = required_by_mode.get(mode, default_required)
@@ -1098,6 +1099,37 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                 for index, item in enumerate(body_ids):
                     if item not in supported:
                         invalid.append(f"body_ids[{index}] is unsupported: {item}")
+    if mode == "classical_visibility":
+        moment = request.get("moment")
+        if not isinstance(moment, dict):
+            invalid.append("moment must be an object with an exact moment")
+        else:
+            for key in _PERSON_MOMENT_FIELDS:
+                if key not in moment:
+                    missing.append(f"moment.{key}")
+        location = request.get("location")
+        if not isinstance(location, dict):
+            invalid.append("location must be an object")
+        else:
+            for field in ("latitude", "longitude"):
+                if field not in location:
+                    missing.append(f"location.{field}")
+            latitude = location.get("latitude")
+            longitude = location.get("longitude")
+            if latitude is not None and (
+                isinstance(latitude, bool)
+                or not isinstance(latitude, (int, float))
+                or not math.isfinite(float(latitude))
+                or not -90 <= float(latitude) <= 90
+            ):
+                invalid.append("location.latitude must be a finite number in [-90, 90]")
+            if longitude is not None and (
+                isinstance(longitude, bool)
+                or not isinstance(longitude, (int, float))
+                or not math.isfinite(float(longitude))
+                or not -180 <= float(longitude) <= 180
+            ):
+                invalid.append("location.longitude must be a finite number in [-180, 180]")
     if mode in ("astrocartography", "local_space"):
         moment = request.get("moment")
         if not isinstance(moment, dict):
@@ -1564,6 +1596,9 @@ def main() -> None:
         elif mode == "retrograde_cycles":
             from astro_backend_retrograde_cycles import calculate_retrograde_cycles
             response = calculate_retrograde_cycles(request, warnings)
+        elif mode == "classical_visibility":
+            from astro_backend_visibility import calculate_classical_visibility
+            response = calculate_classical_visibility(request, warnings)
         elif mode in {"astrocartography", "local_space"}:
             from astro_backend_map import calculate_map_mode
             response = calculate_map_mode(request, warnings)

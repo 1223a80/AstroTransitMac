@@ -388,6 +388,24 @@ struct BackendContractTests {
         #expect(csv.contains("station"))
     }
 
+    @Test func decodeClassicalVisibilityFixtureFromRealOutput() throws {
+        let result = try JSONDecoder().decode(
+            ClassicalVisibilityResult.self,
+            from: fixtureData("classical-visibility-result")
+        )
+        #expect(result.meta.method == "classical_visibility_v1")
+        #expect(!result.heliacalEvents.isEmpty)
+        #expect(!result.riseSet.isEmpty)
+        #expect(result.planetaryHours?.status == "ok")
+        #expect((result.planetaryHours?.hours?.count ?? 0) == 24)
+        #expect(result.calculationAssumptions?.isEmpty == false)
+        let markdown = MarkdownExportBuilder.classicalVisibility(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(markdown.contains("行星时"))
+        #expect(markdown.contains("计算假设"))
+        #expect(csv.contains("heliacal") || csv.contains("planetary_hour"))
+    }
+
     @Test func decodeHoraryResultFromRealOutput() throws {
         let result = try JSONDecoder().decode(HoraryResult.self, from: fixtureData("horary-result"))
 

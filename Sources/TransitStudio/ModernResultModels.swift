@@ -15,6 +15,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
     case modernCycles = "modern_cycles"
     case declinationTiming = "declination_timing"
     case retrogradeCycles = "retrograde_cycles"
+    case classicalVisibility = "classical_visibility"
     case astrocartography = "astrocartography"
     case localSpace = "local_space"
 
@@ -36,6 +37,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .modernCycles: return "朔望食相"
         case .declinationTiming: return "赤纬事件"
         case .retrogradeCycles: return "逆行阴影"
+        case .classicalVisibility: return "可见相位/行星时"
         case .astrocartography: return "天体地图"
         case .localSpace: return "Local Space"
         }
@@ -57,6 +59,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .modernCycles: return "moon.stars"
         case .declinationTiming: return "arrow.up.and.down.circle"
         case .retrogradeCycles: return "arrow.uturn.backward.circle"
+        case .classicalVisibility: return "eye"
         case .astrocartography: return "globe.americas"
         case .localSpace: return "location.north.line"
         }
@@ -79,6 +82,7 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .modernCycles: return "events"
         case .declinationTiming: return "events"
         case .retrogradeCycles: return "cycles"
+        case .classicalVisibility: return "heliacal"
         case .astrocartography: return "lines"
         case .localSpace: return "directions"
         }
@@ -99,6 +103,7 @@ enum ModernResultData {
     case modernCycles(ModernCyclesResult)
     case declinationTiming(DeclinationTimingResult)
     case retrogradeCycles(RetrogradeCyclesResult)
+    case classicalVisibility(ClassicalVisibilityResult)
     case astrocartography(AstrocartographyResult)
     case localSpace(LocalSpaceResult)
 }

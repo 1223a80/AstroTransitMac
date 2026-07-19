@@ -661,6 +661,8 @@ extension ContentView {
                 declinationTimingSidebar
             case .retrogradeCycles:
                 retrogradeCyclesSidebar
+            case .classicalVisibility:
+                classicalVisibilitySidebar
             case .astrocartography:
                 astrocartographySidebar
             case .localSpace:
@@ -731,6 +733,48 @@ extension ContentView {
                         Text("观察点使用本命经纬度。")
                             .font(TS.Font.label)
                             .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+    }
+
+    private var classicalVisibilitySidebar: some View {
+        Group {
+            collapsible("时刻与地点") {
+                VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+                    DateTimeInput(date: $natalDate, timeZone: selectedTimeZone)
+                    Text("使用本命经纬度作为观察点。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            collapsible("天体") {
+                bodySection(title: "可见性天体", selection: $visibilityBodies)
+            }
+            collapsible("段落") {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                    ForEach(["heliacal", "rise_set", "planetary_hours"], id: \.self) { item in
+                        Toggle(item, isOn: Binding(
+                            get: { visibilityInclude.contains(item) },
+                            set: { enabled in
+                                if enabled { visibilityInclude.insert(item) }
+                                else { visibilityInclude.remove(item) }
+                            }
+                        ))
+                    }
+                }
+            }
+            collapsible("Heliacal 类型") {
+                VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                    ForEach(["heliacal_rising", "heliacal_setting"], id: \.self) { item in
+                        Toggle(item, isOn: Binding(
+                            get: { visibilityHeliacalTypes.contains(item) },
+                            set: { enabled in
+                                if enabled { visibilityHeliacalTypes.insert(item) }
+                                else { visibilityHeliacalTypes.remove(item) }
+                            }
+                        ))
                     }
                 }
             }

@@ -135,7 +135,7 @@ extension ContentView {
                 return nil
             case .progressedComposite:
                 return nil
-            case .relocation, .modernCycles, .declinationTiming, .retrogradeCycles, .astrocartography, .localSpace:
+            case .relocation, .modernCycles, .declinationTiming, .retrogradeCycles, .classicalVisibility, .astrocartography, .localSpace:
                 return nil
             }
         case .horary:

@@ -73,6 +73,7 @@ extension ContentView {
                 case .modernCycles: await runModernCycles()
                 case .declinationTiming: await runDeclinationTiming()
                 case .retrogradeCycles: await runRetrogradeCycles()
+                case .classicalVisibility: await runClassicalVisibility()
                 case .astrocartography: await runAstrocartography()
                 case .localSpace: await runLocalSpace()
                 }
@@ -555,6 +556,38 @@ extension ContentView {
                 pythonPath: appState.pythonPath
             )
             calcVM.modernResultData = .retrogradeCycles(result)
+        }
+    }
+
+    @MainActor
+    func runClassicalVisibility() async {
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude) else { return }
+        await performRun(progressLabel: "可见相位/行星时") {
+            let request = ClassicalVisibilityRequest(
+                moment: makeMoment(from: natalDate),
+                location: GeoPlace(
+                    name: "Observer",
+                    latitude: coords.latitude,
+                    longitude: coords.longitude,
+                    timezone: timezoneLabel,
+                    altitudeM: 10
+                ),
+                displayTimezone: timezoneLabel,
+                bodyIDs: sortedBodyIDs(visibilityBodies).isEmpty
+                    ? ["MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"]
+                    : sortedBodyIDs(visibilityBodies),
+                heliacalEventTypes: Array(visibilityHeliacalTypes).sorted(),
+                include: Array(visibilityInclude).sorted(),
+                observerAge: 36,
+                ephemerisPath: appState.ephemerisPath.isEmpty ? nil : appState.ephemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            let result = try await BackendClient.classicalVisibility(
+                request: request,
+                pythonPath: appState.pythonPath
+            )
+            calcVM.modernResultData = .classicalVisibility(result)
         }
     }
 

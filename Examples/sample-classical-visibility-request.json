@@ -1,0 +1,26 @@
+{
+  "mode": "classical_visibility",
+  "moment": {
+    "year": 2026,
+    "month": 5,
+    "day": 5,
+    "hour": 12,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "location": {
+    "name": "Shanghai",
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "altitude_m": 10,
+    "timezone": "Asia/Shanghai"
+  },
+  "display_timezone": "Asia/Shanghai",
+  "body_ids": ["MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"],
+  "heliacal_event_types": ["heliacal_rising", "heliacal_setting"],
+  "include": ["heliacal", "rise_set", "planetary_hours"],
+  "observer_age": 36,
+  "ephemeris_path": null,
+  "no_asteroids": false,
+  "require_ephemeris": "warn"
+}

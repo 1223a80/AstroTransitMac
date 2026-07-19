@@ -19,6 +19,7 @@ struct ModernTabStateTests {
         #expect(ModernSubMode.modernCycles.defaultResultTab == "events")
         #expect(ModernSubMode.declinationTiming.defaultResultTab == "events")
         #expect(ModernSubMode.retrogradeCycles.defaultResultTab == "cycles")
+        #expect(ModernSubMode.classicalVisibility.defaultResultTab == "heliacal")
         #expect(ModernSubMode.astrocartography.defaultResultTab == "lines")
         #expect(ModernSubMode.localSpace.defaultResultTab == "directions")
     }

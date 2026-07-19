@@ -1,3 +1,22 @@
+# B9 古典 heliacal 与行星时（2026-07-19）
+
+## 范围
+
+- mode=`classical_visibility`：heliacal rising/setting（及 morning/evening first/last 可用项）、地方升落、planetary hours（昼夜不等时）。
+- 极区/无升落：warnings + section_errors 降级，不伪造小时。
+- JSON/Swift/Markdown/CSV/sample/fixture/测试/门禁。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 实现后端 | ✅ | visibility 模块 + API |
+| 02 测试 sample fixture | ✅ | pytest + smoke |
+| 03 Swift | ✅ | Codable/UI/export |
+| 04 门禁提交 | ✅ | 全门禁 |
+
+---
+
 # B8 任意行星返照与逆行阴影（2026-07-19）
 
 ## 范围
