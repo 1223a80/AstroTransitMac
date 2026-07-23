@@ -21,13 +21,19 @@ extension ContentView {
         switch mode {
         case .settings:
             if practiceMode == .classical {
-                return AIPanelContext(
-                    streamKey: "classical",
-                    title: "古典排盘",
-                    analysis: aiVM.classicalAnalysis,
-                    reasoning: aiVM.classicalReasoning,
-                    hasResult: calcVM.classicalResult != nil
-                ) { Task { await analyzeClassicalResult() } }
+                // Expansion: AI is nil (KD5). Do not reuse streamKey "classical".
+                switch ClassicalSettingsGate.route(workspace: classicalSettingsWorkspace) {
+                case .natalChart:
+                    return AIPanelContext(
+                        streamKey: "classical",
+                        title: "古典排盘",
+                        analysis: aiVM.classicalAnalysis,
+                        reasoning: aiVM.classicalReasoning,
+                        hasResult: calcVM.classicalResult != nil
+                    ) { Task { await analyzeClassicalResult() } }
+                case .expansion:
+                    return nil
+                }
             }
             if practiceMode == .vedic {
                 return AIPanelContext(

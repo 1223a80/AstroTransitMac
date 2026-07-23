@@ -85,10 +85,16 @@ enum ModernSubMode: String, CaseIterable, Identifiable {
         case .planetarySynodic: return "arrow.triangle.2.circlepath"
         case .hellenisticConditionAudit: return "list.bullet.rectangle"
         case .draconicHeliocentric: return "arrow.triangle.swap"
-        case .classicalDerivatives, .timeLordsExtended, .methodFamilies,
-             .primaryDirectionsAudit, .distributionsPd, .prenatalParans,
-             .orbitalDial, .mundaneElectional:
-            return "star"
+        // Classical expansion eight — unique icons (design §1.3); no shared "star".
+        case .classicalDerivatives: return "square.split.2x1"
+        case .timeLordsExtended: return "hourglass"
+        case .primaryDirectionsAudit: return "arrow.up.right.circle"
+        case .distributionsPd: return "rectangle.split.3x1"
+        case .prenatalParans: return "sparkles"
+        case .mundaneElectional: return "building.columns"
+        // Modern-only: distinct from midpoint's circle.grid.cross.
+        case .methodFamilies: return "square.stack.3d.up"
+        case .orbitalDial: return "circle.dotted"
         case .astrocartography: return "globe.americas"
         case .localSpace: return "location.north.line"
         }

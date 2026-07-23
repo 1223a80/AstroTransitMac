@@ -31,38 +31,16 @@ extension ContentView {
     var runButtonTitle: String {
         switch mode {
         case .settings:
-            if practiceMode == .classical { return "古典排盘" }
-            if practiceMode == .vedic { return "吠陀排盘" }
-            switch modernSubMode {
-            case .natal: return "现代排盘"
-            case .synastry: return "计算合盘"
-            case .composite: return "计算组合盘"
-            case .davison: return "计算戴维森盘"
-            case .progression: return "计算次限推进"
-            case .solarArc: return "计算太阳弧"
-            case .harmonic: return "计算调和盘"
-            case .returnChart: return "计算返照盘"
-            case .midpoint: return "计算中点"
-            case .progressedComposite: return "计算推进组合盘"
-            case .relocation: return "计算迁移盘"
-            case .modernCycles: return "扫描朔望食相"
-            case .declinationTiming: return "计算赤纬事件"
-            case .retrogradeCycles: return "扫描逆行阴影"
-            case .classicalVisibility: return "计算可见相位/行星时"
-            case .planetarySynodic: return "扫描会合周期"
-            case .hellenisticConditionAudit: return "计算希腊状态审计"
-            case .draconicHeliocentric: return "计算 Draconic/日心"
-            case .classicalDerivatives: return "计算派生盘/尊贵"
-            case .timeLordsExtended: return "计算时间主扩展"
-            case .methodFamilies: return "计算推运方法族"
-            case .primaryDirectionsAudit: return "计算主限审计"
-            case .distributionsPd: return "计算沿界/主限扩展"
-            case .prenatalParans: return "计算产前朔望/Parans"
-            case .orbitalDial: return "计算轨道点/Dial"
-            case .mundaneElectional: return "计算世俗/择时"
-            case .astrocartography: return "计算天体地图线"
-            case .localSpace: return "计算 Local Space"
+            if practiceMode == .classical {
+                switch ClassicalSettingsGate.route(workspace: classicalSettingsWorkspace) {
+                case .natalChart:
+                    return "古典排盘"
+                case .expansion(let expansionMode):
+                    return modernSubModeRunTitle(expansionMode)
+                }
             }
+            if practiceMode == .vedic { return "吠陀排盘" }
+            return modernSubModeRunTitle(modernSubMode)
         case .horary:
             return "Horary 起盘"
         case .moment:
@@ -74,13 +52,25 @@ extension ContentView {
         }
     }
 
+    /// Run button title for a modern / classical-expansion sub-mode.
+    func modernSubModeRunTitle(_ subMode: ModernSubMode) -> String {
+        ModernSubModeChrome.runButtonTitle(subMode)
+    }
+
     var runButtonHelp: String {
         if calcVM.isRunning {
             return canStopCurrentRun ? "停止当前计算" : "计算中"
         }
         switch mode {
         case .settings:
-            if practiceMode == .classical { return "保存本命盘资料并计算古典排盘" }
+            if practiceMode == .classical {
+                switch ClassicalSettingsGate.route(workspace: classicalSettingsWorkspace) {
+                case .natalChart:
+                    return "保存本命盘资料并计算古典排盘"
+                case .expansion:
+                    return runButtonTitle
+                }
+            }
             if practiceMode == .vedic { return "计算吠陀排盘" }
             if modernSubMode == .natal { return "保存本命盘资料并计算现代排盘" }
             return runButtonTitle
@@ -99,72 +89,17 @@ extension ContentView {
         switch mode {
         case .settings:
             if practiceMode == .classical {
-                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+                switch ClassicalSettingsGate.route(workspace: classicalSettingsWorkspace) {
+                case .natalChart:
+                    return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+                case .expansion(let expansionMode):
+                    return isModernSubModeRunDisabled(expansionMode)
+                }
             }
             if practiceMode == .vedic {
                 return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
             }
-            switch modernSubMode {
-            case .natal, .harmonic:
-                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
-            case .synastry, .composite, .davison:
-                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
-                    || parseDouble(modernPersonBLatitude) == nil || parseDouble(modernPersonBLongitude) == nil
-            case .progressedComposite:
-                let pointSet = progressedCompositePointSet()
-                return parseDouble(birthLatitude) == nil
-                    || parseDouble(birthLongitude) == nil
-                    || parseDouble(modernPersonBLatitude) == nil
-                    || parseDouble(modernPersonBLongitude) == nil
-                    || (pointSet.bodyIDs.isEmpty && !pointSet.includeNodes && pointSet.customAsteroids.isEmpty)
-            case .progression, .solarArc:
-                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
-            case .returnChart:
-                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
-                    || (modernReturnLocationSource == "custom" && (
-                        parseDouble(modernReturnLocationLatitude) == nil
-                        || parseDouble(modernReturnLocationLongitude) == nil
-                        || modernReturnLocationName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                        || modernReturnLocationTimezone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                    ))
-            case .midpoint:
-                return parseDouble(birthLatitude) == nil
-                    || parseDouble(birthLongitude) == nil
-                    || midpointSelectedPointIDs.count < 2
-                    || midpointEffectiveFocusPointIDs.isEmpty
-            case .relocation:
-                return parseDouble(birthLatitude) == nil
-                    || parseDouble(birthLongitude) == nil
-                    || parseDouble(relocationLatitude) == nil
-                    || parseDouble(relocationLongitude) == nil
-                    || relocationPlaceName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                    || relocationTimezone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            case .modernCycles:
-                return cyclesSelectedTypes.isEmpty
-            case .declinationTiming:
-                return parseDouble(birthLatitude) == nil
-                    || parseDouble(birthLongitude) == nil
-                    || declinationMovingBodies.isEmpty
-                    || declinationEventTypes.isEmpty
-            case .retrogradeCycles:
-                return retrogradeBodies.isEmpty
-            case .classicalVisibility:
-                return parseDouble(birthLatitude) == nil
-                    || parseDouble(birthLongitude) == nil
-                    || visibilityInclude.isEmpty
-            case .planetarySynodic:
-                return synodicBodyA == synodicBodyB
-            case .classicalDerivatives, .timeLordsExtended, .methodFamilies, .primaryDirectionsAudit,
-                 .distributionsPd, .prenatalParans, .orbitalDial, .mundaneElectional,
-                 .hellenisticConditionAudit, .draconicHeliocentric:
-                return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
-            case .astrocartography:
-                return mapBodies.isEmpty
-            case .localSpace:
-                let lat = localSpaceLatitude.isEmpty ? birthLatitude : localSpaceLatitude
-                let lon = localSpaceLongitude.isEmpty ? birthLongitude : localSpaceLongitude
-                return parseDouble(lat) == nil || parseDouble(lon) == nil || mapBodies.isEmpty
-            }
+            return isModernSubModeRunDisabled(modernSubMode)
         case .horary:
             return parseDouble(horaryLatitude) == nil
                 || parseDouble(horaryLongitude) == nil
@@ -193,6 +128,71 @@ extension ContentView {
                 || (selectedScanKind == "aspect" && resolvedScanTargetText().trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         case .rectify:
             return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+        }
+    }
+
+    /// Disable rules for modern / classical-expansion sub-modes (shared by modern rail + classical workspace).
+    func isModernSubModeRunDisabled(_ subMode: ModernSubMode) -> Bool {
+        switch subMode {
+        case .natal, .harmonic:
+            return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+        case .synastry, .composite, .davison:
+            return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+                || parseDouble(modernPersonBLatitude) == nil || parseDouble(modernPersonBLongitude) == nil
+        case .progressedComposite:
+            let pointSet = progressedCompositePointSet()
+            return parseDouble(birthLatitude) == nil
+                || parseDouble(birthLongitude) == nil
+                || parseDouble(modernPersonBLatitude) == nil
+                || parseDouble(modernPersonBLongitude) == nil
+                || (pointSet.bodyIDs.isEmpty && !pointSet.includeNodes && pointSet.customAsteroids.isEmpty)
+        case .progression, .solarArc:
+            return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+        case .returnChart:
+            return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+                || (modernReturnLocationSource == "custom" && (
+                    parseDouble(modernReturnLocationLatitude) == nil
+                    || parseDouble(modernReturnLocationLongitude) == nil
+                    || modernReturnLocationName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    || modernReturnLocationTimezone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                ))
+        case .midpoint:
+            return parseDouble(birthLatitude) == nil
+                || parseDouble(birthLongitude) == nil
+                || midpointSelectedPointIDs.count < 2
+                || midpointEffectiveFocusPointIDs.isEmpty
+        case .relocation:
+            return parseDouble(birthLatitude) == nil
+                || parseDouble(birthLongitude) == nil
+                || parseDouble(relocationLatitude) == nil
+                || parseDouble(relocationLongitude) == nil
+                || relocationPlaceName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                || relocationTimezone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case .modernCycles:
+            return cyclesSelectedTypes.isEmpty
+        case .declinationTiming:
+            return parseDouble(birthLatitude) == nil
+                || parseDouble(birthLongitude) == nil
+                || declinationMovingBodies.isEmpty
+                || declinationEventTypes.isEmpty
+        case .retrogradeCycles:
+            return retrogradeBodies.isEmpty
+        case .classicalVisibility:
+            return parseDouble(birthLatitude) == nil
+                || parseDouble(birthLongitude) == nil
+                || visibilityInclude.isEmpty
+        case .planetarySynodic:
+            return synodicBodyA == synodicBodyB
+        case .classicalDerivatives, .timeLordsExtended, .methodFamilies, .primaryDirectionsAudit,
+             .distributionsPd, .prenatalParans, .orbitalDial, .mundaneElectional,
+             .hellenisticConditionAudit, .draconicHeliocentric:
+            return parseDouble(birthLatitude) == nil || parseDouble(birthLongitude) == nil
+        case .astrocartography:
+            return mapBodies.isEmpty
+        case .localSpace:
+            let lat = localSpaceLatitude.isEmpty ? birthLatitude : localSpaceLatitude
+            let lon = localSpaceLongitude.isEmpty ? birthLongitude : localSpaceLongitude
+            return parseDouble(lat) == nil || parseDouble(lon) == nil || mapBodies.isEmpty
         }
     }
 
@@ -240,38 +240,16 @@ extension ContentView {
     var resultsContent: AnyView {
         switch mode {
         case .settings:
-            if practiceMode == .classical { return AnyView(classicalResultsPane) }
-            if practiceMode == .vedic { return AnyView(vedicResultsPane) }
-            switch modernSubMode {
-            case .natal: return AnyView(modernNatalResultsPane)
-            case .synastry: return AnyView(synastryResultsPane)
-            case .composite: return AnyView(compositeResultsPane)
-            case .davison: return AnyView(davisonResultsPane)
-            case .progressedComposite: return AnyView(progressedCompositeResultsPane)
-            case .relocation: return AnyView(relocationResultsPane)
-            case .modernCycles: return AnyView(modernCyclesResultsPane)
-            case .declinationTiming: return AnyView(declinationTimingResultsPane)
-            case .retrogradeCycles: return AnyView(retrogradeCyclesResultsPane)
-            case .classicalVisibility: return AnyView(classicalVisibilityResultsPane)
-            case .planetarySynodic: return AnyView(planetarySynodicResultsPane)
-            case .hellenisticConditionAudit: return AnyView(hellenisticConditionAuditResultsPane)
-            case .draconicHeliocentric: return AnyView(draconicHeliocentricResultsPane)
-            case .classicalDerivatives: return AnyView(classicalDerivativesResultsPane)
-            case .timeLordsExtended: return AnyView(timeLordsExtendedResultsPane)
-            case .methodFamilies: return AnyView(methodFamiliesResultsPane)
-            case .primaryDirectionsAudit: return AnyView(primaryDirectionsAuditResultsPane)
-            case .distributionsPd: return AnyView(distributionsPdResultsPane)
-            case .prenatalParans: return AnyView(prenatalParansResultsPane)
-            case .orbitalDial: return AnyView(orbitalDialResultsPane)
-            case .mundaneElectional: return AnyView(mundaneElectionalResultsPane)
-            case .astrocartography: return AnyView(astrocartographyResultsPane)
-            case .localSpace: return AnyView(localSpaceResultsPane)
-            case .progression: return AnyView(progressionResultsPane)
-            case .solarArc: return AnyView(solarArcResultsPane)
-            case .harmonic: return AnyView(harmonicResultsPane)
-            case .returnChart: return AnyView(modernReturnResultsPane)
-            case .midpoint: return AnyView(midpointResultsPane)
+            if practiceMode == .classical {
+                switch ClassicalSettingsGate.route(workspace: classicalSettingsWorkspace) {
+                case .natalChart:
+                    return AnyView(classicalResultsPane)
+                case .expansion(let expansionMode):
+                    return AnyView(classicalExpansionResultsWrapper(expansionMode))
+                }
             }
+            if practiceMode == .vedic { return AnyView(vedicResultsPane) }
+            return modernSubModeResultsPane(modernSubMode)
         case .horary:
             return AnyView(horaryResultsPane)
         case .moment:
@@ -282,6 +260,65 @@ extension ContentView {
                 : AnyView(scanResultsPane)
         case .rectify:
             return AnyView(rectifyResultsPane)
+        }
+    }
+
+    /// Classical expansion results: shared modern pane + D6 section/merge export bar.
+    @ViewBuilder
+    func classicalExpansionResultsWrapper(_ expansionMode: ModernSubMode) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ClassicalExpansionExportBar(
+                mode: expansionMode,
+                hasCurrentResult: calcVM.modernResultData?.classicalExpansionMode == expansionMode
+                    || calcVM.classicalExpansionResults[expansionMode] != nil,
+                cachedCount: calcVM.classicalExpansionResults.count,
+                onExport: { showExpansionExportSheet = true }
+            )
+            .padding(.horizontal, TS.Padding.resultContent)
+            .padding(.top, TS.Spacing.md)
+            modernSubModeResultsPane(expansionMode)
+        }
+        .sheet(isPresented: $showExpansionExportSheet) {
+            ExpansionExportSheet(
+                mode: expansionMode,
+                currentData: calcVM.classicalExpansionResults[expansionMode] ?? calcVM.modernResultData,
+                classicalExpansionResults: calcVM.classicalExpansionResults,
+                onDismiss: { showExpansionExportSheet = false }
+            )
+        }
+    }
+
+    /// Results pane for a modern / classical-expansion sub-mode (shared gate).
+    func modernSubModeResultsPane(_ subMode: ModernSubMode) -> AnyView {
+        switch subMode {
+        case .natal: return AnyView(modernNatalResultsPane)
+        case .synastry: return AnyView(synastryResultsPane)
+        case .composite: return AnyView(compositeResultsPane)
+        case .davison: return AnyView(davisonResultsPane)
+        case .progressedComposite: return AnyView(progressedCompositeResultsPane)
+        case .relocation: return AnyView(relocationResultsPane)
+        case .modernCycles: return AnyView(modernCyclesResultsPane)
+        case .declinationTiming: return AnyView(declinationTimingResultsPane)
+        case .retrogradeCycles: return AnyView(retrogradeCyclesResultsPane)
+        case .classicalVisibility: return AnyView(classicalVisibilityResultsPane)
+        case .planetarySynodic: return AnyView(planetarySynodicResultsPane)
+        case .hellenisticConditionAudit: return AnyView(hellenisticConditionAuditResultsPane)
+        case .draconicHeliocentric: return AnyView(draconicHeliocentricResultsPane)
+        case .classicalDerivatives: return AnyView(classicalDerivativesResultsPane)
+        case .timeLordsExtended: return AnyView(timeLordsExtendedResultsPane)
+        case .methodFamilies: return AnyView(methodFamiliesResultsPane)
+        case .primaryDirectionsAudit: return AnyView(primaryDirectionsAuditResultsPane)
+        case .distributionsPd: return AnyView(distributionsPdResultsPane)
+        case .prenatalParans: return AnyView(prenatalParansResultsPane)
+        case .orbitalDial: return AnyView(orbitalDialResultsPane)
+        case .mundaneElectional: return AnyView(mundaneElectionalResultsPane)
+        case .astrocartography: return AnyView(astrocartographyResultsPane)
+        case .localSpace: return AnyView(localSpaceResultsPane)
+        case .progression: return AnyView(progressionResultsPane)
+        case .solarArc: return AnyView(solarArcResultsPane)
+        case .harmonic: return AnyView(harmonicResultsPane)
+        case .returnChart: return AnyView(modernReturnResultsPane)
+        case .midpoint: return AnyView(midpointResultsPane)
         }
     }
 

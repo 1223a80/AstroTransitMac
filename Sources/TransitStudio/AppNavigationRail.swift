@@ -6,6 +6,11 @@ struct AppNavigationRail: View {
     @Binding var selectedMode: CalculationMode
     @Binding var isShowingSettingsPage: Bool
     @Binding var modernSubMode: ModernSubMode
+    @Binding var classicalSettingsWorkspace: ClassicalSettingsWorkspace
+
+    /// Optional hooks so host can dual-write workspace + sub-mode with pure helpers.
+    var onSelectClassicalNatal: (() -> Void)?
+    var onSelectClassicalExpansion: ((ModernSubMode) -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
@@ -83,9 +88,57 @@ struct AppNavigationRail: View {
 
     private var classicalModeButtons: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.sm) {
-            navigationButton(title: "本命设置", icon: "person.crop.circle", mode: .settings)
+            classicalNatalButton
             navigationButton(title: "Horary", icon: "questionmark.bubble", mode: .horary)
             navigationButton(title: "生时矫正", icon: "clock.arrow.circlepath", mode: .rectify)
+
+            groupLabel("古典进阶")
+                .padding(.top, TS.Spacing.sm)
+            ForEach(ClassicalExpansionCatalog.modes) { subMode in
+                classicalExpansionButton(subMode)
+            }
+        }
+    }
+
+    private var classicalNatalButton: some View {
+        let isSelected = !isShowingSettingsPage
+            && selectedMode == .settings
+            && classicalSettingsWorkspace.isNatalChart
+        return navButtonLabel(
+            title: "本命设置",
+            icon: "person.crop.circle",
+            isSelected: isSelected
+        ) {
+            if let onSelectClassicalNatal {
+                onSelectClassicalNatal()
+            } else {
+                let selection = ClassicalWorkspaceSelection.selectNatalChart()
+                isShowingSettingsPage = selection.showSettingsPage
+                selectedMode = selection.mode
+                classicalSettingsWorkspace = selection.workspace
+            }
+        }
+    }
+
+    private func classicalExpansionButton(_ subMode: ModernSubMode) -> some View {
+        let isSelected = !isShowingSettingsPage
+            && selectedMode == .settings
+            && classicalSettingsWorkspace.expansionMode == subMode
+        return navButtonLabel(
+            title: subMode.title,
+            icon: subMode.icon,
+            isSelected: isSelected
+        ) {
+            if let onSelectClassicalExpansion {
+                onSelectClassicalExpansion(subMode)
+            } else if let selection = ClassicalWorkspaceSelection.selectExpansion(subMode) {
+                isShowingSettingsPage = selection.showSettingsPage
+                selectedMode = selection.mode
+                classicalSettingsWorkspace = selection.workspace
+                if modernSubMode != selection.modernSubMode {
+                    modernSubMode = selection.modernSubMode
+                }
+            }
         }
     }
 
@@ -97,7 +150,8 @@ struct AppNavigationRail: View {
 
     private var modernSubModeButtons: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.sm) {
-            ForEach(ModernSubMode.allCases) { subMode in
+            // Modern rail excludes classical-expansion eight (D1 / KD4).
+            ForEach(ClassicalExpansionCatalog.modernRailSubModes) { subMode in
                 modernNavButton(title: subMode.title, icon: subMode.icon, subMode: subMode)
             }
         }

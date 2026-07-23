@@ -4,7 +4,6 @@ struct PickerOption: Identifiable {
     let id: String
     let title: String
 }
-
 struct TargetPositionOption: Identifiable, Hashable {
     let id: String
     let name: String
@@ -72,6 +71,7 @@ struct ContentView: View {
     @State var scanConfigText = ""
     @State var showClassicalExportSheet = false
     @State var classicalExportSections: Set<MarkdownExportBuilder.ExportSection> = Set(MarkdownExportBuilder.ExportSection.classicalSectionIDs)
+    @State var showExpansionExportSheet = false
 
     @State var isParamDrawerPinned = false
     @State var isAIPanelOpen = false
@@ -107,6 +107,9 @@ struct ContentView: View {
     @State var modernLastRelationshipZodiac: String?
 
     @State var modernSubMode = ModernSubMode.natal
+    /// Classical settings workspace: natal chart vs one of eight classical-expansion modes.
+    /// Gates under classical + settings branch on this only (not residual modernSubMode alone).
+    @State var classicalSettingsWorkspace: ClassicalSettingsWorkspace = .natalChart
     @State var modernPersonBDate = Self.fixedDate(year: 1992, month: 6, day: 15, hour: 8, minute: 30, gmtOffset: -5)
     @State var modernPersonBLatitude = "40.7128"
     @State var modernPersonBLongitude = "-74.0060"
@@ -284,7 +287,14 @@ struct ContentView: View {
                 selectedPracticeMode: practiceModeBinding,
                 selectedMode: $mode,
                 isShowingSettingsPage: $isShowingAppSettingsPage,
-                modernSubMode: $modernSubMode
+                modernSubMode: $modernSubMode,
+                classicalSettingsWorkspace: $classicalSettingsWorkspace,
+                onSelectClassicalNatal: {
+                    applyClassicalNatalSelection()
+                },
+                onSelectClassicalExpansion: { subMode in
+                    applyClassicalExpansionSelection(subMode)
+                }
             )
                 .frame(width: isNavigationCollapsed ? TS.Layout.navigationRailCollapsed : TS.Layout.navigationRailExpanded)
                 .background(TS.SemanticColor.paperRaised)
@@ -399,11 +409,47 @@ struct ContentView: View {
         Binding(
             get: { practiceMode },
             set: { newValue in
+                let previous = practiceMode
+                let transition = PracticeModeTransition.apply(
+                    from: previous,
+                    to: newValue,
+                    modernSubMode: modernSubMode,
+                    calculationMode: mode,
+                    workspace: classicalSettingsWorkspace
+                )
                 practiceMode = newValue
                 isShowingAppSettingsPage = false
+                modernSubMode = transition.modernSubMode
+                classicalSettingsWorkspace = transition.classicalSettingsWorkspace
+                if let newMode = transition.calculationMode {
+                    mode = newMode
+                }
             }
         )
     }
 
+    /// 「本命设置」: force natalChart workspace (gates ignore residual modernSubMode).
+    func applyClassicalNatalSelection() {
+        let selection = ClassicalWorkspaceSelection.selectNatalChart()
+        isShowingAppSettingsPage = selection.showSettingsPage
+        mode = selection.mode
+        classicalSettingsWorkspace = selection.workspace
+    }
 
+    /// Classical-expansion leaf: dual-write workspace + modernSubMode.
+    func applyClassicalExpansionSelection(_ subMode: ModernSubMode) {
+        guard let selection = ClassicalWorkspaceSelection.selectExpansion(subMode) else { return }
+        isShowingAppSettingsPage = selection.showSettingsPage
+        mode = selection.mode
+        classicalSettingsWorkspace = selection.workspace
+        if modernSubMode != selection.modernSubMode {
+            modernSubMode = selection.modernSubMode
+        }
+    }
+
+    /// Deep-link entry into a classical expansion mode (DL1/DL2).
+    func openClassicalExpansion(_ subMode: ModernSubMode) {
+        practiceMode = .classical
+        applyClassicalExpansionSelection(subMode)
+    }
 }

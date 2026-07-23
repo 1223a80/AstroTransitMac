@@ -65,6 +65,30 @@ final class CalculationViewModel: ObservableObject {
     @Published var rectifyLevel3Response: RectifyResponse?
     @Published var vedicResult: VedicResult?
     @Published var modernResultData: ModernResultData?
+    /// Multi-mode cache for classical-expansion results (D6 merge export).
+    /// Successful expansion runs write here without clearing other modes.
+    @Published var classicalExpansionResults: [ModernSubMode: ModernResultData] = [:]
+
+    /// Assign `modernResultData` and, when the payload is a classical-expansion
+    /// mode, also store it in `classicalExpansionResults` without wiping others.
+    func setModernResultData(_ data: ModernResultData) {
+        modernResultData = data
+        if let mode = data.classicalExpansionMode {
+            classicalExpansionResults[mode] = data
+        }
+    }
+
+    /// Resolve result for a classical-expansion mode: prefer multi-mode cache so
+    /// revisiting mode A after computing B still shows A's payload (D6 session UX).
+    func classicalExpansionResult(for mode: ModernSubMode) -> ModernResultData? {
+        if let cached = classicalExpansionResults[mode] {
+            return cached
+        }
+        if let data = modernResultData, data.classicalExpansionMode == mode {
+            return data
+        }
+        return nil
+    }
 
     // MARK: - Rectify State
     @Published var rectifyS1Index = 0

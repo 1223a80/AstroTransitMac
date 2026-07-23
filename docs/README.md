@@ -15,6 +15,7 @@ Use these files before changing the project:
 - `b13-b20-skeptic-remediation-handoff-2026-07.md` - B13–B20 review REQUEST CHANGES remediation handoff (lot/ZR L4, PD profiles, Swift payloads, gates).
 - `opencode-next-step-requirements.md` - scoped product requirement for config preset management.
 - `frontend-refactor/` - 2026-06 frontend refactor module specs and handoff notes (completed, kept for reference).
+- `ui-design-b7-b20-2026-07.md` - **Confirmed r4** UI design for B7–B20: 古典进阶 list IA, Classical Workspace, structured panes, merge Markdown export, deep links.
 - `archive/` - completed planning documents (vedic AI port plan, classical roadmap, finished PLANS batches).
 
 The root `README.md` is the user-facing overview. Keep detailed agent handoff notes, audits, and active implementation requirements in `AGENTS.md` or this `docs/` folder rather than expanding the README indefinitely.

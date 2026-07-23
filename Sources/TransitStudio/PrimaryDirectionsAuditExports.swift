@@ -21,8 +21,35 @@ extension MarkdownExportBuilder {
                 "| \(d.promissor ?? d.promissorId ?? "") | \(d.significator ?? d.significatorId ?? "") | \(d.directionType ?? "") | \(d.arcSigned.map { String(format: "%.4f", $0) } ?? "") | \(d.ageFromAbsArc.map { String(format: "%.3f", $0) } ?? "") | \(d.methodKey ?? d.algorithmName ?? "") |"
             )
         }
+        lines += ["", "## 算法说明", ""]
+        if let algorithm = result.algorithmDescriptionPayload {
+            lines.append("- 名称：\(algorithm.name ?? "—")")
+            lines.append("- Key：`\(algorithm.key ?? "—")`")
+            lines.append("- 外部核对状态：\(algorithm.externalCrosscheckStatus ?? "—")")
+            if let note = algorithm.externalCrosscheckNote, !note.isEmpty {
+                lines.append("- 核对说明：\(note)")
+            }
+            if let limits = algorithm.knownLimits, !limits.isEmpty {
+                lines.append("- 已知限制：")
+                lines.append(contentsOf: limits.map { "  - \($0)" })
+            }
+        } else {
+            lines.append("无结构化算法说明。")
+        }
         if let a = result.calculationAssumptions, !a.isEmpty {
-            lines += ["", "## 计算假设 / known limits", ""] + a.map { "- \($0)" }
+            lines += ["", "## 计算假设", ""] + a.map { "- \($0)" }
+        }
+        if let errors = result.sectionErrors, !errors.isEmpty {
+            lines += ["", "## 未计算 / section_errors", ""]
+            for key in errors.keys.sorted() {
+                lines.append("- `\(key)`: \(errors[key] ?? "")")
+            }
+        }
+        lines += ["", "## 警告", ""]
+        if result.warnings.isEmpty {
+            lines.append("无。")
+        } else {
+            lines.append(contentsOf: result.warnings.map { "- \($0)" })
         }
         lines += ["", "> AUDIT of simplified PD proxy — not complete traditional primary directions."]
         return lines.joined(separator: "\n")

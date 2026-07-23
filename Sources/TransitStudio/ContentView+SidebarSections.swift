@@ -35,11 +35,17 @@ extension ContentView {
         switch mode {
         case .settings:
             if practiceMode == .classical {
-                return AnyView(classicalSettingsSection)
+                switch ClassicalSettingsGate.route(workspace: classicalSettingsWorkspace) {
+                case .natalChart:
+                    return AnyView(classicalSettingsSection)
+                case .expansion(let expansionMode):
+                    // Share modern expansion sidebars; dual-write keeps modernSubMode in sync.
+                    return AnyView(sidebar(for: expansionMode))
+                }
             } else if practiceMode == .vedic {
                 return AnyView(vedicSettingsSection)
             }
-            return AnyView(modernSettingsSidebar)
+            return AnyView(sidebar(for: modernSubMode))
         case .horary:
             return AnyView(VStack(alignment: .leading, spacing: TS.Spacing.xl) {
                 collapsible("Horary 问题") { horaryQuestionSection }
@@ -633,9 +639,11 @@ extension ContentView {
         }
     }
 
-    private var modernSettingsSidebar: some View {
+    /// Sidebar for a modern / classical-expansion sub-mode (shared by modern rail + classical workspace).
+    @ViewBuilder
+    func sidebar(for subMode: ModernSubMode) -> some View {
         VStack(alignment: .leading, spacing: TS.Spacing.xl) {
-            switch modernSubMode {
+            switch subMode {
             case .natal:
                 collapsible("本命盘资料") { natalProfileSection }
                 collapsible("本命盘") { natalSettingsSection }
@@ -685,6 +693,10 @@ extension ContentView {
                 localSpaceSidebar
             }
         }
+    }
+
+    private var modernSettingsSidebar: some View {
+        sidebar(for: modernSubMode)
     }
 
     private var relocationSidebar: some View {
@@ -1353,6 +1365,17 @@ extension ContentView {
 
     var sidebarTitle: String {
         if mode == .settings {
+            if practiceMode == .classical {
+                switch ClassicalSettingsGate.route(workspace: classicalSettingsWorkspace) {
+                case .natalChart:
+                    return "\(practiceMode.title)\(mode.title)"
+                case .expansion(let expansionMode):
+                    return expansionMode.title
+                }
+            }
+            if practiceMode == .modern {
+                return modernSubMode.title
+            }
             return "\(practiceMode.title)\(mode.title)"
         }
         return mode.title

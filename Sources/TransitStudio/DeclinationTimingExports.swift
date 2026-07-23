@@ -28,20 +28,31 @@ extension MarkdownExportBuilder {
             )
         }
 
-        lines += ["", "## 事件表", ""]
-        if result.events.isEmpty {
-            lines.append("窗口内没有赤纬事件。")
-        } else {
+        func appendEventSection(title: String, events: [DeclinationTimingEvent], emptyMessage: String) {
+            lines += ["", "## \(title)", ""]
+            guard !events.isEmpty else {
+                lines.append(emptyMessage)
+                return
+            }
             lines += [
                 "| 精确当地时间 | Pass | 移动点 | 事件 | 目标 | 赤纬° | 目标赤纬° | 赤纬速度 | 容许度 | 精确差 | OOB阈值 | 方法 |",
                 "| --- | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
             ]
-            for event in result.events.sorted(by: { $0.exactUTC < $1.exactUTC }) {
+            for event in events.sorted(by: { $0.exactUTC < $1.exactUTC }) {
                 lines.append(
                     "| \(mdCell(event.exactLocal)) | \(event.passIndexInWindow)/\(event.passCountInWindow) | \(mdCell(event.movingPointName)) | \(mdCell(event.aspectName ?? event.eventType)) | \(mdCell(event.targetPointName ?? "—")) | \(fmt(event.movingDeclination)) | \(event.targetDeclination.map(fmt) ?? "—") | \(event.movingDeclinationSpeed.map(fmtSpeed) ?? "—") | \(event.orbLimit.map(fmt) ?? "—") | \(event.exactOrb.map(fmtOrb) ?? "—") | \(event.oobThreshold.map(fmt) ?? "—") | \(mdCell(event.methodKey)) |"
                 )
             }
         }
+
+        let stationEvents = result.events.filter { $0.eventType == "declination_station" }
+        let oobEvents = result.events.filter { $0.eventType.hasPrefix("oob_") }
+        let aspectEvents = result.events.filter {
+            $0.eventType != "declination_station" && !$0.eventType.hasPrefix("oob_")
+        }
+        appendEventSection(title: "赤纬事件", events: aspectEvents, emptyMessage: "窗口内没有平行/反平行事件。")
+        appendEventSection(title: "赤纬停滞", events: stationEvents, emptyMessage: "窗口内没有赤纬停滞事件。")
+        appendEventSection(title: "OOB", events: oobEvents, emptyMessage: "窗口内没有 OOB 进出事件。")
 
         if let assumptions = result.calculationAssumptions, !assumptions.isEmpty {
             lines += ["", "## 计算假设", ""]

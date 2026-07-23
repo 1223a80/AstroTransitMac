@@ -54,40 +54,18 @@ extension ContentView {
         switch mode {
         case .settings:
             if practiceMode == .classical {
-                await runClassical()
+                // Workspace is the only classical+settings authority (PR1 five gates).
+                switch ClassicalSettingsGate.route(workspace: classicalSettingsWorkspace) {
+                case .natalChart:
+                    await runClassical()
+                case .expansion(let expansionMode):
+                    // Expansion writes modernResultData via the shared modern runners.
+                    await runModernSubMode(expansionMode)
+                }
             } else if practiceMode == .vedic {
                 await runVedic()
             } else {
-                switch modernSubMode {
-                case .natal: await runModernNatal()
-                case .synastry: await runSynastry()
-                case .composite: await runComposite()
-                case .davison: await runDavison()
-                case .progression: await runProgressions()
-                case .solarArc: await runSolarArc()
-                case .harmonic: await runHarmonic()
-                case .returnChart: await runModernReturn()
-                case .midpoint: await runMidpoint()
-                case .progressedComposite: await runProgressedComposite()
-                case .relocation: await runRelocation()
-                case .modernCycles: await runModernCycles()
-                case .declinationTiming: await runDeclinationTiming()
-                case .retrogradeCycles: await runRetrogradeCycles()
-                case .classicalVisibility: await runClassicalVisibility()
-                case .planetarySynodic: await runPlanetarySynodic()
-                case .hellenisticConditionAudit: await runHellenisticConditionAudit()
-                case .draconicHeliocentric: await runDraconicHeliocentric()
-                                case .classicalDerivatives: await runClassicalDerivatives()
-                case .timeLordsExtended: await runTimeLordsExtended()
-                case .methodFamilies: await runMethodFamilies()
-                case .primaryDirectionsAudit: await runPrimaryDirectionsAudit()
-                case .distributionsPd: await runDistributionsPd()
-                case .prenatalParans: await runPrenatalParans()
-                case .orbitalDial: await runOrbitalDial()
-                case .mundaneElectional: await runMundaneElectional()
-                case .astrocartography: await runAstrocartography()
-                case .localSpace: await runLocalSpace()
-                }
+                await runModernSubMode(modernSubMode)
             }
         case .horary:
             await runHorary()
@@ -104,13 +82,58 @@ extension ContentView {
         }
     }
 
+    /// Shared modern/expansion dispatch — also used by classical expansion workspace.
+    @MainActor
+    func runModernSubMode(_ subMode: ModernSubMode) async {
+        switch subMode {
+        case .natal: await runModernNatal()
+        case .synastry: await runSynastry()
+        case .composite: await runComposite()
+        case .davison: await runDavison()
+        case .progression: await runProgressions()
+        case .solarArc: await runSolarArc()
+        case .harmonic: await runHarmonic()
+        case .returnChart: await runModernReturn()
+        case .midpoint: await runMidpoint()
+        case .progressedComposite: await runProgressedComposite()
+        case .relocation: await runRelocation()
+        case .modernCycles: await runModernCycles()
+        case .declinationTiming: await runDeclinationTiming()
+        case .retrogradeCycles: await runRetrogradeCycles()
+        case .classicalVisibility: await runClassicalVisibility()
+        case .planetarySynodic: await runPlanetarySynodic()
+        case .hellenisticConditionAudit: await runHellenisticConditionAudit()
+        case .draconicHeliocentric: await runDraconicHeliocentric()
+        case .classicalDerivatives: await runClassicalDerivatives()
+        case .timeLordsExtended: await runTimeLordsExtended()
+        case .methodFamilies: await runMethodFamilies()
+        case .primaryDirectionsAudit: await runPrimaryDirectionsAudit()
+        case .distributionsPd: await runDistributionsPd()
+        case .prenatalParans: await runPrenatalParans()
+        case .orbitalDial: await runOrbitalDial()
+        case .mundaneElectional: await runMundaneElectional()
+        case .astrocartography: await runAstrocartography()
+        case .localSpace: await runLocalSpace()
+        }
+    }
+
     @MainActor
     func clearAnalysisForCurrentMode() {
         switch mode {
         case .settings:
-            if practiceMode == .classical { aiVM.clear(modeKey: "classical") }
-            else if practiceMode == .vedic { aiVM.clear(modeKey: "vedic") }
-            else { aiVM.clear(modeKey: modernSubMode == .natal ? "natal" : modernSubMode.rawValue) }
+            if practiceMode == .classical {
+                switch ClassicalSettingsGate.route(workspace: classicalSettingsWorkspace) {
+                case .natalChart:
+                    aiVM.clear(modeKey: "classical")
+                case .expansion:
+                    // Expansion has no AI streamKey; do not clear or reuse "classical".
+                    break
+                }
+            } else if practiceMode == .vedic {
+                aiVM.clear(modeKey: "vedic")
+            } else {
+                aiVM.clear(modeKey: modernSubMode == .natal ? "natal" : modernSubMode.rawValue)
+            }
         case .horary: aiVM.clear(modeKey: "horary")
         case .moment: aiVM.clear(modeKey: "moment")
         case .scan:
@@ -298,7 +321,7 @@ extension ContentView {
                 pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.synastry(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .synastry(result)
+            calcVM.setModernResultData(.synastry(result))
         }
     }
 
@@ -324,7 +347,7 @@ extension ContentView {
             modernLastRelationshipPersonB = pair.personB
             modernLastRelationshipHouseSystem = request.houseSystem
             modernLastRelationshipZodiac = request.zodiac
-            calcVM.modernResultData = .composite(result)
+            calcVM.setModernResultData(.composite(result))
         }
     }
 
@@ -350,7 +373,7 @@ extension ContentView {
             modernLastRelationshipPersonB = pair.personB
             modernLastRelationshipHouseSystem = request.houseSystem
             modernLastRelationshipZodiac = request.zodiac
-            calcVM.modernResultData = .davison(result)
+            calcVM.setModernResultData(.davison(result))
         }
     }
 
@@ -386,7 +409,7 @@ extension ContentView {
                 request: request,
                 pythonPath: appState.pythonPath
             )
-            calcVM.modernResultData = .progressedComposite(result)
+            calcVM.setModernResultData(.progressedComposite(result))
         }
     }
 
@@ -434,7 +457,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.relocation(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .relocation(result)
+            calcVM.setModernResultData(.relocation(result))
         }
     }
 
@@ -496,7 +519,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.modernCycles(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .modernCycles(result)
+            calcVM.setModernResultData(.modernCycles(result))
         }
     }
 
@@ -541,7 +564,7 @@ extension ContentView {
                 request: request,
                 pythonPath: appState.pythonPath
             )
-            calcVM.modernResultData = .declinationTiming(result)
+            calcVM.setModernResultData(.declinationTiming(result))
         }
     }
 
@@ -566,7 +589,7 @@ extension ContentView {
                 request: request,
                 pythonPath: appState.pythonPath
             )
-            calcVM.modernResultData = .retrogradeCycles(result)
+            calcVM.setModernResultData(.retrogradeCycles(result))
         }
     }
 
@@ -598,7 +621,7 @@ extension ContentView {
                 request: request,
                 pythonPath: appState.pythonPath
             )
-            calcVM.modernResultData = .classicalVisibility(result)
+            calcVM.setModernResultData(.classicalVisibility(result))
         }
     }
 
@@ -651,7 +674,7 @@ extension ContentView {
                 request: request,
                 pythonPath: appState.pythonPath
             )
-            calcVM.modernResultData = .planetarySynodic(result)
+            calcVM.setModernResultData(.planetarySynodic(result))
         }
     }
 
@@ -671,7 +694,7 @@ extension ContentView {
                 request: request,
                 pythonPath: appState.pythonPath
             )
-            calcVM.modernResultData = .hellenisticConditionAudit(result)
+            calcVM.setModernResultData(.hellenisticConditionAudit(result))
         }
     }
 
@@ -698,7 +721,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.draconicHeliocentric(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .draconicHeliocentric(result)
+            calcVM.setModernResultData(.draconicHeliocentric(result))
         }
     }
 
@@ -740,7 +763,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.classicalDerivatives(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .classicalDerivatives(result)
+            calcVM.setModernResultData(.classicalDerivatives(result))
         }
     }
 
@@ -782,7 +805,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.timeLordsExtended(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .timeLordsExtended(result)
+            calcVM.setModernResultData(.timeLordsExtended(result))
         }
     }
 
@@ -824,7 +847,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.methodFamilies(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .methodFamilies(result)
+            calcVM.setModernResultData(.methodFamilies(result))
         }
     }
 
@@ -866,7 +889,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.primaryDirectionsAudit(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .primaryDirectionsAudit(result)
+            calcVM.setModernResultData(.primaryDirectionsAudit(result))
         }
     }
 
@@ -908,7 +931,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.distributionsPd(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .distributionsPd(result)
+            calcVM.setModernResultData(.distributionsPd(result))
         }
     }
 
@@ -950,7 +973,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.prenatalParans(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .prenatalParans(result)
+            calcVM.setModernResultData(.prenatalParans(result))
         }
     }
 
@@ -992,7 +1015,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.orbitalDial(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .orbitalDial(result)
+            calcVM.setModernResultData(.orbitalDial(result))
         }
     }
 
@@ -1034,7 +1057,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.mundaneElectional(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .mundaneElectional(result)
+            calcVM.setModernResultData(.mundaneElectional(result))
         }
     }
 
@@ -1055,7 +1078,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.astrocartography(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .astrocartography(result)
+            calcVM.setModernResultData(.astrocartography(result))
         }
     }
 
@@ -1085,7 +1108,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.localSpace(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .localSpace(result)
+            calcVM.setModernResultData(.localSpace(result))
         }
     }
 
@@ -1106,7 +1129,7 @@ extension ContentView {
                 pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.progression(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .progression(result)
+            calcVM.setModernResultData(.progression(result))
         }
     }
 
@@ -1128,7 +1151,7 @@ extension ContentView {
                 pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.solarArc(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .solarArc(result)
+            calcVM.setModernResultData(.solarArc(result))
         }
     }
 
@@ -1150,7 +1173,7 @@ extension ContentView {
                 pointSet: modernDefaultPointSet(asteroidIDs: asteroidIDs)
             )
             let result = try await BackendClient.harmonic(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .harmonic(result)
+            calcVM.setModernResultData(.harmonic(result))
         }
     }
 
@@ -1194,7 +1217,7 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             let result = try await BackendClient.modernReturn(request: request, pythonPath: appState.pythonPath)
-            calcVM.modernResultData = .returnChart(result)
+            calcVM.setModernResultData(.returnChart(result))
         }
     }
 
@@ -1233,7 +1256,7 @@ extension ContentView {
                 request: request,
                 pythonPath: appState.pythonPath
             )
-            calcVM.modernResultData = .midpoint(result)
+            calcVM.setModernResultData(.midpoint(result))
         }
     }
 

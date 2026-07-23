@@ -43,6 +43,23 @@ extension MarkdownExportBuilder {
                 )
             }
         }
+        lines += ["", "## 本命接触", ""]
+        let contacts = result.events.flatMap { event in
+            (event.natalContacts ?? []).map { (event, $0) }
+        }
+        if contacts.isEmpty {
+            lines.append("窗口内没有本命接触。")
+        } else {
+            lines += [
+                "| 相位事件 | 本命点 | 相位 | 本命黄经 | 周期黄经 | 容许度 |",
+                "| --- | --- | --- | ---: | ---: | ---: |",
+            ]
+            for (event, contact) in contacts {
+                lines.append(
+                    "| \(event.exactLocal ?? event.exactUTC) | \(contact.bodyName ?? contact.bodyID) | \(contact.aspectName ?? contact.aspectID ?? "—") | \(contact.natalLongitude.map { String(format: "%.4f", $0) } ?? "—") | \(contact.cycleLongitude.map { String(format: "%.4f", $0) } ?? "—") | \(contact.orb.map { String(format: "%.4f", $0) } ?? "—") |"
+                )
+            }
+        }
         if let assumptions = result.calculationAssumptions, !assumptions.isEmpty {
             lines += ["", "## 计算假设", ""]
             for item in assumptions { lines.append("- \(item)") }

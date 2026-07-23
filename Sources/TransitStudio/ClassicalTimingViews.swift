@@ -6,6 +6,8 @@ struct ClassicalTimingView: View {
     let circumambulations: [Circumambulation]?
     let birthdayTransition: BirthdayTransition?
     let activatedLordFocus: ActivatedLordFocus?
+    var prenatalSyzygy: PrenatalSyzygy? = nil
+    var onOpenPrenatalParans: (() -> Void)? = nil
 
     private var solarReturn: SolarReturnSummary? {
         planetaryReturns.first { $0.bodyID == "SUN" }
@@ -41,6 +43,41 @@ struct ClassicalTimingView: View {
                     planetaryReturns: planetaryReturns,
                     circumambulations: circumambulations
                 )
+
+                // DL2: prenatal syzygy block → prenatalParans expansion
+                if let syzygy = prenatalSyzygy {
+                    TimingSectionBox(title: "产前朔望") {
+                        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                            Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: 6) {
+                                GridRow {
+                                    Text("类型").foregroundStyle(.secondary)
+                                    Text(syzygy.syzygyType == "new_moon" ? "朔月" : "望月")
+                                }
+                                if let utc = syzygy.exactUTC {
+                                    GridRow {
+                                        Text("精确 UTC").foregroundStyle(.secondary)
+                                        Text(utc).monospacedDigit()
+                                    }
+                                }
+                                if let note = syzygy.syzygyDegreeUsed {
+                                    GridRow {
+                                        Text("度数来源").foregroundStyle(.secondary)
+                                        Text(note)
+                                    }
+                                }
+                            }
+                            if let onOpenPrenatalParans {
+                                Button {
+                                    onOpenPrenatalParans()
+                                } label: {
+                                    Label("打开产前朔望/Parans 包", systemImage: "sparkles")
+                                }
+                                .buttonStyle(.bordered)
+                                .controlSize(.small)
+                            }
+                        }
+                    }
+                }
 
                 TimingSectionBox(title: "Annual Profection") {
                     Grid(alignment: .leading, horizontalSpacing: TS.Spacing.lg, verticalSpacing: 8) {

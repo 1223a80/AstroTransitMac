@@ -233,10 +233,24 @@ extension ContentView {
                 ClassicalPlanetTableView(planets: result.planets)
             }
         case "primary":
-            if let pd = result.primaryDirections, !pd.isEmpty {
-                PrimaryDirectionsView(directions: pd)
-            } else {
-                ClassicalPlanetTableView(planets: result.planets)
+            VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                // DL1: classical natal 主限 → primaryDirectionsAudit expansion
+                Button {
+                    openClassicalExpansion(.primaryDirectionsAudit)
+                } label: {
+                    Label("打开主限审计（进阶）", systemImage: "arrow.up.right.circle")
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                if let pd = result.primaryDirections, !pd.isEmpty {
+                    PrimaryDirectionsView(directions: pd)
+                } else {
+                    EmptyStateView(
+                        title: "无主限行",
+                        systemImage: "arrow.up.right.circle",
+                        description: "本命主限为空时可打开主限审计进阶对照算法边界。"
+                    )
+                }
             }
         case "circumambulations":
             if let circ = result.circumambulations, !circ.isEmpty {
@@ -250,7 +264,9 @@ extension ContentView {
                 planetaryReturns: result.planetaryReturns,
                 circumambulations: result.circumambulations,
                 birthdayTransition: result.birthdayTransition,
-                activatedLordFocus: result.activatedLordFocus
+                activatedLordFocus: result.activatedLordFocus,
+                prenatalSyzygy: result.prenatalSyzygy,
+                onOpenPrenatalParans: { openClassicalExpansion(.prenatalParans) }
             )
         case "diagnostics":
             ClassicalDiagnosticsView(result: result)

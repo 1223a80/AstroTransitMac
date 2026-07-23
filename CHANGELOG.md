@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-23 — B7–B20 发布前审查收口
+
+- 修复古典进阶 Markdown 章节选择“全不选”仍导出全文的问题。
+- 将赤纬普通事件、赤纬停滞与 OOB 拆成可独立选择的 Markdown 章节，并补齐会合周期的本命接触章节、主限审计的算法说明与诊断章节。
+- 增加章节导出回归测试，防止 picker 声明的章节再次退化为空切片。
+- 发布版本提升至 `1.4.1 (43)`，用于区分此前已安装但未包含本轮 UI 收口的 `1.4.0 (42)`。
+
+## 2026-07-20 — B7–B20 古典进阶 UI（IA + Workspace + 结构化结果 + 导出 + 深链）
+
+- **PR1 路由/IA**：现代轨过滤古典八键；古典轨新增 `groupLabel「古典进阶」` + 8 列表叶子；引入 `ClassicalSettingsWorkspace`（`natalChart | expansion(m)`）并改写 Run / Results / Sidebar / 运行按钮 chrome / AI 五道门闩；顶栏实践切换 clamp 八键→natal；本命设置强制 natalChart；扩展 run 写入 `modernResultData`；扩展 AI = nil。
+- **图标（D5）**：古典八键唯一 SF Symbol；`orbitalDial` 用 `circle.dotted`（不与 midpoint 撞车）；禁共用 `star`。
+- **PR2 共享 chrome**：`ExpansionChromeModel` / `MethodChromeBanner` / per-mode 工厂（非 assumptions 正则）；`AssumptionsListView` / Overview 嵌顶条。
+- **PR3–PR7 结构化 pane**：B7–B20 中文表头、EmptyState、chrome；B14/B16/B17/B18 NestedJSON typed（ZR / PD algorithm / 沿界 boundaries / 产前 packet）；B20 仅事实矩阵（无推荐/打分/按吉排序）。
+- **PR8 导出 D6**：`classicalExpansionResults` 多 mode 缓存；当前 mode 章节多选 + 合并导出两级 sheet（§2.3 sectionId）。
+- **PR9 深链**：古典本命「主限」→ 主限审计；时机「产前朔望」→ prenatalParans。
+- 测试：`ClassicalWorkspaceTests` + `ExpansionStructuredUITests`；`swift test` 全绿；`check_vibe_changes.sh`。
+- 补强：B8/B10/B12/B15/B19 中文表头 + EmptyState/Overview；古典进阶 pane 优先读 `classicalExpansionResults[mode]`（A→B 后回看 A 仍有结果）。
+
 ## 2026-07-19 — B13–B20 第二轮审查修复：reference / 步长 / 导出 / 校验
 
 - **P1**：`time_lords_extended` / `method_families`（及 PD 扩展）reference 改用 `classicalReferenceDate`；侧栏增加参考时间控件；请求编码测试断言 birth≠reference。

@@ -4,6 +4,14 @@ struct DeclinationTimingResultPane: View {
     let result: DeclinationTimingResult
     @Binding var selectedTab: String
 
+    private var chrome: ExpansionChromeModel {
+        ExpansionChromeFactory.chrome(
+            for: .declinationTiming,
+            metaMethod: result.meta.method,
+            extras: ExpansionChromeExtras(oobThresholdMethod: result.meta.oobThresholdMethod)
+        )
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             ResultPaneToolbar(
@@ -16,6 +24,7 @@ struct DeclinationTimingResultPane: View {
                 csvProvider: { TextExportBuilder.csv(result) },
                 basename: "declination_timing"
             )
+            MethodChromeBanner(chrome: chrome)
             selectedResultView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -56,50 +65,44 @@ struct DeclinationTimingResultPane: View {
 
     @ViewBuilder
     private func eventTable(_ events: [DeclinationTimingEvent]) -> some View {
-        if events.isEmpty {
-            EmptyStateView(
-                title: "无事件",
-                systemImage: "arrow.up.and.down.circle",
-                description: "当前筛选下没有赤纬事件。"
-            )
-        } else {
-            Table(events.sorted(by: { $0.exactUTC < $1.exactUTC })) {
-                TableColumn("Local") { Text($0.exactLocal).monospacedDigit() }
-                TableColumn("Pass") { Text("\($0.passIndexInWindow)/\($0.passCountInWindow)").monospacedDigit() }
-                TableColumn("Mover") { Text($0.movingPointName) }
-                TableColumn("Event") { Text($0.aspectName ?? $0.eventType) }
-                TableColumn("Target") { Text($0.targetPointName ?? "—") }
-                TableColumn("δ°") {
-                    Text(String(format: "%.4f", $0.movingDeclination)).monospacedDigit()
-                }
-                TableColumn("Exact") {
-                    Text($0.exactOrb.map { String(format: "%.6f", $0) } ?? "—").monospacedDigit()
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+            if selectedTab == "events" {
+                ExpansionOverviewStrip(cards: [
+                    ("事件数", "\(result.events.count)", "窗口内"),
+                    ("OOB 方法", result.meta.oobThresholdMethod ?? "—", "阈值"),
+                ])
+            }
+            if events.isEmpty {
+                EmptyStateView(
+                    title: "无事件",
+                    systemImage: "arrow.up.and.down.circle",
+                    description: "当前筛选下没有赤纬事件。"
+                )
+            } else {
+                Table(events.sorted(by: { $0.exactUTC < $1.exactUTC })) {
+                    TableColumn("本地") { Text($0.exactLocal).monospacedDigit() }
+                    TableColumn("次序") { Text("\($0.passIndexInWindow)/\($0.passCountInWindow)").monospacedDigit() }
+                    TableColumn("行运点") { Text($0.movingPointName) }
+                    TableColumn("事件") { Text($0.aspectName ?? $0.eventType) }
+                    TableColumn("目标") { Text($0.targetPointName ?? "—") }
+                    TableColumn("赤纬°") {
+                        Text(String(format: "%.4f", $0.movingDeclination)).monospacedDigit()
+                    }
+                    TableColumn("精确差") {
+                        Text($0.exactOrb.map { String(format: "%.6f", $0) } ?? "—").monospacedDigit()
+                    }
                 }
             }
         }
     }
 
     private var assumptionsView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: TS.Spacing.md) {
-                Text("计算假设")
-                    .font(TS.Font.sectionTitle)
-                ForEach(result.calculationAssumptions ?? [], id: \.self) { item in
-                    Text("• \(item)")
-                        .font(TS.Font.body)
-                        .foregroundStyle(.secondary)
-                }
-                if let method = result.meta.oobThresholdMethod {
-                    Text("OOB 阈值方法：\(method)")
-                        .font(TS.Font.label)
-                }
-                if let sample = result.meta.oobThresholdSample {
-                    Text(String(format: "样本阈值：%.6f°", sample))
-                        .font(TS.Font.label)
-                        .monospacedDigit()
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
+        AssumptionsListView(
+            assumptions: result.calculationAssumptions ?? [],
+            footer: [
+                result.meta.oobThresholdMethod.map { "OOB 阈值方法：\($0)" },
+                result.meta.oobThresholdSample.map { String(format: "样本阈值：%.6f°", $0) },
+            ].compactMap { $0 }.joined(separator: " · ")
+        )
     }
 }

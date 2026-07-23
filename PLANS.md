@@ -1,3 +1,23 @@
+# B7–B20 古典进阶 UI（2026-07-20）
+
+真源：`docs/ui-design-b7-b20-2026-07.md` Confirmed r4。
+
+| PR | 状态 | 说明 |
+|---|---|---|
+| PR1 | ✅ | 古典进阶列表 + 现代轨过滤 + Workspace 五门闩 + clamp + 图标 + 单元测试 |
+| PR2 | ✅ | ExpansionChrome / MethodChromeBanner 工厂 / AssumptionsListView |
+| PR3 | ✅ | B7/B8/B10 现代周期 pane 结构化（中文表头 + chrome + Overview 嵌顶） |
+| PR4 | ✅ | B9/B11/B13 古典条件/可见/派生 |
+| PR5 | ✅ | B14/B16/B17 NestedJSON typed + 结构化 UI |
+| PR6 | ✅ | B12/B15/B19 chrome + 中文/空态 |
+| PR7 | ✅ | B18 typed packet；B20 事实矩阵 only |
+| PR8 | ✅ | classicalExpansionResults 缓存 + 章节多选 + 合并导出 sheet |
+| PR9 | ✅ | DL1 主限→主限审计；DL2 产前→prenatalParans；门禁全绿 |
+
+非目标遵守：不改 Python 算法 / 不新增 mode 字符串 / 扩展无 AI / 不重做吠陀。
+
+---
+
 # B13–B20 expansion batches (2026-07-19)
 
 All of B13–B20 implemented with independent backends, samples, fixtures, Swift panes, and gates.
@@ -239,6 +259,27 @@ All of B13–B20 implemented with independent backends, samples, fixtures, Swift
 # PLANS
 
 按 `AGENTS.md` 约定：开始任务前在此写计划，执行中更新状态；已完结的历史任务批次归档到 `docs/archive/`（如 `plans-frontend-refactor-2026-06.md`）。
+
+---
+
+# B7–B20 古典进阶 UI 接手审计与发布收口（2026-07-23）
+
+## 目标
+
+- 对照 2026-07-20 设计稿、计划、变更记录与完整 diff，确认未提交的 B7–B20 Swift UI / 导出 / 深链改动是否完整。
+- 修复审查或验证发现的问题，补齐必要测试和记录；不改 Python 算法、不扩展既定业务范围。
+- 全量门禁通过后更新发布版本，打包并覆盖 `/Applications`，验证安装包，最后清理构建与测试缓存。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 工作树与任务边界审计 | ✅ | 已确认独立功能分支及单一 B7–B20 改动集 |
+| 02 代码 / 契约 / 测试 review | ✅ | workspace 五门闩、tab、typed model、缓存、导出与深链已核对 |
+| 03 必要修复与聚焦验证 | ✅ | 章节空切片/全不选回退已修复；Swift 136 项通过 |
+| 04 全量门禁与 diff 复核 | ✅ | Python 841、Swift 136、32 类 smoke 全绿；`git diff --check` 无告警 |
+| 05 版本、打包、覆盖与安装验证 | ✅ | 1.4.1 (43) 已覆盖 `/Applications`；codesign、arm64、无 pyc、安装包主限审计 smoke 通过 |
+| 06 缓存清理与最终交接 | ✅ | 已清理约 656MB `.build` / release staging / Python 缓存；工作树仅保留本任务源码与文档 |
 
 ---
 

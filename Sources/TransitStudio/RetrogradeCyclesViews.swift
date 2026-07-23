@@ -16,6 +16,7 @@ struct RetrogradeCyclesResultPane: View {
                 csvProvider: { TextExportBuilder.csv(result) },
                 basename: "retrograde_cycles"
             )
+            MethodChromeBanner(chrome: ExpansionChromeFactory.chrome(for: .retrogradeCycles, metaMethod: result.meta.method))
             selectedResultView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -38,44 +39,47 @@ struct RetrogradeCyclesResultPane: View {
     var selectedResultView: some View {
         switch selectedTab {
         case "cycles":
-            if result.cycles.isEmpty {
-                EmptyStateView(title: "无逆行周期", systemImage: "arrow.uturn.backward.circle", description: "窗口内没有完整逆行站配对。")
-            } else {
-                Table(result.cycles) {
-                    TableColumn("Body") { Text($0.bodyName ?? $0.bodyID) }
-                    TableColumn("Pre") { Text($0.preShadowStartLocal ?? $0.preShadowStartUTC ?? "—").monospacedDigit() }
-                    TableColumn("Retro") { Text($0.retrogradeStationLocal ?? $0.retrogradeStationUTC ?? "—").monospacedDigit() }
-                    TableColumn("Direct") { Text($0.directStationLocal ?? $0.directStationUTC ?? "—").monospacedDigit() }
-                    TableColumn("Post") { Text($0.postShadowEndLocal ?? $0.postShadowEndUTC ?? "—").monospacedDigit() }
-                    TableColumn("Days") {
-                        Text($0.retrogradeDurationDays.map { String(format: "%.2f", $0) } ?? "—").monospacedDigit()
+            VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                ExpansionOverviewStrip(cards: [
+                    ("周期数", "\(result.cycles.count)", "完整配对"),
+                    ("站度数", "\(result.stations.count)", "站度事件"),
+                ])
+                if result.cycles.isEmpty {
+                    EmptyStateView(title: "无逆行周期", systemImage: "arrow.uturn.backward.circle", description: "窗口内没有完整逆行站配对。")
+                } else {
+                    Table(result.cycles) {
+                        TableColumn("天体") { Text($0.bodyName ?? $0.bodyID) }
+                        TableColumn("前阴影起") { Text($0.preShadowStartLocal ?? $0.preShadowStartUTC ?? "—").monospacedDigit() }
+                        TableColumn("逆行站") { Text($0.retrogradeStationLocal ?? $0.retrogradeStationUTC ?? "—").monospacedDigit() }
+                        TableColumn("顺行站") { Text($0.directStationLocal ?? $0.directStationUTC ?? "—").monospacedDigit() }
+                        TableColumn("后阴影止") { Text($0.postShadowEndLocal ?? $0.postShadowEndUTC ?? "—").monospacedDigit() }
+                        TableColumn("天数") {
+                            Text($0.retrogradeDurationDays.map { String(format: "%.2f", $0) } ?? "—").monospacedDigit()
+                        }
                     }
                 }
             }
         case "stations":
-            Table(result.stations) {
-                TableColumn("Local") { Text($0.exactLocal ?? $0.exactUTC).monospacedDigit() }
-                TableColumn("Body") { Text($0.bodyName ?? $0.bodyID) }
-                TableColumn("Kind") { Text($0.stationKind) }
-                TableColumn("Lon") {
-                    Text($0.longitude.map { String(format: "%.4f", $0) } ?? "—").monospacedDigit()
+            if result.stations.isEmpty {
+                EmptyStateView(title: "无站度", systemImage: "arrow.uturn.backward.circle", description: "窗口内没有站度事件。")
+            } else {
+                Table(result.stations) {
+                    TableColumn("本地") { Text($0.exactLocal ?? $0.exactUTC).monospacedDigit() }
+                    TableColumn("天体") { Text($0.bodyName ?? $0.bodyID) }
+                    TableColumn("类型") { Text($0.stationKind) }
+                    TableColumn("黄经°") {
+                        Text($0.longitude.map { String(format: "%.4f", $0) } ?? "—").monospacedDigit()
+                    }
                 }
             }
         case "assumptions":
-            ScrollView {
-                VStack(alignment: .leading, spacing: TS.Spacing.md) {
-                    ForEach(result.calculationAssumptions ?? [], id: \.self) { item in
-                        Text("• \(item)").foregroundStyle(.secondary)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
+            AssumptionsListView(assumptions: result.calculationAssumptions ?? [])
         case "diagnostics":
             ModernDiagnosticsView(warnings: result.warnings, sectionErrors: result.sectionErrors)
         case "json":
             RawJSONView(value: result)
         default:
-            EmptyStateView(title: "逆行周期", systemImage: "arrow.uturn.backward.circle", description: "选择标签页查看结果。")
+            EmptyStateView(title: "逆行周期", systemImage: "arrow.uturn.backward.circle", description: "运行计算后查看逆行阴影结果。")
         }
     }
 }

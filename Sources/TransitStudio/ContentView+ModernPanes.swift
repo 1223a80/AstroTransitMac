@@ -175,7 +175,9 @@ extension ContentView {
 
     var classicalVisibilityResultsPane: some View {
         Group {
-            if let result = calcVM.modernResultData, case .classicalVisibility(let r) = result {
+            // Prefer multi-mode cache so revisiting A after B still shows A (D6).
+            if let result = calcVM.classicalExpansionResult(for: .classicalVisibility),
+               case .classicalVisibility(let r) = result {
                 ClassicalVisibilityResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
                 EmptyStateView(
@@ -203,7 +205,8 @@ extension ContentView {
 
     var hellenisticConditionAuditResultsPane: some View {
         Group {
-            if let result = calcVM.modernResultData, case .hellenisticConditionAudit(let r) = result {
+            if let result = calcVM.classicalExpansionResult(for: .hellenisticConditionAudit),
+               case .hellenisticConditionAudit(let r) = result {
                 HellenisticConditionAuditResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
                 EmptyStateView(
@@ -227,20 +230,22 @@ extension ContentView {
 
     var classicalDerivativesResultsPane: some View {
         Group {
-            if let result = calcVM.modernResultData, case .classicalDerivatives(let r) = result {
+            if let result = calcVM.classicalExpansionResult(for: .classicalDerivatives),
+               case .classicalDerivatives(let r) = result {
                 ClassicalDerivativesResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
-                EmptyStateView(title: "等待派生盘/尊贵", systemImage: "star", description: "运行计算。")
+                EmptyStateView(title: "等待派生盘/尊贵", systemImage: "square.split.2x1", description: "运行计算。")
             }
         }
     }
 
     var timeLordsExtendedResultsPane: some View {
         Group {
-            if let result = calcVM.modernResultData, case .timeLordsExtended(let r) = result {
+            if let result = calcVM.classicalExpansionResult(for: .timeLordsExtended),
+               case .timeLordsExtended(let r) = result {
                 TimeLordsExtendedResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
-                EmptyStateView(title: "等待时间主扩展", systemImage: "star", description: "运行计算。")
+                EmptyStateView(title: "等待时间主扩展", systemImage: "hourglass", description: "运行计算。")
             }
         }
     }
@@ -250,37 +255,40 @@ extension ContentView {
             if let result = calcVM.modernResultData, case .methodFamilies(let r) = result {
                 MethodFamiliesResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
-                EmptyStateView(title: "等待推运方法族", systemImage: "star", description: "运行计算。")
+                EmptyStateView(title: "等待推运方法族", systemImage: "square.stack.3d.up", description: "运行计算。")
             }
         }
     }
 
     var primaryDirectionsAuditResultsPane: some View {
         Group {
-            if let result = calcVM.modernResultData, case .primaryDirectionsAudit(let r) = result {
+            if let result = calcVM.classicalExpansionResult(for: .primaryDirectionsAudit),
+               case .primaryDirectionsAudit(let r) = result {
                 PrimaryDirectionsAuditResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
-                EmptyStateView(title: "等待主限审计", systemImage: "star", description: "运行计算。")
+                EmptyStateView(title: "等待主限审计", systemImage: "arrow.up.right.circle", description: "运行计算。")
             }
         }
     }
 
     var distributionsPdResultsPane: some View {
         Group {
-            if let result = calcVM.modernResultData, case .distributionsPd(let r) = result {
+            if let result = calcVM.classicalExpansionResult(for: .distributionsPd),
+               case .distributionsPd(let r) = result {
                 DistributionsPdResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
-                EmptyStateView(title: "等待沿界/主限扩展", systemImage: "star", description: "运行计算。")
+                EmptyStateView(title: "等待沿界/主限扩展", systemImage: "rectangle.split.3x1", description: "运行计算。")
             }
         }
     }
 
     var prenatalParansResultsPane: some View {
         Group {
-            if let result = calcVM.modernResultData, case .prenatalParans(let r) = result {
+            if let result = calcVM.classicalExpansionResult(for: .prenatalParans),
+               case .prenatalParans(let r) = result {
                 PrenatalParansResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
-                EmptyStateView(title: "等待产前朔望/Parans", systemImage: "star", description: "运行计算。")
+                EmptyStateView(title: "等待产前朔望/Parans", systemImage: "sparkles", description: "运行计算。")
             }
         }
     }
@@ -290,17 +298,18 @@ extension ContentView {
             if let result = calcVM.modernResultData, case .orbitalDial(let r) = result {
                 OrbitalDialResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
-                EmptyStateView(title: "等待轨道点/Dial", systemImage: "star", description: "运行计算。")
+                EmptyStateView(title: "等待轨道点/Dial", systemImage: "circle.dotted", description: "运行计算。")
             }
         }
     }
 
     var mundaneElectionalResultsPane: some View {
         Group {
-            if let result = calcVM.modernResultData, case .mundaneElectional(let r) = result {
+            if let result = calcVM.classicalExpansionResult(for: .mundaneElectional),
+               case .mundaneElectional(let r) = result {
                 MundaneElectionalResultPane(result: r, selectedTab: $calcVM.modernSelectedTab)
             } else {
-                EmptyStateView(title: "等待世俗/择时事实", systemImage: "star", description: "运行计算。")
+                EmptyStateView(title: "等待世俗/择时事实", systemImage: "building.columns", description: "运行计算。")
             }
         }
     }
