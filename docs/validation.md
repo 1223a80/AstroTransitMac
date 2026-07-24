@@ -32,7 +32,8 @@ Run individual test files:
 
 ```bash
 python3 -m pytest python_tests/test_classical.py -v   # classical dignity, timing, audit, circumambulations, primary directions
-python3 -m pytest python_tests/test_horary.py -v      # horary significators, radicality, advanced detection
+python3 -m pytest python_tests/test_horary.py -v      # legacy horary helpers (significators/advanced); call calculate_horary directly
+python3 -m pytest python_tests/test_horary_v2.py -v   # horary data packet v2 (default production path)
 python3 -m pytest python_tests/test_scan.py -v        # scan engine: aspect matching, priority scoring, ingress/station
 python3 -m pytest python_tests/test_contracts.py -v   # integration: JSON contract for all modes
 ```
@@ -141,7 +142,8 @@ Package the app with:
 - Horary logic changed: run `python3 -m pytest python_tests/test_horary.py -v`.
 - Scan engine changed: run `python3 -m pytest python_tests/test_scan.py -v`.
 - Contract / integration: run `python3 -m pytest python_tests/test_contracts.py -v`.
-- Backend JSON shape changed: update the corresponding Swift model file (`ClassicalResultModels.swift`, `HoraryResultModels.swift`, `TransitResultModels.swift`, `RectifyModels.swift`, `VedicResultModels.swift`, `ModernResultModels.swift`), regenerate the affected `SwiftTests/Fixtures/` file, and run `swift test` with the relevant filter.
+- Backend JSON shape changed: update the corresponding Swift model file (`ClassicalResultModels.swift`, `HoraryDataPacketModels.swift` / legacy `HoraryResultModels.swift`, `TransitResultModels.swift`, `RectifyModels.swift`, `VedicResultModels.swift`, `ModernResultModels.swift`), regenerate the affected `SwiftTests/Fixtures/` file, and run `swift test` with the relevant filter.
+- Horary default packet is v2 (`packetVersion=2`). Use `packetVersion=1` only for the deprecated interpretive adapter.
 - Result-pane tab added: add the id to the pane's tab list **and** a matching `case` in its `selectedResultView` switch — a missing case silently falls through to the default view. Titles come from the list via `resultTabTitle()`; do not add a separate title switch.
 - Result UI changed: run `swift build` and manually inspect the relevant Swift view when possible.
 - Export changed: check both `MarkdownExportBuilder.swift` and `TextExportBuilder.swift`.

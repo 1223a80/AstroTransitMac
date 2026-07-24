@@ -1514,14 +1514,15 @@ extension ContentView {
                     moment: makeMoment(from: horaryDate, gmtOffset: horaryGmtOffset),
                     latitude: coords.latitude,
                     longitude: coords.longitude,
-                    houseSystem: selectedHouseSystem,
+                    houseSystem: horaryHouseSystem,
                     zodiac: selectedZodiac,
                     boundsSystem: selectedBoundsSystem,
                     triplicitySystem: selectedTriplicitySystem
                 ),
                 placeName: horaryPlaceName.trimmingCharacters(in: .whitespacesAndNewlines),
                 questionText: question,
-                aspectOrb: classicalAspectOrb,
+                aspectOrb: horaryAspectOrb,
+                packetVersion: "2",
                 ephemerisPath: normalizedEphemerisPath,
                 noAsteroids: appState.noAsteroids,
                 requireEphemeris: appState.requireEphemeris

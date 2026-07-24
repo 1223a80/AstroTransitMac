@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://transitstudio.local/schemas/horary-data-packet-2.0.json",
+  "title": "Horary Data Packet",
+  "description": "Judgment-free, versioned horary chart data packet. No interpretation, scores, or significator selection.",
+  "type": "object",
+  "required": [
+    "schema",
+    "question_metadata",
+    "calculation_config",
+    "provenance",
+    "time_and_location",
+    "houses",
+    "angles",
+    "bodies",
+    "dignities",
+    "pairwise_geometry",
+    "aspects",
+    "receptions",
+    "lots",
+    "events",
+    "moon",
+    "visibility",
+    "optional_modules",
+    "validation"
+  ],
+  "properties": {
+    "schema": {
+      "type": "object",
+      "required": ["name", "version", "schema_id"],
+      "properties": {
+        "name": { "const": "horary-data-packet" },
+        "version": { "enum": ["2.0", "2.1"] },
+        "schema_id": { "enum": ["horary-data-packet/2.0", "horary-data-packet/2.1"] }
+      }
+    },
+    "question_metadata": {
+      "type": "object",
+      "required": ["question_text", "place_name"],
+      "properties": {
+        "question_text": { "type": "string" },
+        "place_name": { "type": "string" }
+      }
+    },
+    "calculation_config": { "type": "object" },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "engine_name",
+        "engine_version",
+        "algorithm_version",
+        "ephemeris_provider",
+        "input_hash_sha256",
+        "config_hash_sha256"
+      ]
+    },
+    "time_and_location": {
+      "type": "object",
+      "required": [
+        "local_datetime",
+        "utc_datetime",
+        "timezone",
+        "utc_offset_seconds",
+        "jd_ut",
+        "latitude_deg",
+        "longitude_deg",
+        "sect"
+      ]
+    },
+    "houses": {
+      "type": "object",
+      "required": ["system", "cusps"],
+      "properties": {
+        "cusps": {
+          "type": "array",
+          "minItems": 12,
+          "maxItems": 12
+        }
+      }
+    },
+    "angles": { "type": "object" },
+    "bodies": { "type": "array" },
+    "dignities": { "type": "array" },
+    "pairwise_geometry": { "type": "array" },
+    "aspects": { "type": "array" },
+    "receptions": { "type": "array" },
+    "lots": { "type": "array" },
+    "events": { "type": "array" },
+    "moon": { "type": "object" },
+    "visibility": { "type": "array" },
+    "optional_modules": { "type": "object" },
+    "validation": {
+      "type": "object",
+      "required": ["warnings", "forbidden_field_scan"]
+    },
+    "display": { "type": "object" }
+  },
+  "not": {
+    "anyOf": [
+      { "required": ["machine_summary"] },
+      { "required": ["radicality_flags"] },
+      { "required": ["significator_candidates"] },
+      { "required": ["key_significator_links"] },
+      { "required": ["advanced_candidates"] },
+      { "required": ["score"] },
+      { "required": ["bonification"] },
+      { "required": ["maltreatment"] }
+    ]
+  },
+  "additionalProperties": true
+}

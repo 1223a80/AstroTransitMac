@@ -293,7 +293,7 @@ struct BackendClient {
         try await run(request: request, pythonPath: pythonPath)
     }
 
-    static func horary(request: HoraryRequest, pythonPath: String) async throws -> HoraryResult {
+    static func horary(request: HoraryRequest, pythonPath: String) async throws -> HoraryDataPacket {
         try await run(request: request, pythonPath: pythonPath)
     }
 

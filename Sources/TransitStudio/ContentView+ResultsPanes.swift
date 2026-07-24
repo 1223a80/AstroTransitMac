@@ -551,13 +551,30 @@ extension ContentView {
 
     var horaryTabs: [(id: String, title: String)] {
         [
-            ("wheel", "星盘图"), ("overview", "问卜总览"), ("planets", "行星状态"), ("points", "点位/Lots"), ("houses", "宫位"),
-            ("aspects", "相位/接纳"), ("judgement", "评分明细"),
+            ("wheel", "星盘图"),
+            ("overview", "数据总览"),
+            ("planets", "天体/偶然"),
+            ("points", "角点/Lots"),
+            ("houses", "宫位"),
+            ("aspects", "相位候选"),
+            ("receptions", "接纳"),
+            ("judgement", "尊贵归属"),
+            ("moon", "月亮/VOC"),
+            ("events", "事件/图"),
         ]
     }
 
     var horaryMoreTabs: [(id: String, title: String)] {
-        [("diagnostics", "诊断"), ("json", "JSON")]
+        [
+            ("hours", "行星时"),
+            ("considerations", "判断前事实"),
+            ("declination", "赤纬"),
+            ("antiscia", "Antiscia"),
+            ("stars", "固定星"),
+            ("visibility", "可见性"),
+            ("diagnostics", "校验"),
+            ("json", "JSON"),
+        ]
     }
 
     var horaryTabTitle: String {
@@ -565,26 +582,73 @@ extension ContentView {
     }
 
     @ViewBuilder
-    func horarySelectedResultView(_ result: HoraryResult) -> some View {
+    func horarySelectedResultView(_ result: HoraryDataPacket) -> some View {
         switch calcVM.horarySelectedTab {
         case "wheel":
             ChartWheelView(data: ChartWheelData(horaryResult: result))
         case "overview":
             HoraryOverviewView(result: result)
         case "planets":
-            ClassicalPlanetTableView(planets: result.planets)
+            HoraryBodiesTableView(bodies: result.bodies)
         case "points":
-            ClassicalPointsView(
-                angles: result.angles,
-                lots: result.lots.filter { $0.lotGroup != "experimental" },
-                experimentalLots: result.lots.filter { $0.lotGroup == "experimental" }
-            )
+            HoraryLotsDataView(lots: result.lots, angles: result.angles.points)
         case "houses":
-            ClassicalHouseTableView(houses: result.houses)
+            HoraryHousesDataView(houses: result.houses)
         case "aspects":
-            ClassicalAspectReceptionView(aspects: result.aspects, receptions: result.receptions)
+            HoraryAspectsDataView(
+                aspects: result.aspectCandidates ?? result.aspects,
+                receptions: result.receptions
+            )
+        case "receptions":
+            HoraryAspectsDataView(aspects: [], receptions: result.receptions)
         case "judgement":
-            ClassicalJudgementView(planets: result.planets)
+            HoraryDignitiesView(dignities: result.dignities)
+        case "moon":
+            HoraryMoonDataView(moon: result.moon)
+        case "events":
+            HoraryEventsTimelineView(result: result)
+        case "hours":
+            HoraryJSONBlockView(title: "Planetary Day / Hour", value: result.planetaryDayHour)
+        case "considerations":
+            HoraryJSONBlockView(
+                title: "Considerations Evidence",
+                value: result.considerationsEvidence.map { .array($0) }
+            )
+        case "declination":
+            HoraryJSONBlockView(
+                title: "Declination (parallels / contacts / moon sequence)",
+                value: result.optionalModules.flatMap { mods in
+                    guard case .object(let o) = mods else { return mods }
+                    var sub: [String: HoraryV2JSONValue] = [:]
+                    for k in ["declination_parallels", "declination_contacts", "declination_moon_sequence"] {
+                        if let v = o[k] { sub[k] = v }
+                    }
+                    return .object(sub)
+                }
+            )
+        case "antiscia":
+            HoraryJSONBlockView(
+                title: "Antiscia (positions + contacts)",
+                value: result.optionalModules.flatMap { mods in
+                    guard case .object(let o) = mods else { return mods }
+                    var sub: [String: HoraryV2JSONValue] = [:]
+                    for k in ["antiscia", "antiscia_contacts"] {
+                        if let v = o[k] { sub[k] = v }
+                    }
+                    return .object(sub)
+                }
+            )
+        case "stars":
+            HoraryJSONBlockView(
+                title: "Fixed Stars",
+                value: result.optionalModules.flatMap { mods in
+                    guard case .object(let o) = mods else { return mods }
+                    if let stars = o["fixed_stars"] { return stars }
+                    return .null
+                }
+            )
+        case "visibility":
+            HoraryVisibilityTableView(rows: result.visibility)
         case "diagnostics":
             HoraryDiagnosticsView(result: result)
         case "json":

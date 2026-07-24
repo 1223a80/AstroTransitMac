@@ -24,6 +24,7 @@ from astro_backend_classical import (
     zodiacal_releasing_summary,
 )
 from astro_backend_horary import calculate_horary
+from astro_backend_horary_v2 import calculate_horary_v2
 from astro_backend_core import (
     BODY_REGISTRY,
     CLASSICAL_BODY_IDS,
@@ -62,6 +63,9 @@ from astro_backend_classical_medieval import (
     determine_kurios,
     profection_solar_return_synthesis,
 )
+
+HORARY_V1_PACKET_VERSIONS = {"1", "v1", "legacy", "1.0"}
+HORARY_V2_PACKET_VERSIONS = {"2", "v2", "2.0", "2.1"}
 
 
 def _bundled_ephemeris_path(module_file: Path | None = None) -> Path | None:
@@ -921,6 +925,13 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         aspect_orb = request.get("aspectOrb", 3.0)
         if isinstance(aspect_orb, bool) or not isinstance(aspect_orb, (int, float)) or not 0 <= aspect_orb <= 10:
             invalid.append("aspectOrb must be a number in [0, 10]")
+        packet_version = str(
+            request.get("packetVersion")
+            or request.get("packet_version")
+            or "2"
+        ).strip().lower()
+        if packet_version not in HORARY_V1_PACKET_VERSIONS | HORARY_V2_PACKET_VERSIONS:
+            invalid.append("packetVersion is unsupported; use 2 (default) or 1/legacy")
     _PERSON_MOMENT_FIELDS = ("year", "month", "day", "hour", "minute", "timezone")
     if mode in ("synastry", "composite", "davison", "progressed_composite"):
         for side in ("person_a", "person_b"):
@@ -1689,7 +1700,28 @@ def main() -> None:
         if mode == "scan":
             response = scan_window(request, warnings)
         elif mode == "horary":
-            response = calculate_horary(request, warnings)
+            packet_version = str(
+                request.get("packetVersion")
+                or request.get("packet_version")
+                or "2"
+            ).strip().lower()
+            if packet_version in HORARY_V1_PACKET_VERSIONS:
+                # Legacy interpretive / judgment-bearing packet (v1).
+                response = calculate_horary(request, warnings)
+                response.setdefault("schema", {
+                    "name": "horary-data-packet",
+                    "version": "1.0",
+                    "schema_id": "horary-data-packet/1.0",
+                    "legacy": True,
+                    "deprecated": True,
+                    "migration": "Use packetVersion=2 for judgment-free data packet",
+                })
+            elif packet_version in HORARY_V2_PACKET_VERSIONS:
+                response = calculate_horary_v2(request, warnings)
+            else:
+                # validate_required_fields rejects this path; keep an explicit
+                # guard so future refactors cannot silently route version typos.
+                raise ValueError(f"unsupported horary packetVersion: {packet_version}")
         elif mode == "classical":
             response = calculate_classical(request, warnings)
         elif mode == "vedic":

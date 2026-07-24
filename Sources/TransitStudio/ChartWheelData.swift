@@ -286,29 +286,79 @@ extension ChartWheelData {
         self.unresolvedAspectEndpoints = unresolved
     }
 
-    init(horaryResult: HoraryResult) {
+    init(horaryResult: HoraryDataPacket) {
         var pts: [WheelPoint] = []
-        for p in horaryResult.planets {
-            let signIdx = Int(p.longitude / 30) % 12
+        for p in horaryResult.bodies {
+            let lon = p.eclipticLongitude
+            let signIdx = Int(lon / 30) % 12
+            let bid = p.bodyId
             pts.append(WheelPoint(
-                id: p.id, name: p.name, shortLabel: planetShortLabels[p.id] ?? String(p.name.prefix(1)),
-                longitude: p.longitude, house: p.house, sign: p.sign, signIndex: signIdx,
-                degreeText: p.degreeText, element: elementForSign(index: signIdx),
-                type: .planet, isTransit: false
+                id: bid,
+                name: p.nameZh,
+                shortLabel: planetShortLabels[bid] ?? String(bid.prefix(2)),
+                longitude: lon,
+                house: p.integerHouse,
+                sign: p.displayZh,
+                signIndex: signIdx,
+                degreeText: p.displayZh,
+                element: elementForSign(index: signIdx),
+                type: .planet,
+                isTransit: false
             ))
         }
-        for a in horaryResult.angles {
-            let signIdx = Int(a.longitude / 30) % 12
+        for a in horaryResult.angles.points {
+            let signIdx = Int(a.longitudeDeg / 30) % 12
             pts.append(WheelPoint(
-                id: a.id, name: a.name, shortLabel: angleShortLabels[a.id] ?? String(a.name.prefix(1)),
-                longitude: a.longitude, house: a.house, sign: a.sign, signIndex: signIdx,
-                degreeText: a.degreeText, element: elementForSign(index: signIdx),
-                type: .angle, isTransit: false
+                id: a.id,
+                name: a.id,
+                shortLabel: angleShortLabels[a.id] ?? String(a.id.prefix(1)),
+                longitude: a.longitudeDeg,
+                house: 0,
+                sign: a.sign.signZh,
+                signIndex: signIdx,
+                degreeText: a.sign.displayZh,
+                element: elementForSign(index: signIdx),
+                type: .angle,
+                isTransit: false
             ))
         }
         self.points = pts
-        self.houseCusps = horaryResult.houses.map(\.cuspLongitude)
-        self.axisLongitudes = horaryResult.angles.map(\.longitude)
-        (self.aspects, self.unresolvedAspectEndpoints) = resolvedClassicalWheelAspects(horaryResult.aspects, points: pts)
+        self.houseCusps = horaryResult.houses.cusps.map(\.cuspLongitudeDeg)
+        self.axisLongitudes = horaryResult.angles.points
+            .filter { ["ASC", "MC", "DSC", "IC"].contains($0.id) }
+            .map(\.longitudeDeg)
+        // Map v2 aspects (English aspect_id + body IDs) into wheel aspect rows.
+        let aspectNameMap: [String: String] = [
+            "conjunction": "合相", "sextile": "六合", "square": "刑相",
+            "trine": "拱相", "opposition": "冲相",
+        ]
+        // A chart wheel represents geometry at the query moment. Future exact
+        // candidates remain available in the candidate/event tabs, but must not
+        // be drawn as current aspect lines outside the configured display orb.
+        let source = horaryResult.aspectsInDisplayOrb
+            ?? (horaryResult.aspectCandidates ?? horaryResult.aspects).filter {
+                $0.withinDisplayOrb == true || $0.withinOrb == true
+            }
+        let classicalAspects: [ClassicalAspectRow] = source.compactMap { a in
+            let inDisplay = a.withinDisplayOrb ?? a.withinOrb ?? true
+            let app = a.application ?? ""
+            let aid = a.aspectId ?? ""
+            let ba = a.bodyAId ?? a.string("body_a_id") ?? ""
+            let bb = a.bodyBId ?? a.string("body_b_id") ?? ""
+            guard !ba.isEmpty, !bb.isEmpty, !aid.isEmpty else { return nil }
+            guard inDisplay else { return nil }
+            return ClassicalAspectRow(
+                id: a.id,
+                bodyA: ba,
+                bodyB: bb,
+                aspect: aspectNameMap[aid] ?? aid,
+                aspectType: "degree",
+                aspectGeometry: "degree",
+                aspectKind: "within_display_orb",
+                orb: a.absoluteOrbDeg ?? a.orbDeg,
+                applying: app == "applying" ? "入相" : "离相"
+            )
+        }
+        (self.aspects, self.unresolvedAspectEndpoints) = resolvedClassicalWheelAspects(classicalAspects, points: pts)
     }
 }

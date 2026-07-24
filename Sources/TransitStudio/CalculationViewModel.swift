@@ -59,7 +59,7 @@ final class CalculationViewModel: ObservableObject {
     @Published var scanResult: ScanResult?
     @Published var modernTimingResult: ModernTimingResult?
     @Published var classicalResult: ClassicalResult?
-    @Published var horaryResult: HoraryResult?
+    @Published var horaryResult: HoraryDataPacket?
     @Published var rectifyResponse: RectifyResponse?
     @Published var rectifyLevel2Response: RectifyResponse?
     @Published var rectifyLevel3Response: RectifyResponse?

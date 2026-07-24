@@ -183,6 +183,31 @@ extension ContentView {
                 Spacer()
                 gmtOffsetControl($horaryGmtOffset)
             }
+            HStack {
+                Text("宫制").foregroundStyle(.secondary)
+                Spacer()
+                Picker("", selection: $horaryHouseSystem) {
+                    Text("Regiomontanus").tag("regiomontanus")
+                    Text("Whole Sign").tag("whole_sign")
+                    Text("Placidus").tag("placidus")
+                    Text("Porphyry").tag("porphyry")
+                    Text("Alcabitius").tag("alcabitius")
+                    Text("Equal").tag("equal")
+                }
+                .labelsHidden()
+                .frame(maxWidth: 180)
+            }
+            HStack {
+                Text("显示容许度").foregroundStyle(.secondary)
+                Spacer()
+                TextField("3.0", value: $horaryAspectOrb, format: .number)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 64)
+                Text("°").foregroundStyle(.secondary)
+            }
+            Text("显示容许度仅过滤 within_display_orb；全量相位候选与 exact 事件始终计算。")
+                .font(TS.Font.label)
+                .foregroundStyle(.secondary)
             VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 Text("问题文本")
                     .font(TS.Font.label)

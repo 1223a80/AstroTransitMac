@@ -413,75 +413,140 @@ enum TextExportBuilder {
         return csv(rows)
     }
 
-    static func csv(_ result: HoraryResult) -> String {
+    static func csv(_ result: HoraryDataPacket) -> String {
         var rows: [[String]] = [
             ["section", "name", "position", "longitude", "house", "ruler_or_aspect", "extra_1", "extra_2", "extra_3"]
         ]
 
-        rows.append(["question", result.questionText, "", "", "", "", "", "", ""])
-        rows.append(["sun_horizon_status", result.meta.sunHorizonStatus, "", "", "", "", "", "", ""])
-        rows.append(["calculation_setting", "house_system", result.meta.houseSystem, "", "", "", "", "", ""])
-        rows.append(["calculation_setting", "zodiac", result.meta.zodiac, "", "", "", "", "", ""])
-        rows.append(["calculation_setting", "bounds_system", result.meta.boundsSystem, "", "", "", "", "", ""])
-        rows.append(["calculation_setting", "triplicity_system", result.meta.triplicitySystem, "", "", "", "", "", ""])
-        rows.append(["calculation_setting", "aspect_orb", result.meta.aspectOrb.map(number) ?? "", "", "", "", "", "", ""])
-        rows += result.houseRulers.map {
-            ["house_ruler", "\($0.house)", $0.sign, "", "\($0.house)", $0.ruler, "", "", ""]
+        rows.append(["schema", result.schema.schemaId, "", "", "", "", result.provenance.engineVersion, result.provenance.algorithmVersion, ""])
+        rows.append(["question", result.questionMetadata.questionText, "", "", "", "", "", "", ""])
+        rows.append(["provenance", "input_hash", result.provenance.inputHashSha256, "", "", "", "", "", ""])
+        rows.append(["provenance", "config_hash", result.provenance.configHashSha256, "", "", "", "", "", ""])
+        rows.append(["provenance", "aberration_light_time", result.provenance.string("aberration_light_time") ?? "", "", "", "", "", "", ""])
+        rows.append(["provenance", "precession_nutation", result.provenance.string("precession_nutation") ?? "", "", "", "", "", "", ""])
+        rows.append(["calculation_setting", "house_system", result.calculationConfig.houseSystem, "", "", "", "", "", ""])
+        rows.append(["calculation_setting", "zodiac", result.calculationConfig.zodiac, "", "", "", "", "", ""])
+        rows.append(["calculation_setting", "bounds_system", result.calculationConfig.boundsSystem, "", "", "", "", "", ""])
+        rows.append(["calculation_setting", "triplicity_system", result.calculationConfig.triplicitySystem, "", "", "", "", "", ""])
+        rows.append(["calculation_setting", "aspect_orb", number(result.calculationConfig.aspectOrbDeg), "", "", "", "", "", ""])
+        rows.append([
+            "calculation_setting",
+            "numeric_precision",
+            result.calculationConfig.value("numeric_precision").map(jsonString) ?? "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+        ])
+        rows.append(["time", "local", result.timeAndLocation.localDatetime, "", "", "", "", "", ""])
+        rows.append(["time", "utc", result.timeAndLocation.utcDatetime, "", "", "", result.timeAndLocation.timezone, "\(result.timeAndLocation.utcOffsetSeconds)", ""])
+        rows.append(["sect", "is_day", "\(result.timeAndLocation.sect.isDay)", "", "", result.timeAndLocation.sect.ruleId, result.timeAndLocation.sect.evidence != nil ? "evidence_present" : "", "", ""])
+        rows.append(["geocoding", result.timeAndLocation.geocoding != nil ? "present" : "null", "", "", "", "", "", "", ""])
+
+        rows += result.angles.points.map {
+            ["angle", $0.id, $0.sign.displayEn, number($0.longitudeDeg), "", "", "", "", ""]
         }
-        rows += result.machineSummary.map {
-            ["machine_summary", $0, "", "", "", "", "", "", ""]
+        rows += result.houses.cusps.map {
+            ["house", "\($0.house)", $0.sign.displayEn, number($0.cuspLongitudeDeg), "\($0.house)", $0.domicileRulerId, $0.spanDeg.map(number) ?? "", "", ""]
         }
-        rows += result.radicalityFlags.map {
-            ["radicality_flag", $0.label, "", "", "", "", $0.severity, "", ""]
+        rows += result.bodies.map {
+            ["body", $0.bodyId, $0.displayEn, number($0.eclipticLongitude), "\($0.integerHouse)", $0.motionState, $0.eclipticSpeed.map(number) ?? "", $0.nameZh, ""]
         }
-        rows.append(["moon_voc_criterion", result.moonVocCriterion, "", "", "", "", "", "", ""])
-        rows += result.significatorCandidates.map {
-            ["significator_candidate", $0.role, $0.position, "", "\($0.house)", $0.planet, $0.source, $0.condition, ""]
-        }
-        rows += result.keySignificatorLinks.map {
-            ["key_significator_link", $0.pair, "", "", "", $0.aspect, $0.type, $0.nextPerfection.isEmpty ? "none" : $0.nextPerfection, "\($0.perfectsBeforeSignExit ? "yes" : "no"); \($0.perfectionReason); \($0.reception)"]
-        }
-        rows += result.degreeBasedKeyAspects.map {
-            ["degree_key_aspect", $0.bodyA, "", "", "", $0.aspect, $0.bodyB, $0.orb.map(number) ?? "", $0.exactTime]
-        }
-        rows += result.planetarySpeeds.map {
-            ["planetary_speed", $0.planet, "", "", "", $0.speedState, number($0.speed), $0.station ? "yes" : "no", ""]
-        }
-        rows += result.solarCondition.map {
-            ["solar_condition", $0.planet, "", "", "", $0.condition, number($0.distanceFromSun), "", ""]
-        }
-        rows += result.negativeReceptions.map {
-            ["negative_reception", $0.receiver, "", "", "", $0.received, $0.debility, $0.viaAspect, $0.strength]
-        }
-        rows += result.lotsSummary.map {
-            ["lot_summary", $0.lot, $0.position, "", "\($0.house)", $0.ruler, $0.rulerCondition, $0.keyNotes, ""]
-        }
-        rows += result.advancedCandidates.map {
-            ["advanced_candidate", $0.type, $0.status, $0.exactTime ?? "", "", $0.details, $0.planets.joined(separator: ";"), $0.frustratingPlanet ?? "", $0.frustratedPlanet ?? ""]
-        }
-        rows += result.moonStoryline.beforeSignExitAspects.map {
-            ["moon_before_sign_exit", $0.targetName, $0.exactLocal, number($0.targetLongitude), "\($0.targetHouse)", $0.aspectName, number($0.moonLongitude), "\($0.moonHouse)", ""]
-        }
-        rows += result.angles.map {
-            ["angle", $0.name, $0.degreeText, number($0.longitude), "\($0.house)", $0.ruler, "", "", ""]
-        }
-        rows += result.houses.map {
-            ["house", "\($0.house)", $0.cuspText, number($0.cuspLongitude), "\($0.house)", $0.ruler, $0.sign, "", ""]
-        }
-        rows += result.planets.map {
-            ["planet", $0.name, $0.degreeText, number($0.longitude), "\($0.house)", $0.motion, $0.sectStatus, [$0.domicile, $0.exaltation, $0.triplicity].filter { !$0.isEmpty }.joined(separator: " "), ($0.notes ?? []).joined(separator: "、")]
-        }
-        rows += result.lots.map {
-            ["lot", $0.name, $0.degreeText, number($0.longitude), "\($0.house)", $0.ruler, $0.formula ?? "", $0.lotGroup ?? "", $0.confidence ?? ""]
+        rows += result.dignities.map {
+            ["dignity", $0.string("body_id") ?? $0.id, "", "", "", $0.string("domicile_ruler_id") ?? "", "", "", ""]
         }
         rows += result.aspects.map {
-            ["aspect", $0.bodyA, "", "", "", $0.aspect, $0.bodyB, $0.orb.map(number) ?? "", $0.applying ?? ""]
+            [
+                "aspect",
+                $0.bodyAId ?? "",
+                "",
+                "",
+                "",
+                $0.aspectId ?? "",
+                $0.bodyBId ?? "",
+                $0.absoluteOrbDeg.map(number) ?? "",
+                $0.application ?? "",
+            ]
         }
         rows += result.receptions.map {
-            ["reception", $0.receiver, "", "", "", $0.received, $0.dignity, $0.viaAspect, $0.strengthLabel ?? ""]
+            [
+                "reception",
+                $0.receiverId ?? $0.bodyAId ?? "",
+                "",
+                "",
+                "",
+                $0.receivedBodyId ?? $0.bodyBId ?? "",
+                $0.dignityType ?? $0.relationKind ?? "",
+                $0.relatedAspectId ?? "",
+                $0.string("id") ?? $0.id,
+            ]
+        }
+        rows += result.lots.map {
+            [
+                "lot",
+                $0.id,
+                $0.sign.displayEn,
+                number($0.longitudeDeg ?? 0),
+                "\($0.house.integerHouse)",
+                $0.domicileRulerId ?? "",
+                $0.formulaUsed ?? "",
+                $0.names.en,
+                $0.sectUsed ?? "",
+            ]
+        }
+        rows += result.events.map {
+            ["event", $0.eventType ?? "", $0.datetimeUtc ?? "", "", "", $0.bodyIds.joined(separator: ";"), $0.aspectId ?? "", "\($0.offsetSecondsFromQuery.map { String($0) } ?? "")", $0.id]
+        }
+        // Nested v2 sections as flat JSON-string rows (parity with Markdown/JSON export).
+        rows += result.pairwiseGeometry.map {
+            ["pairwise_geometry", $0.string("id") ?? $0.id, "", "", "", $0.string("body_a_id") ?? "", $0.string("body_b_id") ?? "", number($0.number("minimum_separation_deg") ?? 0), jsonString($0.raw)]
+        }
+        if let eventGraph = result.eventGraph {
+            rows.append(["event_graph", "packet", "", "", "", "", "", "", jsonString(eventGraph)])
+        }
+        if let moon = result.moon {
+            rows.append(["moon", "index", "", "", "", "", "", "", jsonString(moon)])
+        } else {
+            rows.append(["moon", "index", "", "", "", "", "", "", "null"])
+        }
+        if let nodes = result.nodes {
+            rows.append(["nodes", "packet", "", "", "", "", "", "", jsonString(nodes)])
+        }
+        if let planetary = result.planetaryDayHour {
+            rows.append(["planetary_day_hour", "packet", "", "", "", "", "", "", jsonString(planetary)])
+        }
+        if let considerations = result.considerationsEvidence {
+            for (idx, item) in considerations.enumerated() {
+                rows.append(["considerations_evidence", "\(idx)", "", "", "", "", "", "", jsonString(item)])
+            }
+        }
+        if let optional = result.optionalModules {
+            rows.append(["optional_modules", "packet", "", "", "", "", "", "", jsonString(optional)])
+        }
+        if let display = result.display {
+            rows.append(["display", "language_primary", display.languagePrimary ?? "", "", "", "", "", "", ""])
+        }
+        rows += result.visibility.map {
+            ["visibility", $0.bodyId, "", "", "", $0.string("morning_evening") ?? "", $0.number("ecliptic_separation_from_sun_deg").map(number) ?? "", $0.bool("visible").map { "\($0)" } ?? "null", $0.string("visible_reason_code") ?? ""]
+        }
+        rows += result.validation.warnings.map {
+            ["warning", $0, "", "", "", "", "", "", ""]
         }
 
         return csv(rows)
+    }
+
+    /// Compact JSON encoding of a v2 JSON value for CSV extra columns.
+    private static func jsonString(_ value: HoraryV2JSONValue) -> String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        guard let data = try? encoder.encode(value),
+              let s = String(data: data, encoding: .utf8) else {
+            return String(describing: value)
+        }
+        return s
     }
 
     private static func csv(_ rows: [[String]]) -> String {

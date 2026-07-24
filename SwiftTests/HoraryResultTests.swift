@@ -3,105 +3,186 @@ import Testing
 @testable import TransitStudio
 
 struct HoraryResultTests {
+    @Test func decodeHoraryDataPacketV2() throws {
+        let fixtureURL = Bundle.module.url(forResource: "horary-result", withExtension: "json", subdirectory: "Fixtures")
+            ?? Bundle.module.url(forResource: "horary-result", withExtension: "json")
+        let url = try #require(fixtureURL)
+        let data = try Data(contentsOf: url)
+        let result = try JSONDecoder().decode(HoraryDataPacket.self, from: data)
 
-    @Test func decodeHoraryResult() throws {
-        let json = """
-        {
-            "meta": {
-                "asked_local": "2026-05-05 12:00",
-                "asked_utc": "2026-05-05T04:00:00",
-                "place_name": "Shanghai",
-                "latitude": 31.2304,
-                "longitude": 121.4737,
-                "sect": "day chart",
-                "sun_horizon_status": "above",
-                "house_system": "Whole Sign",
-                "zodiac": "Tropical",
-                "bounds_system": "Egyptian",
-                "triplicity_system": "Dorothean",
-                "aspect_orb": 3.5,
-                "ephemeris": "Swiss Ephemeris"
-            },
-            "question_text": "感情",
-            "machine_summary": ["Moon 位于第 5 宫", "Moon 将于 2026-05-06 离开当前星座"],
-            "radicality_flags": [
-                {"id": "asc_early", "label": "ASC 早度", "severity": "caution"}
-            ],
-            "moon_voc_criterion": "no applying Ptolemaic aspect to classical planets before sign exit",
-            "house_rulers": [
-                {"house": 1, "sign": "白羊", "ruler": "MARS"}
-            ],
-            "significator_candidates": [
-                {"id": "querent", "role": "Querent", "planet": "火星", "source": "1H ruler", "position": "0° 白羊", "house": 1, "condition": "顺行, score 10", "planet_id": "MARS"},
-                {"id": "moon", "role": "Moon", "planet": "月亮", "source": "General significator", "position": "0° 金牛", "house": 2, "condition": "顺行, score 8", "planet_id": "MOON"},
-                {"id": "matter", "role": "Matter / Outcome", "planet": "金星", "source": "7H ruler", "position": "0° 天秤", "house": 7, "condition": "顺行, score 5", "planet_id": "VENUS"},
-                {"id": "natural", "role": "Natural significator", "planet": "金星", "source": "Natural ruler", "position": "0° 天秤", "house": 7, "condition": "顺行, score 5", "planet_id": "VENUS"}
-            ],
-            "key_significator_links": [
-                {"id": "MARS|VENUS|link", "pair": "Querent ruler – Matter ruler", "aspect": "sextile", "type": "degree", "orb": 2.0, "applying": "applying", "perfects_before_sign_exit": true, "next_perfection": "2026-05-06 14:00", "perfection_reason": "degree perfection", "reception": ""}
-            ],
-            "degree_based_key_aspects": [],
-            "planetary_speeds": [
-                {"id": "MARS", "planet": "火星", "speed": 0.524, "speed_state": "顺行", "station": false}
-            ],
-            "solar_condition": [
-                {"id": "MARS", "planet": "火星", "condition": "可见", "distance_from_sun": 80.0}
-            ],
-            "negative_receptions": [],
-            "lots_summary": [
-                {"id": "fortune", "lot": "福点", "position": "20° 双子", "house": 5, "ruler": "MERCURY", "ruler_condition": "", "key_notes": ""}
-            ],
-            "advanced_candidates": [
-                {"id": "translation", "type": "Translation of Light", "status": "not detected", "details": "缺少关键象征星", "planets": [], "exact_time": null},
-                {"id": "collection", "type": "Collection of Light", "status": "not detected", "details": "缺少关键象征星", "planets": [], "exact_time": null},
-                {"id": "prohibition", "type": "Prohibition", "status": "not evaluated", "details": "缺少关键象征星", "planets": [], "exact_time": null},
-                {"id": "frustration", "type": "Frustration", "status": "detected", "details": "第三方先成相", "planets": ["火星", "金星", "土星"], "exact_time": "2026-05-06 12:34", "frustrated_planet": "火星", "frustrating_planet": "土星"}
-            ],
-            "moon_storyline": {
-                "current_position": "0° 金牛",
-                "current_house": 2,
-                "last_aspect": null,
-                "last_aspect_time": "",
-                "next_aspect": null,
-                "next_aspect_time": "",
-                "upcoming_aspects": [],
-                "before_sign_exit_aspects": [],
-                "voc": true,
-                "sign_exit_local": "2026-05-06 14:00",
-                "next_sign": "双子",
-                "next_sign_ingress_time": "2026-05-06 14:00",
-                "first_after_ingress": null,
-                "first_after_ingress_time": ""
-            },
-            "angles": [],
-            "houses": [],
-            "planets": [],
-            "lots": [],
-            "aspects": [],
-            "receptions": [],
-            "warnings": []
+        #expect(result.schema.schemaId.hasPrefix("horary-data-packet/2."))
+        #expect(result.bodies.count == 7)
+        #expect(result.houses.cusps.count == 12)
+        #expect(result.validation.forbiddenFieldScan == "passed")
+        #expect(!result.provenance.inputHashSha256.isEmpty)
+
+        let markdown = MarkdownExportBuilder.horary(result)
+        #expect(markdown.contains("horary-data-packet/2."))
+        #expect(!markdown.lowercased().contains("machine summary"))
+        #expect(!markdown.lowercased().contains("significator candidates"))
+
+        let wheel = ChartWheelData(horaryResult: result)
+        #expect(wheel.points.contains(where: { $0.id == "SUN" || $0.id.contains("SUN") }))
+        #expect(wheel.houseCusps.count == 12)
+        #expect(wheel.aspects.count == (result.aspectsInDisplayOrb?.count ?? 0))
+        #expect(result.aspectsInDisplayOrb?.allSatisfy {
+            ($0.absoluteOrbDeg ?? .infinity) <= (result.displayOrbDeg ?? 0)
+        } == true)
+    }
+
+    @Test func markdownAndCsvAreDataOnly() throws {
+        let fixtureURL = Bundle.module.url(forResource: "horary-result", withExtension: "json", subdirectory: "Fixtures")
+            ?? Bundle.module.url(forResource: "horary-result", withExtension: "json")
+        let url = try #require(fixtureURL)
+        let data = try Data(contentsOf: url)
+        let result = try JSONDecoder().decode(HoraryDataPacket.self, from: data)
+        let csv = TextExportBuilder.csv(result)
+        #expect(csv.contains("schema"))
+        #expect(!csv.contains("machine_summary"))
+        #expect(!csv.contains("significator_candidate"))
+        #expect(!csv.contains("advanced_candidate"))
+        // CSV must not silently drop top-level v2 evidence sections (parity with Markdown/JSON).
+        for section in [
+            "pairwise_geometry", "event_graph", "nodes", "planetary_day_hour",
+            "considerations_evidence", "optional_modules", "moon",
+        ] {
+            #expect(csv.contains(section), "CSV missing section \(section)")
         }
-        """
+        // Moon content is more than a present/null flag.
+        #expect(csv.contains("\"phase_angle_deg\"") || csv.contains("void_of_course") || csv.contains("sign_exit"))
+        #expect(csv.contains("\"longitude_decimals\""))
+        #expect(csv.contains("\"angle_decimals\""))
+    }
 
-        let data = try #require(json.data(using: .utf8))
-        let result = try JSONDecoder().decode(HoraryResult.self, from: data)
+    @Test func evidenceRowIdIsStable() throws {
+        let fixtureURL = Bundle.module.url(forResource: "horary-result", withExtension: "json", subdirectory: "Fixtures")
+            ?? Bundle.module.url(forResource: "horary-result", withExtension: "json")
+        let url = try #require(fixtureURL)
+        let data = try Data(contentsOf: url)
+        let result = try JSONDecoder().decode(HoraryDataPacket.self, from: data)
+        #expect(!result.bodies.isEmpty)
+        let first = result.bodies[0].id
+        let second = result.bodies[0].id
+        #expect(first == second)
+        #expect(first == (result.bodies[0].string("body_id") ?? first))
+        #expect(!first.isEmpty)
+        #expect(!first.contains("-") || first.count < 40 || first == result.bodies[0].string("id") ?? "")
+        // Prefer body_id over random UUID (UUIDs contain hyphens and are 36 chars).
+        if result.bodies[0].string("id") == nil {
+            #expect(first == result.bodies[0].string("body_id"))
+        }
+    }
 
-        #expect(result.meta.askedLocal == "2026-05-05 12:00")
-        #expect(result.meta.aspectOrb == 3.5)
-        #expect(result.questionText == "感情")
-        #expect(result.machineSummary.count == 2)
-        #expect(result.radicalityFlags.count == 1)
-        #expect(result.radicalityFlags[0].id == "asc_early")
-        #expect(result.moonVocCriterion == "no applying Ptolemaic aspect to classical planets before sign exit")
-        #expect(result.significatorCandidates.count == 4)
-        #expect(result.keySignificatorLinks.count == 1)
-        #expect(result.planetarySpeeds.count == 1)
-        #expect(result.solarCondition.count == 1)
-        #expect(result.lotsSummary.count == 1)
-        #expect(result.advancedCandidates.count == 4)
-        #expect(result.advancedCandidates.last?.frustratingPlanet == "土星")
-        #expect(result.advancedCandidates.last?.exactTime == "2026-05-06 12:34")
-        #expect(result.moonStoryline.voc == true)
-        #expect(result.moonStoryline.currentHouse == 2)
+    @Test func jsonSwiftRoundTripPreservesEvidenceKeys() throws {
+        let fixtureURL = Bundle.module.url(forResource: "horary-result", withExtension: "json", subdirectory: "Fixtures")
+            ?? Bundle.module.url(forResource: "horary-result", withExtension: "json")
+        let url = try #require(fixtureURL)
+        let raw = try Data(contentsOf: url)
+        let sourceObj = try #require(JSONSerialization.jsonObject(with: raw) as? [String: Any])
+        let decoded = try JSONDecoder().decode(HoraryDataPacket.self, from: raw)
+        let reencoded = try JSONEncoder().encode(decoded)
+        let obj = try #require(JSONSerialization.jsonObject(with: reencoded) as? [String: Any])
+
+        // Deep key-walk: every source path in the canonical packet must survive
+        // decode→encode, including typed UI projections such as houses/angles.
+        for (root, src) in sourceObj {
+            let dst = obj[root]
+            #expect(dst != nil, "missing root after round-trip: \(root)")
+            if let dst {
+                let missing = deepMissingKeys(source: src, dest: dst, path: root)
+                #expect(missing.isEmpty, "lost keys: \(missing.prefix(20))")
+            }
+        }
+
+        // Explicit fidelity anchors (skeptic gates)
+        let tl = try #require(obj["time_and_location"] as? [String: Any])
+        #expect(tl["geocoding"] != nil)
+        let sect = try #require(tl["sect"] as? [String: Any])
+        #expect(sect["evidence"] != nil)
+        let prov = try #require(obj["provenance"] as? [String: Any])
+        #expect(prov["aberration_light_time"] != nil)
+        #expect(prov["precession_nutation"] != nil)
+        let cfg = try #require(obj["calculation_config"] as? [String: Any])
+        #expect(cfg["numeric_precision"] != nil)
+        #expect(cfg["aspects_enabled"] != nil)
+        let houses = try #require(obj["houses"] as? [String: Any])
+        let cusps = try #require(houses["cusps"] as? [[String: Any]])
+        #expect(cusps.first?["domicile_ruler_en"] != nil)
+        #expect(cusps.first?["domicile_ruler_zh"] != nil)
+        let angles = try #require(obj["angles"] as? [String: Any])
+        let armc = try #require(angles["armc"] as? [String: Any])
+        #expect(armc["unit"] != nil)
+        #expect(armc["definition"] != nil)
+        let validation = try #require(obj["validation"] as? [String: Any])
+        #expect(validation["aspect_candidate_count"] != nil)
+        #expect(validation["aspects_in_display_orb_count"] != nil)
+        let display = try #require(obj["display"] as? [String: Any])
+        #expect(display["notes"] != nil)
+
+        // Reception exact/pre-exit evidence must survive
+        let recs = try #require(obj["receptions"] as? [[String: Any]])
+        let withExact = recs.filter { $0["relation_at_next_aspect_exact"] != nil }
+        #expect(!withExact.isEmpty)
+        #expect(withExact.contains { ($0["relation_at_next_aspect_exact"] as? [String: Any])?["status"] != nil })
+        #expect(recs.contains { $0["relation_changes_if_sign_exit_before_exact"] != nil })
+
+        // Lots input_points / intermediates / pre-normalize
+        let lots = try #require(obj["lots"] as? [[String: Any]])
+        #expect(lots.contains { $0["input_points"] != nil })
+        #expect(lots.contains { $0["intermediates"] != nil })
+        #expect(lots.contains { $0["longitude_before_normalize_deg"] != nil })
+
+        let bodies = try #require(obj["bodies"] as? [[String: Any]])
+        let moon = try #require(bodies.first { ($0["body_id"] as? String) == "MOON" })
+        let idx = try #require(moon["events_index"] as? [String: Any])
+        #expect(idx["previous_house_change"] != nil)
+        #expect((idx["previous_house_change"] as? [String: Any])?["event_id"] != nil
+            || (idx["previous_house_change"] as? NSNull) == nil)
+
+        let md = MarkdownExportBuilder.horary(decoded)
+        #expect(md.contains("geocoding"))
+        #expect(md.contains("aberration_light_time"))
+        #expect(md.contains("numeric_precision"))
+        #expect(md.contains("sect") || md.contains("evidence"))
+        #expect(md.contains("Receptions (full evidence)") || md.contains("relation_at_next_aspect_exact"))
+        #expect(md.contains("input_points") || md.contains("Lots (full evidence)"))
+        #expect(md.contains("domicile_ruler_en"))
+        #expect(md.contains("local_sidereal_time_deg"))
+        #expect(md.contains("aspect_candidate_count"))
+        #expect(md.contains("formatting only"))
+        #expect(!md.contains("truncated; see JSON export"))
+        #expect(!md.lowercased().contains("machine summary"))
+    }
+
+    /// Returns paths present in source but missing (or wrong JSON type class) in dest.
+    private func deepMissingKeys(source: Any, dest: Any, path: String) -> [String] {
+        var missing: [String] = []
+        if let sDict = source as? [String: Any] {
+            guard let dDict = dest as? [String: Any] else {
+                return [path + " (expected object)"]
+            }
+            for (k, sv) in sDict {
+                let p = path + "." + k
+                guard let dv = dDict[k] else {
+                    missing.append(p)
+                    continue
+                }
+                missing.append(contentsOf: deepMissingKeys(source: sv, dest: dv, path: p))
+            }
+        } else if let sArr = source as? [Any] {
+            guard let dArr = dest as? [Any] else {
+                return [path + " (expected array)"]
+            }
+            // Compare by index for arrays of objects with id when possible
+            let n = min(sArr.count, dArr.count)
+            for i in 0..<n {
+                missing.append(contentsOf: deepMissingKeys(source: sArr[i], dest: dArr[i], path: "\(path)[\(i)]"))
+            }
+            if sArr.count > dArr.count {
+                missing.append("\(path) (array shortened \(sArr.count)->\(dArr.count))")
+            }
+        }
+        // scalars: presence is enough
+        return missing
     }
 }

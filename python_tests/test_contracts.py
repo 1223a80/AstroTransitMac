@@ -111,12 +111,27 @@ class TestClassicalContract:
 
 
 class TestHoraryContract:
-    """Note: Uses classical sample with horary not yet having a dedicated sample file.
-    The horary request uses the same chart endpoint but needs question_text, so we
-    construct a minimal horary request inline."""
+    """Horary default contract is Data Packet v2 (judgment-free)."""
 
     MINIMAL_HORARY_REQUEST = json.dumps({
         "mode": "horary",
+        "packetVersion": "2",
+        "chart": {
+            "moment": {"year": 2026, "month": 5, "day": 5, "hour": 12, "minute": 0, "timezone": "Asia/Shanghai"},
+            "latitude": 31.2304,
+            "longitude": 121.4737,
+            "houseSystem": "whole_sign",
+            "zodiac": "tropical",
+            "boundsSystem": "egyptian",
+            "triplicitySystem": "dorothean",
+        },
+        "questionText": "感情",
+        "aspectOrb": 3.0,
+    })
+
+    LEGACY_HORARY_REQUEST = json.dumps({
+        "mode": "horary",
+        "packetVersion": "1",
         "chart": {
             "moment": {"year": 2026, "month": 5, "day": 5, "hour": 12, "minute": 0, "timezone": "Asia/Shanghai"},
             "latitude": 31.2304,
@@ -151,14 +166,26 @@ class TestHoraryContract:
             timeout=30,
         )
         data = json.loads(result.stdout)
-        assert "meta" in data
-        assert "question_text" in data
-        assert "machine_summary" in data
-        assert "radicality_flags" in data
-        assert "moon_storyline" in data
-        assert "significator_candidates" in data
+        assert data["schema"]["schema_id"] in {
+            "horary-data-packet/2.0",
+            "horary-data-packet/2.1",
+        }
+        for key in (
+            "question_metadata",
+            "calculation_config",
+            "provenance",
+            "time_and_location",
+            "houses",
+            "bodies",
+            "moon",
+            "events",
+            "validation",
+        ):
+            assert key in data
+        assert "machine_summary" not in data
+        assert "significator_candidates" not in data
 
-    def test_moon_storyline_has_required_fields(self) -> None:
+    def test_moon_index_has_required_fields(self) -> None:
         result = subprocess.run(
             ["python3", str(TRANSIT_CALC)],
             input=self.MINIMAL_HORARY_REQUEST,
@@ -167,22 +194,21 @@ class TestHoraryContract:
             timeout=30,
         )
         data = json.loads(result.stdout)
-        ms = data["moon_storyline"]
-        assert "current_position" in ms
-        assert "current_house" in ms
-        assert "voc" in ms
-        assert "next_sign" in ms
-        assert "sign_exit_local" in ms
+        ms = data["moon"]
+        assert "void_of_course_rules" in ms
+        assert "sign_exit" in ms
+        assert "future_exact_aspects_in_current_sign" in ms
 
-    def test_significator_candidates_has_querent_moon(self) -> None:
+    def test_legacy_adapter_still_has_v1_fields(self) -> None:
         result = subprocess.run(
             ["python3", str(TRANSIT_CALC)],
-            input=self.MINIMAL_HORARY_REQUEST,
+            input=self.LEGACY_HORARY_REQUEST,
             capture_output=True,
             text=True,
             timeout=30,
         )
         data = json.loads(result.stdout)
+        assert data["schema"]["version"] == "1.0"
         roles = {c["role"] for c in data["significator_candidates"]}
         assert "Querent" in roles
         assert "Moon" in roles

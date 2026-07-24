@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://transitstudio.local/schemas/horary-data-packet-2.1.json",
+  "title": "Horary Data Packet 2.1",
+  "description": "Judgment-free horary packet. Units: degrees [0,360) for longitudes unless signed; house 1-12; times ISO-8601 UTC with Z.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "question_metadata", "calculation_config", "provenance",
+    "time_and_location", "houses", "angles", "bodies", "dignities",
+    "pairwise_geometry", "aspects", "aspect_candidates", "display_orb_deg",
+    "receptions", "lots", "events", "event_graph", "moon", "visibility",
+    "planetary_day_hour", "considerations_evidence", "nodes", "optional_modules",
+    "validation"
+  ],
+  "properties": {
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "schema_id"],
+      "properties": {
+        "name": { "const": "horary-data-packet" },
+        "version": { "const": "2.1" },
+        "schema_id": { "const": "horary-data-packet/2.1" }
+      }
+    },
+    "question_metadata": {
+      "type": "object",
+      "required": ["question_text", "place_name"],
+      "properties": {
+        "question_text": { "type": "string" },
+        "place_name": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "calculation_config": {
+      "type": "object",
+      "required": ["house_system", "zodiac", "aspect_orb_deg", "bodies", "event_window"],
+      "properties": {
+        "house_system": { "type": "string", "enum": ["regiomontanus", "whole_sign", "placidus", "porphyry", "alcabitius", "equal"] },
+        "zodiac": { "type": "string" },
+        "aspect_orb_deg": { "type": "number", "minimum": 0, "maximum": 30 },
+        "bodies": { "type": "array", "items": { "type": "string", "pattern": "^[A-Z0-9_]+$" }, "uniqueItems": true },
+        "event_window": {
+          "type": "object",
+          "required": ["past_days", "future_days"],
+          "properties": {
+            "past_days": { "type": "number", "minimum": 0 },
+            "future_days": { "type": "number", "minimum": 0 }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["engine_name", "engine_version", "algorithm_version", "input_hash_sha256", "config_hash_sha256"],
+      "properties": {
+        "engine_name": { "type": "string" },
+        "engine_version": { "type": "string" },
+        "algorithm_version": { "type": "string" },
+        "ephemeris_provider": { "type": "string" },
+        "ephemeris_version": { "type": "string" },
+        "input_hash_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "config_hash_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": true
+    },
+    "time_and_location": {
+      "type": "object",
+      "required": ["local_datetime", "utc_datetime", "timezone", "jd_ut", "latitude_deg", "longitude_deg", "sect"],
+      "properties": {
+        "jd_ut": { "type": "number" },
+        "jd_tt": { "type": ["number", "null"] },
+        "latitude_deg": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude_deg": { "type": "number", "minimum": -180, "maximum": 180 },
+        "utc_offset_seconds": { "type": "integer" },
+        "dst_active": { "type": "boolean" },
+        "sect": {
+          "type": "object",
+          "required": ["is_day", "rule_id"],
+          "properties": {
+            "is_day": { "type": "boolean" },
+            "rule_id": { "type": "string" },
+            "evidence": { "type": "object" }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "houses": {
+      "type": "object",
+      "required": ["system", "cusps"],
+      "properties": {
+        "system": { "type": "string" },
+        "cusps": {
+          "type": "array",
+          "minItems": 12,
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "required": ["house", "cusp_longitude_deg", "domicile_ruler_id"],
+            "properties": {
+              "house": { "type": "integer", "minimum": 1, "maximum": 12 },
+              "cusp_longitude_deg": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 },
+              "span_deg": { "type": "number", "exclusiveMinimum": 0 },
+              "domicile_ruler_id": { "type": "string" }
+            }
+          }
+        },
+        "fallback_applied": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "angles": { "type": "object", "required": ["points", "armc"] },
+    "bodies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["body_id", "ecliptic", "sign", "house", "motion"],
+        "properties": {
+          "body_id": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+          "ecliptic": {
+            "type": "object",
+            "required": ["longitude_deg"],
+            "properties": {
+              "longitude_deg": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 },
+              "latitude_deg": { "type": ["number", "null"] },
+              "longitude_speed_deg_per_day": { "type": ["number", "null"] }
+            }
+          },
+          "house": {
+            "type": "object",
+            "required": ["integer_house"],
+            "properties": {
+              "integer_house": { "type": "integer", "minimum": 1, "maximum": 12 },
+              "continuous_house": { "type": ["number", "null"] }
+            }
+          },
+          "accidental": { "type": "object" },
+          "distance_to_angles_deg": { "type": "object" },
+          "events_index": { "type": ["object", "null"] },
+          "precision": { "type": ["object", "null"] }
+        }
+      }
+    },
+    "dignities": { "type": "array" },
+    "pairwise_geometry": { "type": "array" },
+    "aspects": { "type": "array" },
+    "aspect_candidates": {
+      "type": "array",
+      "minItems": 1,
+      "description": "All classical pair × Ptolemaic aspects; not filtered by display orb",
+      "items": {
+        "type": "object",
+        "required": ["id", "body_a_id", "body_b_id", "aspect_id", "application", "within_display_orb"],
+        "properties": {
+          "id": { "type": "string" },
+          "body_a_id": { "type": "string" },
+          "body_b_id": { "type": "string" },
+          "aspect_id": { "type": "string", "enum": ["conjunction", "sextile", "square", "trine", "opposition"] },
+          "aspect_angle_deg": { "type": "number" },
+          "signed_orb_deg": { "type": ["number", "null"] },
+          "absolute_orb_deg": { "type": ["number", "null"] },
+          "application": { "type": "string", "enum": ["applying", "separating"] },
+          "within_display_orb": { "type": "boolean" },
+          "station_or_retrograde_before_exact": { "type": "boolean" },
+          "will_perfect_in_window": { "type": "boolean" },
+          "next_exact": { "type": ["object", "null"] },
+          "previous_exact": { "type": ["object", "null"] }
+        }
+      }
+    },
+    "aspects_in_display_orb": { "type": "array" },
+    "display_orb_deg": { "type": "number", "minimum": 0 },
+    "receptions": {
+      "type": "array",
+      "description": "Directed dignity reception facts only; no strength scores",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" },
+          "receiver_id": { "type": "string" },
+          "received_body_id": { "type": "string" },
+          "dignity_type": {
+            "type": "string",
+            "enum": ["domicile", "exaltation", "triplicity", "bound", "decan", "detriment", "fall"]
+          },
+          "relation_kind": {
+            "type": "string",
+            "enum": [
+              "unidirectional",
+              "directed",
+              "mutual",
+              "mutual_reception",
+              "mixed",
+              "mixed_reception"
+            ]
+          },
+          "related_aspect_id": { "type": ["string", "null"] },
+          "relation_at_next_aspect_exact": { "type": ["object", "null"] },
+          "relation_changes_if_sign_exit_before_exact": { "type": ["object", "null"] },
+          "rule_id": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "lots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "longitude_deg", "formula_used"],
+        "properties": {
+          "id": { "type": "string" },
+          "longitude_deg": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 },
+          "longitude_before_normalize_deg": { "type": ["number", "null"] },
+          "formula_used": { "type": "string" },
+          "formula_day": { "type": ["string", "null"] },
+          "formula_night": { "type": ["string", "null"] },
+          "sect_used": { "type": ["string", "null"] },
+          "input_points": { "type": ["object", "array", "null"] },
+          "intermediates": { "type": ["object", "array", "null"] },
+          "house": {
+            "type": "object",
+            "properties": {
+              "integer_house": { "type": "integer", "minimum": 1, "maximum": 12 }
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "event_type", "body_ids", "datetime_utc", "offset_seconds_from_query"],
+        "properties": {
+          "id": { "type": "string" },
+          "event_type": { "type": "string" },
+          "body_ids": { "type": "array", "items": { "type": "string" } },
+          "datetime_utc": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T" },
+          "offset_seconds_from_query": { "type": "integer" }
+        }
+      }
+    },
+    "event_graph": {
+      "type": "object",
+      "required": ["per_body", "aspect_candidate_sequences"],
+      "properties": {
+        "per_body": { "type": "array" },
+        "aspect_candidate_sequences": { "type": "array" },
+        "moon_sequence": { "type": ["object", "null"] },
+        "algorithm_version": { "type": "string" },
+        "note": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "moon": { "type": "object" },
+    "visibility": { "type": "array" },
+    "planetary_day_hour": { "type": "object" },
+    "considerations_evidence": { "type": "array" },
+    "nodes": { "type": "object" },
+    "optional_modules": {
+      "type": "object",
+      "properties": {
+        "antiscia": { "type": "array" },
+        "via_combusta": { "type": "array" },
+        "dodecatemoria": { "type": "array" },
+        "antiscia_contacts": { "type": "array" },
+        "declination_contacts": { "type": "array" },
+        "fixed_stars": { "type": "object" },
+        "nodes": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "validation": {
+      "type": "object",
+      "required": ["warnings", "forbidden_field_scan"],
+      "properties": {
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "forbidden_field_scan": { "type": "string", "enum": ["passed", "failed"] }
+      },
+      "additionalProperties": true
+    },
+    "display": { "type": "object" }
+  },
+  "not": {
+    "anyOf": [
+      { "required": ["machine_summary"] },
+      { "required": ["radicality_flags"] },
+      { "required": ["significator_candidates"] },
+      { "required": ["key_significator_links"] },
+      { "required": ["advanced_candidates"] },
+      { "required": ["score"] },
+      { "required": ["bonification"] },
+      { "required": ["maltreatment"] }
+    ]
+  }
+}

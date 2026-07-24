@@ -1,171 +1,160 @@
 import Foundation
 
 extension MarkdownExportBuilder {
-    static func horary(_ result: HoraryResult) -> String {
-        let aspectOrbText = result.meta.aspectOrb.map { String(format: "%.1f°", $0) } ?? "unknown"
+    /// Lossless Markdown formatter for Horary Data Packet v2.
+    /// Does not invent conclusions, scores, or significator judgments.
+    static func horary(_ result: HoraryDataPacket) -> String {
+        let schemaBag = stringifyJSON(result.rawValue("schema"))
+        let provenanceBag = stringifyJSON(result.provenance.raw)
+        let timeBag = stringifyJSON(result.timeAndLocation.raw)
+        let configBag = stringifyJSON(result.calculationConfig.raw)
         var lines: [String] = [
-            "# Horary Data Packet",
+            "# Horary Data Packet \(result.schema.schemaId)",
             "",
-            "## 1. Question & Metadata",
+            "## 1. Schema & Provenance (full evidence)",
             "",
-            "- Question: \(result.questionText.isEmpty ? "unknown" : result.questionText)",
-            "- Asked: \(result.meta.askedLocal)",
-            "- UTC: \(result.meta.askedUTC)",
-            "- Place: \(result.meta.placeName) (\(String(format: "%.4f", result.meta.latitude)), \(String(format: "%.4f", result.meta.longitude)))",
-            "- Chart: \(result.meta.houseSystem) / \(result.meta.zodiac) / \(result.meta.boundsSystem) bounds / \(result.meta.triplicitySystem) triplicity / \(result.meta.sect)",
-            "- Aspect orb: \(aspectOrbText)",
-            "- Sun position: \(result.meta.sunHorizonStatus) / \(result.planets.first(where: { $0.id == "SUN" })?.degreeText ?? "") / H\(result.planets.first(where: { $0.id == "SUN" })?.house ?? 0)",
+            "- schema: \(schemaBag)",
+            "- provenance: \(provenanceBag)",
+            "",
+            "## 2. Question Metadata",
+            "",
+            "- question_text: \(result.questionMetadata.questionText.isEmpty ? "(empty)" : result.questionMetadata.questionText)",
+            "- place_name: \(result.questionMetadata.placeName.isEmpty ? "(empty)" : result.questionMetadata.placeName)",
+            "- full: \(stringifyJSON(result.rawValue("question_metadata")))",
+            "",
+            "## 3. Time & Location (full evidence)",
+            "",
+            "- \(timeBag)",
+            "",
+            "## 4. Calculation Config (full evidence)",
+            "",
+            "- \(configBag)",
+            "",
+            "## 5. Angles",
             ""
         ]
-
-        lines += [
-            "## 2. Machine Summary",
-            ""
-        ]
-        lines += result.machineSummary.map { "- \($0)" }
-        lines += [
-            "",
-            "## 3. Radicality Flags",
-            ""
-        ]
-        lines += result.radicalityFlags.isEmpty ? ["- none"] : result.radicalityFlags.map { "- \($0.label) (\($0.severity))" }
-        lines += [
-            "",
-            "## 4. Angles",
-            ""
-        ]
-        lines += result.angles.map { "- \($0.name): \($0.degreeText)" }
-        lines += [
-            "",
-            "## 5. House Rulers",
-            ""
-        ]
-        lines += ["- " + result.houseRulers.map { "\($0.house): \($0.ruler)" }.joined(separator: ", ")]
-        lines += [
-            "",
-            "## 6. Planet Conditions",
-            ""
-        ]
-        lines += result.planets.map {
-            "- \($0.name): \($0.degreeText), H\($0.house), \($0.motion), \($0.sectStatus), \($0.solarPhase), score \($0.score)"
+        for p in result.angles.points {
+            lines.append("- \(p.id): \(p.longitudeDeg) (\(p.sign.displayEn))")
         }
         lines += [
+            "- ARMC: \(result.angles.armc.longitudeDeg.map { String($0) } ?? "null")",
+            "- full: \(stringifyJSON(result.rawValue("angles")))",
             "",
-            "## 7. Planetary Speeds",
+            "## 6. Houses",
             ""
         ]
-        lines += result.planetarySpeeds.map {
-            "- \($0.planet): \(String(format: "%.4f", $0.speed))°/day, \($0.speedState)\($0.station ? ", station" : "")"
+        for h in result.houses.cusps {
+            lines.append(
+                "- H\(h.house): cusp \(h.cuspLongitudeDeg) (\(h.sign.displayEn)), span \(h.spanDeg.map { String($0) } ?? "-")°, ruler \(h.domicileRulerId)"
+            )
         }
-        lines += [
-            "",
-            "## 8. Solar Condition",
-            ""
-        ]
-        lines += result.solarCondition.map {
-            "- \($0.planet): \($0.condition), \(degree($0.distanceFromSun, digits: 2)) from Sun"
+        lines.append("- full: \(stringifyJSON(result.rawValue("houses")))")
+        lines += ["", "## 7. Bodies (full evidence)", ""]
+        for b in result.bodies {
+            lines.append("- \(stringifyJSON(b.raw))")
         }
-        lines += [
-            "",
-            "## 9. Significator Candidates",
-            ""
-        ]
-        lines += result.significatorCandidates.map {
-            let position = $0.position.isEmpty ? "-" : $0.position
-            let house = $0.house > 0 ? "H\($0.house)" : "-"
-            let condition = $0.condition.isEmpty ? "-" : $0.condition
-            return "- \($0.role): \($0.planet) [\($0.source)] \(position) \(house) \(condition)"
+        lines += ["", "## 8. Dignities (full evidence)", ""]
+        for d in result.dignities {
+            lines.append("- \(stringifyJSON(d.raw))")
         }
-        lines += [
-            "",
-            "## 10. Moon Storyline",
-            "",
-            "- Moon current: \(result.moonStoryline.currentPosition) / H\(result.moonStoryline.currentHouse)",
-            "- Moon VOC: \(result.moonStoryline.voc ? "yes" : "no")",
-            "- Criterion: \(result.moonVocCriterion)",
-            "- Moon next sign ingress: \(result.moonStoryline.nextSign) @ \(result.moonStoryline.nextSignIngressTime)"
-        ]
-        if let last = result.moonStoryline.lastAspect {
-            lines.append("- Moon last exact aspect: \(last.aspectName) \(last.targetName) @ \(result.moonStoryline.lastAspectTime)")
+        lines += ["", "## 9. Pairwise Geometry (full evidence)", ""]
+        for p in result.pairwiseGeometry {
+            lines.append("- \(stringifyJSON(p.raw))")
+        }
+        let displayOrb = result.displayOrbDeg ?? result.calculationConfig.aspectOrbDeg
+        lines += ["", "## 10. Aspect Candidates (full; display_orb=\(displayOrb)°)", ""]
+        let candidates = result.aspectCandidates ?? result.aspects
+        if candidates.isEmpty {
+            lines.append("- none")
         } else {
-            lines.append("- Moon last exact aspect: unknown")
-        }
-        if let next = result.moonStoryline.nextAspect {
-            lines.append("- Moon next exact aspect before sign exit: \(next.aspectName) \(next.targetName) @ \(result.moonStoryline.nextAspectTime)")
-        } else {
-            lines.append("- Moon next exact aspect before sign exit: none")
-        }
-        if let firstAfterIngress = result.moonStoryline.firstAfterIngress {
-            lines.append("- First aspect after next sign ingress: \(firstAfterIngress.aspectName) \(firstAfterIngress.targetName) @ \(result.moonStoryline.firstAfterIngressTime)")
-        } else {
-            lines.append("- First aspect after next sign ingress: none")
-        }
-        if !result.moonStoryline.beforeSignExitAspects.isEmpty {
-            lines += ["", "### Moon Before Sign Exit Aspects", ""]
-            lines += result.moonStoryline.beforeSignExitAspects.map {
-                "- \($0.aspectName) \($0.targetName) @ \($0.exactLocal)"
+            // Full evidence dump for AI — no curated field loss
+            for a in candidates {
+                lines.append("- \(stringifyJSON(a.raw))")
             }
         }
-        lines += [
-            "",
-            "## 11. Key Significator Links",
-            "",
-        ]
-        lines += result.keySignificatorLinks.isEmpty ? ["- none detected"] : result.keySignificatorLinks.map {
-            "- \($0.pair): \($0.aspect.isEmpty ? "none" : $0.aspect) / \($0.type.isEmpty ? "-" : $0.type) / \($0.applying.isEmpty ? "-" : $0.applying) / perfects before sign exit: \($0.perfectsBeforeSignExit ? "yes" : "no") / next perfection: \($0.nextPerfection.isEmpty ? "none" : $0.nextPerfection) / reason: \($0.perfectionReason)\($0.reception.isEmpty ? "" : " / reception: \($0.reception)")"
-        }
-        lines += [
-            "",
-            "## 12. Degree-Based Key Aspects",
-            "",
-        ]
-        lines += result.degreeBasedKeyAspects.isEmpty
-            ? ["- none detected among selected significators"]
-            : result.degreeBasedKeyAspects.map {
-                "- \($0.bodyA) \($0.aspect) \($0.bodyB) / orb \($0.orb.map { degree($0, digits: 2) } ?? "-") / \($0.applying.isEmpty ? "-" : $0.applying) / exact time: \($0.exactTime.isEmpty ? "past / not computed" : $0.exactTime) / scope: selected significators"
+        lines += ["", "### Aspects within display orb", ""]
+        let inOrb = result.aspectsInDisplayOrb ?? result.aspects.filter { $0.withinDisplayOrb == true || $0.withinOrb == true }
+        if inOrb.isEmpty {
+            lines.append("- none")
+        } else {
+            for a in inOrb {
+                lines.append("- \(a.id)")
             }
+        }
+        lines += ["", "## 11. Receptions (full evidence)", ""]
+        if result.receptions.isEmpty {
+            lines.append("- none")
+        } else {
+            // AI path: dump entire reception object — no curated field loss.
+            for r in result.receptions {
+                lines.append("- \(stringifyJSON(r.raw))")
+            }
+        }
+        lines += ["", "## 12. Lots (full evidence)", ""]
+        for lot in result.lots {
+            lines.append("- \(stringifyJSON(lot.raw))")
+        }
+        lines += ["", "## 13. Events (full evidence)", ""]
+        if result.events.isEmpty {
+            lines.append("- none")
+        } else {
+            for ev in result.events {
+                lines.append("- \(stringifyJSON(ev.raw))")
+            }
+        }
+        lines += ["", "## 14. Moon Index (full evidence)", ""]
+        lines.append("- \(stringifyJSON(result.moon))")
+        lines += ["", "## 15. Visibility / Solar Geometry / Pheno (full evidence)", ""]
+        for v in result.visibility {
+            lines.append("- \(stringifyJSON(v.raw))")
+        }
+        lines += ["", "## 16. Nodes", ""]
+        lines.append("- \(stringifyJSON(result.nodes))")
+        lines += ["", "## 17. Event Graph", ""]
+        lines.append("- \(stringifyJSON(result.eventGraph))")
+        lines += ["", "## 18. Planetary Day / Hour", ""]
+        lines.append("- \(stringifyJSON(result.planetaryDayHour))")
+        lines += ["", "## 19. Considerations Evidence", ""]
+        if let cons = result.considerationsEvidence {
+            lines.append("- \(stringifyJSON(.array(cons)))")
+        } else {
+            lines.append("- null")
+        }
+        lines += ["", "## 20-23. Optional Modules (full evidence)", ""]
+        lines.append("- \(stringifyJSON(result.optionalModules))")
+        lines += ["", "## 24. Validation (full evidence)", ""]
         lines += [
-            "",
-            "## 13. Key Receptions",
-            "",
+            "- forbidden_field_scan: \(result.validation.forbiddenFieldScan ?? "unknown")",
+            "- body_count: \(result.validation.bodyCount.map { String($0) } ?? "-")",
+            "- aspect_count: \(result.validation.aspectCount.map { String($0) } ?? "-")",
+            "- event_count: \(result.validation.eventCount.map { String($0) } ?? "-")",
+            "- lot_count: \(result.validation.lotCount.map { String($0) } ?? "-")",
+            "- house_fallback_applied: \(result.validation.houseFallbackApplied.map { String($0) } ?? "-")",
+            "- full: \(stringifyJSON(result.rawValue("validation")))",
         ]
-        let keyReceptions = result.receptions.filter { ($0.strengthLabel ?? "") != "弱" && $0.dignity != "decan" }
-        lines += keyReceptions.isEmpty ? ["- none detected"] : keyReceptions.map {
-            "- \($0.receiver) receives \($0.received) via \($0.viaAspect) (\($0.strengthLabel ?? ""))"
+        if !result.validation.warnings.isEmpty {
+            lines += ["", "### Technical Warnings", ""]
+            lines += result.validation.warnings.map { "- \($0)" }
         }
         lines += [
             "",
-            "## 14. Negative Receptions",
+            "## 25. Display Metadata (full evidence)",
             "",
+            "- \(stringifyJSON(result.rawValue("display")))",
         ]
-        lines += result.negativeReceptions.isEmpty ? ["- none detected"] : result.negativeReceptions.map {
-            "- \($0.receiver) -> \($0.received) / \($0.debility) / \($0.viaAspect) / \($0.strength)"
-        }
-        lines += [
-            "",
-            "## 15. Lots Summary",
-            "",
-        ]
-        lines += result.lotsSummary.map {
-            "- \($0.lot): \($0.position) / H\($0.house) / \($0.ruler) / \($0.rulerCondition)\($0.keyNotes.isEmpty ? "" : " / \($0.keyNotes)")"
-        }
-        lines += [
-            "",
-            "## 16. Advanced Candidates",
-            "",
-        ]
-        lines += result.advancedCandidates.map {
-            let exact = ($0.exactTime?.isEmpty == false) ? " / exact: \($0.exactTime!)" : ""
-            let frustrating = ($0.frustratingPlanet?.isEmpty == false) ? " / frustrating: \($0.frustratingPlanet!)" : ""
-            return "- \($0.type) [\($0.status)]: \($0.details)\(exact)\(frustrating)"
-        }
-        lines += [
-            "",
-            "## 17. Scoring Note",
-            ""
-        ]
-        lines += ["- score / bonification / maltreatment are internal heuristic fields."]
-        lines += warnings(result.warnings)
         return lines.joined(separator: "\n")
     }
+
+    private static func stringifyJSON(_ value: HoraryV2JSONValue?) -> String {
+        guard let value else { return "null" }
+        // Full AI Markdown must not drop evidence blocks (event_graph, antiscia, declination).
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        guard let data = try? encoder.encode(value),
+              let s = String(data: data, encoding: .utf8) else {
+            return "null"
+        }
+        return s
+    }
+
 }

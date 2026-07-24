@@ -485,9 +485,39 @@ struct HoraryRequest: Codable {
     let placeName: String
     let questionText: String
     let aspectOrb: Double
+    /// Canonical packet is v2 (`"2"`). Use `"1"` / `"legacy"` only for the deprecated interpretive adapter.
+    let packetVersion: String
     let ephemerisPath: String?
     let noAsteroids: Bool
     let requireEphemeris: String
+
+    enum CodingKeys: String, CodingKey {
+        case mode, chart, placeName, questionText, aspectOrb
+        case packetVersion
+        case ephemerisPath, noAsteroids, requireEphemeris
+    }
+
+    init(
+        mode: String,
+        chart: HoraryChartSettings,
+        placeName: String,
+        questionText: String,
+        aspectOrb: Double,
+        packetVersion: String = "2",
+        ephemerisPath: String?,
+        noAsteroids: Bool,
+        requireEphemeris: String
+    ) {
+        self.mode = mode
+        self.chart = chart
+        self.placeName = placeName
+        self.questionText = questionText
+        self.aspectOrb = aspectOrb
+        self.packetVersion = packetVersion
+        self.ephemerisPath = ephemerisPath
+        self.noAsteroids = noAsteroids
+        self.requireEphemeris = requireEphemeris
+    }
 }
 
 struct VedicRequest: Codable {

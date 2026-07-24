@@ -45,6 +45,10 @@ struct ContentView: View {
     @State var horaryQuestionText = ""
     @StateObject var currentLocationManager = CurrentLocationManager()
     @State var selectedHouseSystem = "whole_sign"
+    /// Horary-only house system; independent of natal/classical `selectedHouseSystem`.
+    @State var horaryHouseSystem = "regiomontanus"
+    /// Horary display orb for within_display_orb filter; independent of classicalAspectOrb.
+    @State var horaryAspectOrb = 3.0
     @State var selectedZodiac = "tropical"
     @State var selectedBoundsSystem = "egyptian"
     @State var selectedTriplicitySystem = "dorothean"

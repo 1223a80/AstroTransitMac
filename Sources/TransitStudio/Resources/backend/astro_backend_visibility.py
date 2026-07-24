@@ -326,11 +326,21 @@ def _planetary_hours(
         }
 
     # Next sunrise for night-hour end.
-    next_seed = sunrise + timedelta(hours=12)
+    # Seed AFTER sunset (not sunrise+12h): _sun_rise_set rewinds jd0 by 0.5d, so a
+    # mid-afternoon seed often re-finds the same day's sunrise and falsely trips
+    # the polar/unavailable guard (next_sunrise <= sunset).
+    next_seed = sunset + timedelta(minutes=1)
     next_sunrise, _, next_notes = _sun_rise_set(next_seed, latitude, longitude, altitude_m, warnings)
     for note in next_notes:
         if "sunrise" in note:
             warnings.append(f"行星时次日日出：{note}")
+    # If still not after sunset (edge cases / same-event re-hit), force a +24h seed.
+    if next_sunrise is None or next_sunrise <= sunset:
+        next_seed = sunrise + timedelta(hours=24)
+        next_sunrise, _, next_notes2 = _sun_rise_set(next_seed, latitude, longitude, altitude_m, warnings)
+        for note in next_notes2:
+            if "sunrise" in note:
+                warnings.append(f"行星时次日日出：{note}")
     if next_sunrise is None or next_sunrise <= sunset:
         return {
             "status": "unavailable",
