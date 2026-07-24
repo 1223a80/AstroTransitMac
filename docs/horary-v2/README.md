@@ -55,6 +55,6 @@ See [MIGRATION.md](./MIGRATION.md).
 
 ## Samples
 
-- JSON: `docs/examples/horary-data-packet-v2-sample.json`
+- Canonical JSON: `docs/examples/horary-data-packet-v2-linyi-golden.json`
 - Markdown: `docs/examples/horary-data-packet-v2-sample.md`
 - Example request: `Examples/sample-horary-request.json`

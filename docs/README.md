@@ -20,6 +20,6 @@ Use these files before changing the project:
 - `horary-v2/` - Horary Data Packet v2 architecture, field dictionary, and v1→v2 migration guide.
 - `schemas/horary-data-packet-2.1.json` - production machine-readable schema for the judgment-free horary packet (`horary-data-packet/2.1`).
 - `schemas/horary-data-packet-2.0.json` - historical/compatibility schema (pre-2.1 required key set).
-- `examples/horary-data-packet-v2-sample.json` / `.md` / `summary.md` / `linyi-golden.json` - sample and golden outputs.
+- `examples/horary-data-packet-v2-sample.md` / `summary.md` / `linyi-golden.json` - readable samples and the canonical JSON golden output.
 
 The root `README.md` is the user-facing overview. Keep detailed agent handoff notes, audits, and active implementation requirements in `AGENTS.md` or this `docs/` folder rather than expanding the README indefinitely.
