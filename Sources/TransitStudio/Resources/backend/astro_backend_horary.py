@@ -1186,6 +1186,15 @@ def _detect_translation(
         for row in planet_rows
         if row["id"] not in {moon_row["id"], querent_row["id"], matter_row["id"]}
     ]
+    translation_options: list[
+        tuple[
+            datetime | None,
+            str | None,
+            dict[str, Any],
+            dict[str, Any],
+            dict[str, Any],
+        ]
+    ] = []
     for translator in translators:
         for separated_row, applying_row in [(querent_row, matter_row), (matter_row, querent_row)]:
             if translator["id"] in {separated_row["id"], applying_row["id"]}:
@@ -1203,22 +1212,34 @@ def _detect_translation(
             if separated_event["applying"] != "离相" or applying_event["applying"] != "入相":
                 continue
             exact_time = None
+            exact: datetime | None = None
             if chart_dt is not None:
                 exact = applying_event["exact"]
                 if exact is None:
                     continue
                 exact_time = applying_event["exact_time"]
-            return {
-                "id": "translation",
-                "type": "Translation of Light",
-                "status": "detected",
-                "details": f"{translator['name']} 先离相于 {separated_row['name']}，再入相于 {applying_row['name']}",
-                "planets": [translator["name"], separated_row["name"], applying_row["name"]],
-                "exact_time": exact_time,
-                "translator": translator["name"],
-                "from": separated_row["name"],
-                "to": applying_row["name"],
-            }
+            translation_options.append(
+                (exact, exact_time, translator, separated_row, applying_row)
+            )
+
+    if translation_options:
+        best = (
+            min(translation_options, key=lambda item: item[0])
+            if chart_dt is not None
+            else translation_options[0]
+        )
+        _exact, exact_time, translator, separated_row, applying_row = best
+        return {
+            "id": "translation",
+            "type": "Translation of Light",
+            "status": "detected",
+            "details": f"{translator['name']} 先离相于 {separated_row['name']}，再入相于 {applying_row['name']}",
+            "planets": [translator["name"], separated_row["name"], applying_row["name"]],
+            "exact_time": exact_time,
+            "translator": translator["name"],
+            "from": separated_row["name"],
+            "to": applying_row["name"],
+        }
 
     return {"id": "translation", "type": "Translation of Light", "status": "not detected", "details": "未找到先离相一方、再入相另一方的翻译者", "planets": [], "exact_time": None}
 
@@ -1243,6 +1264,13 @@ def _detect_collection(
     facts = event_facts if event_facts is not None else build_advanced_aspect_events(
         planet_rows, chart_dt, warning_list, aspect_orb, sidereal,
     )
+    main_exact: datetime | None = None
+    if chart_dt is not None:
+        main_event = advanced_aspect_event(facts, querent_row, matter_row)
+        if main_event is not None and main_event["applying"] == "入相":
+            main_exact = main_event["exact"]
+
+    collection_options: list[tuple[datetime | None, dict[str, Any]]] = []
     for collector in planet_rows:
         if collector["id"] in {querent_row["id"], matter_row["id"]}:
             continue
@@ -1267,20 +1295,18 @@ def _detect_collection(
             if len(exact_times) != 2:
                 continue
 
-        # Collection must complete BEFORE the main querent-matter aspect.
-        # A collection that finishes after the main aspect already perfected
-        # cannot be said to "collect" light for something already done.
-        main_exact = None
-        if chart_dt is not None:
-            main_event = advanced_aspect_event(facts, querent_row, matter_row)
-            if main_event is not None and main_event["applying"] == "入相":
-                main_exact = main_event["exact"]
-
         collection_completion = max(exact_times) if exact_times else None
         if main_exact is not None and collection_completion is not None:
             if collection_completion >= main_exact:
                 continue  # collection completes after main aspect → not valid
+        collection_options.append((collection_completion, collector))
 
+    if collection_options:
+        collection_completion, collector = (
+            min(collection_options, key=lambda item: item[0])
+            if chart_dt is not None
+            else collection_options[0]
+        )
         completion_time = format_local(collection_completion) if collection_completion else None
         return {
             "id": "collection",
@@ -1329,6 +1355,9 @@ def _detect_prohibition(
         if main_exact is None:
             return {"id": "prohibition", "type": "Prohibition", "status": "not detected", "details": "主相位未在换座前完成，无法比较禁止顺序", "planets": [], "exact_time": None}
 
+    prohibition_options: list[
+        tuple[datetime, dict[str, Any], dict[str, Any]]
+    ] = []
     for third_row in planet_rows:
         if third_row["id"] in {querent_row["id"], matter_row["id"]}:
             continue
@@ -1340,15 +1369,23 @@ def _detect_prohibition(
                 third_exact = third_event["exact"]
                 if third_exact is None or third_exact >= main_exact:
                     continue
-                return {
-                    "id": "prohibition",
-                    "type": "Prohibition",
-                    "status": "detected",
-                    "details": f"{third_row['name']} 先于 Querent 与 Matter 的主相位成相",
-                    "planets": [querent_row["name"], matter_row["name"], third_row["name"]],
-                    "exact_time": format_local(third_exact),
-                    "prohibitor": third_row["name"],
-                }
+                prohibition_options.append((third_exact, third_row, target_row))
+
+    if prohibition_options:
+        third_exact, third_row, target_row = min(
+            prohibition_options, key=lambda item: item[0],
+        )
+        return {
+            "id": "prohibition",
+            "type": "Prohibition",
+            "status": "detected",
+            "details": f"{third_row['name']} 先于 Querent 与 Matter 的主相位成相",
+            "planets": [querent_row["name"], matter_row["name"], third_row["name"]],
+            "exact_time": format_local(third_exact),
+            "prohibitor": third_row["name"],
+            "_event_key": tuple(sorted((third_row["id"], target_row["id"]))),
+            "_event_exact": third_exact,
+        }
 
     return {"id": "prohibition", "type": "Prohibition", "status": "not detected", "details": "未检测到禁止相位", "planets": [], "exact_time": None}
 
@@ -1393,6 +1430,7 @@ def _detect_frustration(
 
     faster_row, slower_row = (querent_row, matter_row) if querent_speed > matter_speed else (matter_row, querent_row)
     slower_speed = abs(float(slower_row.get("speed", 0.0)))
+    frustration_options: list[tuple[datetime, dict[str, Any]]] = []
     for third_row in planet_rows:
         if third_row["id"] in {querent_row["id"], matter_row["id"]}:
             continue
@@ -1404,6 +1442,12 @@ def _detect_frustration(
         third_exact = third_event["exact"]
         if third_exact is None or third_exact >= main_exact:
             continue
+        frustration_options.append((third_exact, third_row))
+
+    if frustration_options:
+        third_exact, third_row = min(
+            frustration_options, key=lambda item: item[0],
+        )
         return {
             "id": "frustration",
             "type": "Frustration",
@@ -1413,6 +1457,8 @@ def _detect_frustration(
             "exact_time": format_local(third_exact),
             "frustrated_planet": faster_row["name"],
             "frustrating_planet": third_row["name"],
+            "_event_key": tuple(sorted((slower_row["id"], third_row["id"]))),
+            "_event_exact": third_exact,
         }
 
     return {"id": "frustration", "type": "Frustration", "status": "not detected", "details": "未检测到主相位前较慢方先与第三方成相", "planets": [], "exact_time": None}
@@ -1435,16 +1481,15 @@ def advanced_candidates(
     prohibition = _detect_prohibition(candidates, key_links, key_aspects, moon_story, planet_rows, chart_dt, warnings, aspect_orb, sidereal, event_facts)
     frustration = _detect_frustration(candidates, key_links, key_aspects, moon_story, planet_rows, chart_dt, warnings, aspect_orb, sidereal, event_facts)
 
-    # Dedup: if Prohibition and Frustration detect the same event (same exact_time
-    # and same third planet), keep only Frustration as the more specific subtype.
-    # The other is marked "not detected" with an explanation.
+    # Dedup only the same exact pair event. Formatted minute strings and the
+    # third planet name are not precise enough to identify an event.
     results = [translation, collection, prohibition, frustration]
     if (
         prohibition["status"] == "detected"
         and frustration["status"] == "detected"
-        and prohibition.get("exact_time")
-        and prohibition["exact_time"] == frustration.get("exact_time")
-        and prohibition.get("prohibitor") == frustration.get("frustrating_planet")
+        and prohibition.get("_event_key")
+        and prohibition["_event_key"] == frustration.get("_event_key")
+        and prohibition.get("_event_exact") == frustration.get("_event_exact")
     ):
         prohibition = {
             "id": "prohibition",
@@ -1456,6 +1501,9 @@ def advanced_candidates(
         }
         results[2] = prohibition
 
+    for result in results:
+        result.pop("_event_key", None)
+        result.pop("_event_exact", None)
     return results
 
 
@@ -1499,6 +1547,14 @@ def calculate_horary(request: dict[str, Any], warnings: list[str]) -> dict[str, 
     radicality = radicality_flags(snapshot, moon_packet)
     house_ruler_rows = house_rulers(snapshot["houses"])
     candidates = significator_candidates(question_text, snapshot)
+    matter_candidate = next(
+        (row for row in candidates if row.get("role") == "Matter / Outcome"),
+        None,
+    )
+    if matter_candidate is None or not matter_candidate.get("planet_id"):
+        warnings.append(
+            "问题文本无法确定 Matter / Outcome 宫位；关键征象星链接与 Advanced 判断未评估。"
+        )
     key_links = key_significator_links(chart_dt, candidates, snapshot["planets"], snapshot["receptions"], moon_packet, warnings, aspect_orb, sidereal=sidereal)
     key_degree_aspects = degree_based_key_aspects(chart_dt, candidates, snapshot["planets"], warnings, aspect_orb, sidereal=sidereal)
     key_lots = lot_ruler_condition(snapshot["lots"], snapshot["planets"])

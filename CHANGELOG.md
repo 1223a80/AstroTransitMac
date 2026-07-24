@@ -301,6 +301,13 @@
 - 修复 Composite 非 Whole Sign 宫位重建对 `build_houses()` 三元返回值的错误 unpack；保持现有 MC-shift、Whole Sign 与真实 fallback warning 语义，并增加 Placidus/Equal/Porphyry 回归。
 - 修复推进月相使用无方向最短夹角的问题，改用有向 `Moon - Sun` 周期角区分八相；保留 `sun_moon_separation` 与原响应字段，增加盈亏月相和跨 0° 回归。
 - 本批不新增 mode、不改变现有 JSON shape，也不涉及模糊出生时间降级。
+## 2026-07-13 — 项目遗留收尾
+
+- 新增 Horary 二次审查聚焦回归，锁定未知 Matter 无可见诊断、嵌套时刻/选项 ID 校验缺口，以及 Advanced 检测按行星数组顺序而非最早事件返回的残留风险。
+- Horary 请求校验现在复用既有时区/夏令时解析，拒绝非整数时刻字段、无效日期/时区/DST 时刻、非法 fold，并使用共享常量校验宫制、黄道、界与三分主体系 ID。
+- Translation 与 Collection 不再按 Moon 优先或行星数组顺序返回首个候选，而是从共享事件事实中选择最早入相/完成事件。
+- Prohibition 与 Frustration 同样改为选择主相位前的最早第三方事件；去重使用精确 datetime + 行星对标识，不再依赖分钟格式化文本，并补同一分钟内不同行星对不得误去重的回归。
+- 问题文本无法推断 Matter 时，响应 `warnings` 明确说明关键链接与 Advanced 未评估；不扩展 `P3-02` 关键词或派生宫规则。
 
 ## 2026-07-11 — Horary 审计全量修复发布 1.3.1 (41)
 

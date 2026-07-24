@@ -228,7 +228,6 @@ All of B13–B20 implemented with independent backends, samples, fixtures, Swift
 ---
 
 # Horary 审计问题全量修复（2026-07-11）
-
 ## 分支
 
 `codex/fix-horary-audit-2026-07`（基于 `49002fe`，包含审计文档及修复改动）
@@ -254,7 +253,7 @@ All of B13–B20 implemented with independent backends, samples, fixtures, Swift
 
 - P3-02 保持 DECISION_REQUIRED：未增加 quesited-house picker，也未擅自扩展 derived-house 关键词。
 - 未改变 VOC、out-of-sign、mutual reception、moiety、默认宫制或 Hayz/ASC 业务口径。
-- 未 push；分支改动在本地提交后交付。
+- 修复分支后续已并入 `main` 并推送；当前基线 `4f55ad0` 与 `origin/main` 对齐。
 
 # PLANS
 
@@ -496,7 +495,7 @@ All of B13–B20 implemented with independent backends, samples, fixtures, Swift
 | 03 第 1 期施工（Dark Mode，1.2.0/36） | ✅ | 施工完成，等待验收。门禁 check_vibe_changes.sh 全绿，版本 1.2.0/36 |
 | 04 第 1 期验收 | ✅ | diff 与任务书逐项一致（strongLineGray 用 inkSoft 引用属等价实现）；门禁复跑全绿 |
 | 05 第 2 期施工（顶栏布局，1.2.1/37） | ✅ | 施工完成，等待验收。门禁全绿，版本 1.2.1/37 |
-| 06 第 2 期验收 | ✅ | 唯一偏离（档案胶囊摘要误用编辑态数据）已由评审模型修正并复建通过；待手测深色下星盘图即时刷新 |
+| 06 第 2 期验收 | ✅ | 档案胶囊摘要偏离已修正并复建通过；星盘图外观刷新兜底与浅/深色截图核对在后续第 3–6 期完成 |
 | 07 第 3–5 期（垂直目录/扫描时间轴/AI 侧滑） | ✅ | 用户改为让评审模型直接施工，三期合并一笔完成（1.2.2/38）：古典/Horary 垂直目录、扫描时间轴（含表格切换）、AI 全局侧滑面板、星盘图外观切换兜底 |
 | 08 合并 main + 打包覆盖 /Applications | ✅ | 门禁全绿（Python 512 / Swift 33 / 4 smoke）；main 快进合并；安装版 `1.2.2 (38)`，codesign 通过、无 pyc、安装后端 classical smoke 通过 |
 | 09 第 6 期打磨（1.2.3/39） | ✅ | 用户反馈"细节不够打磨"后，用真机截图定位：焦点环/分段器拉伸/按钮截断/表格空斑马纹/双标题冗余/时间轴标签裁切/启动不载入档案等 10 项，逐项修复；浅色+深色截图核对 |
@@ -662,7 +661,7 @@ All of B13–B20 implemented with independent backends, samples, fixtures, Swift
 
 ---
 
-# Expansion 002: 恒星与赤纬 + 中世纪技法深化 — 规划中（2026-07-01）
+# Expansion 002: 恒星与赤纬 + 中世纪技法深化 — 已完成（2026-07-01）
 
 ## 状态
 ✅ 全部 Phase 已完成（编码 + 测试）
@@ -698,15 +697,9 @@ All of B13–B20 implemented with independent backends, samples, fixtures, Swift
 | 2.2 三分主星序列 | ✅ | Sect light 三分主星 + ASC 三分主星 |
 | 2.3 Kurios / Oikodespotes | ✅ | 综合权重判定盘主星 |
 | 2.4 年主+日返融合 | ✅ | 返照 ASC vs 小限 + 年主在返照盘的状态 + 机器摘要 |
-| 2.5 月小限增强 | 🔲 | 推迟（前端改动为主） |
-| 2.6 界推进深化 | 🔲 | 推迟（前端改动为主） |
+| 2.5 月小限增强 | ⏸️ | 明确延期（前端改动为主，不属本批验收） |
+| 2.6 界推进深化 | ⏸️ | 明确延期（前端改动为主，不属本批验收） |
 | 2.7 测试 | ✅ | 10 个中世纪技法单元测试已添加 |
-| 2.2 三分主星序列 | ⬜ | Sect light 三分主星 + ASC 三分主星 |
-| 2.3 Kurios / Oikodespotes | ⬜ | 综合权重判定盘主星 |
-| 2.4 年主+日返融合 | ⬜ | 返照 ASC vs 小限 + 年主在返照盘的状态 + 机器摘要 |
-| 2.5 月小限增强 | ⬜ | 月主条件 + 当月行运触发 |
-| 2.6 界推进深化 | ⬜ | 当前界主突出 + 与其他技法交叉标注 |
-| 2.7 测试 | ⬜ | 扩展阿拉伯点、三分主星、Kurios、日返融合回归测试 |
 
 ## 详细文档
 见 `docs/expansion-002/`
@@ -1432,7 +1425,7 @@ interpretation_context / NLP 事项宫 / 自动征象星 / 转宫矩阵 / yes-no
 |---|---|---|
 | 01 安全快照 | ✅ | 原混合工作区已保全为 `e3d95ba`，无文件丢失 |
 | 02 干净整合 | ✅ | 以高级 UI `7cd1097` 为基线，拆出 Horary v2.1 与主布局两个独立提交 |
-| 03 Legacy Horary 遗漏 | 🔄 | 移植输入校验、最早事件选择、精确去重及测试 |
-| 04 CI 与记录清理 | ⏳ | 补齐 PR 触发、smoke 覆盖与过期计划标记 |
+| 03 Legacy Horary 遗漏 | ✅ | 已移植输入校验、最早事件选择、精确去重；Horary 127 项通过 |
+| 04 CI 与记录清理 | 🔄 | 补齐 PR 触发、smoke 覆盖与过期计划标记 |
 | 05 完整验证 | ⏳ | `check_vibe_changes.sh`、diff、版本一致性、缓存清理 |
 | 06 分支整理 | ⏳ | 快进本地 main，删除确认已合并的本地枝，保留安全快照 |

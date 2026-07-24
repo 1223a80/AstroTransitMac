@@ -10,6 +10,13 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from backend_runtime import apply_runtime_options
 
+from astro_backend_constants import (
+    ALL_BOUNDS_SYSTEMS,
+    ALL_HOUSE_SYSTEMS,
+    ALL_TRIPLICITY_SYSTEMS,
+    ALL_ZODIACS,
+)
+
 from astro_backend_classical import (
     calculate_almuten_figuris,
     calculate_antiscia,
@@ -733,8 +740,45 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
     }
 
 
+def _is_finite_number(value: Any) -> bool:
+    return (
+        not isinstance(value, bool)
+        and isinstance(value, (int, float))
+        and math.isfinite(float(value))
+    )
+
+
+def _validate_horary_moment(moment: dict[str, Any], invalid: list[str]) -> None:
+    integer_fields = ("year", "month", "day", "hour", "minute")
+    wrong_types = [
+        field
+        for field in integer_fields
+        if isinstance(moment.get(field), bool) or not isinstance(moment.get(field), int)
+    ]
+    if wrong_types:
+        invalid.append(
+            "chart.moment fields must be integers: " + ", ".join(wrong_types)
+        )
+
+    timezone_value = moment.get("timezone")
+    if not isinstance(timezone_value, str) or not timezone_value.strip():
+        invalid.append("chart.moment.timezone must be a non-empty string")
+
+    fold = moment.get("fold")
+    if fold is not None and (isinstance(fold, bool) or not isinstance(fold, int) or fold not in (0, 1)):
+        invalid.append("chart.moment.fold must be 0 or 1")
+
+    if wrong_types or not isinstance(timezone_value, str) or not timezone_value.strip():
+        return
+
+    try:
+        moment_to_local_datetime(moment)
+    except (OverflowError, TypeError, ValueError) as exc:
+        invalid.append(f"chart.moment is invalid: {exc}")
+
+
 def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
-    """Return an error dict if required fields are missing, otherwise None."""
+    """Return the structured input error for missing or invalid fields."""
     mode = request.get("mode", "")
     supported_modes = {
         "moment", "classical", "vedic", "horary", "scan", "rectify",
@@ -907,23 +951,41 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             if not isinstance(moment, dict):
                 missing.append("chart.moment")
             else:
-                for field in ("year", "month", "day", "hour", "minute", "timezone"):
+                moment_fields = ("year", "month", "day", "hour", "minute", "timezone")
+                missing_moment_fields = []
+                for field in moment_fields:
                     if field not in moment:
                         missing.append(f"chart.moment.{field}")
+                        missing_moment_fields.append(field)
+                if not missing_moment_fields:
+                    _validate_horary_moment(moment, invalid)
             for field in ("latitude", "longitude"):
                 if field not in chart:
                     missing.append(f"chart.{field}")
             latitude = chart.get("latitude")
             longitude = chart.get("longitude")
-            if latitude is not None and (isinstance(latitude, bool) or not isinstance(latitude, (int, float)) or not -90 <= latitude <= 90):
+            if latitude is not None and (not _is_finite_number(latitude) or not -90 <= float(latitude) <= 90):
                 invalid.append("chart.latitude must be a number in [-90, 90]")
-            if longitude is not None and (isinstance(longitude, bool) or not isinstance(longitude, (int, float)) or not -180 <= longitude <= 180):
+            if longitude is not None and (not _is_finite_number(longitude) or not -180 <= float(longitude) <= 180):
                 invalid.append("chart.longitude must be a number in [-180, 180]")
+
+            option_contracts = {
+                "houseSystem": ("regiomontanus", ALL_HOUSE_SYSTEMS),
+                "zodiac": ("tropical", ALL_ZODIACS),
+                "boundsSystem": ("egyptian", ALL_BOUNDS_SYSTEMS),
+                "triplicitySystem": ("dorothean", ALL_TRIPLICITY_SYSTEMS),
+            }
+            for field, (default, allowed) in option_contracts.items():
+                value = chart.get(field, default)
+                if not isinstance(value, str) or value not in allowed:
+                    invalid.append(
+                        f"chart.{field} must be one of: {', '.join(allowed)}"
+                    )
         question_text = request.get("questionText")
         if not isinstance(question_text, str) or not question_text.strip():
             missing.append("questionText")
         aspect_orb = request.get("aspectOrb", 3.0)
-        if isinstance(aspect_orb, bool) or not isinstance(aspect_orb, (int, float)) or not 0 <= aspect_orb <= 10:
+        if not _is_finite_number(aspect_orb) or not 0 <= float(aspect_orb) <= 10:
             invalid.append("aspectOrb must be a number in [0, 10]")
         packet_version = str(
             request.get("packetVersion")
