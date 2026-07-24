@@ -1426,6 +1426,6 @@ interpretation_context / NLP 事项宫 / 自动征象星 / 转宫矩阵 / yes-no
 | 01 安全快照 | ✅ | 原混合工作区已保全为 `e3d95ba`，无文件丢失 |
 | 02 干净整合 | ✅ | 以高级 UI `7cd1097` 为基线，拆出 Horary v2.1 与主布局两个独立提交 |
 | 03 Legacy Horary 遗漏 | ✅ | 已移植输入校验、最早事件选择、精确去重；Horary 127 项通过 |
-| 04 CI 与记录清理 | 🔄 | 补齐 PR 触发、smoke 覆盖与过期计划标记 |
-| 05 完整验证 | ⏳ | `check_vibe_changes.sh`、diff、版本一致性、缓存清理 |
+| 04 CI 与记录清理 | ✅ | 已补齐 PR 触发、moment/harmonic/B13–B20/rectify smoke 与过期计划标记 |
+| 05 完整验证 | 🔄 | `check_vibe_changes.sh`、diff、版本一致性、缓存清理 |
 | 06 分支整理 | ⏳ | 快进本地 main，删除确认已合并的本地枝，保留安全快照 |
