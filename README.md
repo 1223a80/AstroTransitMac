@@ -1,241 +1,642 @@
 # Transit Studio
 
-Transit Studio 是一个运行在 macOS 上、基于 SwiftUI 的占星计算应用。界面层使用 Swift 编写，计算工作委托给随应用打包的 Python 后端，并通过 `pyswisseph` 完成。当前项目同时覆盖现代、古典、卜卦与吠陀四套工作流，并提供图轮、导出和 AI 辅助分析工具。
+Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界面使用 SwiftUI，计算层使用 Python 与 Swiss Ephemeris；Swift 通过启动随应用打包的 `transit_calc.py` 子进程，以 stdin/stdout JSON 契约取得计算结果。
 
-## 功能概览
+当前发布版本为 **1.4.2 (44)**。项目覆盖现代、古典、Horary 与吠陀工作流，并提供星盘图、结构化结果页、Markdown / JSON / CSV 导出、部分模式的流式 AI 分析，以及三级生时矫正。
 
-- 现代工作流：
-  - 计算本命盘与行运位置。
-  - 计算某个特定时刻的行运对本命相位。
-  - 扫描一段时间窗口内的精确相位命中、入座事件与留逆/顺行站点。
-  - 支持可配置 point set、Vertex / Antivertex / Equatorial Ascendant、赤纬、出界、平行 / 反平行、盘型与相位图形等结构化本命信息。
-  - 支持合盘（Synastry）、组合盘（Composite）、戴维森盘（Davison）、次限推进（Secondary Progressions）、太阳弧（Solar Arc）、调和盘（Harmonic）和 Progressed Composite。
-  - 支持现代 Solar / Lunar Return、本命中点轴与中点激活，以及包含 entering / exact / leaving、多次逆行命中编号的综合预测时间线。
-  - 支持 Transit → Composite / Davison 等关系动态计算，并输出 point-set、method、trace 与 cross-aspect 等可审计数据。
-  - 支持 Relocation、朔望与日月食周期、地点可见性、本命接触、Astrocartography 和 Local Space 计算。
-- 古典工作流：
-  - 支持古典本命盘，包含四轴、宫位、七政、50+ Lots、相位、接纳、antiscia、赤纬相位、固定星、尊贵与偶然状态审计。
-  - 支持年 / 月小限、Firdaria、Decennials、Zodiacal Releasing、七政返照、年主与 Solar Return 综合，以及统一时间线。
-  - 支持主限（Primary Directions）、沿界推进（Circumambulations）、Prenatal Syzygy、Almuten Figuris、Kurios / Oikodespotes 与 Hyleg / Alcocoden 审计数据。
-  - 支持生时矫正（Rectify），采用 1 分钟 / 5 秒 / 1 秒三级滑杆细化，并显示 Python 后端实时进度。
-- 卜卦工作流：
-  - 支持 Horary 起盘与结果展示。
-- 吠陀 / Jyotish 工作流：
-  - 支持 sidereal 模式与多种 ayanamsha（Lahiri、Raman、Krishnamurti、Yukteshwar、True Citra 等）。
-  - 支持 Panchanga（Tithi / Vara / Nakshatra / Yoga / Karana）与日出日落。
-  - 支持 Rasi、Navamsa 以及一组 divisional charts（D1 / D2 / D3 / D4 / D7 / D9 / D10 / D12 / D16 / D20 / D24 / D27 / D30 / D40 / D45 / D60）。
-  - 支持 Moon Chart、Bhava Chart、Upagrahas、Special Lagnas、Arudha、Jaimini Karakas、Ashtakavarga、Vimshottari / Yogini / Ashtottari Dasa、Shadbala 与 Vedic Yogas。
-- 通用工具能力：
-  - 支持星盘图（Chart Wheel）可视化。
-  - 支持导出 Markdown、JSON 和 CSV / 类 CSV 文本格式结果；古典与吠陀支持按 section 选择 Markdown 导出。
-  - 支持部分结果页的 AI 分析标签页，包括本命、时间点、窗口扫描、古典与 Horary；吠陀导出内容也面向 AI 消费组织。
-  - 支持自定义天体、小行星星历策略、节点模式和小行星下载辅助。
+> Transit Studio 首先是一套“可计算、可复算、可审计”的数据工具。部分模块只输出事实、方法与证据，不自动给出吉凶、寿命、择时推荐或 Horary 最终判断。
 
-## B6 后计算路线（规划中）
+## 当前状态
 
-> 本节是后续路线，不代表这些功能已经交付。当前已实现能力以“功能概览”和后端契约为准。
+| 项目 | 当前实现 |
+|---|---|
+| 应用版本 | 1.4.2 (44) |
+| 系统要求 | macOS 13 或更高 |
+| 应用架构 | Swift Package executable；当前打包脚本生成 arm64 `.app` |
+| 前端 | SwiftUI |
+| 后端 | Python 3 + `pyswisseph` |
+| 星历 | 仓库内置 Swiss Ephemeris 文件，也可配置外部 `.se1` 目录 |
+| 后端协议 | 单次 JSON 请求写入 stdin，JSON 响应写入 stdout |
+| Horary 默认协议 | `horary-data-packet/2.1`，判断无关的数据包 |
+| AI | OpenAI-compatible Chat Completions / SSE 接口；需要用户自行配置 Base URL、模型和 API Key |
+| 自动化验证 | GitHub Actions 在 push 与 pull request 上执行 Swift、Python 和后端 smoke |
+| 1.4.2 本地门禁 | Python 912 项、Swift 140 项、全部登记 smoke 通过 |
 
-下一阶段继续以“本地可计算、可复算、可审计、Markdown 可完整导出”为准绳；先输出坐标、时间、周期、相位、容许度、方法和公式证据，再考虑解释性内容。同名技法存在不同流派时，必须在请求、响应 `meta` 和 Markdown 中显式记录方法，不能静默使用未说明的默认值。
+## 1.4.2 已交付更新
 
-近期优先批次：
+1.4.2 汇总了 B7–B20 计算扩展、古典进阶工作区、Horary v2.1 和主窗口布局收口。以下均为已经接入 UI、后端、模型、导出与测试的现有能力，不是 roadmap。
 
-1. **B7 动态赤纬事件**（已交付 mode=`declination_timing`）：平行 / 反平行精确时间、OOB 进入与离开、赤纬停滞、orb 生命周期和多次命中。
-2. **B8 行星返照与逆行周期**：把现代返照扩展到水星至外行星，补齐逆行前阴影、逆行区间、后阴影及重复触发。
-3. **B9 古典可见相位与行星时**：基于 Swiss Ephemeris 计算 heliacal rising / setting、地方升落与昼夜不等时。
-4. **B10 行星会合周期**：任意两星的 synodic cycle、合冲四分、周期阶段、相对速度和对本命 point set 的接触。
+### B7–B20 计算扩展
 
-后续现代方向包括 Draconic、进阶次限与太阳弧方法、行星轨道节点 / 近日点 / 远日点、Heliocentric 对照、45° / 90° dial、年龄与关系调和盘。后续古典方向包括 Hellenistic planetary condition audit、完整 Dodekatemoria、Monomoiria、Topical Almutens、Profections / ZR 深化、Prenatal Syzygy 完整盘、fixed-star parans、mundane ingress 和 electional fact scanner。
+| 批次 | 已交付能力 | 当前入口 |
+|---|---|---|
+| B7 | 动态赤纬时间线：平行、反平行、OOB 进入 / 离开、赤纬停滞、多 pass | 现代 → 赤纬事件 |
+| B8 | 太阳、月亮、水星至冥王星及 Chiron 返照；真实 station 驱动的前阴影、逆行区间、后阴影与重复触发 | 现代 → 返照盘 / 逆行阴影 |
+| B9 | Swiss Ephemeris heliacal phases、地方升落、昼夜不等行星时 | 古典进阶 → 可见相位 / 行星时 |
+| B10 | 任意两星的 synodic cycle、合冲刑等相位阶段、相对速度、pass 和本命接触 | 现代 → 会合周期 |
+| B11 | Hellenistic condition evidence：sect、hayz、oriental / occidental、overcoming、enclosure 等 | 古典进阶 → 希腊状态审计 |
+| B12 | 真 / 平交点 Draconic 移位盘与 heliocentric 坐标对照 | 现代 → Draconic / 日心 |
+| B13 | Dodekatemoria、Monomoiria、Topical Almutens | 古典进阶 → 派生盘 / 尊贵 |
+| B14 | Profection 扩展、ZR L4、Fortune / Spirit 与多技法 concordance | 古典进阶 → 时间主扩展 |
+| B15 | Secondary Progression / Solar Arc 多 method profile 事实对照 | 现代 → 推运方法族 |
+| B16 | 当前 Primary Directions 算法命名、profile、限制、诊断与审计 | 古典进阶 → 主限审计 |
+| B17 | 多 significator Circumambulations / Distributions 与多 PD profile | 古典进阶 → 沿界 / 主限扩展 |
+| B18 | 可复核的 prenatal syzygy chart packet 与固定星 RA paran 代理 | 古典进阶 → 产前朔望 / Parans |
+| B19 | Swiss Ephemeris 轨道节点、近日点 / 远日点和 45° / 90° 等 modulus dial pictures | 现代 → 轨道点 / Dial |
+| B20 | 四至点太阳 ingress 与 electional fact matrix；不做吉时排名 | 古典进阶 → 世俗 / 择时事实 |
 
-Primary Directions 将先进行方法审计与外部数值交叉验证，再单独扩展 Placidus / Regiomontanus、zodiacal / mundane、direct / converse 和多种 key；不会把不同传统公式混为一个不透明的“完整主限”。
+### Horary v2.1
 
-完整候选清单、优先级、输出字段、Markdown 结构、共用底层与 Definition of Done 见 [B6 后现代与古典占星计算扩展规划](docs/roadmap/modern-classical-techniques-after-b6-2026-07.md)。
+- 默认生产入口从旧解释型响应升级为 `horary-data-packet/2.1`。
+- 相位计算与显示 orb 解耦：完整保留候选与未来 exact，盘面只绘制当前显示 orb 内相位。
+- 新增 event graph、前后 sign / house change、月亮接触序列和 VOC 规则证据。
+- 新增 mean / true nodes、偶然状态、完整接纳、行星日时、considerations evidence。
+- 新增赤纬、antiscia contacts、固定星与 Swiss `pheno_ut` 数据。
+- 输入配置、时间地点、星历方法、numeric precision 和 provenance hash 可复核。
+- Swift 模型、图轮、结果 tabs、Markdown / JSON / CSV 与 AI 上下文全部迁移到 v2.1。
+- 旧 `packetVersion=1` 保留为显式兼容入口，并补齐时刻、时区、选项、最早事件和精确去重校验。
 
-## 导出能力
+### 古典进阶 UI 与工作区
 
-- 现代本命 / 时间点 / 窗口扫描：支持 Markdown、JSON 与 CSV 导出。
-- 现代高级模式（Synastry / Composite / Davison / Progression / Solar Arc / Harmonic / Modern Return / Modern Timing / Midpoint / Progressed Composite / Relocation / Cycles / Astrocartography / Local Space）：支持结构化 Markdown、JSON，并按结果类型提供 CSV。
-- 古典模式：支持最完整的 Markdown / JSON / CSV 导出，覆盖角点、宫位、行星、Lots、相位、接纳、时间技法、返照、主限、沿界推进、Prenatal Syzygy、Almuten、Hyleg / Alcocoden 等。
-- Horary：支持结构化 Markdown / JSON / CSV 导出，覆盖问题元数据、radicality、significators、Moon storyline、receptions、lots 与 advanced candidates。
-- 吠陀模式：支持带 section picker 的 Markdown 导出，以及 JSON / CSV 导出；Markdown 可覆盖基本信息、重要设置、星座索引表、Panchanga、日出日落、分盘信息、Moon / Bhava Chart、敌友关系、Arudha、Yogas、Jaimini Karakas、Ashtakavarga、Dasa 与 Shadbala。
+- 现代、古典、吠陀三种实践模式拥有独立导航语义。
+- 八个古典进阶入口从现代长列表中移入“古典进阶”分组。
+- 每个进阶模式拥有明确的运行按钮、参数栏、结果 tabs、空态、方法说明和诊断区。
+- 结构化展示 ZR、Primary Directions、Distributions、Prenatal packet 和世俗 / 择时事实矩阵。
+- 计算结果按 mode 独立缓存；切换后仍可回看先前结果。
+- 支持逐 mode Markdown section picker，并可合并多个古典进阶结果。
+- 古典本命“主限”和“产前朔望”可深链到对应进阶工作区。
+
+### 主窗口布局收口
+
+- 左侧技法列表改为固定比例区域内独立纵向滚动。
+- 导航收起按钮和程序设置固定，不随技法列表滚走。
+- 顶部现代 / 古典 / 吠陀切换与运行按钮保持可见。
+- 底部状态栏固定；超长现代技法列表不再抬高整个窗口最小高度。
+- 已在紧凑窗口验证 20 个现代入口与 8 个古典进阶入口的分流和滚动行为。
+
+## 界面工作流
+
+窗口顶部切换三种实践模式：
+
+- **现代**
+- **古典**
+- **吠陀**
+
+左侧导航根据实践模式显示对应技法，并始终保留公共的“时间点”“窗口扫描”和底部“程序设置”。导航技法列表占据剩余高度并独立滚动；顶部实践切换、排盘按钮、状态栏和程序设置不会再被长列表挤出窗口。
+
+主界面由以下区域组成：
+
+1. 左侧技法导航。
+2. 中间参数栏。
+3. 主结果工作区。
+4. 右侧可折叠 AI 分析面板。
+5. 顶部实践切换与运行按钮。
+6. 底部运行状态。
+
+## 功能矩阵
+
+### 现代工作流
+
+现代导航当前包含 20 个独立入口：
+
+| UI 名称 | 后端 mode | 主要输出 |
+|---|---|---|
+| 本命盘 | `moment` | 行星、角点、宫位、相位、结构、盘型、赤纬、OOB、固定星 |
+| 合盘 | `synastry` | 双人本命数据、跨盘相位、落宫、赤纬关系 |
+| 组合盘 | `composite` | Composite 行星、角点、宫位、相位与方法信息 |
+| 戴维森盘 | `davison` | Davison 中点时空盘、相位、角点与宫位 |
+| 次限推进 | `progression` | Secondary Progressions、推进点与本命接触 |
+| 太阳弧 | `solar_arc` | Solar Arc 点位、推进方法与本命接触 |
+| 调和盘 | `harmonic` | 可配置 harmonic order 的调和位置与相位 |
+| 返照盘 | `modern_return` | Solar / Lunar / Mercury 等返照，前次、当前周期与下次命中 |
+| 中点 | `midpoint` | 中点轴、direct / opposite 分支、焦点与激活 |
+| 推进组合盘 | `progressed_composite` | 双人分别推进后再合成，保留逐点 trace |
+| 迁移盘 | `relocation` | 同一出生 UTC 下的新地点宫位、角点与落宫变化 |
+| 朔望食相 | `modern_cycles` | 新月、满月、日食、月食、地点可见性与本命接触 |
+| 赤纬事件 | `declination_timing` | 平行、反平行、OOB 进出、赤纬停滞及生命周期 |
+| 逆行阴影 | `retrograde_cycles` | 前阴影、逆行区间、后阴影和重复触发 |
+| 会合周期 | `planetary_synodic` | 任意两星会合周期、相位阶段、pass 与本命接触 |
+| Draconic / 日心 | `draconic_heliocentric` | Draconic 与 heliocentric 坐标对照 |
+| 推运方法族 | `method_families` | 次限与太阳弧不同方法 profile 的事实对照 |
+| 轨道点 / Dial | `orbital_dial` | 节点、近日点/远日点与 modulus dial pictures |
+| 天体地图 | `astrocartography` | Astrocartography 线几何与可导出数据 |
+| Local Space | `local_space` | 本地空间方位与方向数据 |
+
+现代本命的 point set 可以包含：
+
+- 十大行星。
+- Chiron、Pholus、Ceres、Pallas、Juno、Vesta。
+- 平 / 真交点及其南交点。
+- Mean / Osculating Lilith。
+- ASC、MC、DSC、IC、Vertex、Antivertex、Equatorial Ascendant。
+- 显式宫头、Lots 与自定义小行星。
+
+公共相位支持合、冲、拱、刑、六合，以及可选的 150°、30°、45°、135°、72°、144°。
+
+### 古典工作流
+
+古典实践模式分为本命、Horary、生时矫正和八个“古典进阶”入口。
+
+#### 古典本命
+
+`mode="classical"` 当前覆盖：
+
+- 四轴、十二宫与七政。
+- 50+ Lots 与实验性 Lots。
+- 古典相位、接纳、antiscia、赤纬相位与固定星。
+- 本质尊贵、偶然状态、昼夜盘、太阳相位与运动状态。
+- 年 / 月小限、Firdaria、Decennials、Zodiacal Releasing。
+- 七政返照；每颗行星统一使用 `previous_return`、`current_cycle_return`、`next_return`。
+- Solar Return / 年主综合与统一时间线。
+- Primary Directions 与 Circumambulations。
+- Prenatal Syzygy。
+- Almuten Figuris、Kurios / Oikodespotes。
+- Hyleg / Alcocoden 审计数据。
+
+重要边界：
+
+- `planetary_returns` 是古典返照的唯一顶层入口；没有独立 `solar_return` 字段。
+- Prenatal Syzygy 的满月数据同时保留太阳和月亮位置，当前轴度数约定使用太阳度数。
+- Zodiacal Releasing 的 Loosing of the Bond 只在真实跳转到松绑点时标记，普通下一星座过渡不标记。
+- Hyleg / Alcocoden 只输出候选、理由与证据，不输出寿命年数。
+
+#### 古典进阶
+
+| UI 名称 | 后端 mode | 定位 |
+|---|---|---|
+| 可见相位 / 行星时 | `classical_visibility` | Heliacal phases、地方升落、昼夜不等行星时 |
+| 希腊状态审计 | `hellenistic_condition_audit` | Oriental / Occidental、sect、hayz、overcoming、enclosure 等证据 |
+| 派生盘 / 尊贵 | `classical_derivatives` | Dodekatemoria、Monomoiria、Topical Almutens |
+| 时间主扩展 | `time_lords_extended` | Profection、ZR L4、Fortune / Spirit 与多技法 concordance |
+| 主限审计 | `primary_directions_audit` | 当前主限算法、profile、限制与诊断 |
+| 沿界 / 主限扩展 | `distributions_pd` | 多 significator 沿界与多 PD profile |
+| 产前朔望 / Parans | `prenatal_parans` | 产前朔望盘包与固定星 RA paran 代理 |
+| 世俗 / 择时事实 | `mundane_electional` | 四至点 ingress 与择时事实矩阵，不排序“吉时” |
+
+八个古典进阶模式拥有独立参数区、结构化结果页、Markdown 章节选择与合并导出，但当前不开放 AI 分析。
+
+### Horary
+
+Horary 默认走 **Data Packet v2.1**：
+
+```json
+{
+  "mode": "horary",
+  "packetVersion": "2",
+  "chart": {
+    "moment": {
+      "year": 2026,
+      "month": 7,
+      "day": 23,
+      "hour": 22,
+      "minute": 25,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 35.0576,
+    "longitude": 118.3346,
+    "houseSystem": "regiomontanus",
+    "zodiac": "tropical",
+    "boundsSystem": "egyptian",
+    "triplicitySystem": "dorothean"
+  },
+  "questionText": "问题文本",
+  "placeName": "地点",
+  "aspectOrb": 3
+}
+```
+
+v2.1 是判断无关的数据管线，主要包含：
+
+- 输入、计算配置、时间地点和 provenance。
+- 宫位、角点、天体、尊贵归属、节点与偶然状态证据。
+- 全量相位候选、显示 orb 内相位、pairwise geometry。
+- 精确事件、event graph、月亮事件序列与 VOC 规则。
+- 接纳、Lots、赤纬、antiscia、固定星、可见性与 `pheno_ut`。
+- 行星日 / 时、considerations evidence、optional modules。
+- 技术校验、warnings 和显示辅助字段。
+
+v2.1 **不自动输出**：
+
+- 征象星选择。
+- radicality 统一结论。
+- yes / no。
+- Translation / Collection / Prohibition / Frustration 判断。
+- machine summary、score 或 confidence。
+
+如确实需要旧解释型 packet，必须显式传 `packetVersion=1`；该入口只用于兼容，已弃用。未知版本会返回结构化校验错误。
+
+详细说明：
+
+- [Horary v2 架构](docs/horary-v2/README.md)
+- [字段字典](docs/horary-v2/FIELD_DICTIONARY.md)
+- [v1 → v2 迁移](docs/horary-v2/MIGRATION.md)
+- [生产 JSON Schema](docs/schemas/horary-data-packet-2.1.json)
+- [Canonical golden](docs/examples/horary-data-packet-v2-linyi-golden.json)
+
+### 生时矫正
+
+古典导航中的“生时矫正”使用 Primary Directions 候选进行三级细化：
+
+| 级别 | 精度 | 默认范围 | 候选数 |
+|---|---:|---:|---:|
+| 1 | 1 分钟 | 中心时间 ±30 分钟 | 61 |
+| 2 | 5 秒 | 当前选择 ±30 秒 | 13 |
+| 3 | 1 秒 | 当前选择 ±5 秒 | 11 |
+
+第一级由用户点击“计算生时矫正”启动；第二、三级在上一级滑杆停止后自动运行。后端通过 stderr 输出 JSON progress 行，Swift 客户端实时显示进度。
+
+### 吠陀 / Jyotish
+
+吠陀模式支持：
+
+- Sidereal zodiac 与 Lahiri、Raman、Krishnamurti、Yukteshwar、True Citra 等 ayanamsha。
+- Panchanga：Tithi、Vara、Nakshatra、Yoga、Karana。
+- 日出日落与 solar day 数据。
+- Rasi、Navamsa、Moon Chart、Bhava Chart。
+- D1 / D2 / D3 / D4 / D6 / D7 / D8 / D9 / D10 / D12 / D16 / D20 / D24 / D27 / D30 / D40 / D45 / D60。
+- Upagrahas、Special Lagnas、Arudha。
+- Jaimini Karakas。
+- 行星敌友关系与 Ashtakavarga。
+- Vimshottari、Yogini、Ashtottari Dasa。
+- Shadbala 与 Vedic Yogas。
+
+`kalachakra_dasa` 仍是占位接口，不应视为完整算法交付。
+
+### 公共时间工具
+
+三个实践模式共用：
+
+- **时间点**：计算指定时刻的行运位置及其对本命的接触。
+- **窗口扫描**：扫描时间区间内的相位命中、ingress 与 station。
+
+现代综合时间线另使用 `modern_timing`，支持：
+
+- Transit → Natal。
+- Secondary Progression → Natal。
+- Solar Arc → Natal。
+- Transit → Composite / Davison。
+- Midpoint direct / opposite target。
+- entering / exact / leaving 生命周期。
+- clipped 边界与逆行多 pass 编号。
+
+## 星盘图与结果页
+
+结果工作区根据模式显示图轮、表格、时间线、分组结果、诊断和原始 JSON。星盘端点使用稳定 ID；解析不到的相位端点进入诊断，而不是静默绘制错误连线。
+
+Horary v2.1 图轮只绘制 `aspects_in_display_orb`；orb 外未来成相保留在候选与事件数据中，不当作当前盘面相位显示。
+
+## 导出
+
+应用按模式提供以下格式：
+
+- **Markdown**：面向阅读、复核和 AI 输入。
+- **JSON**：保留结构化后端数据。
+- **CSV / 类 CSV 文本**：按结果类型展开关键表格。
+
+古典本命、古典进阶与吠陀支持按 section 选择 Markdown。古典进阶还支持把多个已经计算的 mode 合并为一份 Markdown。
+
+Horary v2.1 的 Swift 模型保留原始根 JSON，JSON → Swift → JSON 不应静默丢失 `time_and_location`、`provenance`、`calculation_config`、optional modules 等字段。
+
+## AI 分析
+
+AI 面板使用用户配置的 OpenAI-compatible API：
+
+- API Base URL。
+- 模型名称。
+- API Key。
+- reasoning effort。
+- 各场景默认提示词和用户备注。
+
+响应通过 SSE 流式显示。当前有 AI 上下文的入口：
+
+- 现代本命。
+- Synastry、Composite、Davison。
+- Secondary Progression、Solar Arc。
+- 古典本命。
+- 吠陀。
+- Horary。
+- 时间点。
+- 普通窗口扫描。
+
+当前没有 AI 上下文的入口包括：调和盘、返照、中点、推进组合盘、生时矫正、现代扩展模式、古典进阶模式，以及借用 scan 工作区的 Modern Timing。
+
+AI 是可选能力；本地计算、结果页与导出不依赖 API Key。
+
+## 架构
+
+```text
+SwiftUI views / state
+        │
+        ▼
+BackendClient / ModernBackendClient / RectifyClient
+        │  JSON request via stdin
+        ▼
+Resources/backend/transit_calc.py
+        │
+        ▼
+astro_backend_api.py
+        │
+        ├── modern / timing / map modules
+        ├── classical / audit / visibility modules
+        ├── horary v2.1 modules
+        ├── vedic modules
+        └── rectify module
+        │  JSON response via stdout
+        ▼
+Swift Codable models → result panes / wheel / exports / AI context
+```
+
+后端模块通过资源目录内的文件名互相导入。Swift 与 Python 之间没有内嵌解释器或私有二进制协议。
+
+## 支持的后端 mode
+
+当前 `astro_backend_api.validate_required_fields()` 注册 34 个 mode：
+
+```text
+moment
+classical
+vedic
+horary
+scan
+rectify
+synastry
+composite
+davison
+progression
+solar_arc
+harmonic
+modern_return
+modern_timing
+midpoint
+progressed_composite
+relocation
+modern_cycles
+astrocartography
+local_space
+declination_timing
+retrograde_cycles
+classical_visibility
+planetary_synodic
+hellenistic_condition_audit
+draconic_heliocentric
+classical_derivatives
+time_lords_extended
+method_families
+primary_directions_audit
+distributions_pd
+prenatal_parans
+orbital_dial
+mundane_electional
+```
+
+未知、拼错或空 mode 会返回 JSON error，不会静默回退到其他计算。
 
 ## 项目结构
 
-- `Sources/TransitStudio/` - SwiftUI 应用源码。
-- `Sources/TransitStudio/Resources/backend/` - 随应用打包的 Python 后端源码。
-- `Sources/TransitStudio/Resources/ephemeris/` - 随应用打包的 Swiss Ephemeris 文件。
-- `Examples/` - 后端请求示例。
-- `python_tests/` - 后端逻辑的 pytest 测试。
-- `SwiftTests/` - Swift Package 测试。
-- `docs/` - 项目结构、后端契约、验证说明与范围要求。
-- `docs/roadmap/` - 尚未交付的计算能力路线与实施边界；路线项目不等于现有功能。
-- `AGENTS.md` - 提供给 coding agent 的工作说明。
+```text
+AstroTransitMac/
+├── Sources/TransitStudio/                 SwiftUI 应用与 Codable 模型
+│   └── Resources/
+│       ├── backend/                       Python 计算后端
+│       └── ephemeris/                     内置 Swiss Ephemeris 文件
+├── SwiftTests/                            Swift 单元与契约测试
+│   └── Fixtures/                          真实后端输出 fixture
+├── python_tests/                          Python pytest
+├── Examples/                              每个后端 mode 的请求样例
+├── docs/                                  契约、决策、验证、设计与路线
+├── assets/                                应用资源
+├── package_app.sh                         release 构建、签名与安装脚本
+├── check_vibe_changes.sh                  一键本地门禁
+├── Package.swift                          Swift Package 清单
+├── requirements.txt                       Python 依赖
+├── AGENTS.md                              项目施工规则与高风险契约
+├── PLANS.md                               任务计划与执行记录
+└── CHANGELOG.md                           人类可读变更记录
+```
 
-像 `.build/`、`dist/`、`.pytest_cache/`、`__pycache__/` 和 `backups/` 这类生成目录都不是 source-of-truth。
+以下目录不是 source of truth：
 
-## 环境准备
+- `.build/`
+- `dist/`
+- `.pytest_cache/`
+- `__pycache__/`
+- `backups/`
+
+## 开发环境
+
+### 要求
+
+- macOS 13 或更高。
+- Xcode / Swift 5.9 工具链。
+- Python 3。
+- `pyswisseph`。
+
+CI 当前使用 macOS 15 与 Python 3.12。
+
+### 安装 Python 依赖
 
 ```bash
 cd AstroTransitMac
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r requirements.txt pytest
 ```
 
-然后在 Xcode 中打开 `Package.swift` 并运行 `TransitStudio` 可执行目标，或者直接在终端使用 SwiftPM。
+项目的一键门禁会优先使用 `.venv/bin/python`。
 
-应用内还提供“程序设置”页，用于配置 Python 路径、外部 Ephemeris 目录、AI API 参数以及小行星下载策略。
+### 构建与运行 Swift 应用
 
-如果应用无法找到 Python，请在应用中将 Python 路径指向虚拟环境里的可执行文件，例如：
+```bash
+swift build
+swift run TransitStudio
+```
+
+也可以在 Xcode 中打开 `Package.swift`，运行 `TransitStudio` executable target。
+
+如果应用没有找到正确的 Python，请在“程序设置 → 后端”中指向虚拟环境：
 
 ```text
-/Users/yourname/path/to/AstroTransitMac/.venv/bin/python
+/absolute/path/to/AstroTransitMac/.venv/bin/python
 ```
+
+程序设置还可以配置：
+
+- 外部 Ephemeris 目录。
+- AI Base URL、模型与 API Key。
+- AI 提示词。
+- 小行星下载策略。
 
 ## Swiss Ephemeris
 
-后端会优先尝试使用 Swiss Ephemeris，并在代码允许的地方回退到其他路径。随项目打包的星历文件目录为：
+内置星历目录：
 
 ```text
-Sources/TransitStudio/Resources/ephemeris
+Sources/TransitStudio/Resources/ephemeris/
 ```
 
-如果你要使用外部星历文件，请把应用里的 Ephemeris 文件夹设置为包含 `.se1` 文件的目录。
+如需外部星历文件，在程序设置中选择包含 `.se1` 文件的目录。计算响应会尽量保留 ephemeris、zodiac、house system 与方法 provenance，方便复算和审计。
 
 ## 直接运行后端
 
-```bash
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-scan-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-ingress-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-station-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-synastry-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-composite-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-davison-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-progressions-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-solar-arc-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-solar-return-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-lunar-return-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-timing-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-midpoint-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-progressed-composite-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-relocation-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-cycles-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-astrocartography-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-local-space-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-declination-timing-request.json
-python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-vedic-ai-request.json
-```
-
-PowerShell 等价写法：
-
-```powershell
-Get-Content -Raw -Encoding UTF8 Examples/sample-classical-request.json | python Sources/TransitStudio/Resources/backend/transit_calc.py
-```
-
-## 验证改动
+后端从 stdin 读取一个 JSON，并把 JSON 响应写到 stdout：
 
 ```bash
-python3 -m pytest python_tests/test_classical.py
-python3 -m pytest python_tests
+.venv/bin/python Sources/TransitStudio/Resources/backend/transit_calc.py \
+  < Examples/sample-request.json
+```
+
+常用示例：
+
+```bash
+# 古典本命
+.venv/bin/python Sources/TransitStudio/Resources/backend/transit_calc.py \
+  < Examples/sample-classical-request.json
+
+# Horary v2.1
+.venv/bin/python Sources/TransitStudio/Resources/backend/transit_calc.py \
+  < Examples/sample-horary-request.json
+
+# 现代综合时间线
+.venv/bin/python Sources/TransitStudio/Resources/backend/transit_calc.py \
+  < Examples/sample-modern-timing-request.json
+
+# 古典进阶：主限审计
+.venv/bin/python Sources/TransitStudio/Resources/backend/transit_calc.py \
+  < Examples/sample-primary-directions-audit-request.json
+
+# 吠陀
+.venv/bin/python Sources/TransitStudio/Resources/backend/transit_calc.py \
+  < Examples/sample-vedic-ai-request.json
+```
+
+完整请求样例位于 [`Examples/`](Examples/)。
+
+时刻对象支持 IANA timezone 和固定偏移。DST 跳时中的不存在本地时间会被拒绝；DST 回拨产生的歧义时间必须传 `fold: 0` 或 `fold: 1`。
+
+## 验证
+
+### 一键完整门禁
+
+```bash
+bash check_vibe_changes.sh
+```
+
+该脚本执行：
+
+1. 全部 Python tests。
+2. `swift build`。
+3. `swift test`。
+4. 已登记的后端 smoke，包括 rectify。
+5. 个人路径 / 测试数据痕迹扫描。
+
+### 聚焦验证
+
+```bash
+# Python 全量
+.venv/bin/python -m pytest python_tests/ -q
+
+# Horary v2.1、legacy 与跟进回归
+.venv/bin/python -m pytest \
+  python_tests/test_horary.py \
+  python_tests/test_horary_followup.py \
+  python_tests/test_horary_v2.py -q
+
+# 古典
+.venv/bin/python -m pytest python_tests/test_classical.py -q
+
+# Swift
 swift build
 swift test
 ```
 
-更多 smoke test（包括 rectify）和沙箱说明见 `docs/validation.md`。
+后端 JSON shape 有意变化时，必须同时更新对应 Swift Codable model 和真实输出 fixture；fixture 不应手工编辑。
 
-## Git 卫生
+详细说明见 [docs/validation.md](docs/validation.md)。
 
-如果你在这个仓库里继续开发，建议遵守下面这套最小流程：
+## 打包与安装
+
+默认发布命令：
+
+```bash
+./package_app.sh
+```
+
+脚本会：
+
+1. 使用 SwiftPM release configuration 构建。
+2. 把资源 bundle 放入 `.app`。
+3. 清理 `.pyc`。
+4. 生成 `Info.plist`。
+5. 进行 ad-hoc codesign。
+6. 写入 `dist/TransitStudio.app`。
+7. 默认覆盖 `/Applications/TransitStudio.app`。
+
+只生成 `dist`、不覆盖 `/Applications`：
+
+```bash
+SKIP_INSTALL=1 ./package_app.sh
+```
+
+可用环境变量：
+
+- `APP_OUTPUT_DIR`
+- `APP_INSTALL_ROOT`
+- `APP_INSTALL_PATH`
+- `APP_STAGING_ROOT`
+- `SWIFTPM_BUILD_PATH`
+- `SKIP_INSTALL`
+
+`dist/` 是生成产物；不要直接修改其中的应用内容。
+
+## 关键契约与已知边界
+
+- 出生时间与事件时间要求明确到分钟并带 timezone；项目不自动把模糊生时降级成中午盘。
+- Horary 默认 v2.1 只给事实数据，不给自动判断。
+- Legacy Horary 只通过 `packetVersion=1` 显式调用。
+- 古典返照统一位于 `planetary_returns`。
+- Hyleg / Alcocoden 不输出寿命年数。
+- 世俗 / 择时模块只输出事实矩阵，不做吉时推荐或吉凶排序。
+- 主限审计会明确当前算法及限制，不把不同传统公式伪装成同一个“完整主限”。
+- `kalachakra_dasa` 是占位接口。
+- AI 依赖外部 API，不是本地模型；计算本身不依赖 AI。
+- `docs/roadmap/` 中的条目是规划，不等于当前已交付功能。
+
+## 开发与 Git 纪律
+
+开始修改前：
 
 ```bash
 git status --short --branch
 git log origin/main..HEAD --oneline
 ```
 
-- 先看当前工作树是否干净，以及本地 `main` 是否已经领先于 GitHub。
-- 一个任务一笔提交；如果本地同时混入多类改动，先拆开再提交。
-- 不要把“已经本地 commit”当成“已经同步到 GitHub”。
-- 在声称任务完成前，确认对应验证已经跑过，`PLANS.md` / `CHANGELOG.md` 已同步更新，并且 `git status --short --branch` 反映的远端状态符合预期。
+基本要求：
 
-更详细的仓库操作约定见 [docs/git-workflow.md](docs/git-workflow.md) 和 [AGENTS.md](AGENTS.md)。
+- 一个任务一个分支、一个清晰提交边界。
+- 本地 commit 不等于已经同步 GitHub。
+- 不把 `.build`、`dist`、pytest cache、`__pycache__` 或 backups 当源码修改。
+- 先查询现有模型、调用点和 JSON 契约，再改接口。
+- 计算规则变化必须增加聚焦测试。
+- Swift 展示 / 导出变化至少执行 Swift build/test 和相关导出检查。
+- 完成前更新 `PLANS.md`、`CHANGELOG.md`，检查 `git diff --check`、完整 diff 和测试结果。
+- 不 force-push，不重写共享历史，除非得到明确授权。
 
-## 古典模式输出结构
+完整约定见：
 
-`mode: "classical"` 会返回这些主字段：
+- [AGENTS.md](AGENTS.md)
+- [Git workflow](docs/git-workflow.md)
+- [Validation](docs/validation.md)
 
-```text
-meta
-angles
-houses
-planets
-lots
-experimental_lots
-aspects
-receptions
-antiscia
-primary_directions
-circumambulations
-timing
-planetary_returns
-prenatal_syzygy
-almuten_figuris
-hyleg_alcocoden
-warnings
-ambiguity
-calculation_assumptions
-```
+## 文档索引
 
-重要契约说明：
+- [Documentation Index](docs/README.md)
+- [Project Structure](docs/project-structure.md)
+- [Backend Contracts](docs/backend-contracts.md)
+- [Product Decisions](docs/product-decisions.md)
+- [Horary v2.1](docs/horary-v2/README.md)
+- [B7–B20 UI Design](docs/ui-design-b7-b20-2026-07.md)
+- [Post-B6 Roadmap](docs/roadmap/modern-classical-techniques-after-b6-2026-07.md)
+- [Changelog](CHANGELOG.md)
+- [Task Plans](PLANS.md)
 
-- 太阳 / 月亮 / 水星 / 金星 / 火星 / 木星 / 土星的返照结果都位于 `planetary_returns` 中。
-- 每条返照记录都包含 `previous_return`、`current_cycle_return` 和 `next_return`。
-- Prenatal Syzygy 同时包含 `sun_position` 和 `moon_position`。
-- Loosing of the Bond 不是普通的下一星座过渡。
-- Hyleg / Alcocoden 的输出是审计数据包，不包含寿命年数。
-
-更详细的后端契约说明见 `docs/backend-contracts.md`。
-
-## 吠陀模式输出范围
-
-`mode: "vedic"` 当前可返回的大块数据包括：
-
-```text
-meta
-rasi_chart
-planets
-navamsa
-panchanga
-solar_day
-divisional_charts
-moon_chart
-bhava_chart
-upagrahas
-special_lagnas
-planet_relationships
-arudha
-jaimini_karakas
-ashtakavarga
-vimshottari
-yogini_dasa
-ashtottari_dasa
-kalachakra_dasa
-shadbala
-yogas
-warnings
-```
-
-其中：
-
-- `vimshottari` 包含 Mahadasha 及其 Antardasha。
-- `divisional_charts` 当前覆盖 16 个主分盘。
-- `kalachakra_dasa` 仍是占位接口，不应视为完整算法交付。
-- 吠陀 Markdown 导出按 AI 可消费文本组织，不等于全部字段都会在 CSV 中完整展开。
-
-## 打包
-
-```bash
-./package_app.sh
-```
-
-这会创建或更新 `dist/TransitStudio.app`。请把 `dist/` 视为生成产物目录。
+路线文档可能包含尚未交付的候选能力；判断当前实现时，以源码、`Examples/`、后端 mode 注册和本 README 的“功能矩阵”为准。
