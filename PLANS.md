@@ -1427,5 +1427,5 @@ interpretation_context / NLP 事项宫 / 自动征象星 / 转宫矩阵 / yes-no
 | 02 干净整合 | ✅ | 以高级 UI `7cd1097` 为基线，拆出 Horary v2.1 与主布局两个独立提交 |
 | 03 Legacy Horary 遗漏 | ✅ | 已移植输入校验、最早事件选择、精确去重；Horary 127 项通过 |
 | 04 CI 与记录清理 | ✅ | 已补齐 PR 触发、moment/harmonic/B13–B20/rectify smoke 与过期计划标记 |
-| 05 完整验证 | ✅ | Python 912、Swift 140、全部 smoke 通过；源码/安装版均为 1.4.1 (43)，构建与 Python 缓存已清理 |
+| 05 完整验证 | ✅ | Python 912、Swift 140、全部 smoke 通过；发布并验证 1.4.2 (44)，构建与 Python 缓存已清理 |
 | 06 分支整理 | ✅ | 本地 main 快进至最终提交；删除已吸收的本地任务枝，原混合工作区保留为命名明确的安全归档枝 |

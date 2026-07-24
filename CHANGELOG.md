@@ -3,6 +3,7 @@
 ## 2026-07-24 — 仓库收口与 CI 补强
 
 - 以已安装 `1.4.1 (43)` 对应的高级 UI 提交为基线，无损整合并拆分 Horary v2.1、主窗口布局和 legacy Horary 遗漏修复。
+- 发布版本提升至 `1.4.2 (44)`，覆盖安装后可直接使用本轮主窗口布局与 Horary 修复。
 - CI 新增 `pull_request` 触发，并补齐 moment、harmonic、B13–B20 扩展模式及 rectify 的后端 smoke，避免本地门禁覆盖面高于远端。
 - 删除与 canonical golden 字节完全相同的 Horary 文档 sample JSON，保留 Swift fixture 与唯一文档 golden，减少约 1.4 MB 重复仓库内容。
 - 旧的 B6A 暂停记录明确标记为已被 B6ABC 全量交付取代；保留安全快照，不重写共享历史。
