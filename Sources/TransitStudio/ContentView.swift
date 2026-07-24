@@ -284,48 +284,55 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             appTopBar
+                .fixedSize(horizontal: false, vertical: true)
             Rectangle().fill(TS.SemanticColor.line).frame(height: 1)
-            HStack(spacing: 0) {
-            AppNavigationRail(
-                isCollapsed: $isNavigationCollapsed,
-                selectedPracticeMode: practiceModeBinding,
-                selectedMode: $mode,
-                isShowingSettingsPage: $isShowingAppSettingsPage,
-                modernSubMode: $modernSubMode,
-                classicalSettingsWorkspace: $classicalSettingsWorkspace,
-                onSelectClassicalNatal: {
-                    applyClassicalNatalSelection()
-                },
-                onSelectClassicalExpansion: { subMode in
-                    applyClassicalExpansionSelection(subMode)
-                }
-            )
-                .frame(width: isNavigationCollapsed ? TS.Layout.navigationRailCollapsed : TS.Layout.navigationRailExpanded)
-                .background(TS.SemanticColor.paperRaised)
+            GeometryReader { _ in
+                HStack(spacing: 0) {
+                    AppNavigationRail(
+                        isCollapsed: $isNavigationCollapsed,
+                        selectedPracticeMode: practiceModeBinding,
+                        selectedMode: $mode,
+                        isShowingSettingsPage: $isShowingAppSettingsPage,
+                        modernSubMode: $modernSubMode,
+                        classicalSettingsWorkspace: $classicalSettingsWorkspace,
+                        onSelectClassicalNatal: {
+                            applyClassicalNatalSelection()
+                        },
+                        onSelectClassicalExpansion: { subMode in
+                            applyClassicalExpansionSelection(subMode)
+                        }
+                    )
+                        .frame(width: isNavigationCollapsed ? TS.Layout.navigationRailCollapsed : TS.Layout.navigationRailExpanded)
+                        .background(TS.SemanticColor.paperRaised)
 
-            divider
-
-            if !isShowingAppSettingsPage {
-                if isMiddleSidebarCollapsed {
-                    collapsedMiddleSidebarToggle
-                } else {
-                    middleSidebarColumn
                     divider
+
+                    if !isShowingAppSettingsPage {
+                        if isMiddleSidebarCollapsed {
+                            collapsedMiddleSidebarToggle
+                        } else {
+                            middleSidebarColumn
+                            divider
+                        }
+                    }
+
+                    resultsPane
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                    if !isShowingAppSettingsPage {
+                        divider
+                        aiPanelColumn
+                    }
                 }
-            }
-
-            resultsPane
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            if !isShowingAppSettingsPage {
-                divider
-                aiPanelColumn
+                .clipped()
+                .background(TS.SemanticColor.paper)
             }
-            }
-            .background(TS.SemanticColor.paper)
+            .layoutPriority(1)
 
             Rectangle().fill(TS.SemanticColor.line).frame(height: 1)
             statusBar
+                .fixedSize(horizontal: false, vertical: true)
         }
         .task(id: appState.pythonPath) {
             swissephStatus = await BackendClient.swissephStatus(pythonPath: appState.pythonPath)

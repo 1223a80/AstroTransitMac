@@ -13,11 +13,19 @@ struct AppNavigationRail: View {
     var onSelectClassicalExpansion: ((ModernSubMode) -> Void)?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+        VStack(alignment: .leading, spacing: 0) {
             collapseButton
-            modeButtons
-            Spacer(minLength: TS.Spacing.lg)
+                .padding(.bottom, TS.Spacing.lg)
+
+            ScrollView(.vertical) {
+                modeButtons
+                    .padding(.bottom, TS.Spacing.lg)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxHeight: .infinity)
+
             settingsButton
+                .padding(.top, TS.Spacing.lg)
         }
         .padding(.vertical, TS.Spacing.lg)
     }
@@ -203,7 +211,7 @@ struct AppNavigationRail: View {
             }
             .frame(maxWidth: .infinity, alignment: isCollapsed ? .center : .leading)
             .padding(.horizontal, isCollapsed ? TS.Spacing.sm : TS.Padding.chipHorizontal)
-            .padding(.vertical, 6)
+            .frame(height: 32)
             .foregroundStyle(isSelected ? TS.SemanticColor.goldDeep : TS.SemanticColor.inkSoft)
             .background(
                 RoundedRectangle(cornerRadius: TS.Radius.card)
