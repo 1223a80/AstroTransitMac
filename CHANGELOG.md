@@ -18,6 +18,50 @@
 - 测试：`ClassicalWorkspaceTests` + `ExpansionStructuredUITests`；`swift test` 全绿；`check_vibe_changes.sh`。
 - 补强：B8/B10/B12/B15/B19 中文表头 + EmptyState/Overview；古典进阶 pane 优先读 `classicalExpansionResults[mode]`（A→B 后回看 A 仍有结果）。
 
+## 2026-07-24 — 主界面纵向布局回归
+
+- **导航栏滚动**：现代技法列表改为占据导航栏剩余高度并独立纵向滚动，顶部收起与底部程序设置保持固定。
+- **顶部操作区保真**：主工作区取得可伸缩高度，顶部实践模式切换和排盘按钮、底部状态栏不再被超长现代技法列表压缩到不可见。
+- **实际窗口回归**：独立 QA app 在 1231×768 窗口验证三种实践模式、完整 28 项现代技法与导航滚动；Swift 109 项通过。
+
+## 2026-07-24 — Horary v2.1 parallel review fixes
+
+- **Swiss Ephemeris pheno 修正**：按官方 `swe_pheno_ut` 槽位读取 phase angle / illuminated fraction，并将 apparent diameter 从度换算为弧秒；新增逐字段回归断言。
+- **Swift 全包保真**：`HoraryDataPacket` 保留并原样重编码根 JSON，补齐 houses/angles/validation/display 的 round-trip 与 full Markdown 证据，避免 JSON 导出静默丢字段。
+- **星盘图显示语义**：只绘制 `aspects_in_display_orb` 当前相位；orb 外未来成相保留在候选/事件数据中，不再画成当前盘面连线。
+- **版本路由**：未知 `packetVersion` 返回结构化校验错误，不再静默当作 v2；显式支持 v1/v2 的既有别名。
+- **v2.1 输入防线**：直接计算入口拒绝非有限/负事件窗口与 orb、未知 node mode、非数组或重复 body IDs，避免无效数据包与异常搜索。
+- **溯源哈希**：`declinationOrb`、`antisciaOrb`、`nodeMode` 纳入 canonical input/config 和双 SHA-256；任何改变输出的 v2.1 选项都会改变溯源标识。
+- **CSV**：`numeric_precision` 对象改为完整 JSON 单元格，不再因按字符串读取而导出为空。
+- **Swift 构建清洁度**：Horary 概览显式格式化 Bool 文本，消除 SwiftUI 本地化插值弃用警告。
+- **行星日/时**：`_planetary_hours` 次日日出种子改为日落之后（+24h 回退），修复中纬度晚盘（含临沂 golden）误报 `unavailable`。
+- **时区**：`planetary_day_hour` 使用 chart IANA zone，不再强制 Asia/Shanghai/UTC。
+- **接纳**：跳过自互纳（`mutual|SUN|SUN`）；mutual/mixed id 规范为 `a < b` 单行。
+- **bodyIds**：缺 SUN/MOON 时明确 `ValueError`，避免 `StopIteration`/`KeyError`。
+- **CSV 导出**：补齐 `pairwise_geometry` / `event_graph` / `moon` / `nodes` / `planetary_day_hour` / `considerations_evidence` / `optional_modules`。
+- **UI**：`HoraryV2EvidenceRow.id` 稳定键；overview 事件行 nil 合流。
+- **文档**：生产 schema_id 统一为 `horary-data-packet/2.1`；`aspects` 语义与代码对齐（全量候选别名）。
+- 测试：Horary 聚焦 pytest 78；全量 pytest 896；Swift 109；完整 backend smoke 全绿。
+
+## 2026-07-24 — Horary Data Packet v2.1 生产升级
+
+- **相位架构**：`aspect_candidates` 全量七政×托勒密五相（105）与 `display_orb` 过滤解耦；`aspect_exact` 事件独立自候选生成；`motion_direction` 不再因 orb 外误写 diverging；`station_or_retrograde_before_exact` 按速度符号采样真实计算。
+- **状态隔离**：`horaryHouseSystem` 默认 `regiomontanus`、`horaryAspectOrb` 独立于古典 `classicalAspectOrb`/`selectedHouseSystem`（含隔离测试）。
+- **数据扩展**：mean/true 交点、偶然状态证据、完整接纳（detriment/fall + mutual/mixed）、event_graph、行星日/时、considerations、赤纬、antiscia、固定星、`pheno_ut`。
+- **Skeptic 闭环**：接纳在下一相关 exact 时刻真实评估 `holds` 与 sign-exit 是否改变；`positions_at_exact` 物化 lon/speed/house/dignity；AI Markdown 取消 12k 截断；赤纬含 sign-exit/station 与月亮 contact 序列；`events_index` 含 prev/next `house_change`。
+- **消费者保真**：`HoraryV2EvidenceRow` / `HoraryV2JSONValue` 无损袋承接 bodies/aspects/receptions/lots/events/visibility/optional，以及 `time_and_location`（含 `geocoding`、`sect.evidence`）、`provenance`（含 `aberration_light_time`/`precession_nutation`）、`calculation_config`（含 `numeric_precision`/`aspects_enabled`）；JSON→Swift→JSON 深路径 round-trip；full Markdown 对 schema/provenance/time/config 全量 dump；Schema 2.1；golden 刷新；赤纬/Antiscia/固定星 tab 按子键展示。
+- 边界不变：无征象星选择、无 yes/no、无 radical 统一结论、无 ToL 等判定输出。
+
+## 2026-07-23 — Horary Data Packet v2（纯数据管线）
+
+- 新增 canonical 引擎 `astro_backend_horary_v2.py`：`schema_id=horary-data-packet/2.0`，只输出可复算数据（宫位/天体几何/尊贵归属/两两几何/相位/事件/接纳/Lots/月亮索引/可见性几何），禁止 machine_summary、征象星选择、传光判断、score、confidence/medium 等解释字段。
+- 事件流含 aspect_exact、sign_ingress、house_change、station、sunrise/sunset、lunar_phase_exact、VOC start/end、solar 阈值边界；VOC 多 `rule_id` 且带 start/end/duration。
+- Lots 含 input_points / intermediates / pre-post normalize；无 confidence_tag。
+- 生产默认 `packetVersion=2`；`packetVersion=1|legacy` 走原 `calculate_horary` 兼容适配（deprecated）。
+- Swift：`HoraryDataPacket` 模型、Markdown/CSV/星盘图/结果页/AI 数据包全部迁移到 v2；无损 Markdown 格式化。
+- Golden：临沂 2026-07-23 22:25 Asia/Shanghai（`docs/examples/horary-data-packet-v2-linyi-golden.json` + Swift fixture）。
+- 测试：`python_tests/test_horary_v2.py`（schema/jsonschema、禁止字段、确定性、事件类型、VOC 区间、Lots 公式、性能、legacy CLI）。
+
 ## 2026-07-19 — B13–B20 第二轮审查修复：reference / 步长 / 导出 / 校验
 
 - **P1**：`time_lords_extended` / `method_families`（及 PD 扩展）reference 改用 `classicalReferenceDate`；侧栏增加参考时间控件；请求编码测试断言 birth≠reference。

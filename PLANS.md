@@ -1273,7 +1273,7 @@ All of B13–B20 implemented with independent backends, samples, fixtures, Swift
 - Swift tabs 与 switch case 一一对应，biwheel endpoint 完整；Markdown/CSV/JSON 记录原地点、新地点、同一 birth UTC、house fallback 与 compare/overlay。
 - 聚焦 Python/Swift、真实 backend fixture、`bash check_vibe_changes.sh`、新增 smoke、双路 review、完整 diff 与缓存清理通过后形成独立 B6A commit。
 
-## 2026-07-13 暂停交接与明日恢复点
+## 2026-07-13 暂停交接与明日恢复点（历史记录；已由 2026-07-19 B6ABC 全量交付取代）
 
 - 当前可打包源码的功能终点是 B5A commit `d110b45`：B0 基线、B1 point set/现代完整性、B2 Solar/Lunar Return、B3 综合时间线、B4 中点、B5A 关系动态均已完成；B6A 未完成代码不进入安装包。
 - 2026-07-13 已停止 B6A 的 3 个并行 sub agent，撤回未闭环的 API/Swift contract 草稿；工作区只保留本交接文档，不存在可见但调用必坏的半成品 Relocation mode。
@@ -1295,3 +1295,144 @@ All of B13–B20 implemented with independent backends, samples, fixtures, Swift
 - [completed] 保留 `~/.codex/pets/mint-patchi` 的既有 8×9 动画，升级为带 16 个环视方向的 v2 8×11 图集。
 - [completed] 完成方向语义、连续性、三路隔离盲测、v2 图集与色键清理校验。
 - [completed] 将显示名改为「プリルン」，通过校验后覆盖原宠物包并清理中间缓存。
+
+---
+
+# Horary Data Packet v2 重构（2026-07-23）
+
+分支：`codex/refactor-horary`
+目标：版本化、可复算、机器可读、只含数据、不含占星判断的 v2 数据管线。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 基线与库存 | ✅ | AGENTS、调用链、pytest/smoke 基线 |
+| 02 Schema + domain | ✅ | schema_version, JSON Schema, 顶层结构 |
+| 03 计算管线 | ✅ | 溯源/时间/宫位/天体/尊贵/几何/事件/接纳/Lots |
+| 04 Legacy 适配 | ✅ | packetVersion=1 保留旧输出；v2 默认 |
+| 05 序列化与 Markdown | ✅ | 无损格式化；禁止判断字段 |
+| 06 消费者迁移 | ✅ | API/Swift/UI/AI/fixtures |
+| 07 测试与文档 | ✅ | 合同/golden/确定性/禁止字段 |
+| 08 全量门禁与清理 | ✅ | check_vibe + 缓存清理 + 交付报告 |
+
+## 兼容策略
+
+- 默认 `packetVersion=2` → `calculate_horary_v2`
+- `packetVersion=1|legacy` → 现有 `calculate_horary`（解释层/旧合同）
+- 共享求根与星历 helper 不平行复制
+
+## 边界
+
+- v2 禁止 machine_summary / radicality 评价 / significators / advanced judgment / score
+- 规则状态仅输出带 rule_id/阈值/证据 的中性标签
+
+---
+
+# Horary Data Packet v2.1 生产升级（2026-07-24）
+
+分支：`codex/refactor-horary`
+目标：可复算、判断无关、足以支持严谨人工/AI Horary 分析的生产数据包。
+
+## 阶段
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 计划与库存 | ✅ | 调用链、orb 漏相位根因、宫制耦合 |
+| 02 相位计算/显示拆分 | ✅ | 全量候选 + events 独立扫描 + converging 修正 |
+| 03 Horary 状态隔离 | ✅ | horaryHouseSystem / horaryAspectOrb 默认 |
+| 04 数据扩展 | ✅ | 节点/偶然/接纳/事件图/行星时/considerations |
+| 05 几何扩展 | ✅ | 赤纬/antiscia 接触/固定星/pheno |
+| 06 消费者与 Schema | ✅ | Swift 保真、tabs、Markdown full/summary、Schema 2.1 |
+| 07 测试门禁与交付 | ✅ | pytest 42+79、swift 108、check_vibe 全绿 |
+
+## 保真收口（本会话）
+
+| 项 | 状态 |
+|---|---|
+| `previous_house_change` 后端 + MOON 非空 | ✅ |
+| `HoraryV2EvidenceRow` / JSONValue 无损袋 | ✅ |
+| 深路径 JSON→Swift→JSON round-trip | ✅ |
+| full Markdown 全量 dump（无截断） | ✅ |
+| optional tab 按子键（decl/antiscia/stars） | ✅ |
+| time/provenance/config 无损袋（geocoding/sect.evidence/aberration/numeric_precision） | ✅ |
+| round-trip 根含 time_and_location/provenance/calculation_config | ✅ |
+| check_vibe + smokes | ✅ |
+
+## 边界（不实现）
+
+interpretation_context / NLP 事项宫 / 自动征象星 / 转宫矩阵 / yes-no / radical 统一结论 / ToL 等直接判定
+
+---
+
+# Horary v2.1 当前分支审查与修复（2026-07-24）
+
+分支：`codex/refactor-horary`
+审查基线：`main` 当前提交 `cc861ca`；审查对象为该分支尚未提交的 Horary v2/v2.1 工作区改动。
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 边界与差异盘点 | ✅ | 已分类 Horary v2/v2.1 工作区改动并核对接口、调用链与文档契约 |
+| 02 自动化门禁 | ✅ | 聚焦 Python 78 项；完整 Python 896、Swift 109、build 与 backend smokes 全绿 |
+| 03 代码审查与修复 | ✅ | 已修复 Swiss pheno、版本/输入防线、Codable/导出保真、星盘显示和溯源哈希问题 |
+| 04 回归与交付复核 | ✅ | 完整门禁、diff/stat 与 whitespace 复核完成；`.build`、pytest、pyc 和 QA 临时包已清理 |
+
+完成条件：确认的审查问题均有回归覆盖；项目要求的相关测试通过；最终差异仅包含本 Horary 重构及其审查修复。
+
+---
+
+# 主界面纵向布局回归修复（2026-07-24）
+
+优先级：阻断级，先于 Horary 其余审查。
+截图基线：约 1470×928 pt 的窗口中，技法导航吞掉“现代 / 古典 / 吠陀”切换，中间参数栏吞掉“开始排盘”，现代技法列表向下溢出。
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 布局调用链定位 | ✅ | 确认超长现代技法列表抬高主工作区最小高度并压缩顶部工具栏 |
+| 02 独立滚动与固定区修复 | ✅ | 技法列表占剩余高度独立滚动；收起/设置区固定；顶部实践模式和排盘操作区固定 |
+| 03 尺寸回归与测试 | ✅ | Swift build + 109 tests；独立 QA app 实测顶部操作区、三模式切换、28 项导航与滚动值 |
+| 04 审查任务恢复 | ✅ | 已记录 CHANGELOG，并恢复 Horary 审查、最终门禁和缓存清理 |
+
+完成条件：现代 / 古典 / 吠陀切换和开始排盘始终可见；现代技法列表不再撑破窗口且可上下滚动；紧凑窗口仍保持三栏结构可用。
+
+---
+
+# 仓库与分支全局体检（2026-07-24）
+
+目标：解释当前项目、分支与工作区为什么显得混乱，区分提交历史问题、未提交任务混杂、远端不同步、生成物/缓存和真实代码缺陷；本阶段只检查与报告，不擅自提交、拆分、丢弃或推送。
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 Git 拓扑盘点 | ✅ | origin 已刷新；本地 main ahead 18，advanced UI 再 ahead 1；单 worktree、无 stash/merge/rebase |
+| 02 工作区任务分类 | ✅ | 24 个 tracked + 16 个 untracked；Horary v2.1、主布局修复、文档/fixture 混在同一未提交工作区 |
+| 03 项目健康检查 | ✅ | 最近完整门禁全绿；确认版本/安装包错位、CI smoke 漏项、计划陈旧段落和重复大 fixture |
+| 04 风险排序与收口方案 | ✅ | 已形成先保护快照、再以 1.4.1 UI 为基线拆分 Horary/UI/legacy 修复、最后同步 main 的无损步骤 |
+
+完成条件：每个“乱点”都有证据、影响和建议动作；明确哪些问题需要立即修、哪些只是尚未提交；不以破坏性 Git 操作代替整理。
+
+## 体检结论
+
+- P0：当前 24 个已跟踪修改和 16 个未跟踪文件均未提交、未暂存、无 upstream；分支指针本身不能保护这些工作。
+- P0：当前源码基线为 1.4.0(42)，而已安装 app 和 `feature/b7-b20-classical-advanced-ui` 为 1.4.1(43)；直接从当前工作区打包会发生功能/版本回退。
+- P1：`codex/refactor-horary` 与 local main 同指针，未基于最新 advanced UI 提交；双方重叠 9 个文件，必须人工整合。
+- P1：`codex/project-cleanup-2026-07` 的 `b014709` 仍是非等价未合并提交，legacy Horary 输入校验、最早事件选择和精确去重修复尚未进入当前代码。
+- P1：刷新 origin 后，本地 main 仍领先 origin/main 18 个提交；advanced UI 再领先 1 个，GitHub 不代表当前本地产品。
+- P2：CI smoke 比本地 gate 少 moment、harmonic、B13–B20 多个模式和 rectify，且无 `pull_request` 触发。
+- P2：三份 Horary JSON 内容相同、每份约 1.4 MB；PLANS/CHANGELOG 各约 1.4k 行且保留过期“当前状态”描述。
+- P3：三个已合并本地分支可在主线同步后清理；8 个 B13–B20 commit subject 含字面量 `\n\n`，只影响历史可读性，不应为此重写共享历史。
+
+---
+
+# 仓库无损收口与分支整理（2026-07-24）
+
+分支：`codex/integrate-horary-ui-cleanup`
+目标：以 `1.4.1 (43)` 高级 UI 为基线，保全并拆分混合工作区，补回遗漏修复，完成门禁后整理本地分支；不重写共享历史。
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 安全快照 | ✅ | 原混合工作区已保全为 `e3d95ba`，无文件丢失 |
+| 02 干净整合 | ✅ | 以高级 UI `7cd1097` 为基线，拆出 Horary v2.1 与主布局两个独立提交 |
+| 03 Legacy Horary 遗漏 | 🔄 | 移植输入校验、最早事件选择、精确去重及测试 |
+| 04 CI 与记录清理 | ⏳ | 补齐 PR 触发、smoke 覆盖与过期计划标记 |
+| 05 完整验证 | ⏳ | `check_vibe_changes.sh`、diff、版本一致性、缓存清理 |
+| 06 分支整理 | ⏳ | 快进本地 main，删除确认已合并的本地枝，保留安全快照 |
