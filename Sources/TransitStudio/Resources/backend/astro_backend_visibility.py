@@ -259,6 +259,56 @@ def _heliacal_events(
                     )
                     continue
                 exact = _utc_from_jd(jds[0])
+                # Also search backward for previous event of same type (birth-state context).
+                previous_exact = None
+                try:
+                    prev_result = swe.heliacal_ut(
+                        jd_start - 1.0,
+                        geopos,
+                        datm,
+                        dobs,
+                        object_name,
+                        int(type_event),
+                        swe.FLG_SWIEPH | getattr(swe, "HELIACAL_AVKIND_VISLIM", 0),
+                    )
+                    # Prefer dedicated backward flag when available
+                except Exception:
+                    prev_result = None
+                try:
+                    # pyswisseph: last arg backwards=True for previous
+                    prev_result = swe.heliacal_ut(
+                        jd_start,
+                        geopos,
+                        datm,
+                        dobs,
+                        object_name,
+                        int(type_event),
+                        swe.FLG_SWIEPH,
+                        True,
+                    )
+                    if isinstance(prev_result, tuple) and len(prev_result) >= 1:
+                        if isinstance(prev_result[0], (list, tuple)):
+                            prev_jds = [float(x) for x in prev_result[0] if isinstance(x, (int, float))]
+                        else:
+                            prev_jds = [
+                                float(x)
+                                for x in prev_result
+                                if isinstance(x, (int, float)) and math.isfinite(float(x))
+                            ]
+                        if prev_jds:
+                            previous_exact = _utc_from_jd(prev_jds[0])
+                except TypeError:
+                    # Signature without backwards parameter — leave previous unset.
+                    previous_exact = None
+                except Exception:
+                    previous_exact = None
+
+                days_to_next = (exact - start_utc).total_seconds() / 86400.0
+                days_from_prev = (
+                    (start_utc - previous_exact).total_seconds() / 86400.0
+                    if previous_exact is not None
+                    else None
+                )
                 rows.append(
                     {
                         "id": f"{body_id}|{event_key}|{_iso_utc(exact)}",
@@ -267,17 +317,24 @@ def _heliacal_events(
                         "event_type": event_key,
                         "exact_utc": _iso_utc(exact),
                         "exact_local": _iso_local(exact, display_zone),
+                        "exact_local_minute_precision": _iso_local(exact, display_zone)[:16] if exact else None,
+                        "next_event_utc": _iso_utc(exact),
+                        "previous_event_utc": _iso_utc(previous_exact) if previous_exact else None,
+                        "days_to_next_event": round(days_to_next, 3),
+                        "days_from_previous_event": round(days_from_prev, 3) if days_from_prev is not None else None,
                         "visibility_start_jd": jds[0] if len(jds) > 0 else None,
                         "optimum_jd": jds[1] if len(jds) > 1 else None,
                         "visibility_end_jd": jds[2] if len(jds) > 2 else None,
                         "status": "ok",
                         "method_key": "swe.heliacal_ut",
                         "observer_age": observer_age,
+                        "interpretation_precision": "minute",
                         "atmosphere": {
                             "pressure_hpa": datm[0],
                             "temperature_c": datm[1],
                             "relative_humidity": datm[2],
                         },
+                        "horizon_assumptions": "Swiss Ephemeris default heliacal atmosphere model",
                     }
                 )
             except Exception as exc:
@@ -459,7 +516,15 @@ def calculate_classical_visibility(request: dict[str, Any], warnings: list[str])
     body_ids = request.get("body_ids") or DEFAULT_BODIES
     if not isinstance(body_ids, list) or not body_ids:
         raise ValueError("body_ids must be a non-empty array")
-    event_types = request.get("heliacal_event_types") or DEFAULT_HELIACAL_EVENTS
+    event_types = request.get("heliacal_event_types")
+    if event_types is None:
+        # Mercury/Venus need full four-phase set by default when those bodies are requested.
+        wants_inferior = any(str(b).upper() in {"MERCURY", "VENUS"} for b in body_ids)
+        event_types = (
+            ["morning_first", "morning_last", "evening_first", "evening_last"]
+            if wants_inferior
+            else list(DEFAULT_HELIACAL_EVENTS)
+        )
     if not isinstance(event_types, list) or not event_types:
         raise ValueError("heliacal_event_types must be a non-empty array")
     observer_age = float(request.get("observer_age") or 36)
@@ -497,9 +562,18 @@ def calculate_classical_visibility(request: dict[str, Any], warnings: list[str])
                 if row.get("rise_utc"):
                     dt = datetime.fromisoformat(row["rise_utc"].replace("Z", "+00:00"))
                     row["rise_local"] = _iso_local(dt, display_zone)  # type: ignore[arg-type]
+                    # Next rise after reference — may be next civil day.
+                    row["next_rise_after_reference"] = row["rise_utc"]
+                    row["next_rise_after_reference_local"] = row["rise_local"]
                 if row.get("set_utc"):
                     dt = datetime.fromisoformat(row["set_utc"].replace("Z", "+00:00"))
                     row["set_local"] = _iso_local(dt, display_zone)  # type: ignore[arg-type]
+                    row["next_set_after_reference"] = row["set_utc"]
+                    row["next_set_after_reference_local"] = row["set_local"]
+                row["note"] = (
+                    "next_rise/set_after_reference may fall on different civil days; "
+                    "not a same-day rise/set pair guarantee"
+                )
                 rise_set.append(row)
         except Exception as exc:
             section_errors["rise_set"] = str(exc)

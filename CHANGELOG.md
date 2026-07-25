@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-25 — Technique maintenance batch 2
+
+- Kurios split: `natal_oikodespotes`, `natal_kurios`, `current_compound_chart_governor` (year lord only in composite).
+- Mundane ingress: full ASC/MC/houses/rulers/angular planets at location.
+- Electional: `daily_fact_snapshots` / `scan_samples`; legacy `electional_candidates` = samples not ranked candidates.
+- Heliacal: previous+next event fields; rise/set `next_*_after_reference`; Mercury/Venus four-phase defaults.
+- Parans: renamed to `fixed_star_ra_conjunction` / approximate co-culmination proxy with declination fields.
+
+
 ## 2026-07-25 — Classical + Modern technique maintenance (batch 1)
 
 Branch: `fix/classical-modern-technique-maintenance`

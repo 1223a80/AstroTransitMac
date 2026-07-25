@@ -73,6 +73,23 @@ def calculate_prenatal_parans(request: dict[str, Any], warnings: list[str]) -> d
                     continue
                 dra = abs(((float(sra) - pra + 180) % 360) - 180)
                 if dra <= float(request.get("paran_ra_orb_deg", 1.0)):
+                    pdec = None
+                    sdec = st.get("declination") or st.get("dec")
+                    try:
+                        pdec = float(eq[1]) if len(eq) > 1 else None
+                    except Exception:
+                        pdec = None
+                    ecl_orb = None
+                    also_ecliptic = False
+                    try:
+                        star_lon = st.get("longitude") or st.get("lon")
+                        if star_lon is not None and p.get("longitude") is not None:
+                            from astro_backend_core import signed_orb
+
+                            ecl_orb = abs(signed_orb(float(p["longitude"]), float(star_lon)))
+                            also_ecliptic = ecl_orb <= 1.0
+                    except Exception:
+                        pass
                     parans.append(
                         {
                             "planet_id": p["body_id"],
@@ -81,9 +98,22 @@ def calculate_prenatal_parans(request: dict[str, Any], warnings: list[str]) -> d
                             "planet_ra": round(pra, 6),
                             "star_ra": round(float(sra), 6),
                             "ra_delta_deg": round(dra, 6),
-                            "paran_class": "co_culmination_ra_proxy",
-                            "method_key": "fixed_star_paran_ra_proxy_v1",
-                            "note": "RA co-culmination proxy, not full local rise-pair paran.",
+                            "planet_declination": round(pdec, 6) if pdec is not None else None,
+                            "star_declination": round(float(sdec), 6) if sdec is not None else None,
+                            "event_delta_seconds": None,
+                            "also_ecliptic_conjunction": also_ecliptic,
+                            "ecliptic_orb": round(ecl_orb, 6) if ecl_orb is not None else None,
+                            "coordinate_epoch": "of_date",
+                            "position_type": "apparent_equatorial",
+                            "paran_class": "approximate_co_culmination",
+                            "method_key": "fixed_star_ra_conjunction",
+                            "method_key_legacy": "fixed_star_paran_ra_proxy_v1",
+                            "proxy": True,
+                            "full_paran": False,
+                            "note": (
+                                "RA co-culmination / fixed_star_ra_conjunction proxy only. "
+                                "Not full rise/culmination/set/lower-culmination paran with time deltas."
+                            ),
                         }
                     )
     except Exception as exc:

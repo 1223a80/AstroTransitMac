@@ -113,66 +113,21 @@ def sect_light_triplicity_rulers(
 # ---------------------------------------------------------------------------
 
 
-def determine_kurios(
-    asc_lon: float,
-    is_day: bool,
-    light_triplicity: dict[str, Any] | None,
-    almuten: dict[str, Any] | None,
-    profection_lord_id: str | None,
+def _score_governor_candidates(
+    candidates: list[tuple[str, str, int]],
     planet_rows: list[dict[str, Any]],
     positions_by_id: dict[str, dict[str, Any]] | None = None,
-) -> dict[str, Any]:
-    """Determine the Kurios (Lord of the Nativity) using a weighted scoring system.
-
-    Candidate sources and their base weights:
-    - ASC Domicile Ruler: 5
-    - 1st Triplicity Ruler of Sect Light: 4
-    - Almuten Figuris winner: 3
-    - 2nd Triplicity Ruler of Sect Light: 2
-    - Profection Lord (yearly only): 1
-    """
+) -> list[dict[str, Any]]:
     position_lookup = {r["id"]: r for r in planet_rows} if not positions_by_id else positions_by_id
-
-    # Candidates: (planet_id, role, base_weight)
-    candidates: list[tuple[str, str, int]] = []
-
-    # 1. ASC ruler
-    asc_sign_idx = zodiac_sign_index(asc_lon)
-    asc_ruler_id = SIGN_RULERS[asc_sign_idx]
-    candidates.append((asc_ruler_id, "ASC Ruler", 5))
-
-    # 2. Triplicity ruler(s) of sect light
-    if light_triplicity and light_triplicity.get("rulers"):
-        for r in light_triplicity["rulers"]:
-            w = 4 if r["rank"] == 1 else 2
-            candidates.append((r["planet"], f"{r['label'].capitalize()} Triplicity Ruler", w))
-
-    # 3. Almuten Figuris
-    if almuten and almuten.get("winner_id"):
-        winner_id = almuten["winner_id"]
-        if winner_id in BODY_REGISTRY:
-            candidates.append((winner_id, "Almuten Figuris", 3))
-
-    # 4. Profection Lord
-    if profection_lord_id and profection_lord_id in BODY_REGISTRY:
-        candidates.append((profection_lord_id, "Profection Lord", 1))
-
-    # Remove duplicates, keeping highest weight
     seen: dict[str, tuple[str, str, int]] = {}
     for pid, role, weight in candidates:
         if pid not in seen or weight > seen[pid][2]:
             seen[pid] = (pid, role, weight)
-
-    unique_candidates = list(seen.values())
-
-    # Score each candidate
     scored: list[dict[str, Any]] = []
-    for pid, role, base_weight in unique_candidates:
+    for pid, role, base_weight in seen.values():
         row = position_lookup.get(pid, {})
         modifier = 0
         modifiers: list[str] = []
-
-        # Angular
         acc = row.get("accidental", "")
         if acc in ("角宫", "Angular"):
             modifier += 3
@@ -183,18 +138,13 @@ def determine_kurios(
         else:
             modifier -= 2
             modifiers.append("果宫 -2")
-
-        # Score from dignity system
         score = row.get("score", 0)
-        modifier += max(-5, min(score, 5))  # Cap to ±5
+        modifier += max(-5, min(score, 5))
         modifiers.append(f"score {score}")
-
-        # House
         house = row.get("house", 0)
         if house in (1, 10):
             modifier += 2
             modifiers.append("角宫主 +2")
-
         total = base_weight + modifier
         scored.append({
             "planet": pid,
@@ -207,25 +157,161 @@ def determine_kurios(
             "natal_house": row.get("house", 0),
             "natal_score_label": row.get("score_label", ""),
         })
-
     scored.sort(key=lambda x: -x["score"])
+    return scored
 
-    result: dict[str, Any] = {
-        "method": "compound_weighted",
-        "primary": None,
+
+def determine_oikodespotes(
+    asc_lon: float,
+    planet_rows: list[dict[str, Any]],
+    positions_by_id: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Natal house-master (ASC domicile ruler) — permanent natal fact."""
+    asc_sign_idx = zodiac_sign_index(asc_lon)
+    asc_ruler_id = SIGN_RULERS[asc_sign_idx]
+    scored = _score_governor_candidates(
+        [(asc_ruler_id, "ASC Domicile Ruler / Oikodespotes", 5)],
+        planet_rows,
+        positions_by_id,
+    )
+    primary = scored[0] if scored else None
+    return {
+        "module": "natal_oikodespotes",
+        "method": "asc_domicile_ruler",
+        "primary": {
+            "planet": primary["planet"],
+            "planet_name": primary["planet_name"],
+            "score": primary["score"],
+            "role": primary["role"],
+            "natal_house": primary["natal_house"],
+            "natal_score_label": primary["natal_score_label"],
+        } if primary else None,
         "candidates": scored,
+        "note": "Oikodespotes = ASC domicile ruler (natal permanent).",
     }
-    if scored:
-        result["primary"] = {
-            "planet": scored[0]["planet"],
-            "planet_name": scored[0]["planet_name"],
-            "score": scored[0]["score"],
-            "role": scored[0]["role"],
-            "natal_house": scored[0]["natal_house"],
-            "natal_score_label": scored[0]["natal_score_label"],
-        }
 
-    return result
+
+def determine_natal_kurios(
+    asc_lon: float,
+    light_triplicity: dict[str, Any] | None,
+    almuten: dict[str, Any] | None,
+    planet_rows: list[dict[str, Any]],
+    positions_by_id: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Natal Kurios candidates from permanent dignities only (no profection year lord)."""
+    candidates: list[tuple[str, str, int]] = []
+    asc_sign_idx = zodiac_sign_index(asc_lon)
+    candidates.append((SIGN_RULERS[asc_sign_idx], "ASC Ruler", 5))
+    if light_triplicity and light_triplicity.get("rulers"):
+        for r in light_triplicity["rulers"]:
+            w = 4 if r["rank"] == 1 else 2
+            candidates.append((r["planet"], f"{r['label'].capitalize()} Triplicity Ruler", w))
+    if almuten and almuten.get("winner_id") and almuten["winner_id"] in BODY_REGISTRY:
+        candidates.append((almuten["winner_id"], "Almuten Figuris", 3))
+    scored = _score_governor_candidates(candidates, planet_rows, positions_by_id)
+    primary = scored[0] if scored else None
+    return {
+        "module": "natal_kurios",
+        "method": "natal_weighted_permanent_dignities",
+        "primary": {
+            "planet": primary["planet"],
+            "planet_name": primary["planet_name"],
+            "score": primary["score"],
+            "role": primary["role"],
+            "natal_house": primary["natal_house"],
+            "natal_score_label": primary["natal_score_label"],
+        } if primary else None,
+        "candidates": scored,
+        "note": "Natal Kurios excludes annual profection lord and other time-lords.",
+    }
+
+
+def determine_current_compound_chart_governor(
+    asc_lon: float,
+    is_day: bool,
+    light_triplicity: dict[str, Any] | None,
+    almuten: dict[str, Any] | None,
+    profection_lord_id: str | None,
+    planet_rows: list[dict[str, Any]],
+    positions_by_id: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Modern composite proxy mixing natal + current time-lord factors.
+
+    Not a traditional permanent Kurios. Year lord may enter this module only.
+    """
+    _ = is_day
+    candidates: list[tuple[str, str, int]] = []
+    asc_sign_idx = zodiac_sign_index(asc_lon)
+    candidates.append((SIGN_RULERS[asc_sign_idx], "ASC Ruler", 5))
+    if light_triplicity and light_triplicity.get("rulers"):
+        for r in light_triplicity["rulers"]:
+            w = 4 if r["rank"] == 1 else 2
+            candidates.append((r["planet"], f"{r['label'].capitalize()} Triplicity Ruler", w))
+    if almuten and almuten.get("winner_id") and almuten["winner_id"] in BODY_REGISTRY:
+        candidates.append((almuten["winner_id"], "Almuten Figuris", 3))
+    if profection_lord_id and profection_lord_id in BODY_REGISTRY:
+        candidates.append((profection_lord_id, "Annual Profection Lord (time-bound)", 1))
+    scored = _score_governor_candidates(candidates, planet_rows, positions_by_id)
+    primary = scored[0] if scored else None
+    return {
+        "module": "current_compound_chart_governor",
+        "method": "current_compound_chart_governor",
+        "method_legacy_alias": "compound_weighted",
+        "proxy": True,
+        "primary": {
+            "planet": primary["planet"],
+            "planet_name": primary["planet_name"],
+            "score": primary["score"],
+            "role": primary["role"],
+            "natal_house": primary["natal_house"],
+            "natal_score_label": primary["natal_score_label"],
+        } if primary else None,
+        "candidates": scored,
+        "note": "Modern composite proxy: may include annual profection lord. Not natal Kurios.",
+    }
+
+
+def determine_kurios(
+    asc_lon: float,
+    is_day: bool,
+    light_triplicity: dict[str, Any] | None,
+    almuten: dict[str, Any] | None,
+    profection_lord_id: str | None,
+    planet_rows: list[dict[str, Any]],
+    positions_by_id: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Compatibility wrapper: returns three modules + legacy primary from natal Kurios.
+
+    Legacy `method=compound_weighted` consumers should migrate to
+    `current_compound_chart_governor` for timed composites and `natal_kurios` for natal.
+    """
+    oikodespotes = determine_oikodespotes(asc_lon, planet_rows, positions_by_id)
+    natal_kurios = determine_natal_kurios(
+        asc_lon, light_triplicity, almuten, planet_rows, positions_by_id
+    )
+    current_gov = determine_current_compound_chart_governor(
+        asc_lon,
+        is_day,
+        light_triplicity,
+        almuten,
+        profection_lord_id,
+        planet_rows,
+        positions_by_id,
+    )
+    # Primary for backward compatibility: natal Kurios (no year lord).
+    return {
+        "method": "natal_kurios_with_modules",
+        "method_legacy_alias": "compound_weighted",
+        "primary": natal_kurios.get("primary"),
+        "candidates": natal_kurios.get("candidates"),
+        "natal_oikodespotes": oikodespotes,
+        "natal_kurios": natal_kurios,
+        "current_compound_chart_governor": current_gov,
+        "note": (
+            "Split modules: natal_oikodespotes, natal_kurios, current_compound_chart_governor. "
+            "Year profection lord is only in current_compound_chart_governor."
+        ),
+    }
 
 
 # ---------------------------------------------------------------------------
