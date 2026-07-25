@@ -1443,3 +1443,72 @@ interpretation_context / NLP 事项宫 / 自动征象星 / 转宫矩阵 / yes-no
 | 02 README 重写 | ✅ | 已重构产品定位、1.4.2 更新、B7–B20/现代/古典/Horary/吠陀矩阵、架构、运行与发布 |
 | 03 事实校验 | ✅ | 本地链接、示例文件、34 个 mode、20+8 导航分流、版本、测试数字与 roadmap 边界均已核对 |
 | 04 diff 与交付 | ✅ | 已更新 CHANGELOG/计划，README 结构、空白、完整 diff 与工作树边界通过复核 |
+
+---
+
+# Classical + Modern Technique Maintenance (2026-07-25)
+
+Branch: `fix/classical-modern-technique-maintenance`  
+Sources: `Desktop/古典技法维护.md`, `Desktop/现代技法维护.md`  
+Fixed fixture chart: 2004-08-09T08:16:00Z / 35.0576N 118.3346E / Whole Sign / Egyptian / Dorothean / ref 2026-07-25T08:44:00Z
+
+## Progress tracker
+
+### Classical (priority order)
+
+| ID | Item | Status | Notes |
+|---|---|---|---|
+| C1 | Egyptian bounds + dignity ownership | done | Virgo fixed; ownership fields |
+| C2 | Decennials 129-month rewrite | done | 129-month profile |
+| C3 | PD converse dates + symmetry + aspects | done | |
+| C4 | ZR L1/L2/L3 summary | done | |
+| C5 | Return cycle/hit semantics | done | cycle clustering |
+| C6 | Hyleg eligible vs selected | done | |
+| C7 | Alcocoden witness rejection | done | |
+| C8 | Almuten profile | done | |
+| C9 | Kurios / Oikodespotes / composite split | pending | |
+| C10 | Circumambulations period format | done | |
+| C11 | PD multi-profile rename/downgrade | done | |
+| C12 | Sect layered fields | done | partial |
+| C13 | Angularity vs place quality | done | |
+| C14 | Solar elongation vs visibility | done | |
+| C15 | Enclosure/chariot proxy rename | done | |
+| C16 | Bonification/maltreatment proxy | pending | |
+| C17 | Lots source + duplicate groups | done | |
+| C18 | Prenatal syzygy axis | done | |
+| C19 | Heliacal before/after events | pending | |
+| C20 | Parans complete or downgrade | pending | |
+| C21 | Ingress mundane chart | pending | |
+| C22 | Electional scanner rename | pending | |
+| C23 | Concordance independence | pending | |
+| C24 | Return cross-noise split | pending | |
+| C25 | Unified timeline semantics | pending | |
+
+### Modern (after classical)
+
+| ID | Item | Status |
+|---|---|---|
+| M1 | Location service | pending |
+| M2 | Placidus natal foundation | pending |
+| M3 | Solar Arc restructure | pending |
+| M4 | Harmonic chart mapping | pending |
+| M5 | Planetary return (esp Mercury) | pending |
+| M6 | Relocation | pending |
+| M7 | Modern cycles / eclipses | pending |
+| M8 | Declination / OOB | pending |
+| M9 | Retrograde cycles | pending |
+| M10 | Planetary synodic | pending |
+| M11 | Draconic | pending |
+| M12 | Heliocentric | pending |
+| M13 | Method families (true ARMC) | pending |
+| M14 | 90° Dial / orbital | pending |
+| M15 | Local Space | pending |
+
+## Implementation rules
+
+- Fix calculation layer first, then Markdown/export
+- No hardcoding fixture answers
+- All proxies marked explicitly
+- Add automated regression tests per item
+- Document root causes in `docs/technique-maintenance-2026-07/`
+

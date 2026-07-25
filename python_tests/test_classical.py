@@ -272,8 +272,10 @@ class TestSectHayzJoy:
 
 class TestSolarPhase:
     def test_phase_visible(self) -> None:
-        phase, _, _, _ = solar_phase("VENUS", 50, 100)
-        assert phase == "\u53ef\u89c1"
+        phase, _, _, payload = solar_phase("VENUS", 50, 100)
+        # Free of solar beams — not naked-eye "visible"
+        assert phase in {"脱离日光", "\u53ef\u89c1"}
+        assert payload.get("solar_elongation_condition") in {"free_of_beams", "visible"}
 
     def test_phase_sun(self) -> None:
         phase, _, _, _ = solar_phase("SUN", 0, 0)
@@ -465,10 +467,15 @@ class TestCircumambulations:
     def test_find_bound_mid_degree_aries_egyptian(self) -> None:
         from astro_backend_circumambulations import _find_bound_for_degree
         from astro_backend_classical import EGYPTIAN_BOUNDS
+        # Exclusive upper: 14°00' starts Mercury bound (Venus is 6–14 exclusive).
         ruler, start, end = _find_bound_for_degree(EGYPTIAN_BOUNDS, 0, 14.0)
-        assert ruler == "VENUS"
-        assert start == 6
-        assert end == 14
+        assert ruler == "MERCURY"
+        assert start == 14
+        assert end == 21
+        ruler_v, start_v, end_v = _find_bound_for_degree(EGYPTIAN_BOUNDS, 0, 13.999)
+        assert ruler_v == "VENUS"
+        assert start_v == 6
+        assert end_v == 14
 
     def test_find_bound_last_degree_aries_egyptian(self) -> None:
         from astro_backend_circumambulations import _find_bound_for_degree

@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-07-25 — Classical + Modern technique maintenance (batch 1)
+
+Branch: `fix/classical-modern-technique-maintenance`
+
+### Classical (calculation-layer fixes)
+- Egyptian Virgo bounds corrected; bound upper exclusive; dignity ownership fields (`bound_ruler`, `subject_owns_*`).
+- Decennials rewritten as 129-month minor-years profile (decoupled from Firdaria).
+- Primary directions: converse dates always post-birth; symmetric duplicate flags; aspect fields.
+- ZR L1/L2/L3 layered lords in `technique_lords_summary`.
+- Hyleg eligible≠selected (unique selected); Alcocoden requires witness; no longevity years.
+- Almuten profile title + contribution sources.
+- Circumambulations period table; PD profiles renamed (`one_degree_per_year_proxy`, `sign_reversal_test_naibod`).
+- Sect/place/solar elongation layered fields; enclosure/chariot proxies renamed/downgraded.
+- Lots duplicate formula groups; prenatal full-moon axis fields; return cycle/hit semantics.
+
+### Modern
+- Method families v2: true ARMC Naibod + MC-from-true-solar-arc house rebuild; 361 experimental proxy.
+- Solar Arc: arc keys, natal speed metadata, house field split, SA-internal patterns default off.
+- Shared location service (builtin cities incl. Osaka); relocation city resolution.
+- Modern cycles: eclipse+lunation merge group fields.
+
+### Docs / tests
+- `docs/technique-maintenance-2026-07/ROOT_CAUSES.md`, `CHANGES.md`
+- `python_tests/test_technique_maintenance_classical.py` + updated method/PD/classical tests
+
+### Remaining (next batches)
+- Full heliacal before/after; Parans complete path; electional scanner rename; concordance independence engine; harmonic/draconic/heliocentric/local-space deep fixes; Mercury return multi-pass audit; more SA aspect lifecycle orbs.
+
+
 ## 2026-07-24 — README 对齐 1.4.2 已交付功能
 
 - 根 README 按当前产品重新组织，新增 1.4.2 更新总览、B7–B20 逐批能力、20 个现代入口、八个古典进阶入口、Horary v2.1、吠陀、导出与 AI 覆盖矩阵。

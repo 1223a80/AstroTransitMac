@@ -122,10 +122,25 @@ def calculate_prenatal_syzygy(
 
     if syzygy_type == "new_moon":
         syzygy_degree_used = syzygy_sun_lon
+        selected_luminary = "SUN"
+        degree_selection_profile = "new_moon_sun_degree_v1"
         syzygy_degree_note = "Sun degree (sun_position; Moon conjunct)"
+        syzygy_axis = None
     else:
+        # Full moon is an axis: Sun and Moon opposite. Default profile uses Sun degree.
         syzygy_degree_used = syzygy_sun_lon
-        syzygy_degree_note = "Sun degree (sun_position; full moon axis, Moon opposite)"
+        selected_luminary = "SUN"
+        degree_selection_profile = "full_moon_sun_degree_profile_v1"
+        syzygy_degree_note = (
+            "Sun degree (sun_position; full moon axis, Moon opposite). "
+            "Full-moon axis: sun_longitude and moon_longitude both reported; "
+            "selected_degree uses Sun by profile (not the Moon opposite degree alone)."
+        )
+        syzygy_axis = {
+            "sun_longitude": round(syzygy_sun_lon, 6),
+            "moon_longitude": round(syzygy_moon_lon, 6),
+            "axis_span_deg": round(abs(((syzygy_moon_lon - syzygy_sun_lon + 180) % 360) - 180), 4),
+        }
 
     sign_idx = zodiac_sign_index(syzygy_degree_used)
     degree = syzygy_degree_used - sign_idx * 30.0
@@ -141,12 +156,19 @@ def calculate_prenatal_syzygy(
         "exact_jd": float(syzygy_jd),
         "jd": float(syzygy_jd),
         "longitude": round(syzygy_degree_used, 4),
+        "sun_longitude": round(syzygy_sun_lon, 4),
+        "moon_longitude": round(syzygy_moon_lon, 4),
         "sun_position": round(syzygy_sun_lon, 4),
         "moon_position": round(syzygy_moon_lon, 4),
+        "syzygy_axis": syzygy_axis,
+        "degree_selection_profile": degree_selection_profile,
+        "selected_degree": round(syzygy_degree_used, 4),
+        "selected_luminary": selected_luminary,
         "sign": SIGNS[sign_idx],
         "degree": round(degree, 2),
         "ruler": planet_name(ruler_id),
         "ruler_id": ruler_id,
+        "ruler_basis": "domicile_ruler_of_selected_degree_sign",
         "dignity_rulers": dignities,
         "syzygy_degree_used": syzygy_degree_note,
         "method_variant": "prenatal_syzygy_nearest_before_birth",
@@ -164,7 +186,22 @@ def calculate_almuten_figuris(
     is_day: bool,
     bounds_system: str,
     triplicity_system: str,
+    planetary_day_ruler: str | None = None,
+    planetary_hour_ruler: str | None = None,
+    include_day_hour_bonus: bool = False,
+    include_accidental: bool = False,
 ) -> dict[str, Any]:
+    """Almuten Figuris under an explicit scoring profile.
+
+    Default profile scores only essential dignities of five chart points.
+    Day/hour/accidental bonuses are optional and must be requested explicitly.
+    Title meaning: strongest under the current profile — not absolute chart ruler.
+    """
+    almuten_profile = (
+        "almuten_figuris_5_point_essential_v1"
+        if not include_day_hour_bonus and not include_accidental
+        else "almuten_figuris_5_point_extended_v1"
+    )
     points = [
         ("Sun", planet_positions["SUN"]["longitude"]),
         ("Moon", planet_positions["MOON"]["longitude"]),
@@ -172,39 +209,111 @@ def calculate_almuten_figuris(
         ("Fortune", lot_fortune_lon),
         ("Syzygy", syzygy["longitude"]),
     ]
+    included_dignities = ["domicile", "exaltation", "triplicity", "bound", "decan"]
+    weights = {"domicile": 5, "exaltation": 4, "triplicity": 3, "bound": 2, "decan": 1}
 
     score_table: dict[str, dict[str, Any]] = {}
     for pid in ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"]:
-        score_table[pid] = {"planet": planet_name(pid), "total": 0, "contributions": []}
+        score_table[pid] = {
+            "planet": planet_name(pid),
+            "planet_id": pid,
+            "total": 0,
+            "contributions": [],
+        }
 
     for point_name, lon in points:
         rulers = dignity_rulers_for_lon(lon, is_day, bounds_system, triplicity_system)
-        weights = {"domicile": 5, "exaltation": 4, "triplicity": 3, "bound": 2, "decan": 1}
         for dignity_key, ruler_id in rulers.items():
-            if ruler_id in score_table:
-                weight = weights.get(dignity_key, 0)
+            if ruler_id in score_table and dignity_key in weights:
+                weight = weights[dignity_key]
                 score_table[ruler_id]["total"] += weight
                 score_table[ruler_id]["contributions"].append({
                     "point": point_name,
                     "dignity": dignity_key,
                     "weight": weight,
+                    "owned_by": ruler_id,
+                    "source": f"{point_name}.{dignity_key}",
                 })
+
+    day_ruler_bonus = 0
+    hour_ruler_bonus = 0
+    accidental_dignity_bonus = 0
+    if include_day_hour_bonus:
+        day_ruler_bonus = 7
+        hour_ruler_bonus = 6
+        if planetary_day_ruler and planetary_day_ruler in score_table:
+            score_table[planetary_day_ruler]["total"] += day_ruler_bonus
+            score_table[planetary_day_ruler]["contributions"].append({
+                "point": "planetary_day",
+                "dignity": "day_ruler",
+                "weight": day_ruler_bonus,
+                "owned_by": planetary_day_ruler,
+                "source": "planetary_day_ruler",
+            })
+        if planetary_hour_ruler and planetary_hour_ruler in score_table:
+            score_table[planetary_hour_ruler]["total"] += hour_ruler_bonus
+            score_table[planetary_hour_ruler]["contributions"].append({
+                "point": "planetary_hour",
+                "dignity": "hour_ruler",
+                "weight": hour_ruler_bonus,
+                "owned_by": planetary_hour_ruler,
+                "source": "planetary_hour_ruler",
+            })
+    if include_accidental:
+        accidental_dignity_bonus = 0  # reserved; not auto-applied without house strengths
 
     ranked = sorted(score_table.values(), key=lambda value: -value["total"])
     winner = ranked[0] if ranked else None
-    syzygy_valid = syzygy and syzygy.get("longitude", 0) > 0 and syzygy.get("method_variant") == "prenatal_syzygy_nearest_before_birth"
+    syzygy_valid = (
+        syzygy
+        and syzygy.get("longitude", 0) > 0
+        and syzygy.get("method_variant") == "prenatal_syzygy_nearest_before_birth"
+    )
     confidence_level = "high" if syzygy_valid else "low"
 
     return {
         "winner": winner["planet"] if winner else "",
-        "winner_id": next((pid for pid in ["SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN"] if planet_name(pid) == (winner or {}).get("planet", "")), ""),
+        "winner_id": winner.get("planet_id", "") if winner else "",
+        "title": "当前profile下的Almuten Figuris",
         "score_table": ranked,
         "points_used": [point[0] for point in points],
+        "included_points": [point[0] for point in points],
+        "included_dignities": included_dignities,
+        "day_ruler_bonus": day_ruler_bonus if include_day_hour_bonus else 0,
+        "hour_ruler_bonus": hour_ruler_bonus if include_day_hour_bonus else 0,
+        "accidental_dignity_bonus": accidental_dignity_bonus,
+        "planetary_day_ruler": planetary_day_ruler,
+        "planetary_hour_ruler": planetary_hour_ruler,
         "method": "traditional_5_point",
-        "method_variant": "almuten_figuris_5_point_essential_dignity",
+        "method_variant": almuten_profile,
+        "almuten_profile": almuten_profile,
         "confidence": confidence_level,
         "_source_tradition": "Hellenistic",
+        "note": "Winner is strongest under the stated profile only; not an absolute chart governor.",
     }
+
+
+# Ptolemaic major aspects used for "witnesses hyleg" under the default proxy profile.
+_HYLEG_WITNESS_ASPECTS = {
+    "conjunction": (0.0, 8.0),
+    "sextile": (60.0, 5.0),
+    "square": (90.0, 6.0),
+    "trine": (120.0, 6.0),
+    "opposition": (180.0, 8.0),
+}
+
+
+def _witness_aspect(a_lon: float, b_lon: float) -> tuple[bool, str | None, float | None]:
+    """Return (sees, aspect_name, orb) for classical major aspects."""
+    sep = angular_separation(a_lon, b_lon)
+    best: tuple[str, float] | None = None
+    for name, (angle, orb_max) in _HYLEG_WITNESS_ASPECTS.items():
+        orb = abs(sep - angle)
+        if orb <= orb_max and (best is None or orb < best[1]):
+            best = (name, orb)
+    if best is None:
+        return False, None, None
+    return True, best[0], round(best[1], 4)
 
 
 def calculate_hyleg_alcocoden(
@@ -220,8 +329,18 @@ def calculate_hyleg_alcocoden(
     warnings: list[str],
     sidereal: bool = False,
 ) -> dict[str, Any]:
-    _ = birth_jd, warnings, sidereal
+    """Hyleg/Alcocoden audit-only module.
+
+    Profile: hyleg_hylegical_places_proxy_v1 — simplified place filter, NOT full traditional judgment.
+    Exactly one selected Hyleg. eligible ≠ selected.
+    Alcocoden requires witness of Hyleg under this profile; longevity years are never output.
+    """
+    _ = birth_jd, sidereal
+    hyleg_profile = "hyleg_hylegical_places_proxy_v1"
+    alcocoden_profile = "alcocoden_dignity_witness_proxy_v1"
     hylegical_places = {1, 10, 11, 7, 9}
+    # Selection order (first eligible becomes selected).
+    selection_order = ["SUN", "MOON", "ASC", "fortune", "spirit"]
 
     def _house_for(lon: float) -> int:
         return house_for_longitude(lon, cusps)
@@ -230,7 +349,6 @@ def calculate_hyleg_alcocoden(
     moon_lon = planet_positions["MOON"]["longitude"]
     asc_lon = angles["ASC"]
 
-    all_candidates: list[dict[str, Any]] = []
     potential_hyleg_points = [
         {"name": "Sun", "id": "SUN", "lon": sun_lon},
         {"name": "Moon", "id": "MOON", "lon": moon_lon},
@@ -239,10 +357,11 @@ def calculate_hyleg_alcocoden(
         {"name": "Spirit", "id": "spirit", "lon": lot_spirit_lon},
     ]
 
+    all_candidates: list[dict[str, Any]] = []
     for point in potential_hyleg_points:
         house = _house_for(point["lon"])
         in_place = house in hylegical_places
-        place_pass = "angular" if house in {1, 10, 7, 9} else ("succedent_cadent" if house in {11, 5, 2, 8} else "cadent")
+        place_pass = "angular" if house in {1, 10, 7, 9} else ("succedent" if house in {11, 5, 2, 8} else "cadent")
 
         eligible = False
         reject_reason: str | None = None
@@ -272,62 +391,105 @@ def calculate_hyleg_alcocoden(
 
         sect_relevance = "preferred" if ((point["id"] == "SUN" and is_day) or (point["id"] == "MOON" and not is_day)) else "secondary"
         visibility = "above_horizon" if house >= 7 else "below_horizon"
+        order_rank = selection_order.index(point["id"]) if point["id"] in selection_order else 99
 
         all_candidates.append({
             "name": point["name"],
             "id": point["id"],
             "lon": point["lon"],
             "eligible": eligible,
+            "selected": False,
             "reason": select_reason if eligible else (reject_reason or ""),
             "house": house,
             "hylegical_place_pass": place_pass,
             "sect_relevance": sect_relevance,
             "visibility": visibility,
-            "final_rank": 1 if eligible else 99,
+            "selection_order": order_rank,
+            "final_rank": order_rank if eligible else 99,
+            "reject_reason": reject_reason,
         })
 
-    selected_hyleg = next((candidate for candidate in all_candidates if candidate["eligible"]), None)
+    # Exactly one selected: first eligible in selection order.
+    eligible_sorted = sorted(
+        [c for c in all_candidates if c["eligible"]],
+        key=lambda c: c["selection_order"],
+    )
+    selected_hyleg = eligible_sorted[0] if eligible_sorted else None
+    if selected_hyleg:
+        selected_hyleg["selected"] = True
+        for c in all_candidates:
+            if c["id"] != selected_hyleg["id"] and c["eligible"]:
+                c["reason"] = (c.get("reason") or "") + "（eligible 但未选中；仅一个 selected Hyleg）"
 
     alcocoden_candidates: list[dict[str, Any]] = []
+    selectable_alcocoden: dict[str, Any] | None = None
     if selected_hyleg:
         hyleg_lon = selected_hyleg["lon"]
         rulers = dignity_rulers_for_lon(hyleg_lon, is_day, bounds_system, triplicity_system)
         weights = {"domicile": 5, "exaltation": 4, "triplicity": 3, "bound": 2, "decan": 1}
-        dignity_by_planet: dict[str, list[tuple[str, int]]] = {pid: [] for pid in ["SATURN", "MERCURY", "MARS", "JUPITER", "VENUS"]}
+        dignity_by_planet: dict[str, list[tuple[str, int]]] = {
+            pid: [] for pid in ["SATURN", "MERCURY", "MARS", "JUPITER", "VENUS"]
+        }
         for dignity_key, ruler_id in rulers.items():
             if ruler_id in dignity_by_planet:
                 dignity_by_planet[ruler_id].append((dignity_key, weights.get(dignity_key, 0)))
 
         for ruler_id in ["SATURN", "MERCURY", "MARS", "JUPITER", "VENUS"]:
-            if ruler_id in planet_positions:
-                ruler_pos = planet_positions[ruler_id]
-                ruler_lon = ruler_pos["longitude"]
-                aspect_to = angular_separation(ruler_lon, hyleg_lon)
-                sees = aspect_to < 120 or abs(aspect_to - 180) < 10
-                own_condition = dignity_labels(ruler_id, ruler_lon, is_day, bounds_system, triplicity_system)
-                _, _, _, _, _, own_score, _, _, _, _ = own_condition
-                dignity_hits = dignity_by_planet.get(ruler_id, [])
-                dignity_label = "+".join(item[0] for item in dignity_hits) if dignity_hits else "none"
-                total_weight = sum(item[1] for item in dignity_hits)
-                alcocoden_candidates.append({
-                    "planet": planet_name(ruler_id),
-                    "planet_id": ruler_id,
-                    "dignity_at_hyleg": dignity_label,
-                    "weight": total_weight,
-                    "sees_hyleg": sees,
-                    "aspect_to_hyleg": round(aspect_to, 2),
-                    "own_condition_score": own_score,
-                    "own_condition_summary": _dignity_summary_short(ruler_id, ruler_lon, is_day, bounds_system, triplicity_system),
-                    "rank": 0,
-                    "reason": f"{dignity_label} ruler of hyleg position{'（seeing hyleg）' if sees else '（not seeing hyleg）'}",
-                })
+            if ruler_id not in planet_positions:
+                continue
+            ruler_pos = planet_positions[ruler_id]
+            ruler_lon = ruler_pos["longitude"]
+            sees, witness_aspect, witness_orb = _witness_aspect(ruler_lon, hyleg_lon)
+            own_condition = dignity_labels(ruler_id, ruler_lon, is_day, bounds_system, triplicity_system)
+            _, _, _, _, _, own_score, _, _, _, _ = own_condition
+            dignity_hits = dignity_by_planet.get(ruler_id, [])
+            dignity_label = "+".join(item[0] for item in dignity_hits) if dignity_hits else "none"
+            total_weight = sum(item[1] for item in dignity_hits)
 
-        alcocoden_candidates.sort(key=lambda candidate: (-candidate["weight"], -candidate["own_condition_score"] if candidate["sees_hyleg"] else -99))
+            rejection_reason = None
+            eligible_under_profile = True
+            if total_weight <= 0:
+                eligible_under_profile = False
+                rejection_reason = "no dignity over hyleg position"
+            elif not sees:
+                eligible_under_profile = False
+                rejection_reason = "does_not_see_hyleg"
+
+            candidate = {
+                "planet": planet_name(ruler_id),
+                "planet_id": ruler_id,
+                "dignity_at_hyleg": dignity_label,
+                "weight": total_weight,
+                "sees_hyleg": sees,
+                "witness_aspect": witness_aspect,
+                "witness_orb": witness_orb,
+                "aspect_to_hyleg": round(angular_separation(ruler_lon, hyleg_lon), 2),
+                "own_condition_score": own_score,
+                "own_condition_summary": _dignity_summary_short(
+                    ruler_id, ruler_lon, is_day, bounds_system, triplicity_system
+                ),
+                "eligible_under_profile": eligible_under_profile,
+                "rejection_reason": rejection_reason,
+                "rank": 0,
+                "reason": (
+                    f"{dignity_label} ruler of hyleg"
+                    + (f"；见证 {witness_aspect} orb={witness_orb}" if sees else "；不见 Hyleg → 淘汰")
+                ),
+            }
+            alcocoden_candidates.append(candidate)
+
+        # Select only among candidates that see Hyleg and hold dignity.
+        selectable_pool = [c for c in alcocoden_candidates if c["eligible_under_profile"]]
+        selectable_pool.sort(key=lambda c: (-c["weight"], -c["own_condition_score"]))
         for index, candidate in enumerate(alcocoden_candidates):
             candidate["rank"] = index + 1
-        selectable_alcocoden = next((candidate for candidate in alcocoden_candidates if candidate["weight"] > 0), None)
-    else:
-        selectable_alcocoden = None
+        for index, candidate in enumerate(selectable_pool):
+            candidate["rank"] = index + 1
+        selectable_alcocoden = selectable_pool[0] if selectable_pool else None
+        if selectable_alcocoden is None and any(c["weight"] > 0 for c in alcocoden_candidates):
+            warnings.append(
+                "Alcocoden: all dignity holders fail witness test under profile; no selection (longevity years suppressed)."
+            )
 
     return {
         "hyleg": {
@@ -336,16 +498,37 @@ def calculate_hyleg_alcocoden(
             "longitude": round(selected_hyleg["lon"], 4) if selected_hyleg else 0,
             "reason": selected_hyleg.get("reason", "") if selected_hyleg else "No eligible Hyleg candidate",
             "candidates": all_candidates,
+            "eligible_count": sum(1 for c in all_candidates if c["eligible"]),
+            "selected_count": 1 if selected_hyleg else 0,
+            "selection_order": selection_order,
+            "hylegical_places": sorted(hylegical_places),
+            "day_night_rule": "day prefers Sun then ASC/lots; night prefers Moon then ASC/lots",
+            "proxy": True,
+            "hyleg_profile": hyleg_profile,
         },
         "alcocoden": {
             "selected": selectable_alcocoden["planet"] if selectable_alcocoden else "",
             "selected_id": selectable_alcocoden["planet_id"] if selectable_alcocoden else "",
             "dignity": selectable_alcocoden["dignity_at_hyleg"] if selectable_alcocoden else "",
             "candidates": alcocoden_candidates,
+            "requires_witness": True,
+            "proxy": True,
+            "alcocoden_profile": alcocoden_profile,
+            "longevity_years": None,
+            "longevity_years_suppressed": True,
+            "longevity_note": "寿命年数在 Hyleg/Alcocoden profile 经历史验证前禁止输出",
         },
         "method": "medieval_arabic_basic",
-        "method_variant": "hyleg_alcocoden_hylegical_places_5_candidates",
+        "method_variant": hyleg_profile,
+        "hyleg_profile": hyleg_profile,
+        "alcocoden_profile": alcocoden_profile,
+        "proxy": True,
         "_source_tradition": "Arabic/Medieval",
+        "limitations": [
+            "Simplified hylegical-places filter; not full traditional Hyleg judgment",
+            "Witness uses major-aspect orb proxy",
+            "No longevity years output",
+        ],
     }
 
 

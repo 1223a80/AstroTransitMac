@@ -309,21 +309,36 @@ def calculate_hellenistic_condition_audit(request: dict[str, Any], warnings: lis
                         )
                     )
 
-            # enclosure / besiegement by malefics
+            # Longitude-neighbor malefic bracket proxy (NOT full traditional besiegement).
             enclosed, actors, span = _enclosure(lon, list(by_id.values()), body_id)
             if enclosed:
+                conditions.append(
+                    _row(
+                        "longitude_bracketed_by_malefics_proxy",
+                        body_id,
+                        actors,
+                        "nearest_longitude_neighbors_both_malefic",
+                        None,
+                        span,
+                        [
+                            f"{name} has nearest ecliptic neighbors {actors} both malefic",
+                            "proxy only: no ray, applying/separating, intervention, or rescue checks",
+                            "not full traditional enclosure/besiegement",
+                        ],
+                        value="longitude_bracketed_by_malefics_proxy",
+                    )
+                )
+                # Keep legacy key as alias for consumers that still look for enclosure_besiegement.
                 conditions.append(
                     _row(
                         "enclosure_besiegement",
                         body_id,
                         actors,
-                        "between_two_malefics_by_longitude",
+                        "alias_of_longitude_bracketed_by_malefics_proxy",
                         None,
                         span,
-                        [
-                            f"{name} is between malefics {actors}",
-                            "no intervening-body check beyond nearest neighbors",
-                        ],
+                        ["legacy alias; prefer longitude_bracketed_by_malefics_proxy"],
+                        value="legacy_alias",
                     )
                 )
 
@@ -353,27 +368,34 @@ def calculate_hellenistic_condition_audit(request: dict[str, Any], warnings: lis
                     )
                 )
 
-            # chariot proxy: planet in domicile or exaltation and not combust
+            # Chariot proxy: only non-Sun planets that are under beams/combust AND in domicile/exaltation.
             sign_idx = zodiac_sign_index(lon)
             domicile = SIGN_RULERS[sign_idx] == body_id
             exalt = EXALTATION_RULERS.get(sign_idx) == body_id
             phase_label, _, _, phase_trace = solar_phase(body_id, lon, sun_lon) if body_id != "SUN" else ("-", 0, [], {"solar_condition": "-"})
-            if (domicile or exalt) and phase_trace.get("solar_condition") not in {"combust", "under_beams"}:
+            solar_cond = phase_trace.get("solar_condition")
+            if (
+                body_id != "SUN"
+                and (domicile or exalt)
+                and solar_cond in {"combust", "under_beams"}
+            ):
                 conditions.append(
                     _row(
                         "chariot_proxy",
                         body_id,
                         [],
-                        "domicile_or_exaltation_and_not_combust",
+                        "domicile_or_exaltation_while_under_beams_proxy",
                         None,
                         None,
                         [
                             f"domicile={domicile}",
                             f"exaltation={exalt}",
-                            f"solar_condition={phase_trace.get('solar_condition')}",
-                            "chariot-like protection proxy (not full Hellenistic chariot definition set)",
+                            f"solar_condition={solar_cond}",
+                            "proxy: protection only considered while under solar beams; not full historical chariot set",
+                            "Sun never receives chariot-after-solar-damage protection",
                         ],
                         value="chariot_proxy",
+                        profile="chariot_under_beams_domicile_exalt_proxy_v1",
                     )
                 )
 

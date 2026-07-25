@@ -51,13 +51,16 @@ SIGN_ELEMENTS = [
     "water",
 ]
 
+# Egyptian terms (Ptolemy's table of the Egyptians). Each tuple is (ruler, exclusive_upper_degree).
+# Degree D in sign is in the first bound with D < upper (last bound absorbs D==30).
 EGYPTIAN_BOUNDS = {
     0: [("JUPITER", 6), ("VENUS", 14), ("MERCURY", 21), ("MARS", 26), ("SATURN", 30)],
     1: [("VENUS", 8), ("MERCURY", 14), ("JUPITER", 22), ("SATURN", 27), ("MARS", 30)],
     2: [("MERCURY", 6), ("JUPITER", 12), ("VENUS", 17), ("MARS", 24), ("SATURN", 30)],
     3: [("MARS", 7), ("VENUS", 13), ("MERCURY", 19), ("JUPITER", 26), ("SATURN", 30)],
     4: [("JUPITER", 6), ("VENUS", 11), ("SATURN", 18), ("MERCURY", 24), ("MARS", 30)],
-    5: [("MERCURY", 7), ("VENUS", 13), ("JUPITER", 17), ("MARS", 21), ("SATURN", 30)],
+    # Virgo: Mer 0–7, Ven 7–17, Jup 17–21, Mar 21–28, Sat 28–30 (was wrongly Ven13/Jup17/Mar21/Sat30)
+    5: [("MERCURY", 7), ("VENUS", 17), ("JUPITER", 21), ("MARS", 28), ("SATURN", 30)],
     6: [("SATURN", 6), ("MERCURY", 14), ("JUPITER", 21), ("VENUS", 28), ("MARS", 30)],
     7: [("MARS", 7), ("VENUS", 11), ("MERCURY", 19), ("JUPITER", 24), ("SATURN", 30)],
     8: [("JUPITER", 12), ("VENUS", 17), ("MERCURY", 21), ("SATURN", 26), ("MARS", 30)],
@@ -99,13 +102,62 @@ def house_strength(house: int) -> str:
     return "果宫"
 
 
+# Traditional place quality (good/bad) is independent of angularity class.
+GOOD_PLACES = {1, 4, 5, 7, 9, 10, 11}
+DIFFICULT_PLACES = {6, 8, 12}
+TRADITIONAL_PLACE_NAMES = {
+    1: "Hour-marker / Ascendant",
+    2: "Gate of Hades",
+    3: "Goddess",
+    4: "Subterraneous / IC",
+    5: "Good Fortune",
+    6: "Bad Fortune",
+    7: "Setting",
+    8: "Idle",
+    9: "God",
+    10: "Midheaven",
+    11: "Good Spirit",
+    12: "Bad Spirit",
+}
+
+
+def place_quality_fields(house: int) -> dict[str, Any]:
+    """Angularity class vs place quality vs ASC aspect (whole-sign beholding)."""
+    if house in {1, 4, 7, 10}:
+        angularity = "angular"
+    elif house in {2, 5, 8, 11}:
+        angularity = "succeedent"
+    else:
+        angularity = "cadent"
+    # Whole-sign aspects to ASC: houses that aspect 1 by major aspect.
+    # 1 conj, 3 sextile, 4 square, 5 trine, 7 opp, 9 trine, 10 square, 11 sextile.
+    beholds = house in {1, 3, 4, 5, 7, 9, 10, 11}
+    if house in GOOD_PLACES:
+        quality = "good"
+    elif house in DIFFICULT_PLACES:
+        quality = "difficult"
+    else:
+        quality = "neutral"
+    return {
+        "angularity_class": angularity,
+        "place_quality": quality,
+        "beholds_ascendant": beholds,
+        "aversion_to_ascendant": not beholds,
+        "traditional_place_name": TRADITIONAL_PLACE_NAMES.get(house, ""),
+        "house_strength_label": house_strength(house),
+    }
+
+
 def bounds_ruler(lon: float, bounds_system: str) -> str:
+    """Return bound lord for longitude. Upper degree is exclusive except the final 30° bound."""
     table = PTOLEMAIC_BOUNDS if bounds_system == "ptolemaic" else EGYPTIAN_BOUNDS
     degree = sign_degree(lon)
-    for ruler, upper in table[zodiac_sign_index(lon)]:
-        if degree < upper or degree == upper:
+    bounds = table[zodiac_sign_index(lon)]
+    for ruler, upper in bounds:
+        # Exclusive upper edge so e.g. Virgo 17°00' belongs to Jupiter, not Venus.
+        if degree < upper:
             return ruler
-    return table[zodiac_sign_index(lon)][-1][0]
+    return bounds[-1][0]
 
 
 def decan_ruler(lon: float) -> str:
@@ -124,6 +176,7 @@ def dignity_rulers_for_lon(
     bounds_system: str,
     triplicity_system: str,
 ) -> dict[str, str]:
+    """Rulers of the *position* (not whether the subject planet owns them)."""
     sign_idx = zodiac_sign_index(lon)
     triplicity = triplicity_set(sign_idx, triplicity_system)
     return {
@@ -132,6 +185,23 @@ def dignity_rulers_for_lon(
         "triplicity": triplicity[0] if is_day else triplicity[1],
         "bound": bounds_ruler(lon, bounds_system),
         "decan": decan_ruler(lon),
+    }
+
+
+def dignity_ownership(body_id: str, rulers: dict[str, str], triplicity: tuple[str, str, str]) -> dict[str, Any]:
+    """Separate position rulers from subject ownership of those dignities."""
+    trip_ids = [r for r in triplicity if r]
+    return {
+        "domicile_ruler": rulers.get("domicile") or "",
+        "exaltation_ruler": rulers.get("exaltation") or "",
+        "triplicity_rulers": list(trip_ids),
+        "bound_ruler": rulers.get("bound") or "",
+        "decan_ruler": rulers.get("decan") or "",
+        "subject_owns_domicile": rulers.get("domicile") == body_id,
+        "subject_owns_exaltation": bool(rulers.get("exaltation")) and rulers.get("exaltation") == body_id,
+        "subject_owns_triplicity": body_id in trip_ids,
+        "subject_owns_bound": rulers.get("bound") == body_id,
+        "subject_owns_decan": rulers.get("decan") == body_id,
     }
 
 
@@ -152,7 +222,7 @@ def dignity_labels(
     if domicile:
         score += 5
         notes.append("入庙")
-        breakdown.append({"label": "domicile", "score": 5, "value": "入庙"})
+        breakdown.append({"label": "domicile", "score": 5, "value": "入庙", "owned": True})
 
     detriment_label = ""
     is_detriment = SIGN_RULERS[(sign_idx + 6) % 12] == body_id
@@ -166,7 +236,7 @@ def dignity_labels(
     if exaltation:
         score += 4
         notes.append("旺")
-        breakdown.append({"label": "exaltation", "score": 4, "value": "旺"})
+        breakdown.append({"label": "exaltation", "score": 4, "value": "旺", "owned": True})
 
     fall_label = ""
     is_fall = EXALTATION_RULERS.get((sign_idx + 6) % 12) == body_id
@@ -184,19 +254,36 @@ def dignity_labels(
         delta = 3 if role != "参与" else 1
         score += delta
         notes.append(f"三分 {role}")
-        breakdown.append({"label": "triplicity", "score": delta, "value": role})
+        breakdown.append({"label": "triplicity", "score": delta, "value": role, "owned": True})
 
+    # Always report the position's bound/decan ruler names; score only if subject owns them.
     bound = planet_name(rulers["bound"])
     if rulers["bound"] == body_id:
         score += 2
         notes.append("界主")
-        breakdown.append({"label": "bound", "score": 2, "value": "界主"})
+        breakdown.append({"label": "bound", "score": 2, "value": "界主", "owned": True, "bound_ruler": rulers["bound"]})
+    else:
+        breakdown.append({
+            "label": "bound_ruler",
+            "score": 0,
+            "value": bound,
+            "owned": False,
+            "bound_ruler": rulers["bound"],
+        })
 
     decan = planet_name(rulers["decan"])
     if rulers["decan"] == body_id:
         score += 1
         notes.append("面主")
-        breakdown.append({"label": "decan", "score": 1, "value": "面主"})
+        breakdown.append({"label": "decan", "score": 1, "value": "面主", "owned": True, "decan_ruler": rulers["decan"]})
+    else:
+        breakdown.append({
+            "label": "decan_ruler",
+            "score": 0,
+            "value": decan,
+            "owned": False,
+            "decan_ruler": rulers["decan"],
+        })
 
     return domicile, exaltation, triplicity_label, bound, decan, score, notes, breakdown, detriment_label, fall_label
 
@@ -271,28 +358,42 @@ def solar_phase(body_id: str, lon: float, sun_lon: float, cazimi_orb: float = 17
     separation = angular_separation(lon, sun_lon)
     threshold_profile = {"cazimi_arcmin": round(cazimi_orb * 60, 1), "combust_deg": combust_orb, "under_beams_deg": under_beams_orb}
 
+    def _phase_payload(label: str, score: int, condition: str) -> dict[str, Any]:
+        return {
+            "label": "solar_phase",
+            "score": score,
+            "value": label,
+            "solar_condition": condition,
+            "solar_elongation_condition": condition,
+            "combust": condition == "combust",
+            "under_beams": condition in {"under_beams", "combust", "cazimi"},
+            "cazimi": condition == "cazimi",
+            "heliacally_visible": False if condition in {"combust", "under_beams", "cazimi"} else None,
+            "visibility_method": "solar_elongation_thresholds_only",
+            "sun_distance_deg": round(separation, 4),
+            "threshold_profile": threshold_profile,
+            "note": "solar elongation condition only; not naked-eye heliacal visibility",
+        }
+
     if separation <= cazimi_orb:
-        return "日心合", 5, ["日心合"], {
-            "label": "solar_phase", "score": 5, "value": "日心合",
-            "solar_condition": "cazimi", "sun_distance_deg": round(separation, 4),
-            "threshold_profile": threshold_profile,
-        }
+        return "日心合", 5, ["日心合"], _phase_payload("日心合", 5, "cazimi")
     if separation <= combust_orb:
-        return "燃烧", -5, ["燃烧"], {
-            "label": "solar_phase", "score": -5, "value": "燃烧",
-            "solar_condition": "combust", "sun_distance_deg": round(separation, 4),
-            "threshold_profile": threshold_profile,
-        }
+        return "燃烧", -5, ["燃烧"], _phase_payload("燃烧", -5, "combust")
     if separation <= under_beams_orb:
-        return "日光下", -3, ["日光下"], {
-            "label": "solar_phase", "score": -3, "value": "日光下",
-            "solar_condition": "under_beams", "sun_distance_deg": round(separation, 4),
-            "threshold_profile": threshold_profile,
-        }
-    return "可见", 0, [], {
-        "label": "solar_phase", "score": 0, "value": "可见",
-        "solar_condition": "visible", "sun_distance_deg": round(separation, 4),
+        return "日光下", -3, ["日光下"], _phase_payload("日光下", -3, "under_beams")
+    # Free of solar elongation hazards — not the same as heliacal naked-eye visibility.
+    return "脱离日光", 0, [], {
+        "label": "solar_phase", "score": 0, "value": "脱离日光",
+        "solar_condition": "free_of_beams",
+        "solar_elongation_condition": "free_of_beams",
+        "combust": False,
+        "under_beams": False,
+        "cazimi": False,
+        "heliacally_visible": None,
+        "visibility_method": "solar_elongation_thresholds_only",
+        "sun_distance_deg": round(separation, 4),
         "threshold_profile": threshold_profile,
+        "note": "solar elongation condition only; heliacal visibility requires the visibility module",
     }
 
 

@@ -359,6 +359,60 @@ def calculate_moment(request: dict[str, Any], warnings: list[str]) -> dict[str, 
     return response
 
 
+def _zr_level_ruler_id(zr: dict[str, Any], level: str) -> str:
+    """Extract L1/L2/L3 ruler body id from a ZR packet without collapsing levels into one label."""
+    if not isinstance(zr, dict) or not level.startswith("L"):
+        return ""
+    digit = level[-1]
+    key = f"l{digit}_ruler_id"
+    if zr.get(key):
+        return str(zr[key])
+    periods = zr.get(f"l{digit}_periods")
+    if isinstance(periods, list):
+        active = next((p for p in periods if p.get("is_active")), None)
+        if active:
+            if active.get("ruler_id"):
+                return str(active["ruler_id"])
+            if active.get("sign_index") is not None:
+                from astro_backend_core import SIGN_RULERS
+
+                return str(SIGN_RULERS[int(active["sign_index"])])
+    if level == "L1":
+        if zr.get("ruler_id"):
+            return str(zr["ruler_id"])
+        if zr.get("l1_ruler_id"):
+            return str(zr["l1_ruler_id"])
+    return ""
+
+
+def _zr_technique_lords_summary(zodiacal_releasing: list[dict[str, Any]]) -> dict[str, Any]:
+    """Layered ZR lords for technique_lords_summary (never label L1 sign as LL3)."""
+    spirit = zodiacal_releasing[0] if len(zodiacal_releasing) > 0 else {}
+    fortune = zodiacal_releasing[1] if len(zodiacal_releasing) > 1 else {}
+    summary = {
+        "zr_spirit_l1_lord": _zr_level_ruler_id(spirit, "L1") if spirit else "",
+        "zr_spirit_l2_lord": _zr_level_ruler_id(spirit, "L2") if spirit else "",
+        "zr_spirit_l3_lord": _zr_level_ruler_id(spirit, "L3") if spirit else "",
+        "zr_fortune_l1_lord": _zr_level_ruler_id(fortune, "L1") if fortune else "",
+        "zr_fortune_l2_lord": _zr_level_ruler_id(fortune, "L2") if fortune else "",
+        "zr_fortune_l3_lord": _zr_level_ruler_id(fortune, "L3") if fortune else "",
+        "zr_spirit_l1_sign": spirit.get("l1_sign") or spirit.get("sign") or "",
+        "zr_spirit_l2_sign": spirit.get("l2_sign") or "",
+        "zr_spirit_l3_sign": spirit.get("l3_sign") or "",
+        "zr_fortune_l1_sign": fortune.get("l1_sign") or fortune.get("sign") or "",
+        "zr_fortune_l2_sign": fortune.get("l2_sign") or "",
+        "zr_fortune_l3_sign": fortune.get("l3_sign") or "",
+        "note": "L1/L2/L3 are distinct layers. current_zr_lord uses finest active level when present.",
+    }
+    if spirit:
+        summary["zr_spirit_current_lord"] = spirit.get("current_zr_lord") or spirit.get("current_level_ruler") or ""
+        summary["zr_spirit_current_lord_level"] = spirit.get("current_zr_lord_level") or spirit.get("current_active_level") or ""
+    if fortune:
+        summary["zr_fortune_current_lord"] = fortune.get("current_zr_lord") or fortune.get("current_level_ruler") or ""
+        summary["zr_fortune_current_lord_level"] = fortune.get("current_zr_lord_level") or fortune.get("current_active_level") or ""
+    return summary
+
+
 def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[str, Any]:
     birth = request["birth"]
     birth_dt = moment_to_local_datetime(birth["moment"])
@@ -717,12 +771,14 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
                 "profection_lord": profection.get("lord", ""),
                 "firdaria_lord": firdaria.get("ruler", ""),
                 "decennials_lord": decennials.get("ruler", ""),
+                # Legacy single fields keep L1 major lords (not finest level).
                 "zr_spirit": zodiacal_releasing[0].get("ruler", "") if len(zodiacal_releasing) > 0 else "",
                 "zr_fortune": zodiacal_releasing[1].get("ruler", "") if len(zodiacal_releasing) > 1 else "",
                 "circumambulation_lord": circumambulations[0].get("current_ruler", "") if circumambulations else "",
                 "almuten_figuris": almuten.get("winner", "") if almuten else "",
                 "hyleg": hyleg.get("hyleg", {}).get("selected", "") if hyleg else "",
             },
+            "technique_lords_summary": _zr_technique_lords_summary(zodiacal_releasing),
             "conflicting_signals": [],
             "confidence": "medium",
         },

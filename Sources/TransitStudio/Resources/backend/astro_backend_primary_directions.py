@@ -38,6 +38,7 @@ ASPECT_NAMES = {
 }
 
 NAIBOD_RATE = 0.9856
+fixed_point_names = {"ASC", "MC", "DSC", "IC"}
 
 
 def right_ascension(lon: float, obliq: float) -> float:
@@ -103,35 +104,40 @@ def _make_direction(
         target_lon = norm360(sig_lon + ASPECT_ANGLES.get(asp_type, 0.0))
 
     arc = platiclon_to_arc(prom_lon, target_lon, obliq, latitude, is_diurnal)
-    age_at = arc / NAIBOD_RATE
+    # Converse is a direction label; age and event date always run forward from birth.
+    age_years = abs(arc) / NAIBOD_RATE
     direction_type = "direct" if arc >= 0 else "converse"
-    abs_age = abs(age_at)
 
-    if abs_age > max_age:
+    if age_years > max_age:
         return None
 
-    event_dt_after_birth = birth_dt + timedelta(days=abs_age * 365.2425)
-    symbolic_date = birth_dt + timedelta(days=age_at * 365.2425)
+    event_dt = birth_dt + timedelta(days=age_years * 365.2425)
     return {
         "id": f"pd-{prom_id}-{sig_id}-{asp_type}",
-        "promissor": planet_name(prom_id),
+        "promissor": planet_name(prom_id) if prom_id not in fixed_point_names else prom_id,
         "promissor_id": prom_id,
         "significator": sig_id if sig_id in fixed_point_names else planet_name(sig_id),
         "significator_id": sig_id,
+        "aspect": asp_type,
         "aspect_type": asp_type,
         "aspect_name": asp_name,
         "natal_promissor_lon": round(prom_lon, 4),
         "natal_significator_lon": round(sig_lon, 4),
+        "direction": direction_type,
         "direction_type": direction_type,
         "arc_signed": round(arc, 4),
-        "arc_abs": round(abs_age * NAIBOD_RATE, 4),
-        "age_from_abs_arc": round(abs_age, 2),
-        "event_date_after_birth": event_dt_after_birth.strftime("%Y-%m-%d"),
-        "symbolic_date_from_signed_arc": symbolic_date.strftime("%Y-%m-%d") if arc < 0 else None,
+        "arc_abs": round(abs(arc), 4),
+        "age_years": round(age_years, 4),
+        "age_from_abs_arc": round(age_years, 2),
+        "event_date": event_dt.strftime("%Y-%m-%d"),
+        "event_date_after_birth": event_dt.strftime("%Y-%m-%d"),
+        # Deprecated: never emit pre-birth symbolic dates for converse arcs.
+        "symbolic_date_from_signed_arc": None,
+        "key_rate": NAIBOD_RATE,
+        "method_note": "longitude_semi_arc_proxy; latitude not fully modeled; not full Placidus/Regiomontanus PD",
+        "proxy": True,
+        "symmetric_duplicate_under_proxy": False,
     }
-
-
-fixed_point_names = {"ASC", "MC", "DSC", "IC"}
 
 
 def calculate_primary_directions(
@@ -204,6 +210,35 @@ def calculate_primary_directions(
         if key not in seen:
             seen.add(key)
             unique.append(d)
+
+    # Mark A→B and B→A conjunction pairs that are symmetric under the longitude proxy.
+    # Group by unordered endpoints only (direction_type differs but age/arc_abs match).
+    by_pair: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for d in unique:
+        if d.get("aspect_type") != "conjunction":
+            continue
+        a, b = d["promissor_id"], d["significator_id"]
+        pair_key = (min(a, b), max(a, b))
+        by_pair.setdefault(pair_key, []).append(d)
+    for pair_rows in by_pair.values():
+        if len(pair_rows) < 2:
+            continue
+        # Prefer keeping planet→angle as primary when mixed; else stable by id.
+        def _keep_score(row: dict[str, Any]) -> tuple:
+            prom, sig = row["promissor_id"], row["significator_id"]
+            planet_to_angle = (prom not in fixed_point_names) and (sig in fixed_point_names)
+            return (0 if planet_to_angle else 1, row["id"])
+
+        pair_rows.sort(key=_keep_score)
+        group_id = f"pd-conj-{pair_rows[0]['promissor_id']}-{pair_rows[0]['significator_id']}"
+        for idx, row in enumerate(pair_rows):
+            if idx == 0:
+                row["symmetric_duplicate_under_proxy"] = False
+                row["independence_group"] = group_id
+            else:
+                row["symmetric_duplicate_under_proxy"] = True
+                row["duplicate_of"] = pair_rows[0]["id"]
+                row["independence_group"] = group_id
 
     unique.sort(key=lambda d: d["age_from_abs_arc"])
 

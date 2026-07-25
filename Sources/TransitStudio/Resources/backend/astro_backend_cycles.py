@@ -428,6 +428,99 @@ def _dedupe_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return unique
 
 
+def _event_time_key(event: dict[str, Any]) -> str:
+    return str(event.get("maximum_utc") or event.get("exact_utc") or event.get("id") or "")
+
+
+def _merge_eclipse_lunation_groups(
+    events: list[dict[str, Any]],
+    warnings: list[str],
+) -> list[dict[str, Any]]:
+    """Merge co-temporal new_moon+solar_eclipse (or full_moon+lunar_eclipse) into one group.
+
+    Primary record is the eclipse; lunation exact time is retained as a sub-field.
+    Same geometric event must not appear twice as independent cycle hits.
+    """
+    from datetime import datetime
+
+    def _parse(ts: str) -> datetime | None:
+        if not ts:
+            return None
+        try:
+            return datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+        except Exception:
+            return None
+
+    lunations = [e for e in events if e.get("cycle_type") in {"new_moon", "full_moon"}]
+    eclipses = [e for e in events if e.get("cycle_type") in {"solar_eclipse", "lunar_eclipse"}]
+    other = [e for e in events if e not in lunations and e not in eclipses]
+
+    used_lunation_ids: set[str] = set()
+    merged: list[dict[str, Any]] = []
+
+    for ecl in eclipses:
+        ecl_t = _parse(str(ecl.get("maximum_utc") or ecl.get("exact_utc") or ""))
+        match = None
+        want = "new_moon" if ecl.get("cycle_type") == "solar_eclipse" else "full_moon"
+        if ecl_t is not None:
+            best_dt = None
+            for lun in lunations:
+                if lun.get("cycle_type") != want:
+                    continue
+                if str(lun.get("id")) in used_lunation_ids:
+                    continue
+                lun_t = _parse(str(lun.get("maximum_utc") or lun.get("exact_utc") or ""))
+                if lun_t is None:
+                    continue
+                delta = abs((ecl_t - lun_t).total_seconds())
+                if delta <= 36 * 3600 and (best_dt is None or delta < best_dt):
+                    best_dt = delta
+                    match = lun
+        row = dict(ecl)
+        row["event_group"] = "eclipse_lunation"
+        row["eclipse_type"] = ecl.get("cycle_type")
+        row["eclipse_maximum_time"] = ecl.get("maximum_utc") or ecl.get("exact_utc")
+        if match is not None:
+            used_lunation_ids.add(str(match.get("id")))
+            row["exact_syzygy_time"] = match.get("maximum_utc") or match.get("exact_utc")
+            row["lunation_cycle_type"] = match.get("cycle_type")
+            row["lunation_id"] = match.get("id")
+            # Prefer richer contacts: take max of both if present
+            c_ecl = ecl.get("contacts") or ecl.get("contact_count")
+            c_lun = match.get("contacts") or match.get("contact_count")
+            if isinstance(c_ecl, list) or isinstance(c_lun, list):
+                combined = list(c_ecl or []) + [c for c in (c_lun or []) if c not in (c_ecl or [])]
+                row["contacts"] = combined
+                row["contact_count"] = len(combined)
+                row["contacts_basis"] = "merged_eclipse_and_syzygy"
+            row["merged_from"] = [ecl.get("id"), match.get("id")]
+            # Keep eclipse id / cycle_type stable for consumers; group fields carry merge info.
+            row["primary_record"] = "eclipse"
+        else:
+            row["exact_syzygy_time"] = None
+            row["merged_from"] = [ecl.get("id")]
+            row["primary_record"] = "eclipse"
+        # Visibility clarity
+        if row.get("visible_at_location") is None and not row.get("location_visibility"):
+            row["location_visibility"] = "not_requested"
+        merged.append(row)
+
+    for lun in lunations:
+        if str(lun.get("id")) in used_lunation_ids:
+            continue
+        row = dict(lun)
+        row["event_group"] = "lunation_only"
+        merged.append(row)
+
+    out = other + merged
+    out.sort(key=lambda row: str(row.get("maximum_utc") or row.get("exact_utc") or row.get("id") or ""))
+    if used_lunation_ids:
+        warnings.append(
+            f"Merged {len(used_lunation_ids)} lunation(s) into eclipse_lunation groups (single primary record per eclipse)."
+        )
+    return out
+
+
 def _attach_contacts(
     events: list[dict[str, Any]],
     *,
@@ -644,6 +737,7 @@ def calculate_modern_cycles(request: dict[str, Any], warnings: list[str]) -> dic
         )
 
     events = _dedupe_events(events)
+    events = _merge_eclipse_lunation_groups(events, warnings)
 
     birth = request.get("birth")
     if birth is not None:

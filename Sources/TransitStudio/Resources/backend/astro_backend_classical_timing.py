@@ -39,8 +39,22 @@ FIRDARIA_SEQUENCE_NIGHT = [("MOON", 9), ("SATURN", 11), ("JUPITER", 12), ("MARS"
 FIRDARIA_SUB_SEQUENCE = ["SUN", "VENUS", "MERCURY", "MOON", "SATURN", "JUPITER", "MARS"]
 FIRDARIA_NAMES = {"NORTH_NODE": "北交点", "SOUTH_NODE": "南交点"}
 
-DECENNIALS_SEQUENCE_DAY = [("SUN", 10), ("VENUS", 8), ("MERCURY", 13), ("MOON", 9), ("SATURN", 11), ("JUPITER", 12), ("MARS", 7)]
-DECENNIALS_SEQUENCE_NIGHT = [("MOON", 9), ("SATURN", 11), ("JUPITER", 12), ("MARS", 7), ("SUN", 10), ("VENUS", 8), ("MERCURY", 13)]
+# Decennials (Hellenistic "10 years and 9 months" / 129 months). Independent of Firdaria.
+# Minor years expressed as months: 30+12+15+19+8+20+25 = 129. No lunar nodes.
+DECENNIALS_METHOD_PROFILE = "decennials_129_month_minor_years_v1"
+DECENNIALS_MONTHS = {
+    "SUN": 19,
+    "VENUS": 8,
+    "MERCURY": 20,
+    "MOON": 25,
+    "SATURN": 30,
+    "JUPITER": 12,
+    "MARS": 15,
+}
+DECENNIALS_TOTAL_MONTHS = sum(DECENNIALS_MONTHS.values())  # 129
+# Day: from Sun in Chaldean descending order; night: from Moon.
+DECENNIALS_ORDER_DAY = ["SUN", "VENUS", "MERCURY", "MOON", "SATURN", "JUPITER", "MARS"]
+DECENNIALS_ORDER_NIGHT = ["MOON", "SATURN", "JUPITER", "MARS", "SUN", "VENUS", "MERCURY"]
 
 _ZR_TOTAL_YEARS = sum(ZR_PERIOD_YEARS.values())
 
@@ -216,63 +230,152 @@ def firdaria_summary(birth_dt: datetime, reference_dt: datetime, is_day: bool) -
     }
 
 
-def decennials_sub_periods(main_ruler: str, main_start: datetime, main_years: float, is_day: bool) -> list[dict[str, Any]]:
-    sequence = DECENNIALS_SEQUENCE_DAY if is_day else DECENNIALS_SEQUENCE_NIGHT
-    sub_sequence = [(r, y) for r, y in sequence if r != main_ruler]
-    total_sub = sum(y for _, y in sub_sequence)
-    sub_start = main_start
+def _decennials_order(is_day: bool) -> list[str]:
+    return list(DECENNIALS_ORDER_DAY if is_day else DECENNIALS_ORDER_NIGHT)
+
+
+def _decennials_add_months(base: datetime, months: float) -> datetime:
+    """Advance by fractional months using tropical year / 12."""
+    days = float(months) * (365.2425 / 12.0)
+    return base + timedelta(days=days)
+
+
+def decennials_build_timeline(
+    birth_dt: datetime,
+    is_day: bool,
+    max_age_years: float = 100.0,
+) -> list[dict[str, Any]]:
+    """Build continuous major periods of the 129-month Decennials cycle (no Firdaria reuse)."""
+    order = _decennials_order(is_day)
+    birth_naive = birth_dt.replace(tzinfo=None) if birth_dt.tzinfo else birth_dt
+    end_limit = birth_naive + timedelta(days=max_age_years * 365.2425)
+    cursor = birth_naive
+    cycle_index = 0
+    periods: list[dict[str, Any]] = []
+    while cursor < end_limit:
+        for ruler in order:
+            months = float(DECENNIALS_MONTHS[ruler])
+            end = _decennials_add_months(cursor, months)
+            periods.append({
+                "ruler_id": ruler,
+                "ruler": planet_name(ruler),
+                "months": months,
+                "years": round(months / 12.0, 6),
+                "start": cursor,
+                "end": end,
+                "cycle_index": cycle_index,
+            })
+            cursor = end
+            if cursor >= end_limit:
+                break
+        cycle_index += 1
+    return periods
+
+
+def decennials_sub_periods(
+    main_ruler: str,
+    main_start: datetime,
+    main_months: float,
+    is_day: bool,
+) -> list[dict[str, Any]]:
+    """Sub-periods proportional to minor-year months within the major period, starting at main ruler."""
+    order = _decennials_order(is_day)
+    if main_ruler not in order:
+        return []
+    start_index = order.index(main_ruler)
+    rotated = [order[(start_index + offset) % len(order)] for offset in range(len(order))]
+    total = float(DECENNIALS_TOTAL_MONTHS)
+    sub_start = main_start.replace(tzinfo=None) if main_start.tzinfo else main_start
     rows: list[dict[str, Any]] = []
-    for sub_ruler, sub_years in sub_sequence:
-        if total_sub <= 0:
-            continue
-        fraction = sub_years / total_sub
-        sub_duration_days = main_years * 365.2425 * fraction
-        sub_end = sub_start + timedelta(days=sub_duration_days)
+    for idx, sub_ruler in enumerate(rotated):
+        fraction = DECENNIALS_MONTHS[sub_ruler] / total
+        sub_months = float(main_months) * fraction
+        sub_end = _decennials_add_months(sub_start, sub_months)
         rows.append({
-            "id": f"decennials-sub-{main_ruler}-{sub_ruler}",
+            "id": f"decennials-sub-{main_ruler}-{idx + 1}-{sub_ruler}",
+            "ruler_id": sub_ruler,
             "ruler": planet_name(sub_ruler),
             "start_local": format_local(sub_start),
             "end_local": format_local(sub_end),
-            "fraction": round(fraction, 4),
+            "months": round(sub_months, 6),
+            "fraction": round(fraction, 6),
         })
         sub_start = sub_end
     return rows
 
 
 def decennials_summary(birth_dt: datetime, reference_dt: datetime, is_day: bool) -> dict[str, Any]:
-    sequence = DECENNIALS_SEQUENCE_DAY if is_day else DECENNIALS_SEQUENCE_NIGHT
-    start = birth_dt
-    for ruler, years in sequence:
-        end = add_years_approx(start, years)
-        if start <= reference_dt < end:
-            sub_periods = decennials_sub_periods(ruler, start, years, is_day)
-            return {
-                "id": "decennials-main",
-                "technique": "Decennials",
-                "level": "主限",
-                "ruler": planet_name(ruler),
-                "sign": None,
-                "start_local": format_local(start),
-                "end_local": format_local(end),
-                "notes": [f"{'昼盘' if is_day else '夜盘'}序列", f"{years} 年主限", f"共 {len(sub_periods)} 个子限", "Decennials = 7-planet 70-year cycle (no lunar nodes); differs from Firdaria which totals 75 years with nodes"],
-                "sub_periods": sub_periods,
-                "_method": "Decennials_Hellenistic_10_year_cycle",
-                "_source_tradition": "Hellenistic",
-                "method_variant": "decennials_7_planet_70_year_cycle",
-            }
-        start = end
+    """Current Decennials major period under the 129-month profile (decoupled from Firdaria)."""
+    ref = reference_dt.replace(tzinfo=None) if reference_dt.tzinfo else reference_dt
+    birth_naive = birth_dt.replace(tzinfo=None) if birth_dt.tzinfo else birth_dt
+    timeline = decennials_build_timeline(birth_dt, is_day, max_age_years=120.0)
+    active = next((p for p in timeline if p["start"] <= ref < p["end"]), None)
+    expired = False
+    if active is None and timeline:
+        active = timeline[-1]
+        expired = True
 
-    ruler, years = sequence[-1]
+    if active is None:
+        return {
+            "id": "decennials-main-missing",
+            "technique": "Decennials",
+            "level": "主限",
+            "ruler": "",
+            "sign": None,
+            "start_local": format_local(birth_naive),
+            "end_local": format_local(birth_naive),
+            "notes": ["未生成 Decennials 时间线"],
+            "sub_periods": [],
+            "method_profile": DECENNIALS_METHOD_PROFILE,
+            "method_variant": DECENNIALS_METHOD_PROFILE,
+            "total_cycle_months": DECENNIALS_TOTAL_MONTHS,
+            "_method": "Decennials_Hellenistic_129_month",
+            "_source_tradition": "Hellenistic",
+        }
+
+    sub_periods = decennials_sub_periods(active["ruler_id"], active["start"], active["months"], is_day)
+    current_sub: dict[str, Any] | None = None
+    for sub in sub_periods:
+        sub_start_dt = datetime.strptime(sub["start_local"], "%Y-%m-%d %H:%M")
+        sub_end_dt = datetime.strptime(sub["end_local"], "%Y-%m-%d %H:%M")
+        if sub_start_dt <= ref < sub_end_dt:
+            current_sub = sub
+            break
+
+    notes = [
+        f"{'昼盘' if is_day else '夜盘'} 129 月体系",
+        f"主限 {active['months']:.0f} 月（{active['years']:.2f} 年）",
+        f"共 {len(sub_periods)} 个子限",
+        "Decennials = 七曜小年换算为月，大周期 129 月（10年9月）；不含交点；与 Firdaria 完全解耦",
+        f"cycle_index={active['cycle_index']}",
+    ]
+    if expired:
+        notes.append("参考时刻超出生成窗口，返回最后一段")
+
     return {
-        "id": "decennials-main-expired",
+        "id": "decennials-main-expired" if expired else "decennials-main",
         "technique": "Decennials",
         "level": "主限",
-        "ruler": planet_name(ruler),
+        "ruler": active["ruler"],
+        "ruler_id": active["ruler_id"],
         "sign": None,
-        "start_local": format_local(start),
-        "end_local": format_local(add_years_approx(start, years)),
-        "notes": ["超出基础 Decennials 序列"],
-        "sub_periods": [],
+        "start_local": format_local(active["start"]),
+        "end_local": format_local(active["end"]),
+        "next_transition": format_local(active["end"]),
+        "months": active["months"],
+        "years": active["years"],
+        "cycle_index": active["cycle_index"],
+        "notes": notes,
+        "sub_periods": sub_periods,
+        "current_sub_period": current_sub,
+        "method_profile": DECENNIALS_METHOD_PROFILE,
+        "method_variant": DECENNIALS_METHOD_PROFILE,
+        "total_cycle_months": DECENNIALS_TOTAL_MONTHS,
+        "planetary_months": dict(DECENNIALS_MONTHS),
+        "_method": "Decennials_Hellenistic_129_month",
+        "_source_tradition": "Hellenistic",
+        "independence_group": "decennials_129_month",
+        "technique_family": "decennials",
     }
 
 
@@ -546,20 +649,55 @@ def zodiacal_releasing_summary(lot: dict[str, Any], birth_dt: datetime, referenc
         importance += 2
 
     finest = active_l4 or active_l3 or active_l2 or active_period
+
+    def _level_fields(period: dict[str, Any] | None, level_name: str) -> dict[str, Any]:
+        if not period:
+            return {
+                f"{level_name.lower()}_sign": None,
+                f"{level_name.lower()}_ruler": None,
+                f"{level_name.lower()}_ruler_id": None,
+            }
+        ruler_name = period.get("ruler") or ""
+        # Prefer body id when present on period; else map from SIGN_RULERS by sign.
+        ruler_id = period.get("ruler_id")
+        if not ruler_id and period.get("sign_index") is not None:
+            ruler_id = SIGN_RULERS[int(period["sign_index"])]
+        return {
+            f"{level_name.lower()}_sign": period.get("sign"),
+            f"{level_name.lower()}_ruler": ruler_name,
+            f"{level_name.lower()}_ruler_id": ruler_id,
+        }
+
+    l1f = _level_fields(active_period, "L1")
+    l2f = _level_fields(active_l2, "L2")
+    l3f = _level_fields(active_l3, "L3")
+    l4f = _level_fields(active_l4, "L4")
+
     return {
         "id": f"zr-{lot['id']}",
         "technique": f"Zodiacal Releasing from {lot['name']}",
+        # Top-level ruler/sign remain L1 (major period). Finer levels are explicit fields.
         "level": "L1",
         "ruler": active_period["ruler"],
+        "ruler_id": SIGN_RULERS[active_period["sign_index"]],
         "sign": active_period["sign"],
         "start_local": active_period["start_local"],
         "end_local": active_period["end_local"],
         "next_transition": active_period["end_local"],
         "importance_score": importance,
-        "notes": [],
+        "notes": [
+            "Top-level ruler/sign = L1. Use l1/l2/l3 fields for layered lords; do not label L1 as LL3.",
+        ],
         "current_active_level": current_active_level,
         "current_level_ruler": finest.get("ruler") if finest else active_period["ruler"],
         "current_level_sign": finest.get("sign") if finest else active_period["sign"],
+        "current_zr_lord_level": current_active_level,
+        "current_zr_lord": finest.get("ruler") if finest else active_period["ruler"],
+        "current_zr_lord_basis": f"finest_active_level={current_active_level}",
+        **l1f,
+        **l2f,
+        **l3f,
+        **l4f,
         "lot_angularity": angularity,
         "l1_periods": l1_periods,
         "l2_periods": l2_periods,

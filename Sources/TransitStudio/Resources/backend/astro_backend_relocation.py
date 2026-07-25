@@ -230,7 +230,38 @@ def calculate_relocation(request: dict[str, Any], warnings: list[str]) -> dict[s
     birth_tz = str(moment["timezone"]).strip()
     birth_name = str(birth.get("name") or "Birth place").strip() or "Birth place"
 
-    relocation = _validate_place(request.get("relocation") or {}, "relocation")
+    relocation_req = request.get("relocation") or {}
+    # Prefer shared location service when city name / location_id is provided.
+    if relocation_req.get("location_id") or relocation_req.get("city") or relocation_req.get("query"):
+        try:
+            from astro_backend_location_service import resolve_location
+
+            resolved = resolve_location(
+                query=relocation_req.get("query") or relocation_req.get("city") or relocation_req.get("name"),
+                location_id=relocation_req.get("location_id"),
+                latitude=relocation_req.get("latitude"),
+                longitude=relocation_req.get("longitude"),
+                timezone=relocation_req.get("timezone"),
+                name=relocation_req.get("name"),
+                warnings=warnings,
+            )
+            if resolved.get("resolved"):
+                relocation_req = {
+                    **relocation_req,
+                    "latitude": resolved["latitude"],
+                    "longitude": resolved["longitude"],
+                    "timezone": resolved.get("timezone") or relocation_req.get("timezone"),
+                    "name": resolved.get("name") or relocation_req.get("name"),
+                    "location_source": resolved.get("source"),
+                    "location_id": resolved.get("id"),
+                }
+            elif resolved.get("candidates"):
+                warnings.append(
+                    f"relocation city ambiguous; candidates={[c.get('id') for c in resolved['candidates'][:5]]}"
+                )
+        except Exception as exc:
+            warnings.append(f"location service unavailable: {exc}")
+    relocation = _validate_place(relocation_req, "relocation")
 
     # Fixed birth JD: interpreted only in the birth timezone.
     birth_local = moment_to_local_datetime(moment)

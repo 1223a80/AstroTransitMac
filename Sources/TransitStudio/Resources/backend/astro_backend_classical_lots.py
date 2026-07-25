@@ -272,13 +272,41 @@ def calculate_lots(
         )
         used_f = day_f if is_day else night_f
         formula_text = f"昼 {day_f}；夜 {night_f}"
+        # Normalized formula key for duplicate detection (sect-independent pair order).
+        day_key = f"{lot_def['day_p1']}|{lot_def['day_p2']}"
+        night_key = f"{lot_def['night_p1']}|{lot_def['night_p2']}"
+        formula_normalized = f"day:{day_key};night:{night_key}"
 
         row = point_row(lid, name_cn, lon, cusps, formula_text, day_f, night_f, used_f)
 
         # Group and confidence
         row["lot_group"] = group
         row["confidence"] = confidence
+        row["confidence_level"] = confidence
         row["source_tradition"] = source
+        row["source_author"] = source
+        row["source_work"] = source
+        row["era"] = {
+            "Paulus": "Hellenistic",
+            "Bonatti": "Medieval",
+            "Lilly": "Early Modern",
+            "AbuMa'shar": "Medieval",
+            "Hybrid": "Modern hybrid",
+        }.get(source, "unspecified")
+        row["formula_profile"] = f"lot_{lid}_v1"
+        row["formula_normalized"] = formula_normalized
+        row["formula_operands"] = {
+            "asc_longitude": round(asc, 6),
+            "first_operand_spec": p1,
+            "first_operand_longitude": round(a, 6),
+            "second_operand_spec": p2,
+            "second_operand_longitude": round(b, 6),
+        }
+        row["input_longitudes"] = {
+            "ASC": round(asc, 6),
+            str(p1): round(a, 6),
+            str(p2): round(b, 6),
+        }
 
         # Special notes for positional lots
         if lid == "basis":
@@ -287,5 +315,21 @@ def calculate_lots(
             row["formula_notes"] = "Day ASC+Saturn-Venus, night ASC+Venus-Saturn (Bonatti)"
 
         rows.append(row)
+
+    # Duplicate formula groups: same normalized day/night operands share a group id.
+    formula_to_ids: dict[str, list[str]] = {}
+    for row in rows:
+        formula_to_ids.setdefault(row["formula_normalized"], []).append(row["id"])
+    for row in rows:
+        group_members = formula_to_ids.get(row["formula_normalized"], [row["id"]])
+        if len(group_members) > 1:
+            primary = sorted(group_members)[0]
+            row["duplicate_formula_group"] = f"formula::{row['formula_normalized']}"
+            row["alias_of"] = primary if row["id"] != primary else None
+            row["independence_group"] = row["duplicate_formula_group"]
+        else:
+            row["duplicate_formula_group"] = None
+            row["alias_of"] = None
+            row["independence_group"] = f"lot::{row['id']}"
 
     return rows

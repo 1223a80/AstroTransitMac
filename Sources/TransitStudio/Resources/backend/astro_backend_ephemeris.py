@@ -334,7 +334,10 @@ def build_houses(
     if len({round(value, 8) for value in cusps}) == 1:
         warnings.append("DATA QUALITY WARNING: All house cusps are identical. House-related hits are suppressed.")
 
+    armc = _read_optional_angle(ascmc, 2, "ARMC", warnings)
     angles = {"ASC": asc, "MC": mc, "DSC": norm360(asc + 180), "IC": norm360(mc + 180)}
+    if armc is not None:
+        angles["ARMC"] = armc
     vertex = _read_optional_angle(ascmc, 3, "VERTEX", warnings)
     if vertex is not None:
         angles["VERTEX"] = vertex
@@ -348,6 +351,76 @@ def build_houses(
         warnings.append("DATA QUALITY WARNING: MC 与 IC 相同。")
 
     return cusps, angles, system_label
+
+
+def obliquity_deg(jd_ut: float) -> float:
+    """True ecliptic obliquity in degrees via Swiss Ephemeris."""
+    try:
+        values, _ = swe.calc_ut(jd_ut, swe.ECL_NUT)
+        return float(values[0])
+    except Exception:
+        # Fallback mean obliquity approximation
+        t = (jd_ut - 2451545.0) / 36525.0
+        return 23.43929111 - 0.0130042 * t
+
+
+def build_houses_from_armc(
+    armc: float,
+    latitude: float,
+    obliquity: float,
+    house_system: str,
+    warnings: list[str],
+) -> tuple[list[float], dict[str, float], str]:
+    """Recompute cusps and angles from ARMC + geographic latitude (no ecliptic +arc proxy)."""
+    if house_system not in HOUSE_SYSTEMS:
+        _append_unique(warnings, f"未识别的宫位制 '{house_system}'，已改用 Placidus for ARMC rebuild。")
+        house_system = "placidus"
+    system_label, house_code = HOUSE_SYSTEMS[house_system]
+    try:
+        raw_cusps, ascmc = swe.houses_armc(float(armc), float(latitude), float(obliquity), house_code.encode("ascii"))
+    except Exception as exc:
+        _append_unique(warnings, f"houses_armc failed ({exc}); falling back to Placidus")
+        raw_cusps, ascmc = swe.houses_armc(float(armc), float(latitude), float(obliquity), b"P")
+        house_system = "placidus"
+        system_label = "Placidus"
+
+    asc = norm360(ascmc[0])
+    mc = norm360(ascmc[1])
+    if house_system == "whole_sign":
+        first_cusp = zodiac_sign_index(asc) * 30.0
+        cusps = [norm360(first_cusp + 30.0 * index) for index in range(12)]
+    else:
+        if len(raw_cusps) >= 13:
+            cusps = [norm360(value) for value in raw_cusps[1:13]]
+        elif len(raw_cusps) == 12:
+            cusps = [norm360(value) for value in raw_cusps]
+        else:
+            cusps = [norm360(value) for value in list(raw_cusps)[:12]]
+            while len(cusps) < 12:
+                cusps.append(norm360(cusps[-1] + 30.0))
+
+    angles = {
+        "ASC": asc,
+        "MC": mc,
+        "DSC": norm360(asc + 180.0),
+        "IC": norm360(mc + 180.0),
+        "ARMC": norm360(float(armc)),
+    }
+    return cusps, angles, system_label
+
+
+def armc_from_mc(mc_lon: float, obliquity: float) -> float:
+    """Approximate ARMC from ecliptic MC longitude (zero latitude conversion).
+
+    Uses standard RA from ecliptic longitude with lat=0 for the MC point.
+    """
+    import math
+
+    mc = math.radians(norm360(mc_lon))
+    eps = math.radians(obliquity)
+    # RA of ecliptic point at latitude 0
+    ra = math.degrees(math.atan2(math.sin(mc) * math.cos(eps), math.cos(mc)))
+    return norm360(ra)
 
 
 def longitude_in_interval(longitude: float, start: float, end: float) -> bool:

@@ -82,6 +82,11 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     sidereal = set_zodiac_mode(zodiac, warnings)
     node_mode = request.get("node_mode", "true_node")
     aspect_specs = request.get("aspects", [])
+    # Arc key: true_sun (default) | naibod_mean | custom_key
+    arc_method = str(request.get("solar_arc_method") or request.get("arc_method") or "true_sun")
+    if arc_method not in {"true_sun", "naibod_mean", "custom_key"}:
+        warnings.append(f"Unknown solar_arc_method={arc_method}; using true_sun")
+        arc_method = "true_sun"
     point_set = resolve_point_set(
         request.get("point_set") if "point_set" in request else None,
         node_mode=node_mode,
@@ -118,13 +123,21 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
     natal_by_id = {row["body_id"]: row for row in natal_positions}
     prog_by_id = {row["body_id"]: row for row in prog_positions}
 
-    # Solar arc = progressed_sun - natal_sun
+    # Solar arc key (never mix keys silently in one result)
     natal_sun_lon = natal_by_id.get("SUN", {}).get("longitude", 0.0)
     prog_sun_lon = prog_by_id.get("SUN", {}).get("longitude", 0.0)
-    arc = true_solar_arc_value(natal_sun_lon, prog_sun_lon)
+    if arc_method == "true_sun":
+        arc = true_solar_arc_value(natal_sun_lon, prog_sun_lon)
+    elif arc_method == "naibod_mean":
+        arc = 0.98564733 * age_years
+    else:
+        custom_rate = float(request.get("solar_arc_rate_deg_per_year") or 1.0)
+        arc = custom_rate * age_years
+    # Solar arc growth rate (deg/year) — not natal planetary speed.
+    solar_arc_rate_deg_per_year = arc / age_years if age_years > 1e-9 else 0.0
 
     # Build natal chart
-    natal_cusps, natal_angles, _ = build_houses(
+    natal_cusps, natal_angles, house_label = build_houses(
         birth_jd, latitude, longitude, house_system, sidereal, warnings,
     )
     natal_positioned_all = [
@@ -135,8 +148,7 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
         row for row in natal_positioned_all if row["body_id"] in selected_body_ids
     ]
 
-    # Solar arc houses move by the same arc as every directed point.  Assign
-    # houses against the same cusps that are returned to the client.
+    # Directed house cusps (same arc on all cusps) — explicit algorithm.
     sa_cusps = [norm360(c + arc) for c in natal_cusps]
     sa_house_rows = house_rows(sa_cusps)
 
@@ -150,16 +162,24 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
             sign, degree_text = format_longitude(sa_lon)
         except Exception:
             pass
-        h = house_for_longitude(sa_lon, sa_cusps)
+        sa_in_natal_house = house_for_longitude(sa_lon, natal_cusps)
+        sa_in_directed_house = house_for_longitude(sa_lon, sa_cusps)
         sa_positioned_all.append({
             "body_id": row["body_id"],
             "name": row["name"],
             "longitude": sa_lon,
             "latitude": row.get("latitude", 0.0),
-            "speed": row.get("speed", 0.0),
+            # Do not present natal speed as SA motion.
+            "speed": None,
+            "natal_speed_metadata": row.get("speed", 0.0),
+            "solar_arc_rate_deg_per_year": round(solar_arc_rate_deg_per_year, 6),
             "sign": sign,
             "degree_text": degree_text,
-            "house": h,
+            "natal_house_original": row.get("house"),
+            "sa_point_in_natal_house": sa_in_natal_house,
+            "sa_point_in_directed_house_system": sa_in_directed_house,
+            "house": sa_in_natal_house,  # default most useful: SA point in natal house
+            "house_note": "default house = sa_point_in_natal_house; directed cusps also provided",
         })
     sa_positioned = [
         row for row in sa_positioned_all if row["body_id"] in selected_body_ids
@@ -201,14 +221,45 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
         section_errors["solar_arc_internal"] = str(exc)
         aspects_internal = []
     house_map = {row["body_id"]: row.get("house", 1) for row in sa_positioned}
+    # SA-internal patterns are natal patterns rotated by one arc — not new time structures.
+    # Default: do not emit them as current-time signals. Optional: natal_pattern_rotated.
     patterns: list[dict[str, Any]] = []
-    patterns_enabled = request.get("patterns_enabled", False)
-    if patterns_enabled:
+    patterns_mode = str(request.get("sa_internal_patterns") or "off")
+    # Legacy: patterns_enabled=true maps to natal_pattern_rotated (not "new structure").
+    if request.get("patterns_enabled", False) and patterns_mode == "off":
+        patterns_mode = "natal_pattern_rotated"
+    if patterns_mode == "natal_pattern_rotated":
         try:
-            patterns = find_patterns(body_lons, aspects_internal, house_map, warnings=warnings)
+            raw = find_patterns(body_lons, aspects_internal, house_map, warnings=warnings)
+            for p in raw or []:
+                item = dict(p) if isinstance(p, dict) else {"pattern": p}
+                item["kind"] = "natal_pattern_rotated"
+                item["note"] = "SA points share one arc; internal figures equal natal figures rotated"
+                patterns.append(item)
         except Exception as exc:
             warnings.append(f"Solar Arc 图形识别失败：{exc}")
             section_errors["patterns"] = str(exc)
+    elif patterns_mode not in {"off", "natal_pattern_rotated"}:
+        warnings.append(f"Unknown sa_internal_patterns={patterns_mode}; using off")
+
+    # Mixed SA→natal activation clusters: group aspects that share an SA body hitting a tight natal structure.
+    activation_clusters: list[dict[str, Any]] = []
+    by_sa: dict[str, list[dict[str, Any]]] = {}
+    for asp in sa_to_natal:
+        key = str(asp.get("transit_body_id") or asp.get("body_a_id") or asp.get("left_body_id") or "")
+        if key:
+            by_sa.setdefault(key, []).append(asp)
+    for sa_body, group in by_sa.items():
+        if len(group) >= 2:
+            activation_clusters.append({
+                "sa_body_id": sa_body,
+                "hit_count": len(group),
+                "targets": [
+                    asp.get("target_body_id") or asp.get("body_b_id") or asp.get("right_body_id")
+                    for asp in group
+                ],
+                "note": "Single SA point activating multiple natal points; treat as one cluster when natal structure is tight",
+            })
 
     point_set = finalize_point_set(
         point_set,
@@ -219,19 +270,38 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
 
     return {
         "meta": {
-            "method": "true_solar_arc",
+            "method": arc_method,
+            "method_version": "solar_arc_v2",
+            "arc_method": arc_method,
             "natal_utc": birth_utc_str,
             "progressed_utc": progressed_dt.isoformat() if hasattr(progressed_dt, 'isoformat') else str(progressed_dt),
             "ephemeris": ", ".join(sorted(all_ephemerides)) if all_ephemerides else "unknown",
+            "house_system_requested": house_system,
+            "house_system_effective": house_label,
+            "zodiac": zodiac,
             "effective_point_set": point_set,
+            "solar_arc_rate_deg_per_year": round(solar_arc_rate_deg_per_year, 6),
+            "angles_use_uniform_solar_arc": True,
+            "cusps_use_uniform_solar_arc": True,
         },
         "natal_planets": natal_positioned,
         "solar_arc_planets": sa_positioned,
         "solar_arc_angles": sa_angle_rows,
         "solar_arc_houses": sa_house_rows,
         "solar_arc_to_natal_aspects": sa_to_natal,
+        "activation_clusters": activation_clusters,
         "arc_value": round(arc, 6),
         "patterns": patterns,
+        "patterns_mode": patterns_mode,
+        "aspects_internal_sa": aspects_internal,
+        "aspects_internal_note": "SA-internal aspects equal natal aspects (relative geometry preserved); not new timed structures",
         "warnings": warnings,
         "section_errors": section_errors if section_errors else None,
+        "calculation_assumptions": [
+            f"Arc method={arc_method}; keys never mixed in one result.",
+            "Default house field = SA point in natal Placidus/requested house system.",
+            "SA angles and cusps use the same uniform solar arc.",
+            "Natal planetary speed is metadata only; SA motion is the solar arc rate.",
+            "SA-internal patterns default off; optional natal_pattern_rotated labeling.",
+        ],
     }

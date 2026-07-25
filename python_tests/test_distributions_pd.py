@@ -37,30 +37,40 @@ def test_calculate_defining_facts():
 
 
 def test_pd_profiles_diverge_using_arc_signed():
-    r = calculate_distributions_pd(_req(), [])
+    r = calculate_distributions_pd({**_req(), "include_test_pd_profiles": True}, [])
     by_id: dict[str, dict[str, dict]] = {}
     for row in r["primary_directions_by_profile"]:
         by_id.setdefault(row["id"], {})[row["method_profile"]] = row
+    for row in r.get("primary_directions_test_profiles") or []:
+        by_id.setdefault(row["id"], {})[row["method_profile"]] = row
 
     assert by_id, "expected directions"
+    formal = {row.get("method_profile") for row in r["primary_directions_by_profile"]}
+    assert "naibod_longitude_proxy" in formal
+    assert "one_degree_per_year_proxy" in formal
+    assert "ptolemy_key_proxy" not in formal
+    assert "sign_reversal_test_naibod" not in formal  # test-only, not formal
+
     checked = 0
-    for did, profs in by_id.items():
-        if set(profs) < {"naibod_longitude_proxy", "ptolemy_key_proxy", "converse_naibod_proxy"}:
+    for _did, profs in by_id.items():
+        if "naibod_longitude_proxy" not in profs or "one_degree_per_year_proxy" not in profs:
             continue
         n = profs["naibod_longitude_proxy"]
-        p = profs["ptolemy_key_proxy"]
-        c = profs["converse_naibod_proxy"]
+        p = profs["one_degree_per_year_proxy"]
         arc = float(n["arc_signed"])
-        # Ptolemy re-ages with 1°/year vs Naibod rate
         expected_naibod_age = abs(arc) / float(NAIBOD_RATE)
-        expected_ptolemy_age = abs(arc) / 1.0
+        expected_one_deg_age = abs(arc) / 1.0
         assert abs(float(n["age_from_abs_arc"]) - expected_naibod_age) < 1e-3
-        assert abs(float(p["age_from_abs_arc"]) - expected_ptolemy_age) < 1e-3
+        assert abs(float(p["age_from_abs_arc"]) - expected_one_deg_age) < 1e-3
         if abs(arc) > 1e-6:
             assert abs(float(n["age_from_abs_arc"]) - float(p["age_from_abs_arc"])) > 1e-6
-        # Converse negates arc
-        assert abs(float(c["arc_signed"]) + float(n["arc_signed"])) < 1e-6
-        assert c["direction_type"] != n["direction_type"] or abs(arc) < 1e-9
+        if "sign_reversal_test_naibod" in profs:
+            c = profs["sign_reversal_test_naibod"]
+            assert abs(float(c["arc_signed"]) + float(n["arc_signed"])) < 1e-6
+            assert c.get("exclude_from_concordance") is True
+            assert c.get("test_profile") is True
+        # Event dates always after birth even for converse arcs
+        assert n.get("symbolic_date_from_signed_arc") is None
         checked += 1
         if checked >= 5:
             break

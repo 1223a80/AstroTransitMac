@@ -48,9 +48,11 @@ from astro_backend_classical_dignity import (
     calc_dodekatemorion,
     decan_ruler,
     dignity_labels,
+    dignity_ownership,
     dignity_rulers_for_lon,
     hayz_status,
     house_strength,
+    place_quality_fields,
     joy_status,
     motion_label,
     sect_status,
@@ -166,6 +168,12 @@ def calculate_classical_planets(
         house = house_for_longitude(row["longitude"], cusps)
         dignity = dignity_labels(body_id, row["longitude"], is_day, bounds_system, triplicity_system)
         domicile, exaltation, triplicity, bound, decan, dignity_score, dignity_notes, dignity_breakdown, detriment_label, fall_label = dignity
+        rulers = dignity_rulers_for_lon(row["longitude"], is_day, bounds_system, triplicity_system)
+        ownership = dignity_ownership(
+            body_id,
+            rulers,
+            triplicity_set(zodiac_sign_index(row["longitude"]), triplicity_system),
+        )
         phase, phase_score, phase_notes, phase_breakdown = solar_phase(body_id, row["longitude"], sun_lon)
         solar_condition = phase_breakdown.get("solar_condition", "-")
         sun_distance_deg = phase_breakdown.get("sun_distance_deg", 0)
@@ -174,15 +182,30 @@ def calculate_classical_planets(
         hayz, hayz_score, hayz_notes, hayz_breakdown = hayz_status(body_id, is_day, row["longitude"], house, sun_lon)
         joy, joy_score, joy_notes, joy_breakdown = joy_status(body_id, house)
         accidental = house_strength(house)
+        place_fields = place_quality_fields(house)
         accidental_score = 3 if accidental == "角宫" else 1 if accidental == "续宫" else -1
+        # Place quality is reported separately; scoring still uses angularity only (documented).
         base_score = dignity_score + phase_score + motion_score + sect_score + accidental_score + hayz_score + joy_score
         score_label = score_label_for(base_score)
         notes = dignity_notes + phase_notes + motion_notes + sect_notes + hayz_notes + joy_notes + [accidental]
-        score_breakdown = dignity_breakdown + [phase_breakdown, motion_breakdown, sect_breakdown, hayz_breakdown, joy_breakdown, {"label": "accidental", "score": accidental_score, "value": accidental}]
+        score_breakdown = dignity_breakdown + [
+            phase_breakdown,
+            motion_breakdown,
+            sect_breakdown,
+            hayz_breakdown,
+            joy_breakdown,
+            {"label": "accidental", "score": accidental_score, "value": accidental},
+            {"label": "place_quality", "score": 0, "value": place_fields["place_quality"], "note": "not substituted for angularity score"},
+        ]
 
         sign_idx = zodiac_sign_index(row["longitude"])
         if sign_idx not in triplicity_cache:
             triplicity_cache[sign_idx] = triplicity_ruler_details(sign_idx, triplicity_system, positions_with_house)
+
+        # Expand sect layers from breakdown when available.
+        sect_trace = sect_breakdown if isinstance(sect_breakdown, dict) else {}
+        hayz_trace = (hayz_breakdown or {}).get("trace") if isinstance(hayz_breakdown, dict) else {}
+        solar_trace = phase_breakdown if isinstance(phase_breakdown, dict) else {}
 
         rows.append(
             {
@@ -197,6 +220,25 @@ def calculate_classical_planets(
                 "speed": row["speed"],
                 "motion": motion,
                 "sect_status": sect,
+                "chart_sect": sect_trace.get("chart_sect") or ("day" if is_day else "night"),
+                "planet_sect": sect_trace.get("planet_sect"),
+                "above_horizon": house >= 7,
+                "sign_gender": SIGN_GENDER[sign_idx],
+                "sect_agreement": sect_trace.get("sect_agreement"),
+                "horizon_agreement": (hayz_trace or {}).get("above_horizon") if hayz_trace else (house >= 7) == is_day,
+                "gender_agreement": (hayz_trace or {}).get("sign_gender"),
+                "partial_hayz": bool(hayz) is False and bool(sect_trace.get("sect_agreement")),
+                "angularity_class": place_fields["angularity_class"],
+                "place_quality": place_fields["place_quality"],
+                "beholds_ascendant": place_fields["beholds_ascendant"],
+                "aversion_to_ascendant": place_fields["aversion_to_ascendant"],
+                "traditional_place_name": place_fields["traditional_place_name"],
+                "solar_elongation_condition": solar_trace.get("solar_elongation_condition") or solar_trace.get("solar_condition"),
+                "combust": solar_trace.get("combust"),
+                "under_beams": solar_trace.get("under_beams"),
+                "cazimi": solar_trace.get("cazimi"),
+                "heliacally_visible": solar_trace.get("heliacally_visible"),
+                "visibility_method": solar_trace.get("visibility_method") or "solar_elongation_thresholds_only",
                 "domicile": domicile,
                 "detriment": detriment_label,
                 "exaltation": exaltation,
@@ -205,6 +247,16 @@ def calculate_classical_planets(
                 "triplicity_details": triplicity_cache[sign_idx],
                 "bound": bound,
                 "decan": decan,
+                "domicile_ruler": ownership["domicile_ruler"],
+                "exaltation_ruler": ownership["exaltation_ruler"],
+                "triplicity_rulers": ownership["triplicity_rulers"],
+                "bound_ruler": ownership["bound_ruler"],
+                "decan_ruler": ownership["decan_ruler"],
+                "subject_owns_domicile": ownership["subject_owns_domicile"],
+                "subject_owns_exaltation": ownership["subject_owns_exaltation"],
+                "subject_owns_triplicity": ownership["subject_owns_triplicity"],
+                "subject_owns_bound": ownership["subject_owns_bound"],
+                "subject_owns_decan": ownership["subject_owns_decan"],
                 "solar_phase": phase,
                 "solar_condition": solar_condition,
                 "sun_distance_deg": sun_distance_deg,
@@ -685,9 +737,121 @@ def return_summary(
             "house_overlay": r_overlay,
         }
 
-    previous_snapshot = _build_snapshot(prev_previous_exact, "previous_return") if prev_previous_exact else None
-    current_snapshot = _build_snapshot(previous_exact, "current_cycle_return") if previous_exact else None
-    next_snapshot = _build_snapshot(next_exact, "next_return") if next_exact else None
+    def _cluster_hits(exacts_list: list[datetime], gap_days: float = 120.0) -> list[list[datetime]]:
+        """Group natal-degree crossings that belong to the same retrograde/return cycle."""
+        if not exacts_list:
+            return []
+        ordered = sorted(exacts_list)
+        clusters: list[list[datetime]] = [[ordered[0]]]
+        for hit in ordered[1:]:
+            if (hit - clusters[-1][-1]).total_seconds() <= gap_days * 86400:
+                clusters[-1].append(hit)
+            else:
+                clusters.append([hit])
+        return clusters
+
+    # Cluster all hits in window; also attempt to classify postnatal recrossings (inner/outer).
+    all_hits = sorted(exacts)
+    clusters = _cluster_hits(all_hits, gap_days=150.0 if body_id in {"JUPITER", "SATURN"} else 40.0)
+
+    def _annotate_hit(exact_dt: datetime | None, label: str) -> dict[str, Any] | None:
+        if exact_dt is None:
+            return None
+        snap = _build_snapshot(exact_dt, label)
+        # Find cluster membership
+        cluster_idx = None
+        hit_number = 1
+        total_hits = 1
+        for idx, cluster in enumerate(clusters):
+            if exact_dt in cluster:
+                cluster_idx = idx
+                hit_number = cluster.index(exact_dt) + 1
+                total_hits = len(cluster)
+                break
+        cycle_start = clusters[cluster_idx][0] if cluster_idx is not None else exact_dt
+        cycle_end = clusters[cluster_idx][-1] if cluster_idx is not None else exact_dt
+        prev_cluster = clusters[cluster_idx - 1] if cluster_idx and cluster_idx > 0 else None
+        next_cluster = clusters[cluster_idx + 1] if cluster_idx is not None and cluster_idx + 1 < len(clusters) else None
+
+        # Postnatal recrossing: hit after birth but belonging to the first post-birth degree re-pass
+        # of the natal cycle (not a mature multi-orbit return). Heuristic: age < 3 years for outer planets.
+        age_at_hit = completed_age(birth_dt, exact_dt)
+        is_postnatal_recrossing = body_id in {"JUPITER", "SATURN", "MARS"} and age_at_hit < 3
+
+        # valid_until: for Sun/Moon → next return; for others → end of distinct next cycle start if known
+        if body_id in {"SUN", "MOON"} and next_exact is not None:
+            valid_until = format_local(next_exact)
+            is_current_cycle = previous_exact == exact_dt
+        elif next_cluster is not None:
+            valid_until = format_local(next_cluster[0])
+            is_current_cycle = (
+                previous_exact is not None
+                and cluster_idx is not None
+                and previous_exact in clusters[cluster_idx]
+            )
+        else:
+            valid_until = None
+            is_current_cycle = previous_exact == exact_dt
+
+        # Do not mark early postnatal recrossings as a multi-decade "current return".
+        if is_postnatal_recrossing:
+            is_current_cycle = False
+            valid_until = format_local(cycle_end) if cycle_end else valid_until
+
+        snap.update({
+            "return_cycle_id": f"{body_id.lower()}-cycle-{cluster_idx if cluster_idx is not None else 0}",
+            "planet": body_id,
+            "hit_number": hit_number,
+            "total_hits": total_hits,
+            "exact_time": snap.get("exact_utc") or snap.get("exact_local"),
+            "motion_at_hit": next((p.get("motion") for p in snap.get("planets") or [] if p.get("id") == body_id), None),
+            "cycle_start": format_local(cycle_start),
+            "cycle_end": format_local(cycle_end),
+            "previous_distinct_cycle": format_local(prev_cluster[0]) if prev_cluster else None,
+            "next_distinct_cycle": format_local(next_cluster[0]) if next_cluster else None,
+            "is_postnatal_recrossing": is_postnatal_recrossing,
+            "is_current_cycle": is_current_cycle,
+            "valid_until": valid_until,
+            "location": {
+                "latitude": latitude,
+                "longitude": longitude,
+                "source": "birth_place",
+                "timezone": None,
+            },
+            "location_source": "birth_place",
+        })
+        return snap
+
+    # Prefer not to present a postnatal recrossing as current_cycle_return when a later mature cycle exists.
+    current_hit = previous_exact
+    if current_hit is not None and body_id in {"JUPITER", "SATURN", "MARS"}:
+        age_cur = completed_age(birth_dt, current_hit)
+        if age_cur < 3:
+            # Look for a later pre-reference hit that is not a postnatal recrossing.
+            mature = [h for h in before if completed_age(birth_dt, h) >= 3]
+            if mature:
+                current_hit = mature[-1]
+                # previous becomes the hit before current_hit
+                earlier = [h for h in before if h < current_hit]
+                prev_previous_exact = earlier[-1] if earlier else None
+            else:
+                # No mature return yet — keep as historical reference, not multi-decade current.
+                pass
+
+    previous_snapshot = _annotate_hit(prev_previous_exact, "previous_return") if prev_previous_exact else None
+    current_snapshot = _annotate_hit(current_hit, "current_cycle_return") if current_hit else None
+    next_snapshot = _annotate_hit(next_exact, "next_return") if next_exact else None
+
+    all_hit_rows = []
+    for c_idx, cluster in enumerate(clusters):
+        for h_idx, hit in enumerate(cluster, start=1):
+            all_hit_rows.append({
+                "return_cycle_id": f"{body_id.lower()}-cycle-{c_idx}",
+                "hit_number": h_idx,
+                "total_hits": len(cluster),
+                "exact_local": format_local(hit),
+                "is_postnatal_recrossing": completed_age(birth_dt, hit) < 3 and body_id in {"JUPITER", "SATURN", "MARS"},
+            })
 
     return {
         "id": body_id.lower(),
@@ -699,6 +863,13 @@ def return_summary(
         "previous_return": previous_snapshot,
         "current_cycle_return": current_snapshot,
         "next_return": next_snapshot,
+        "all_hits_in_window": all_hit_rows,
         "search_start_local": format_local(start),
         "search_end_local": format_local(end),
+        "location": {
+            "latitude": latitude,
+            "longitude": longitude,
+            "source": "birth_place",
+        },
+        "method_note": "Hits clustered by proximity into return cycles; postnatal recrossings are not multi-decade current returns.",
     }
