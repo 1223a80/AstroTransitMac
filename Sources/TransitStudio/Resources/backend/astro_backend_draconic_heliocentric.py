@@ -113,10 +113,17 @@ def calculate_draconic_heliocentric(request: dict[str, Any], warnings: list[str]
             )
 
     # Heliocentric positions via SE FLG_HELCTR
+    # Standard set: include Earth (SE_EARTH), hide Sun (origin), hide Moon by default.
     helio_planets = []
     helio_errors: dict[str, str] = {}
+    include_moon_helio = bool(request.get("include_heliocentric_moon", False))
     for spec in specs:
         if spec.body_id in ("MEAN_NODE", "TRUE_NODE", "SOUTH_MEAN_NODE", "SOUTH_TRUE_NODE", "MEAN_LILITH", "OSCU_LILITH"):
+            continue
+        if spec.body_id == "SUN":
+            # Sun is the heliocentric origin — omit from standard output.
+            continue
+        if spec.body_id == "MOON" and not include_moon_helio:
             continue
         try:
             flags = swe.FLG_SWIEPH | swe.FLG_SPEED | swe.FLG_HELCTR
@@ -125,25 +132,57 @@ def calculate_draconic_heliocentric(request: dict[str, Any], warnings: list[str]
             values, _ = swe.calc_ut(jd, spec.code, flags)
             hlon = (float(values[0]) + spec.longitude_offset) % 360.0
             sign, degree_text = format_longitude(hlon)
-            helio_planets.append(
-                _public(
-                    {
-                        "body_id": spec.body_id,
-                        "name": spec.name,
-                        "longitude": hlon,
-                        "latitude": float(values[1]),
-                        "speed": float(values[3]),
-                        "sign": sign,
-                        "degree_text": degree_text,
-                        "house": None,
-                    },
-                    coordinate_center="heliocentric",
-                    coordinate_system="tropical_ecliptic" if not sidereal else "sidereal_ecliptic",
-                )
+            row = _public(
+                {
+                    "body_id": spec.body_id,
+                    "name": spec.name,
+                    "longitude": hlon,
+                    "latitude": float(values[1]),
+                    "speed": float(values[3]),
+                    "sign": sign,
+                    "degree_text": degree_text,
+                    "house": None,
+                },
+                coordinate_center="heliocentric",
+                coordinate_system="tropical_ecliptic" if not sidereal else "sidereal_ecliptic",
             )
+            if spec.body_id == "MOON":
+                row["experimental"] = True
+                row["note"] = "Heliocentric Moon is near Earth; experimental"
+            helio_planets.append(row)
         except Exception as exc:
             helio_errors[spec.body_id] = str(exc)
             warnings.append(f"heliocentric {spec.name} failed: {exc}")
+
+    # Add Earth (heliocentric Earth = geocentric Sun + 180° approximately, via SE_EARTH)
+    try:
+        flags = swe.FLG_SWIEPH | swe.FLG_SPEED | swe.FLG_HELCTR
+        if sidereal:
+            flags |= swe.FLG_SIDEREAL
+        earth_code = getattr(swe, "EARTH", 14)
+        values, _ = swe.calc_ut(jd, earth_code, flags)
+        hlon = float(values[0]) % 360.0
+        sign, degree_text = format_longitude(hlon)
+        helio_planets.insert(
+            0,
+            _public(
+                {
+                    "body_id": "EARTH",
+                    "name": "Earth",
+                    "longitude": hlon,
+                    "latitude": float(values[1]),
+                    "speed": float(values[3]),
+                    "sign": sign,
+                    "degree_text": degree_text,
+                    "house": None,
+                },
+                coordinate_center="heliocentric",
+                coordinate_system="tropical_ecliptic" if not sidereal else "sidereal_ecliptic",
+            ),
+        )
+    except Exception as exc:
+        helio_errors["EARTH"] = str(exc)
+        warnings.append(f"heliocentric Earth failed: {exc}")
 
     # Comparison table geo vs helio for shared bodies
     geo_map = {r["body_id"]: r for r in geo_positions}
@@ -172,13 +211,64 @@ def calculate_draconic_heliocentric(request: dict[str, Any], warnings: list[str]
         warnings=warnings,
     )
 
+    # Draconic → tropical natal contacts (overlay priority); internal draconic aspects = natal aspects.
+    draconic_to_natal: list[dict[str, Any]] = []
+    try:
+        from astro_backend_scan import find_aspects
+
+        aspect_specs = request.get("aspects") or [
+            {"id": "conjunction", "angle": 0, "orb": 1.0},
+            {"id": "opposition", "angle": 180, "orb": 1.0},
+        ]
+        # Map draconic planets as "transit" against geocentric natal.
+        d_pos = [
+            {"body_id": p["body_id"], "name": p.get("name", p["body_id"]), "longitude": p["longitude"], "speed": 0.0}
+            for p in draconic_planets
+        ]
+        n_pos = [
+            {"body_id": p["body_id"], "name": p.get("name", p["body_id"]), "longitude": p["longitude"], "speed": p.get("speed", 0.0)}
+            for p in geo_positions
+        ]
+        # Also add natal angles as targets
+        for aid, alon in angles.items():
+            if aid in {"ASC", "MC", "DSC", "IC"}:
+                n_pos.append({"body_id": aid, "name": aid, "longitude": float(alon), "speed": 0.0})
+        draconic_to_natal = find_aspects(d_pos, n_pos, aspect_specs)
+    except Exception as exc:
+        warnings.append(f"draconic→natal overlay aspects failed: {exc}")
+
+    # Heliocentric major aspects among helio planets
+    helio_aspects: list[dict[str, Any]] = []
+    try:
+        from astro_backend_scan import find_aspects
+
+        aspect_specs = request.get("aspects") or [
+            {"id": "conjunction", "angle": 0, "orb": 1.0},
+            {"id": "opposition", "angle": 180, "orb": 1.0},
+            {"id": "trine", "angle": 120, "orb": 1.0},
+            {"id": "square", "angle": 90, "orb": 1.0},
+            {"id": "sextile", "angle": 60, "orb": 1.0},
+        ]
+        h_pos = [
+            {"body_id": p["body_id"], "name": p.get("name", p["body_id"]), "longitude": p["longitude"], "speed": p.get("speed", 0.0)}
+            for p in helio_planets
+        ]
+        helio_aspects = find_aspects(h_pos, h_pos, aspect_specs, skip_self_aspects=True)
+    except Exception as exc:
+        warnings.append(f"heliocentric aspects failed: {exc}")
+
+    include_draconic_houses = bool(request.get("include_draconic_houses", False))
+
     assumptions = [
         "Draconic: tropical/sidereal natal longitudes shifted so North Node → 0° Aries.",
         f"node_mode={node_mode}; node_longitude={node_lon:.6f}; shift={shift:.6f}.",
-        "Draconic houses: whole-sign style cusp shift by same arc (experimental house overlay).",
-        "Heliocentric: swe.calc_ut with FLG_HELCTR; Earth not included as planet.",
+        "Draconic internal aspects equal natal internal aspects (uniform shift); not new structures.",
+        "Primary output: Draconic→tropical natal overlay (conjunction/opposition preferred).",
+        "Draconic houses: experimental_house_overlay; hidden by default.",
+        "Heliocentric: FLG_HELCTR; includes Earth; Sun hidden (origin); Moon optional experimental.",
         "Nodes/Lilith skipped for heliocentric.",
         "Houses are geocentric constructs; heliocentric rows have house=null.",
+        "Geo vs Helio Δ is geometric (observer center/distance), not character meaning.",
         "结果为坐标事实，不含解释性论断。",
     ]
 
@@ -186,29 +276,32 @@ def calculate_draconic_heliocentric(request: dict[str, Any], warnings: list[str]
         "meta": {
             "mode": "draconic_heliocentric",
             "method": METHOD,
-            "schema_version": SCHEMA_VERSION,
+            "schema_version": SCHEMA_VERSION + 1 if isinstance(SCHEMA_VERSION, int) else SCHEMA_VERSION,
             "birth_utc": birth_utc,
             "zodiac": zodiac,
             "node_mode": node_mode,
             "node_id": node_id,
             "node_longitude": round(node_lon, 9),
             "draconic_shift_deg": round(shift, 9),
-            "house_system": house_system,
-            "house_label": house_label,
+            "house_system": house_system if include_draconic_houses else None,
+            "house_label": house_label if include_draconic_houses else None,
             "ephemeris": "Swiss Ephemeris",
             "effective_point_set": effective,
+            "draconic_houses": "experimental_house_overlay" if include_draconic_houses else "hidden",
         },
         "requested_config": {
             "node_mode": request.get("node_mode"),
             "zodiac": zodiac,
             "point_set": request.get("point_set"),
+            "include_draconic_houses": include_draconic_houses,
+            "include_heliocentric_moon": include_moon_helio,
         },
         "effective_config": {
             "node_mode": node_mode,
             "node_id": node_id,
             "draconic_shift_deg": round(shift, 9),
             "zodiac": zodiac,
-            "house_system": house_system,
+            "house_system": house_system if include_draconic_houses else None,
             "method": METHOD,
         },
         "draconic": {
@@ -219,11 +312,19 @@ def calculate_draconic_heliocentric(request: dict[str, Any], warnings: list[str]
             "angles": draconic_angles,
             "coordinate_system": "draconic_ecliptic",
             "coordinate_center": "geocentric",
+            "to_natal_aspects": draconic_to_natal,
+            "internal_aspects_note": "equal to natal internal aspects under uniform shift; not emitted as new",
+            "houses": "experimental_house_overlay" if include_draconic_houses else None,
+            "experimental_house_overlay": include_draconic_houses,
         },
         "heliocentric": {
             "planets": helio_planets,
+            "aspects": helio_aspects,
             "coordinate_system": "tropical_ecliptic" if not sidereal else "sidereal_ecliptic",
             "coordinate_center": "heliocentric",
+            "sun_included": False,
+            "earth_included": any(p.get("body_id") == "EARTH" for p in helio_planets),
+            "moon_included": include_moon_helio,
             "errors": helio_errors or None,
         },
         "geocentric": {

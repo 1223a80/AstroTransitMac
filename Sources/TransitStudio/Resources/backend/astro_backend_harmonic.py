@@ -156,6 +156,70 @@ def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str
                 seen.add(key)
                 deduped.append(a)
         aspects = deduped
+
+        # Map H-chart aspects to natal harmonic families.
+        # H_n conjunction = natal n-fold; H_n opposition = natal 2n family, etc.
+        aspect_angle = {
+            "conjunction": 0.0,
+            "opposition": 180.0,
+            "trine": 120.0,
+            "square": 90.0,
+            "sextile": 60.0,
+        }
+        natal_by = {r["body_id"]: r for r in harmonic_planet_rows}
+        # Need natal longitudes for equivalent angles
+        natal_lon = {bid: float(natal_by_id[bid]["longitude"]) for bid in natal_by_id}
+        for a in aspects:
+            aid = str(a.get("aspect_id") or a.get("aspect") or "").lower()
+            h_angle = aspect_angle.get(aid)
+            if h_angle is None:
+                # try aspect name
+                name = str(a.get("aspect_name") or a.get("aspect") or "")
+                for k, v in aspect_angle.items():
+                    if k in name.lower() or name in { "合相": "conjunction", "冲相": "opposition", "拱相": "trine", "刑相": "square", "六合": "sextile"}:
+                        pass
+                if "合" in name:
+                    h_angle = 0.0
+                    aid = "conjunction"
+                elif "冲" in name:
+                    h_angle = 180.0
+                    aid = "opposition"
+                elif "拱" in name:
+                    h_angle = 120.0
+                    aid = "trine"
+                elif "刑" in name:
+                    h_angle = 90.0
+                    aid = "square"
+                elif "六合" in name:
+                    h_angle = 60.0
+                    aid = "sextile"
+            if h_angle is None:
+                continue
+            # family: harmonic_order * (360/gcd) mapping
+            # H chart angle A corresponds to natal unit 360/(H * k) where A = k * (360/H)/something
+            # Standard: natal_unit = 360 / (harmonic_order * m) where H-chart aspect is m-fold of base.
+            # Conjunction (0) → family H_n; opposition (180) → H_(2n); trine 120 → H_(3n); square 90 → H_(4n); sextile 60 → H_(6n)
+            mult = {0.0: 1, 180.0: 2, 120.0: 3, 90.0: 4, 60.0: 6}.get(h_angle, 1)
+            family_n = harmonic_order * mult
+            natal_unit = 360.0 / family_n if family_n else None
+            h_orb = float(a.get("orb") or 0.0)
+            natal_equiv_orb = h_orb / harmonic_order if harmonic_order else None
+            ba = a.get("transit_body_id")
+            bb = a.get("natal_body_id")
+            natal_sep = None
+            if ba in natal_lon and bb in natal_lon:
+                from astro_backend_core import signed_orb
+                natal_sep = abs(signed_orb(natal_lon[ba], natal_lon[bb]))
+            a["harmonic_chart_angle"] = h_angle
+            a["harmonic_chart_orb"] = h_orb
+            a["natal_separation_deg"] = round(natal_sep, 6) if natal_sep is not None else None
+            a["natal_harmonic_unit_deg"] = round(natal_unit, 6) if natal_unit is not None else None
+            a["natal_equivalent_orb"] = round(natal_equiv_orb, 6) if natal_equiv_orb is not None else None
+            a["harmonic_family"] = f"H{family_n}"
+            a["is_primary_for_selected_harmonic"] = h_angle == 0.0
+            a["priority"] = 0 if h_angle == 0.0 else 1
+        # Prefer H_n conjunctions first when listing
+        aspects.sort(key=lambda row: (row.get("priority", 1), abs(float(row.get("orb") or 99))))
     except Exception as exc:
         warnings.append(f"Harmonic 相位计算失败：{exc}")
         section_errors["aspects"] = str(exc)
@@ -169,20 +233,40 @@ def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str
         warnings=warnings,
     )
 
+    include_houses = bool(request.get("include_harmonic_houses", False))
+    if not include_houses:
+        warnings.append(
+            "Harmonic house cusps/house numbers hidden by default (experimental overlay); "
+            "angles retained as experimental multiplied axes. "
+            "Pass include_harmonic_houses=true to emit house cusps."
+        )
+
     return {
         "meta": {
             "method": f"harmonic_{harmonic_order}",
+            "method_version": "harmonic_family_map_v1",
             "natal_utc": birth_utc_str,
             "progressed_utc": None,
             "ephemeris": ", ".join(sorted(all_ephemerides)) if all_ephemerides else "unknown",
             "effective_point_set": point_set,
+            "houses_experimental": True,
+            "angles_experimental": True,
+            "include_harmonic_houses": include_houses,
         },
-        "planets": harmonic_planet_rows,
-        "angles": harmonic_angle_rows,
-        "houses": harmonic_house_rows,
+        "planets": [{**p, "house": p["house"] if include_houses else None} for p in harmonic_planet_rows],
+        # Angles kept (experimental multiplied ASC/MC); not a complete harmonic house system.
+        "angles": [{**a, "experimental": True} for a in harmonic_angle_rows],
+        "houses": harmonic_house_rows if include_houses else [],
         "houses_experimental": True,
         "aspects": aspects,
         "warnings": warnings,
         "harmonic_order": harmonic_order,
+        "calculation_assumptions": [
+            f"H{harmonic_order} chart angles: longitude * {harmonic_order} mod 360.",
+            "H-chart conjunction maps to natal H_n family; opposition→H_2n; trine→H_3n; square→H_4n; sextile→H_6n.",
+            "natal_equivalent_orb = harmonic_chart_orb / harmonic_order.",
+            "Primary listing prioritizes H-chart conjunctions for the selected harmonic.",
+            "House cusps experimental and hidden by default; angle multiplication is experimental.",
+        ],
         "section_errors": section_errors if section_errors else None,
     }
