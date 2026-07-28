@@ -1,6 +1,6 @@
 # Technique Maintenance — Root Causes (2026-07-25)
 
-Branch: `fix/classical-modern-technique-maintenance`  
+Branch: `fix/classical-modern-technique-maintenance`
 Fixture chart: 2004-08-09T08:16:00Z / 35.0576N 118.3346E / Whole Sign / Egyptian / Dorothean / ref 2026-07-25T08:44:00Z
 
 ## Classical

@@ -22,6 +22,12 @@ def test_draconic_node_to_zero():
     assert abs(dnode["longitude"]) < 1e-6 or abs(dnode["longitude"] - 360) < 1e-6
     assert r["draconic"]["coordinate_system"] == "draconic_ecliptic"
     assert all(p["coordinate_center"] == "heliocentric" for p in r["heliocentric"]["planets"])
+    assert r["draconic"]["to_natal_aspects"]
+    assert r["heliocentric"]["aspects"]
+    assert not any("aspects failed" in warning for warning in r["warnings"])
+    assert r["heliocentric"]["earth_included"] is True
+    assert r["heliocentric"]["sun_included"] is False
+    assert r["heliocentric"]["moon_included"] is False
     assert r["geo_helio_comparison"]
     assert r["calculation_assumptions"]
 

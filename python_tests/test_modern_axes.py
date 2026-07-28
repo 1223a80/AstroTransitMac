@@ -29,6 +29,7 @@ def test_axes_match_same_houses_ex_and_preserve_existing_houses(sidereal: bool) 
     assert len(ascmc) > 4
     assert angles["ASC"] == pytest.approx(norm360(ascmc[0]), abs=1e-9)
     assert angles["MC"] == pytest.approx(norm360(ascmc[1]), abs=1e-9)
+    assert angles["ARMC"] == pytest.approx(norm360(ascmc[2]), abs=1e-9)
     assert angles["DSC"] == pytest.approx(norm360(ascmc[0] + 180.0), abs=1e-9)
     assert angles["IC"] == pytest.approx(norm360(ascmc[1] + 180.0), abs=1e-9)
     assert angles["VERTEX"] == pytest.approx(norm360(ascmc[3]), abs=1e-9)
@@ -87,14 +88,19 @@ def test_invalid_axis_values_warn_once_and_do_not_change_houses(
 
     assert first_label == second_label == "Placidus"
     assert first_cusps == second_cusps == raw_cusps
-    assert first_angles == second_angles == {
+    expected_angles = {
         "ASC": 100.0,
         "MC": 200.0,
         "DSC": 280.0,
         "IC": 20.0,
     }
+    expected_warning_count = 3
+    if len(ascmc) > 2:
+        expected_angles["ARMC"] = 0.0
+        expected_warning_count = 2
+    assert first_angles == second_angles == expected_angles
     assert "VERTEX" not in first_angles
     assert "EQUATORIAL_ASCENDANT" not in first_angles
     assert "ANTIVERTEX" not in first_angles
-    assert len(warnings) == len(set(warnings)) == 2
+    assert len(warnings) == len(set(warnings)) == expected_warning_count
     assert all(fragment in " ".join(warnings) for fragment in warning_fragments)

@@ -217,8 +217,8 @@ def calculate_draconic_heliocentric(request: dict[str, Any], warnings: list[str]
         from astro_backend_scan import find_aspects
 
         aspect_specs = request.get("aspects") or [
-            {"id": "conjunction", "angle": 0, "orb": 1.0},
-            {"id": "opposition", "angle": 180, "orb": 1.0},
+            {"id": "conjunction", "name": "Conjunction", "angle": 0, "orb": 1.0},
+            {"id": "opposition", "name": "Opposition", "angle": 180, "orb": 1.0},
         ]
         # Map draconic planets as "transit" against geocentric natal.
         d_pos = [
@@ -243,11 +243,11 @@ def calculate_draconic_heliocentric(request: dict[str, Any], warnings: list[str]
         from astro_backend_scan import find_aspects
 
         aspect_specs = request.get("aspects") or [
-            {"id": "conjunction", "angle": 0, "orb": 1.0},
-            {"id": "opposition", "angle": 180, "orb": 1.0},
-            {"id": "trine", "angle": 120, "orb": 1.0},
-            {"id": "square", "angle": 90, "orb": 1.0},
-            {"id": "sextile", "angle": 60, "orb": 1.0},
+            {"id": "conjunction", "name": "Conjunction", "angle": 0, "orb": 1.0},
+            {"id": "opposition", "name": "Opposition", "angle": 180, "orb": 1.0},
+            {"id": "trine", "name": "Trine", "angle": 120, "orb": 1.0},
+            {"id": "square", "name": "Square", "angle": 90, "orb": 1.0},
+            {"id": "sextile", "name": "Sextile", "angle": 60, "orb": 1.0},
         ]
         h_pos = [
             {"body_id": p["body_id"], "name": p.get("name", p["body_id"]), "longitude": p["longitude"], "speed": p.get("speed", 0.0)}

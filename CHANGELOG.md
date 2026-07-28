@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-07-28 — Technique maintenance review and release closeout
+
+- 发布版本提升至 `1.4.3 (45)`，用于交付本轮古典/现代技法维护与审查修复。
+- Solar Arc 的通用 `house` 字段重新与同一响应中的 `solar_arc_houses` 宫头保持一致；本命宫位继续由 `sa_point_in_natal_house` 单独保留。
+- 修复 Solar Arc activation cluster 目标字段遗漏 `natal_body_id`、Draconic/Heliocentric 默认相位缺少名称导致两个相位区块静默失败的问题。
+- 更新 ARMC、Solar Arc v2 和固定星 RA 代理方法的新契约回归，并增加 Draconic→本命及日心相位非空验证。
+- 清理后端重复导入与 Harmonic 相位映射中的无效分支。
+- 验证：聚焦 pytest 169；完整门禁 Python 939、Swift 140、全部后端 smoke 通过。
+- 已覆盖 `/Applications/TransitStudio.app`；版本、签名、arm64、dist/安装二进制哈希、无 Python 缓存和安装后端 smoke 均通过，构建与测试缓存已清理。
+
 ## 2026-07-25 — Technique maintenance batch 2
 
 - Kurios split: `natal_oikodespotes`, `natal_kurios`, `current_compound_chart_governor` (year lord only in composite).

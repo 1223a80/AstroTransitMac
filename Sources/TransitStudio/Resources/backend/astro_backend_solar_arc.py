@@ -178,8 +178,13 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
             "natal_house_original": row.get("house"),
             "sa_point_in_natal_house": sa_in_natal_house,
             "sa_point_in_directed_house_system": sa_in_directed_house,
-            "house": sa_in_natal_house,  # default most useful: SA point in natal house
-            "house_note": "default house = sa_point_in_natal_house; directed cusps also provided",
+            # Keep the conventional `house` field consistent with the
+            # `solar_arc_houses` cusps returned in the same payload.
+            "house": sa_in_directed_house,
+            "house_note": (
+                "house = sa_point_in_directed_house_system; "
+                "sa_point_in_natal_house is provided separately"
+            ),
         })
     sa_positioned = [
         row for row in sa_positioned_all if row["body_id"] in selected_body_ids
@@ -255,7 +260,10 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
                 "sa_body_id": sa_body,
                 "hit_count": len(group),
                 "targets": [
-                    asp.get("target_body_id") or asp.get("body_b_id") or asp.get("right_body_id")
+                    asp.get("natal_body_id")
+                    or asp.get("target_body_id")
+                    or asp.get("body_b_id")
+                    or asp.get("right_body_id")
                     for asp in group
                 ],
                 "note": "Single SA point activating multiple natal points; treat as one cluster when natal structure is tight",
@@ -299,7 +307,8 @@ def calculate_solar_arc(request: dict[str, Any], warnings: list[str]) -> dict[st
         "section_errors": section_errors if section_errors else None,
         "calculation_assumptions": [
             f"Arc method={arc_method}; keys never mixed in one result.",
-            "Default house field = SA point in natal Placidus/requested house system.",
+            "Default house field = SA point in the returned directed house system.",
+            "SA point in the natal house system is retained as sa_point_in_natal_house.",
             "SA angles and cusps use the same uniform solar arc.",
             "Natal planetary speed is metadata only; SA motion is the solar arc rate.",
             "SA-internal patterns default off; optional natal_pattern_rotated labeling.",

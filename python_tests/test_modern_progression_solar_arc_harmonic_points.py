@@ -275,3 +275,32 @@ def test_progressed_lunation_keeps_directed_phase_and_legacy_fields(
     assert lunation["phase_name"] == phase_name
     assert lunation["phase_angle"] == phase_angle
     assert lunation["sun_moon_separation"] == separation
+
+
+def test_harmonic_family_mapping_and_default_house_visibility() -> None:
+    request = _request("harmonic")
+    request["aspects"] = [
+        {"id": "conjunction", "name": "合相", "angle": 0, "orb": 6},
+        {"id": "opposition", "name": "冲相", "angle": 180, "orb": 6},
+        {"id": "trine", "name": "拱相", "angle": 120, "orb": 6},
+        {"id": "square", "name": "刑相", "angle": 90, "orb": 6},
+        {"id": "sextile", "name": "六合", "angle": 60, "orb": 6},
+    ]
+
+    result = calculate_harmonic(request, [])
+
+    assert result["houses"] == []
+    assert all(row["house"] is None for row in result["planets"])
+    assert result["aspects"]
+    assert all(
+        {
+            "harmonic_family",
+            "natal_equivalent_orb",
+            "is_primary_for_selected_harmonic",
+            "priority",
+        }
+        <= row.keys()
+        for row in result["aspects"]
+    )
+    assert result["aspects"][0]["is_primary_for_selected_harmonic"] is True
+    assert result["aspects"][0]["harmonic_family"] == "H4"

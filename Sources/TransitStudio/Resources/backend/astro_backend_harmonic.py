@@ -166,18 +166,15 @@ def calculate_harmonic(request: dict[str, Any], warnings: list[str]) -> dict[str
             "square": 90.0,
             "sextile": 60.0,
         }
-        natal_by = {r["body_id"]: r for r in harmonic_planet_rows}
         # Need natal longitudes for equivalent angles
         natal_lon = {bid: float(natal_by_id[bid]["longitude"]) for bid in natal_by_id}
         for a in aspects:
             aid = str(a.get("aspect_id") or a.get("aspect") or "").lower()
             h_angle = aspect_angle.get(aid)
             if h_angle is None:
-                # try aspect name
+                # Fall back to localized aspect names when a custom aspect
+                # identifier is not one of the canonical IDs.
                 name = str(a.get("aspect_name") or a.get("aspect") or "")
-                for k, v in aspect_angle.items():
-                    if k in name.lower() or name in { "合相": "conjunction", "冲相": "opposition", "拱相": "trine", "刑相": "square", "六合": "sextile"}:
-                        pass
                 if "合" in name:
                     h_angle = 0.0
                     aid = "conjunction"

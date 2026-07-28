@@ -160,6 +160,42 @@ def test_solar_arc_positions_and_angles_use_returned_houses() -> None:
     assert result["patterns"]
 
 
+def test_solar_arc_activation_clusters_keep_natal_target_ids() -> None:
+    swe.set_ephe_path(str(EPHE_PATH))
+    result = calculate_solar_arc(
+        {
+            "mode": "solar_arc",
+            "birth": BIRTH,
+            "reference": {
+                "year": 2026,
+                "month": 6,
+                "day": 2,
+                "hour": 12,
+                "minute": 0,
+                "timezone": "Asia/Shanghai",
+            },
+            "house_system": "whole_sign",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": [
+                {
+                    "id": "conjunction",
+                    "name": "合相",
+                    "angle": 0,
+                    "orb": 180,
+                }
+            ],
+        },
+        [],
+    )
+
+    assert result["activation_clusters"]
+    assert all(
+        cluster["targets"] and all(cluster["targets"])
+        for cluster in result["activation_clusters"]
+    )
+
+
 def test_primary_directions_treats_twelfth_house_sun_as_diurnal(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

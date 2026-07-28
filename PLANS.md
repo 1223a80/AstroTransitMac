@@ -1448,8 +1448,8 @@ interpretation_context / NLP 事项宫 / 自动征象星 / 转宫矩阵 / yes-no
 
 # Classical + Modern Technique Maintenance (2026-07-25)
 
-Branch: `fix/classical-modern-technique-maintenance`  
-Sources: `Desktop/古典技法维护.md`, `Desktop/现代技法维护.md`  
+Branch: `fix/classical-modern-technique-maintenance`
+Sources: `Desktop/古典技法维护.md`, `Desktop/现代技法维护.md`
 Fixed fixture chart: 2004-08-09T08:16:00Z / 35.0576N 118.3346E / Whole Sign / Egyptian / Dorothean / ref 2026-07-25T08:44:00Z
 
 ## Progress tracker
@@ -1466,7 +1466,7 @@ Fixed fixture chart: 2004-08-09T08:16:00Z / 35.0576N 118.3346E / Whole Sign / Eg
 | C6 | Hyleg eligible vs selected | done | |
 | C7 | Alcocoden witness rejection | done | |
 | C8 | Almuten profile | done | |
-| C9 | Kurios / Oikodespotes / composite split | pending | |
+| C9 | Kurios / Oikodespotes / composite split | done | natal/current roles split |
 | C10 | Circumambulations period format | done | |
 | C11 | PD multi-profile rename/downgrade | done | |
 | C12 | Sect layered fields | done | partial |
@@ -1476,10 +1476,10 @@ Fixed fixture chart: 2004-08-09T08:16:00Z / 35.0576N 118.3346E / Whole Sign / Eg
 | C16 | Bonification/maltreatment proxy | pending | |
 | C17 | Lots source + duplicate groups | done | |
 | C18 | Prenatal syzygy axis | done | |
-| C19 | Heliacal before/after events | pending | |
-| C20 | Parans complete or downgrade | pending | |
-| C21 | Ingress mundane chart | pending | |
-| C22 | Electional scanner rename | pending | |
+| C19 | Heliacal before/after events | done | previous/next fields |
+| C20 | Parans complete or downgrade | done | explicitly downgraded to RA proxy |
+| C21 | Ingress mundane chart | done | full ingress chart |
+| C22 | Electional scanner rename | done | daily fact snapshots |
 | C23 | Concordance independence | pending | |
 | C24 | Return cross-noise split | pending | |
 | C25 | Unified timeline semantics | pending | |
@@ -1488,19 +1488,19 @@ Fixed fixture chart: 2004-08-09T08:16:00Z / 35.0576N 118.3346E / Whole Sign / Eg
 
 | ID | Item | Status |
 |---|---|---|
-| M1 | Location service | pending |
+| M1 | Location service | done |
 | M2 | Placidus natal foundation | pending |
-| M3 | Solar Arc restructure | pending |
-| M4 | Harmonic chart mapping | pending |
+| M3 | Solar Arc restructure | done |
+| M4 | Harmonic chart mapping | done |
 | M5 | Planetary return (esp Mercury) | pending |
-| M6 | Relocation | pending |
-| M7 | Modern cycles / eclipses | pending |
+| M6 | Relocation | done |
+| M7 | Modern cycles / eclipses | done |
 | M8 | Declination / OOB | pending |
 | M9 | Retrograde cycles | pending |
 | M10 | Planetary synodic | pending |
-| M11 | Draconic | pending |
-| M12 | Heliocentric | pending |
-| M13 | Method families (true ARMC) | pending |
+| M11 | Draconic | done |
+| M12 | Heliocentric | done |
+| M13 | Method families (true ARMC) | done |
 | M14 | 90° Dial / orbital | pending |
 | M15 | Local Space | pending |
 
@@ -1512,3 +1512,19 @@ Fixed fixture chart: 2004-08-09T08:16:00Z / 35.0576N 118.3346E / Whole Sign / Eg
 - Add automated regression tests per item
 - Document root causes in `docs/technique-maintenance-2026-07/`
 
+---
+
+# Classical + Modern Technique Maintenance Review & Release (2026-07-28)
+
+Branch: `fix/classical-modern-technique-maintenance`
+Scope: review commits `df9c589`, `8dbb874`, and `f83a6f5`; repair confirmed defects; validate, package over `/Applications/TransitStudio.app`, and commit the review/release closeout.
+
+| Phase | Status | Scope |
+|---|---|---|
+| 01 Boundary and contract review | done | Reviewed full branch boundary, call sites, schemas, tests, and task-record alignment |
+| 02 Focused review and fixes | done | Fixed Solar Arc house/cluster defects and default Draconic/Heliocentric aspect failures; synchronized contract tests |
+| 03 Validation | done | Focused pytest 169; full gate: Python 939, Swift 140, build and all backend smokes green |
+| 04 Version and packaging | done | `1.4.3 (45)` packaged over `/Applications/TransitStudio.app`; metadata, signature, arm64 binary, hashes, no-pyc check, and installed-backend smoke verified |
+| 05 Cleanup and commit | done | Removed `.build`, pytest cache, backend bytecode, and temporary package build/staging directories; records synchronized for final commit |
+
+Completion criteria: no unresolved review findings in the three maintenance commits; required validation is green; installed app matches the new version and passes verification; caches are cleaned; worktree is clean after the final commit.

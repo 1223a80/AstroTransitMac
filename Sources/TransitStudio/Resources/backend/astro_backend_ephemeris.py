@@ -7,7 +7,6 @@ from typing import Any
 from astro_backend_core import (
     ASTEROID_BODY_IDS,
     BODY_REGISTRY,
-    BODY_REGISTRY,
     BodySpec,
     SIGN_RULERS,
     declination_from_lon,

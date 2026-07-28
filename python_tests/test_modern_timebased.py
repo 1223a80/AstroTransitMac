@@ -260,7 +260,8 @@ class TestSolarArc:
                      "solar_arc_angles", "solar_arc_houses",
                      "solar_arc_to_natal_aspects", "arc_value", "warnings"):
             assert key in result, f"Missing key: {key}"
-        assert result["meta"]["method"] == "true_solar_arc"
+        assert result["meta"]["method"] == "true_sun"
+        assert result["meta"]["method_version"] == "solar_arc_v2"
 
     def test_arc_value_reasonable(self) -> None:
         request = {
