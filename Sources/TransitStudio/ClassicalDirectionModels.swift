@@ -55,8 +55,8 @@ struct Circumambulation: Codable, Identifiable {
     let boundLord: String?
     let boundLordId: String?
     let boundSign: String?
-    let boundStartDegree: Int?
-    let boundEndDegree: Int?
+    let boundStartDegree: Double?
+    let boundEndDegree: Double?
     let boundStartDate: String?
     let boundEndDate: String?
     let naibodRate: Double
@@ -84,8 +84,8 @@ struct Circumambulation: Codable, Identifiable {
 
 struct CircumambulationBoundary: Codable, Identifiable {
     let sign: String
-    let startDegree: Int?
-    let endDegree: Int
+    let startDegree: Double?
+    let endDegree: Double
     let ruler: String
     let rulerId: String
     let arcValue: Double
@@ -106,6 +106,10 @@ struct CircumambulationBoundary: Codable, Identifiable {
         case estimatedDate = "estimated_date"
         case isCurrent = "is_current"
     }
+}
+
+func classicalBoundDegreeText(_ value: Double) -> String {
+    String(format: "%g", value)
 }
 
 struct PrimaryDirection: Codable, Identifiable {

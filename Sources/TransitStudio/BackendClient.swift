@@ -458,9 +458,12 @@ struct BackendClient {
             return try JSONDecoder().decode(Response.self, from: outputData)
         } catch {
             let preview = String(outputText.prefix(500))
-            Logger.backend.error("JSON decode failed for \(type(of: Response.self)): \(error.localizedDescription, privacy: .public)")
+            let details = String(describing: error)
+            Logger.backend.error("JSON decode failed for \(type(of: Response.self)): \(details, privacy: .public)")
             Logger.backend.error("JSON preview: \(preview, privacy: .public)")
-            throw BackendClientError.invalidOutput(String(outputText.prefix(500)))
+            throw BackendClientError.invalidOutput(
+                "\(details)\nJSON preview:\n\(preview)"
+            )
         }
         }
 

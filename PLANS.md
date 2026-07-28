@@ -1528,3 +1528,21 @@ Scope: review commits `df9c589`, `8dbb874`, and `f83a6f5`; repair confirmed defe
 | 05 Cleanup and commit | done | Removed `.build`, pytest cache, backend bytecode, and temporary package build/staging directories; records synchronized for final commit |
 
 Completion criteria: no unresolved review findings in the three maintenance commits; required validation is green; installed app matches the new version and passes verification; caches are cleaned; worktree is clean after the final commit.
+
+---
+
+# Classical Chart JSON Decode Regression (2026-07-28)
+
+Branch target: `fix/classical-json-decode-regression`
+Reproduction: classical natal chart for 2004-08-09 16:16 GMT+8, 35.0576N / 118.3346E, Whole Sign / Tropical / Egyptian / Dorothean, reference 2026-07-28 21:19 GMT+8.
+
+| Phase | Status | Scope |
+|---|---|---|
+| 01 Installed-app reproduction | done | Installed backend reproduced a 1,478,960-byte valid JSON response; Swift rejected fractional Circumambulation `start_degree=2.5762` as non-Int |
+| 02 Root cause and repair | done | Circumambulation bound degrees now decode as `Double`; UI/Markdown/CSV formatting and actionable decode diagnostics updated |
+| 03 Regression coverage | done | Added the reported chart as a real Python backend → Swift `ClassicalResult` test; added Python/Swift scan-limit consistency coverage |
+| 04 Validation | done | Focused Python 138 + 69, focused Swift 9 + 21; full gate Python 940, Swift 141, build and all backend smokes green |
+| 05 Patch release | done | Installed `1.4.4 (46)`; metadata/signature/arm64/no-pyc verified; fresh UI launch rendered the reported chart and `2.5762°–7°` first bound period |
+| 06 Cleanup and commit | done | Build/test/package caches removed; records and final diff synchronized for the regression fix plus authorized scan-limit changes |
+
+Completion criteria: the reported classical chart decodes and renders without the raw-JSON error; full validation is green; the corrected app replaces the broken installation; the final worktree is clean.

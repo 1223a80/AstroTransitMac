@@ -293,7 +293,7 @@ enum TextExportBuilder {
             for c in circ {
                 rows.append(["circumambulation_system", c.system, String(format: "%.4f", c.startLon), "Naibod \(String(format: "%.4f", c.naibodRate))", c.currentRuler, c.currentBoundInfo ?? "", "", "", ""])
                 for b in c.boundaries {
-                    rows.append(["circumambulation_boundary", b.sign, "\(b.endDegree)°", b.ruler, String(format: "%.2f", b.arcValue), String(format: "%.1f", b.ageAtBoundary), b.estimatedDate, "", ""])
+                    rows.append(["circumambulation_boundary", b.sign, "\(classicalBoundDegreeText(b.endDegree))°", b.ruler, String(format: "%.2f", b.arcValue), String(format: "%.1f", b.ageAtBoundary), b.estimatedDate, "", ""])
                 }
             }
         }

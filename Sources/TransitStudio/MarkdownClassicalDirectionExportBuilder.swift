@@ -52,7 +52,7 @@ extension MarkdownExportBuilder {
                 "| --- | ---: | --- | ---: | ---: | --- |"
             ]
             lines += circ.boundaries.prefix(30).map {
-                "| \($0.sign) | \($0.endDegree)° | \($0.ruler) | \(String(format: "%.2f°", $0.arcValue)) | \(String(format: "%.1f", $0.ageAtBoundary)) | \($0.estimatedDate) |"
+                "| \($0.sign) | \(classicalBoundDegreeText($0.endDegree))° | \($0.ruler) | \(String(format: "%.2f°", $0.arcValue)) | \(String(format: "%.1f", $0.ageAtBoundary)) | \($0.estimatedDate) |"
             }
             lines.append("")
         }

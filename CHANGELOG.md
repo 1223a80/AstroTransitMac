@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-28 — Classical chart fractional-bound decode regression
+
+- 发布修复版本 `1.4.4 (46)`，替换存在经典排盘解码回归的 `1.4.3 (45)`。
+- 修复 `1.4.3 (45)` 经典本命盘解码回归：沿界推进首段会从实际 ASC 度数开始，`start_degree` 因而可能是小数；Swift 旧模型仍按 `Int` 解码，导致整份约 1.5 MB 的经典结果被拒绝。
+- `Circumambulation` 当前界度数和 boundary 起止度数统一改为 `Double`，并同步界面、Markdown 与 CSV 的稳定度数格式。
+- 增加截图同输入（2004-08-09 16:16 GMT+8，35.0576 / 118.3346）的真实 Python 后端 → Swift `ClassicalResult` 端到端解码回归。
+- 后端解码失败提示现在包含具体 `DecodingError` 和截断预览，不再只显示无法定位字段的原始 JSON。
+- 一并验证扫描 work-unit 新阈值：确认线 5M、硬上限 15M；新增 Python/Swift 常量一致性回归并更新 Swift 边界测试。
+- 验证：经典/扫描聚焦 Python 138 + 69，聚焦 Swift 9 + 21；完整门禁 Python 940、Swift 141、全部后端 smoke 通过。
+- 已覆盖 `/Applications/TransitStudio.app` 并重启安装版实测：截图同盘古典排盘正常显示，沿界推进首段正确显示 `2.5762°–7°`；版本、签名、arm64 与无 Python 缓存检查通过。
+
+## 2026-07-28 — Scan work unit thresholds relaxed
+
+- 窗口扫描 work unit 阈值调整：确认阈值 `2,500,000 → 5,000,000`，硬拒绝上限 `5,000,000 → 15,000,000`。
+  理由：原 5M 硬拒绝仅占 300s 进程超时预算的 ~40%，对于 3-5 年 × 多目标点的合理扫描请求过于保守。
+  新 15M 上限对应约 225s 耗时，仍留 25% 预算给二分精确定位和 JSON 序列化。
+  同步更新 `astro_backend_scan.py` 和 `ScanWorkEstimator.swift`（`ModernTimingWorkLimits` 通过引用自动继承）。
+
 ## 2026-07-28 — Technique maintenance review and release closeout
 
 - 发布版本提升至 `1.4.3 (45)`，用于交付本轮古典/现代技法维护与审查修复。

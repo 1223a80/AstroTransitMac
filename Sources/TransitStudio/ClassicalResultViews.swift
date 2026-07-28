@@ -198,7 +198,10 @@ struct CircumambulationsView: View {
                         }
                         if let lord = circ.boundLord, let sign = circ.boundSign,
                            let sDeg = circ.boundStartDegree, let eDeg = circ.boundEndDegree {
-                            Text("当前宫限：\(sign) \(sDeg)°00 – \(eDeg)°00，主星 \(lord)")
+                            Text(
+                                "当前宫限：\(sign) \(classicalBoundDegreeText(sDeg))°"
+                                + " – \(classicalBoundDegreeText(eDeg))°，主星 \(lord)"
+                            )
                                 .font(TS.Font.label)
                                 .foregroundStyle(.secondary)
                         }
@@ -217,9 +220,12 @@ struct CircumambulationsView: View {
                             TableColumn("星座") { Text($0.sign) }
                             TableColumn("度数") { row in
                                 if let sDeg = row.startDegree {
-                                    Text("\(sDeg)°–\(row.endDegree)°")
+                                    Text(
+                                        "\(classicalBoundDegreeText(sDeg))°"
+                                        + "–\(classicalBoundDegreeText(row.endDegree))°"
+                                    )
                                 } else {
-                                    Text("\(row.endDegree)°")
+                                    Text("\(classicalBoundDegreeText(row.endDegree))°")
                                 }
                             }
                             TableColumn("界主") { Text($0.ruler) }

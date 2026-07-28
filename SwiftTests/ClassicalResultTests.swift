@@ -4,6 +4,79 @@ import Testing
 
 struct ClassicalResultTests {
 
+    @Test func decodeReportedClassicalBackendOutput() throws {
+        let projectRoot = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let backendURL = projectRoot
+            .appendingPathComponent("Sources/TransitStudio/Resources/backend/transit_calc.py")
+        let venvPython = projectRoot.appendingPathComponent(".venv/bin/python").path
+        let python = FileManager.default.isExecutableFile(atPath: venvPython)
+            ? venvPython
+            : "python3"
+        let request = """
+        {
+          "mode": "classical",
+          "birth": {
+            "moment": {
+              "year": 2004,
+              "month": 8,
+              "day": 9,
+              "hour": 16,
+              "minute": 16,
+              "timezone": "GMT+8"
+            },
+            "latitude": 35.0576,
+            "longitude": 118.3346,
+            "houseSystem": "whole_sign",
+            "zodiac": "tropical",
+            "boundsSystem": "egyptian",
+            "triplicitySystem": "dorothean"
+          },
+          "reference": {
+            "year": 2026,
+            "month": 7,
+            "day": 28,
+            "hour": 21,
+            "minute": 19,
+            "timezone": "GMT+8"
+          },
+          "aspectOrb": 3,
+          "ephemerisPath": null
+        }
+        """
+
+        let process = Process()
+        let stdin = Pipe()
+        let stdout = Pipe()
+        let stderr = Pipe()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = [python, backendURL.path]
+        process.standardInput = stdin
+        process.standardOutput = stdout
+        process.standardError = stderr
+        var environment = ProcessInfo.processInfo.environment
+        environment["PYTHONDONTWRITEBYTECODE"] = "1"
+        process.environment = environment
+
+        try process.run()
+        stdin.fileHandleForWriting.write(try #require(request.data(using: .utf8)))
+        try stdin.fileHandleForWriting.close()
+        let output = stdout.fileHandleForReading.readDataToEndOfFile()
+        let errorOutput = stderr.fileHandleForReading.readDataToEndOfFile()
+        process.waitUntilExit()
+
+        #expect(
+            process.terminationStatus == 0,
+            "backend failed: \(String(data: errorOutput, encoding: .utf8) ?? "")"
+        )
+        let result = try JSONDecoder().decode(ClassicalResult.self, from: output)
+        let firstBoundary = try #require(
+            result.circumambulations?.first?.boundaries.first
+        )
+        #expect(firstBoundary.startDegree == 2.5762)
+    }
+
     @Test func decodeSampleClassicalResult() throws {
         let json = """
         {
@@ -51,7 +124,29 @@ struct ClassicalResultTests {
             "receptions": [],
             "antiscia": [],
             "primary_directions": [],
-            "circumambulations": [],
+            "circumambulations": [
+                {
+                    "id": "circumambulations-egyptian",
+                    "system": "Egyptian",
+                    "start_lon": 272.5762,
+                    "current_ruler": "土星",
+                    "current_ruler_id": "SATURN",
+                    "naibod_rate": 0.9856,
+                    "boundaries": [
+                        {
+                            "sign": "摩羯",
+                            "start_degree": 2.5762,
+                            "end_degree": 7,
+                            "ruler": "水星",
+                            "ruler_id": "MERCURY",
+                            "arc_value": 4.4238,
+                            "age_at_boundary": 4.4885,
+                            "estimated_date": "2009-02-04",
+                            "is_current": false
+                        }
+                    ]
+                }
+            ],
             "timing": {
                 "profection": {
                     "age": 34,
@@ -150,6 +245,7 @@ struct ClassicalResultTests {
         #expect(result.timing.profection.age == 34)
         #expect(result.timing.profection.lord == "土星")
         #expect(result.timing.firdaria.ruler == "月亮")
+        #expect(result.circumambulations?.first?.boundaries.first?.startDegree == 2.5762)
         #expect(result.planetaryReturns.first?.previousReturn?.label == "previous_return")
         #expect(result.planetaryReturns.first?.currentCycleReturn?.label == "current_cycle_return")
         #expect(result.planetaryReturns.first?.nextReturn?.label == "next_return")
