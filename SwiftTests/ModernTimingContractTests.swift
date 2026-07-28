@@ -160,10 +160,10 @@ struct ModernTimingContractTests {
 
         #expect(!workEstimate(1_500_000).shouldWarn)
         #expect(workEstimate(1_500_001).shouldWarn)
-        #expect(!workEstimate(2_500_000).requiresConfirmation)
-        #expect(workEstimate(2_500_001).requiresConfirmation)
-        #expect(!workEstimate(5_000_000).isBlocked)
-        #expect(workEstimate(5_000_001).isBlocked)
+        #expect(!workEstimate(ModernTimingWorkLimits.confirmationRequired).requiresConfirmation)
+        #expect(workEstimate(ModernTimingWorkLimits.confirmationRequired + 1).requiresConfirmation)
+        #expect(!workEstimate(ModernTimingWorkLimits.maximum).isBlocked)
+        #expect(workEstimate(ModernTimingWorkLimits.maximum + 1).isBlocked)
 
         let emptyTargets = ModernPointSet(
             bodyIDs: [],

@@ -51,10 +51,14 @@ struct ScanWorkEstimatorTests {
     }
 
     @Test func thresholdsClassifyHeavyScans() {
+        #expect(ScanWorkLimits.confirmationRequired == 5_000_000)
+        #expect(ScanWorkLimits.maximum == 15_000_000)
         #expect(!ScanWorkEstimate(workUnits: 1_500_000, stepUnits: 1, bodyCount: 1, targetCount: 1, exactAspectCount: 1).shouldWarn)
         #expect(ScanWorkEstimate(workUnits: 1_500_001, stepUnits: 1, bodyCount: 1, targetCount: 1, exactAspectCount: 1).shouldWarn)
-        #expect(ScanWorkEstimate(workUnits: 2_500_001, stepUnits: 1, bodyCount: 1, targetCount: 1, exactAspectCount: 1).requiresConfirmation)
-        #expect(ScanWorkEstimate(workUnits: 5_000_001, stepUnits: 1, bodyCount: 1, targetCount: 1, exactAspectCount: 1).isBlocked)
+        #expect(!ScanWorkEstimate(workUnits: 5_000_000, stepUnits: 1, bodyCount: 1, targetCount: 1, exactAspectCount: 1).requiresConfirmation)
+        #expect(ScanWorkEstimate(workUnits: 5_000_001, stepUnits: 1, bodyCount: 1, targetCount: 1, exactAspectCount: 1).requiresConfirmation)
+        #expect(!ScanWorkEstimate(workUnits: 15_000_000, stepUnits: 1, bodyCount: 1, targetCount: 1, exactAspectCount: 1).isBlocked)
+        #expect(ScanWorkEstimate(workUnits: 15_000_001, stepUnits: 1, bodyCount: 1, targetCount: 1, exactAspectCount: 1).isBlocked)
     }
 
     private func makeDate(year: Int, month: Int, day: Int) -> Date {

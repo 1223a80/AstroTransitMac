@@ -18,7 +18,12 @@ from astro_backend_modern_timing import (
     estimate_modern_timing_work_units,
 )
 from astro_backend_progressions import calculate_progressions
-from astro_backend_scan import exact_longitudes_for_aspect, reject_oversized_scan
+from astro_backend_scan import (
+    MAX_SCAN_WORK_UNITS,
+    SCAN_CONFIRMATION_WORK_UNITS,
+    exact_longitudes_for_aspect,
+    reject_oversized_scan,
+)
 from astro_backend_solar_arc import calculate_solar_arc
 
 
@@ -184,9 +189,9 @@ class TestEstimator:
 
     def test_shared_confirmation_and_hard_limits_remain_authoritative(self) -> None:
         with pytest.raises(ValueError, match="确认"):
-            reject_oversized_scan(2_500_001)
+            reject_oversized_scan(SCAN_CONFIRMATION_WORK_UNITS + 1)
         with pytest.raises(ValueError, match="窗口过大"):
-            reject_oversized_scan(5_000_001, confirmed=True)
+            reject_oversized_scan(MAX_SCAN_WORK_UNITS + 1, confirmed=True)
 
 
 class TestValidation:

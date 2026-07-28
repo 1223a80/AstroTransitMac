@@ -2,8 +2,8 @@ import Foundation
 
 enum ScanWorkLimits {
     static let softWarning = 1_500_000
-    static let confirmationRequired = 2_500_000
-    static let maximum = 5_000_000
+    static let confirmationRequired = 5_000_000
+    static let maximum = 15_000_000
 }
 
 struct ScanWorkEstimate: Equatable {

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+from pathlib import Path
+import re
 from typing import Any
 
 import pytest
@@ -191,6 +193,25 @@ class TestTargetWeight:
 
 
 class TestRejectOversized:
+    def test_python_and_swift_limits_match(self) -> None:
+        from astro_backend_scan import MAX_SCAN_WORK_UNITS, SCAN_CONFIRMATION_WORK_UNITS
+
+        swift_source = (
+            Path(__file__).resolve().parents[1]
+            / "Sources"
+            / "TransitStudio"
+            / "ScanWorkEstimator.swift"
+        ).read_text()
+        confirmation = re.search(
+            r"static let confirmationRequired = ([0-9_]+)", swift_source
+        )
+        maximum = re.search(r"static let maximum = ([0-9_]+)", swift_source)
+
+        assert confirmation is not None
+        assert maximum is not None
+        assert int(confirmation.group(1).replace("_", "")) == SCAN_CONFIRMATION_WORK_UNITS
+        assert int(maximum.group(1).replace("_", "")) == MAX_SCAN_WORK_UNITS
+
     def test_under_limit_passes(self) -> None:
         from astro_backend_scan import reject_oversized_scan
         reject_oversized_scan(100)  # should not raise
