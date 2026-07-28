@@ -146,8 +146,8 @@ enum ExpansionChromeFactory {
                 title: mode.title,
                 methodLine: metaMethod,
                 profileChips: compactChips([metaMethod]),
-                badge: extras.hasProxyMethodKey || (extras.paranCount ?? 0) > 0 ? .proxy : nil,
-                detailCaption: "RA 共中天代理 · 非完整方位 Parans"
+                badge: extras.hasProxyMethodKey ? .proxy : nil,
+                detailCaption: "本地升 / 上中天 / 落 / 下中天真实事件配对"
             )
         case .orbitalDial:
             return ExpansionChromeModel(

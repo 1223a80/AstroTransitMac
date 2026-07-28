@@ -96,7 +96,8 @@ enum ExpansionExportCatalog {
         case .prenatalParans:
             return [
                 .init(id: "packet", title: "朔望包", headerMatchers: ["朔望", "packet", "Prenatal", "syzygy"]),
-                .init(id: "parans", title: "Parans 代理", headerMatchers: ["Paran", "恒星", "fixed star"]),
+                .init(id: "parans", title: "Parans 事件", headerMatchers: ["Paran", "事件", "fixed star"]),
+                .init(id: "legacy", title: "兼容代理", headerMatchers: ["Legacy", "兼容", "RA proxy"]),
                 .init(id: "assumptions", title: "计算假设", headerMatchers: ["计算假设", "假设"]),
                 .init(id: "warnings", title: "警告", headerMatchers: ["警告", "Warnings", "section_errors"]),
             ]

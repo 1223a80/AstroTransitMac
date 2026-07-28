@@ -1726,6 +1726,26 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             or float(picture_orb) > 15
         ):
             invalid.append("picture_orb must be a finite number in [0, 15]")
+        if mode == "prenatal_parans":
+            event_orb = request.get("paran_event_orb_seconds", 240)
+            if (
+                isinstance(event_orb, bool)
+                or not isinstance(event_orb, (int, float))
+                or not math.isfinite(float(event_orb))
+                or not 0 < float(event_orb) <= 3600
+            ):
+                invalid.append("paran_event_orb_seconds must be a finite number in (0, 3600]")
+            ra_orb = request.get("paran_ra_orb_deg", 1.0)
+            if (
+                isinstance(ra_orb, bool)
+                or not isinstance(ra_orb, (int, float))
+                or not math.isfinite(float(ra_orb))
+                or not 0 <= float(ra_orb) <= 15
+            ):
+                invalid.append("paran_ra_orb_deg must be a finite number in [0, 15]")
+            include_legacy = request.get("include_legacy_paran_proxy", True)
+            if not isinstance(include_legacy, bool):
+                invalid.append("include_legacy_paran_proxy must be a boolean")
         modulus = request.get("modulus")
         if modulus is not None and modulus not in (45, 90, 360):
             invalid.append("modulus must be 45, 90, or 360")

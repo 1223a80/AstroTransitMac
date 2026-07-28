@@ -15,5 +15,8 @@
     "zodiac": "tropical",
     "boundsSystem": "egyptian",
     "triplicitySystem": "dorothean"
-  }
+  },
+  "paran_event_orb_seconds": 240,
+  "paran_ra_orb_deg": 1.0,
+  "include_legacy_paran_proxy": true
 }

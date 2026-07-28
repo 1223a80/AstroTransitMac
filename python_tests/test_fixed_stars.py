@@ -47,7 +47,7 @@ class TestStarCatalog:
         assert len(positions) == len(STAR_CATALOG)
         assert warnings == []
         assert any(p["name"] == "Zubenelschemali" for p in positions)
-        # RA required for B18 fixed-star parans (co-culmination proxy)
+        # RA remains required for B18's explicit schema-v1 legacy proxy output.
         for p in positions:
             assert "ra" in p and p["ra"] is not None
             assert "right_ascension" in p and p["right_ascension"] is not None

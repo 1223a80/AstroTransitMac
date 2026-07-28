@@ -965,6 +965,8 @@ extension ContentView {
                 aspectOrb: globalOrb,
                 significators: ["ASC", "SUN", "MOON"],
                 paranRaOrbDeg: 1.0,
+                paranEventOrbSeconds: 240.0,
+                includeLegacyParanProxy: true,
                 pictureOrb: 1.0,
                 houseSystem: selectedHouseSystem,
                 zodiac: selectedZodiac,

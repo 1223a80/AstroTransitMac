@@ -1,18 +1,57 @@
 {
   "meta": {
     "mode": "prenatal_parans",
-    "method": "prenatal_parans_v1",
-    "schema_version": 1,
+    "method": "prenatal_parans_v2",
+    "schema_version": 2,
     "birth_utc": "1990-01-01T04:00:00+00:00",
-    "paran_count": 3,
+    "paran_count": 22,
+    "legacy_paran_count": 3,
     "ephemeris": "Swiss Ephemeris"
   },
   "requested_config": {
-    "paran_ra_orb_deg": 1.0
+    "paran_event_orb_seconds": 240,
+    "paran_ra_orb_deg": 1.0,
+    "include_legacy_paran_proxy": true
   },
   "effective_config": {
-    "paran_class": "co_culmination_ra_proxy",
-    "method": "prenatal_parans_v1"
+    "paran_class": "local_horizon_meridian_event_pair",
+    "event_types": [
+      "rising",
+      "culminating",
+      "setting",
+      "lower_culminating"
+    ],
+    "event_orb_seconds": 240.0,
+    "method": "prenatal_parans_v2",
+    "legacy_proxy_output": "legacy_fixed_star_parans"
+  },
+  "method_trace": {
+    "provider": "Swiss Ephemeris",
+    "function": "swe.rise_trans",
+    "event_flags": {
+      "rising": "CALC_RISE",
+      "culminating": "CALC_MTRANSIT",
+      "setting": "CALC_SET",
+      "lower_culminating": "CALC_ITRANSIT"
+    },
+    "rise_set_options": [
+      "BIT_DISC_CENTER",
+      "BIT_NO_REFRACTION"
+    ],
+    "ephemeris_flags": [
+      "FLG_SWIEPH"
+    ],
+    "geopos": {
+      "longitude": 121.4737,
+      "latitude": 31.2304,
+      "altitude_m": 0.0
+    },
+    "local_day_basis": "birth-place local civil date",
+    "local_day_start": "1990-01-01T00:00:00+08:00",
+    "local_day_end": "1990-01-02T00:00:00+08:00",
+    "utc_day_start": "1989-12-31T16:00:00.000Z",
+    "utc_day_end": "1990-01-01T16:00:00.000Z",
+    "pairing_rule": "absolute event time delta <= paran_event_orb_seconds"
   },
   "prenatal_packet": {
     "prenatal_syzygy": {
@@ -21,12 +60,19 @@
       "exact_jd": 2447888.6386041767,
       "jd": 2447888.6386041767,
       "longitude": 276.3677,
+      "sun_longitude": 276.3677,
+      "moon_longitude": 276.3677,
       "sun_position": 276.3677,
       "moon_position": 276.3677,
+      "syzygy_axis": null,
+      "degree_selection_profile": "new_moon_sun_degree_v1",
+      "selected_degree": 276.3677,
+      "selected_luminary": "SUN",
       "sign": "摩羯",
       "degree": 6.37,
       "ruler": "土星",
       "ruler_id": "SATURN",
+      "ruler_basis": "domicile_ruler_of_selected_degree_sign",
       "dignity_rulers": {
         "domicile": "SATURN",
         "exaltation": "MARS",
@@ -275,42 +321,885 @@
     {
       "planet_id": "MERCURY",
       "planet_name": "水星",
+      "star_id": "Altair",
       "star_name": "Altair",
-      "planet_ra": 297.639059,
-      "star_ra": 297.571,
-      "ra_delta_deg": 0.068059,
-      "paran_class": "co_culmination_ra_proxy",
-      "method_key": "fixed_star_paran_ra_proxy_v1",
-      "note": "RA co-culmination proxy, not full local rise-pair paran."
+      "planet_event_type": "culminating",
+      "star_event_type": "culminating",
+      "planet_event_utc": "1990-01-01T05:02:14.091Z",
+      "planet_event_local": "1990-01-01T13:02:14.091+08:00",
+      "star_event_utc": "1990-01-01T05:02:00.934Z",
+      "star_event_local": "1990-01-01T13:02:00.934+08:00",
+      "planet_event_jd": 2447892.709885324,
+      "star_event_jd": 2447892.709733034,
+      "event_delta_seconds": 13.158,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 4,
+        "planet_rsmi": 4,
+        "star_event_flag": 4,
+        "star_rsmi": 4,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
     },
     {
-      "planet_id": "MARS",
-      "planet_name": "火星",
-      "star_name": "Antares",
-      "planet_ra": 248.106355,
-      "star_ra": 247.1962,
-      "ra_delta_deg": 0.910155,
-      "paran_class": "co_culmination_ra_proxy",
-      "method_key": "fixed_star_paran_ra_proxy_v1",
-      "note": "RA co-culmination proxy, not full local rise-pair paran."
+      "planet_id": "MOON",
+      "planet_name": "月亮",
+      "star_id": "Canopus",
+      "star_name": "Canopus",
+      "planet_event_type": "setting",
+      "star_event_type": "rising",
+      "planet_event_utc": "1990-01-01T13:05:29.797Z",
+      "planet_event_local": "1990-01-01T21:05:29.797+08:00",
+      "star_event_utc": "1990-01-01T13:05:02.278Z",
+      "star_event_local": "1990-01-01T21:05:02.278+08:00",
+      "planet_event_jd": 2447893.045483768,
+      "star_event_jd": 2447893.045165257,
+      "event_delta_seconds": 27.519,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 2,
+        "planet_rsmi": 770,
+        "star_event_flag": 1,
+        "star_rsmi": 769,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "MERCURY",
+      "planet_name": "水星",
+      "star_id": "Altair",
+      "star_name": "Altair",
+      "planet_event_type": "lower_culminating",
+      "star_event_type": "lower_culminating",
+      "planet_event_utc": "1989-12-31T17:04:42.831Z",
+      "planet_event_local": "1990-01-01T01:04:42.831+08:00",
+      "star_event_utc": "1989-12-31T17:03:58.889Z",
+      "star_event_local": "1990-01-01T01:03:58.889+08:00",
+      "planet_event_jd": 2447892.211606852,
+      "star_event_jd": 2447892.211098253,
+      "event_delta_seconds": 43.943,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 8,
+        "planet_rsmi": 8,
+        "star_event_flag": 8,
+        "star_rsmi": 8,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "SUN",
+      "planet_name": "太阳",
+      "star_id": "Sirius",
+      "star_name": "Sirius",
+      "planet_event_type": "culminating",
+      "star_event_type": "lower_culminating",
+      "planet_event_utc": "1990-01-01T03:57:28.404Z",
+      "planet_event_local": "1990-01-01T11:57:28.404+08:00",
+      "star_event_utc": "1990-01-01T03:56:39.196Z",
+      "star_event_local": "1990-01-01T11:56:39.196+08:00",
+      "planet_event_jd": 2447892.664912087,
+      "star_event_jd": 2447892.664342546,
+      "event_delta_seconds": 49.208,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 4,
+        "planet_rsmi": 4,
+        "star_event_flag": 8,
+        "star_rsmi": 8,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "VENUS",
+      "planet_name": "金星",
+      "star_id": "Zubeneshamali",
+      "star_name": "Zubenelschemali",
+      "planet_event_type": "rising",
+      "star_event_type": "culminating",
+      "planet_event_utc": "1990-01-01T00:27:59.287Z",
+      "planet_event_local": "1990-01-01T08:27:59.287+08:00",
+      "star_event_utc": "1990-01-01T00:28:56.631Z",
+      "star_event_local": "1990-01-01T08:28:56.631+08:00",
+      "planet_event_jd": 2447892.519436203,
+      "star_event_jd": 2447892.520099898,
+      "event_delta_seconds": 57.343,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 1,
+        "planet_rsmi": 769,
+        "star_event_flag": 4,
+        "star_rsmi": 4,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "MERCURY",
+      "planet_name": "水星",
+      "star_id": "Spica",
+      "star_name": "Spica",
+      "planet_event_type": "lower_culminating",
+      "star_event_type": "rising",
+      "planet_event_utc": "1989-12-31T17:04:42.831Z",
+      "planet_event_local": "1990-01-01T01:04:42.831+08:00",
+      "star_event_utc": "1989-12-31T17:05:43.160Z",
+      "star_event_local": "1990-01-01T01:05:43.160+08:00",
+      "planet_event_jd": 2447892.211606852,
+      "star_event_jd": 2447892.212305103,
+      "event_delta_seconds": 60.329,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 8,
+        "planet_rsmi": 8,
+        "star_event_flag": 1,
+        "star_rsmi": 769,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
     },
     {
       "planet_id": "JUPITER",
       "planet_name": "木星",
+      "star_id": "Canopus",
+      "star_name": "Canopus",
+      "planet_event_type": "lower_culminating",
+      "star_event_type": "lower_culminating",
+      "planet_event_utc": "1990-01-01T03:34:35.575Z",
+      "planet_event_local": "1990-01-01T11:34:35.575+08:00",
+      "star_event_utc": "1990-01-01T03:35:44.427Z",
+      "star_event_local": "1990-01-01T11:35:44.427+08:00",
+      "planet_event_jd": 2447892.649022861,
+      "star_event_jd": 2447892.649819767,
+      "event_delta_seconds": 68.853,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 8,
+        "planet_rsmi": 8,
+        "star_event_flag": 8,
+        "star_rsmi": 8,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "MOON",
+      "planet_name": "月亮",
+      "star_id": "Regulus",
+      "star_name": "Regulus",
+      "planet_event_type": "culminating",
+      "star_event_type": "lower_culminating",
+      "planet_event_utc": "1990-01-01T07:20:26.111Z",
+      "planet_event_local": "1990-01-01T15:20:26.111+08:00",
+      "star_event_utc": "1990-01-01T07:19:13.470Z",
+      "star_event_local": "1990-01-01T15:19:13.470+08:00",
+      "planet_event_jd": 2447892.805857776,
+      "star_event_jd": 2447892.805017025,
+      "event_delta_seconds": 72.641,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 4,
+        "planet_rsmi": 4,
+        "star_event_flag": 8,
+        "star_rsmi": 8,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "JUPITER",
+      "planet_name": "木星",
+      "star_id": "Canopus",
+      "star_name": "Canopus",
+      "planet_event_type": "culminating",
+      "star_event_type": "culminating",
+      "planet_event_utc": "1990-01-01T15:32:20.221Z",
+      "planet_event_local": "1990-01-01T23:32:20.221+08:00",
+      "star_event_utc": "1990-01-01T15:33:46.473Z",
+      "star_event_local": "1990-01-01T23:33:46.473+08:00",
+      "planet_event_jd": 2447893.147456266,
+      "star_event_jd": 2447893.148454556,
+      "event_delta_seconds": 86.252,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 4,
+        "planet_rsmi": 4,
+        "star_event_flag": 4,
+        "star_rsmi": 4,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "MOON",
+      "planet_name": "月亮",
+      "star_id": "Antares",
+      "star_name": "Antares",
+      "planet_event_type": "rising",
+      "star_event_type": "culminating",
+      "planet_event_utc": "1990-01-01T01:42:32.688Z",
+      "planet_event_local": "1990-01-01T09:42:32.688+08:00",
+      "star_event_utc": "1990-01-01T01:41:03.966Z",
+      "star_event_local": "1990-01-01T09:41:03.966+08:00",
+      "planet_event_jd": 2447892.571211671,
+      "star_event_jd": 2447892.570184793,
+      "event_delta_seconds": 88.722,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 1,
+        "planet_rsmi": 769,
+        "star_event_flag": 4,
+        "star_rsmi": 4,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "JUPITER",
+      "planet_name": "木星",
+      "star_id": "Spica",
+      "star_name": "Spica",
+      "planet_event_type": "setting",
+      "star_event_type": "culminating",
+      "planet_event_utc": "1989-12-31T22:35:50.628Z",
+      "planet_event_local": "1990-01-01T06:35:50.628+08:00",
+      "star_event_utc": "1989-12-31T22:37:27.357Z",
+      "star_event_local": "1990-01-01T06:37:27.357+08:00",
+      "planet_event_jd": 2447892.441558204,
+      "star_event_jd": 2447892.442677744,
+      "event_delta_seconds": 96.728,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 2,
+        "planet_rsmi": 770,
+        "star_event_flag": 4,
+        "star_rsmi": 4,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "SATURN",
+      "planet_name": "土星",
+      "star_id": "Almach",
+      "star_name": "Almach",
+      "planet_event_type": "rising",
+      "star_event_type": "lower_culminating",
+      "planet_event_utc": "1989-12-31T23:17:37.854Z",
+      "planet_event_local": "1990-01-01T07:17:37.854+08:00",
+      "star_event_utc": "1989-12-31T23:15:58.903Z",
+      "star_event_local": "1990-01-01T07:15:58.903+08:00",
+      "planet_event_jd": 2447892.470577017,
+      "star_event_jd": 2447892.469431751,
+      "event_delta_seconds": 98.951,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 1,
+        "planet_rsmi": 769,
+        "star_event_flag": 8,
+        "star_rsmi": 8,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "SATURN",
+      "planet_name": "土星",
+      "star_id": "Hamal",
+      "star_name": "Hamal",
+      "planet_event_type": "rising",
+      "star_event_type": "lower_culminating",
+      "planet_event_utc": "1989-12-31T23:17:37.854Z",
+      "planet_event_local": "1990-01-01T07:17:37.854+08:00",
+      "star_event_utc": "1989-12-31T23:19:17.895Z",
+      "star_event_local": "1990-01-01T07:19:17.895+08:00",
+      "planet_event_jd": 2447892.470577017,
+      "star_event_jd": 2447892.471734903,
+      "event_delta_seconds": 100.041,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 1,
+        "planet_rsmi": 769,
+        "star_event_flag": 8,
+        "star_rsmi": 8,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "MARS",
+      "planet_name": "火星",
+      "star_id": "Aldebaran",
+      "star_name": "Aldebaran",
+      "planet_event_type": "lower_culminating",
+      "star_event_type": "culminating",
+      "planet_event_utc": "1990-01-01T13:43:56.542Z",
+      "planet_event_local": "1990-01-01T21:43:56.542+08:00",
+      "star_event_utc": "1990-01-01T13:45:40.659Z",
+      "star_event_local": "1990-01-01T21:45:40.659+08:00",
+      "planet_event_jd": 2447893.072182201,
+      "star_event_jd": 2447893.073387257,
+      "event_delta_seconds": 104.117,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 8,
+        "planet_rsmi": 8,
+        "star_event_flag": 4,
+        "star_rsmi": 4,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "SUN",
+      "planet_name": "太阳",
+      "star_id": "Denebola",
+      "star_name": "Denebola",
+      "planet_event_type": "setting",
+      "star_event_type": "lower_culminating",
+      "planet_event_utc": "1990-01-01T08:57:51.853Z",
+      "planet_event_local": "1990-01-01T16:57:51.853+08:00",
+      "star_event_utc": "1990-01-01T08:59:39.017Z",
+      "star_event_local": "1990-01-01T16:59:39.017+08:00",
+      "planet_event_jd": 2447892.873516826,
+      "star_event_jd": 2447892.874757149,
+      "event_delta_seconds": 107.164,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 2,
+        "planet_rsmi": 770,
+        "star_event_flag": 8,
+        "star_rsmi": 8,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "SATURN",
+      "planet_name": "土星",
+      "star_id": "Hamal",
+      "star_name": "Hamal",
+      "planet_event_type": "culminating",
+      "star_event_type": "rising",
+      "planet_event_utc": "1990-01-01T04:19:29.456Z",
+      "planet_event_local": "1990-01-01T12:19:29.456+08:00",
+      "star_event_utc": "1990-01-01T04:17:34.580Z",
+      "star_event_local": "1990-01-01T12:17:34.580+08:00",
+      "planet_event_jd": 2447892.68020204,
+      "star_event_jd": 2447892.678872461,
+      "event_delta_seconds": 114.876,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 4,
+        "planet_rsmi": 4,
+        "star_event_flag": 1,
+        "star_rsmi": 769,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "JUPITER",
+      "planet_name": "木星",
+      "star_id": "Denebola",
+      "star_name": "Denebola",
+      "planet_event_type": "lower_culminating",
+      "star_event_type": "setting",
+      "planet_event_utc": "1990-01-01T03:34:35.575Z",
+      "planet_event_local": "1990-01-01T11:34:35.575+08:00",
+      "star_event_utc": "1990-01-01T03:36:56.934Z",
+      "star_event_local": "1990-01-01T11:36:56.934+08:00",
+      "planet_event_jd": 2447892.649022861,
+      "star_event_jd": 2447892.65065896,
+      "event_delta_seconds": 141.359,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 8,
+        "planet_rsmi": 8,
+        "star_event_flag": 2,
+        "star_rsmi": 770,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "SUN",
+      "planet_name": "太阳",
+      "star_id": "Sirius",
+      "star_name": "Sirius",
+      "planet_event_type": "lower_culminating",
+      "star_event_type": "culminating",
+      "planet_event_utc": "1990-01-01T15:57:42.572Z",
+      "planet_event_local": "1990-01-01T23:57:42.572+08:00",
+      "star_event_utc": "1990-01-01T15:54:41.241Z",
+      "star_event_local": "1990-01-01T23:54:41.241+08:00",
+      "planet_event_jd": 2447893.165076069,
+      "star_event_jd": 2447893.162977336,
+      "event_delta_seconds": 181.331,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 8,
+        "planet_rsmi": 8,
+        "star_event_flag": 4,
+        "star_rsmi": 4,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "MARS",
+      "planet_name": "火星",
+      "star_id": "Aldebaran",
+      "star_name": "Aldebaran",
+      "planet_event_type": "culminating",
+      "star_event_type": "lower_culminating",
+      "planet_event_utc": "1990-01-01T01:44:24.999Z",
+      "planet_event_local": "1990-01-01T09:44:24.999+08:00",
+      "star_event_utc": "1990-01-01T01:47:38.613Z",
+      "star_event_local": "1990-01-01T09:47:38.613+08:00",
+      "planet_event_jd": 2447892.572511564,
+      "star_event_jd": 2447892.57475247,
+      "event_delta_seconds": 193.614,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 4,
+        "planet_rsmi": 4,
+        "star_event_flag": 8,
+        "star_rsmi": 8,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "MARS",
+      "planet_name": "火星",
+      "star_id": "Antares",
+      "star_name": "Antares",
+      "planet_event_type": "culminating",
+      "star_event_type": "culminating",
+      "planet_event_utc": "1990-01-01T01:44:24.999Z",
+      "planet_event_local": "1990-01-01T09:44:24.999+08:00",
+      "star_event_utc": "1990-01-01T01:41:03.966Z",
+      "star_event_local": "1990-01-01T09:41:03.966+08:00",
+      "planet_event_jd": 2447892.572511564,
+      "star_event_jd": 2447892.570184793,
+      "event_delta_seconds": 201.033,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 4,
+        "planet_rsmi": 4,
+        "star_event_flag": 4,
+        "star_rsmi": 4,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "JUPITER",
+      "planet_name": "木星",
+      "star_id": "Scheat",
+      "star_name": "Scheat",
+      "planet_event_type": "culminating",
+      "star_event_type": "setting",
+      "planet_event_utc": "1990-01-01T15:32:20.221Z",
+      "planet_event_local": "1990-01-01T23:32:20.221+08:00",
+      "star_event_utc": "1990-01-01T15:28:38.251Z",
+      "star_event_local": "1990-01-01T23:28:38.251+08:00",
+      "planet_event_jd": 2447893.147456266,
+      "star_event_jd": 2447893.144887166,
+      "event_delta_seconds": 221.97,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 4,
+        "planet_rsmi": 4,
+        "star_event_flag": 2,
+        "star_rsmi": 770,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    },
+    {
+      "planet_id": "MOON",
+      "planet_name": "月亮",
+      "star_id": "Markab",
+      "star_name": "Markab",
+      "planet_event_type": "rising",
+      "star_event_type": "rising",
+      "planet_event_utc": "1990-01-01T01:42:32.688Z",
+      "planet_event_local": "1990-01-01T09:42:32.688+08:00",
+      "star_event_utc": "1990-01-01T01:38:44.737Z",
+      "star_event_local": "1990-01-01T09:38:44.737+08:00",
+      "planet_event_jd": 2447892.571211671,
+      "star_event_jd": 2447892.568573351,
+      "event_delta_seconds": 227.951,
+      "event_orb_seconds": 240.0,
+      "paran_class": "local_horizon_meridian_event_pair",
+      "method_key": "swiss_rise_trans_event_pair_v2",
+      "proxy": false,
+      "full_paran": true,
+      "method_trace": {
+        "provider": "Swiss Ephemeris",
+        "function": "swe.rise_trans",
+        "ephemeris_flags": [
+          "FLG_SWIEPH"
+        ],
+        "planet_event_flag": 1,
+        "planet_rsmi": 769,
+        "star_event_flag": 1,
+        "star_rsmi": 769,
+        "rise_set_options": [
+          "BIT_DISC_CENTER",
+          "BIT_NO_REFRACTION"
+        ],
+        "pairing_rule": "absolute local-event time delta within event_orb_seconds"
+      }
+    }
+  ],
+  "legacy_fixed_star_parans": [
+    {
+      "planet_id": "MERCURY",
+      "planet_name": "水星",
+      "star_id": "Altair",
+      "star_name": "Altair",
+      "planet_ra": 297.639059,
+      "star_ra": 297.571,
+      "ra_delta_deg": 0.068059,
+      "planet_declination": -20.477947,
+      "star_declination": 8.8403,
+      "event_delta_seconds": null,
+      "also_ecliptic_conjunction": false,
+      "ecliptic_orb": 5.872257,
+      "coordinate_epoch": "of_date",
+      "position_type": "apparent_equatorial",
+      "paran_class": "approximate_co_culmination_ra_proxy",
+      "method_key": "fixed_star_ra_conjunction",
+      "method_key_legacy": "fixed_star_paran_ra_proxy_v1",
+      "proxy": true,
+      "full_paran": false,
+      "note": "Legacy RA co-culmination proxy retained for migration only; use fixed_star_parans for true local event pairs."
+    },
+    {
+      "planet_id": "JUPITER",
+      "planet_name": "木星",
+      "star_id": "Canopus",
       "star_name": "Canopus",
       "planet_ra": 95.652961,
       "star_ra": 95.943,
       "ra_delta_deg": 0.290039,
-      "paran_class": "co_culmination_ra_proxy",
-      "method_key": "fixed_star_paran_ra_proxy_v1",
-      "note": "RA co-culmination proxy, not full local rise-pair paran."
+      "planet_declination": 23.222694,
+      "star_declination": -52.6889,
+      "event_delta_seconds": null,
+      "also_ecliptic_conjunction": false,
+      "ecliptic_orb": 9.65565,
+      "coordinate_epoch": "of_date",
+      "position_type": "apparent_equatorial",
+      "paran_class": "approximate_co_culmination_ra_proxy",
+      "method_key": "fixed_star_ra_conjunction",
+      "method_key_legacy": "fixed_star_paran_ra_proxy_v1",
+      "proxy": true,
+      "full_paran": false,
+      "note": "Legacy RA co-culmination proxy retained for migration only; use fixed_star_parans for true local event pairs."
+    },
+    {
+      "planet_id": "MARS",
+      "planet_name": "火星",
+      "star_id": "Antares",
+      "star_name": "Antares",
+      "planet_ra": 248.106355,
+      "star_ra": 247.1962,
+      "ra_delta_deg": 0.910155,
+      "planet_declination": -21.946663,
+      "star_declination": -26.4116,
+      "event_delta_seconds": null,
+      "also_ecliptic_conjunction": true,
+      "ecliptic_orb": 0.14453,
+      "coordinate_epoch": "of_date",
+      "position_type": "apparent_equatorial",
+      "paran_class": "approximate_co_culmination_ra_proxy",
+      "method_key": "fixed_star_ra_conjunction",
+      "method_key_legacy": "fixed_star_paran_ra_proxy_v1",
+      "proxy": true,
+      "full_paran": false,
+      "note": "Legacy RA co-culmination proxy retained for migration only; use fixed_star_parans for true local event pairs."
     }
   ],
+  "event_diagnostics": [],
+  "polar_degradation": {
+    "active": false,
+    "strategy": "omit_unavailable_horizon_events_keep_available_meridian_events",
+    "affected_object_count": 0,
+    "affected_objects": []
+  },
+  "migration": {
+    "from": "fixed_star_parans RA co-culmination proxy (schema v1)",
+    "to": "fixed_star_parans true local event pairs (schema v2)",
+    "legacy_output": "legacy_fixed_star_parans",
+    "legacy_method_key": "fixed_star_paran_ra_proxy_v1",
+    "disable_legacy_request_key": "include_legacy_paran_proxy=false"
+  },
   "warnings": [],
   "section_errors": null,
   "calculation_assumptions": [
     "Prenatal syzygy from calculate_prenatal_syzygy; chart rebuilt at exact jd when available.",
-    "Parans v1 use equatorial RA proximity as co-culmination proxy; not full rise/set pairing.",
-    "Polar missing events surface as empty lists + warnings."
+    "True parans pair independently calculated local rising, upper-transit, setting, and lower-transit events.",
+    "Rise/set use apparent-disc-center disabled refraction flags; meridian transits use their direct Swiss flags.",
+    "Unavailable circumpolar horizon events are omitted; available culmination events remain eligible.",
+    "legacy_fixed_star_parans is an RA proximity proxy retained only for schema-v1 migration."
   ]
 }

@@ -290,6 +290,22 @@ struct ModernRequestEncodingTests {
         #expect(location["latitude"] as? Double == 31.2304)
     }
 
+    @Test func prenatalParansEncodesTrueEventAndLegacyMigrationConfig() throws {
+        let request = ExpansionGenericRequest(
+            mode: "prenatal_parans",
+            birth: birth,
+            paranRaOrbDeg: 1.0,
+            paranEventOrbSeconds: 240.0,
+            includeLegacyParanProxy: true
+        )
+        let dict = try encodedDictionary(request)
+
+        #expect(dict["mode"] as? String == "prenatal_parans")
+        #expect(dict["paran_ra_orb_deg"] as? Double == 1.0)
+        #expect(dict["paran_event_orb_seconds"] as? Double == 240.0)
+        #expect(dict["include_legacy_paran_proxy"] as? Bool == true)
+    }
+
     private func encodedDictionary<T: Encodable>(_ value: T) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         return try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])

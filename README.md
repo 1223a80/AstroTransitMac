@@ -170,7 +170,7 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 | 时间主扩展 | `time_lords_extended` | Profection、ZR L4、Fortune / Spirit 与多技法 concordance |
 | 主限审计 | `primary_directions_audit` | 当前主限算法、profile、限制与诊断 |
 | 沿界 / 主限扩展 | `distributions_pd` | 多 significator 沿界与多 PD profile |
-| 产前朔望 / Parans | `prenatal_parans` | 产前朔望盘包与固定星 RA paran 代理 |
+| 产前朔望 / Parans | `prenatal_parans` | 产前朔望盘包；固定星与行星的本地升/上中天/落/下中天真实事件配对；RA 代理仅作 legacy 迁移输出 |
 | 世俗 / 择时事实 | `mundane_electional` | 四至点 ingress 与择时事实矩阵，不排序“吉时” |
 
 八个古典进阶模式拥有独立参数区、结构化结果页、Markdown 章节选择与合并导出，但当前不开放 AI 分析。

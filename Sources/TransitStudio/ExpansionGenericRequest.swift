@@ -18,6 +18,8 @@ struct ExpansionGenericRequest: Codable {
     let aspectOrb: Double?
     let significators: [String]?
     let paranRaOrbDeg: Double?
+    let paranEventOrbSeconds: Double?
+    let includeLegacyParanProxy: Bool?
     let pictureOrb: Double?
     let houseSystem: String?
     let zodiac: String?
@@ -42,6 +44,8 @@ struct ExpansionGenericRequest: Codable {
         aspectOrb: Double? = nil,
         significators: [String]? = nil,
         paranRaOrbDeg: Double? = nil,
+        paranEventOrbSeconds: Double? = nil,
+        includeLegacyParanProxy: Bool? = nil,
         pictureOrb: Double? = nil,
         houseSystem: String? = nil,
         zodiac: String? = nil,
@@ -65,6 +69,8 @@ struct ExpansionGenericRequest: Codable {
         self.aspectOrb = aspectOrb
         self.significators = significators
         self.paranRaOrbDeg = paranRaOrbDeg
+        self.paranEventOrbSeconds = paranEventOrbSeconds
+        self.includeLegacyParanProxy = includeLegacyParanProxy
         self.pictureOrb = pictureOrb
         self.houseSystem = houseSystem
         self.zodiac = zodiac
@@ -83,6 +89,8 @@ struct ExpansionGenericRequest: Codable {
         case solarArcRateDegPerYear = "solar_arc_rate_deg_per_year"
         case aspectOrb = "aspect_orb"
         case paranRaOrbDeg = "paran_ra_orb_deg"
+        case paranEventOrbSeconds = "paran_event_orb_seconds"
+        case includeLegacyParanProxy = "include_legacy_paran_proxy"
         case pictureOrb = "picture_orb"
         case houseSystem = "house_system"
         case ephemerisPath = "ephemeris_path"

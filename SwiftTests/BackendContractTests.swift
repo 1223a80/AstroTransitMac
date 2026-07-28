@@ -460,11 +460,35 @@ struct BackendContractTests {
         #expect(result.calculationAssumptions?.isEmpty == false)
         #expect(result.prenatalPacket != nil)
         #expect(!result.fixedStarParans.isEmpty)
+        #expect(!result.legacyFixedStarParans.isEmpty)
+        #expect(result.meta.schemaVersion == 2)
+        #expect(result.methodTrace?.function == "swe.rise_trans")
+        #expect(result.fixedStarParans.allSatisfy { row in
+            row.planetEventType != nil
+                && row.starEventType != nil
+                && row.planetEventUtc != nil
+                && row.planetEventLocal != nil
+                && row.starEventUtc != nil
+                && row.starEventLocal != nil
+                && row.eventDeltaSeconds != nil
+                && row.proxy == false
+                && row.fullParan == true
+                && row.methodKey == "swiss_rise_trans_event_pair_v2"
+        })
+        #expect(result.legacyFixedStarParans.allSatisfy { row in
+            row.proxy == true
+                && row.fullParan == false
+                && row.methodKeyLegacy == "fixed_star_paran_ra_proxy_v1"
+        })
         let md = MarkdownExportBuilder.prenatalParans(result)
         let csv = TextExportBuilder.csv(result)
         #expect(md.contains(result.meta.method))
-        #expect(md.contains("proxy") || md.contains("Paran"))
-        #expect(csv.contains("paran"))
+        #expect(md.contains("true local events"))
+        #expect(md.contains("Legacy compatibility"))
+        #expect(md.contains("event_delta_seconds") == false)
+        #expect(csv.contains("event_paran"))
+        #expect(csv.contains("legacy_ra_proxy"))
+        #expect(csv.contains("planet_event_utc"))
         #expect(csv.contains("method_key"))
     }
 

@@ -5,7 +5,7 @@ struct PrenatalParansResultPane: View {
     @Binding var selectedTab: String
 
     private var tabs: [(String, String)] {
-        [("packet", "朔望包"), ("parans", "Parans 代理"), ("assumptions", "假设")]
+        [("packet", "朔望包"), ("parans", "Parans 事件"), ("legacy", "兼容代理"), ("assumptions", "假设")]
     }
     private var more: [(String, String)] {
         [("diagnostics", "诊断"), ("json", "JSON")]
@@ -18,7 +18,7 @@ struct PrenatalParansResultPane: View {
             for: .prenatalParans,
             metaMethod: result.meta.method,
             extras: ExpansionChromeExtras(
-                hasProxyMethodKey: result.fixedStarParans.contains { ($0.methodKey ?? "").contains("proxy") || ($0.methodKey ?? "").contains("ra") },
+                hasProxyMethodKey: false,
                 paranCount: result.meta.paranCount ?? result.fixedStarParans.count
             )
         )
@@ -47,6 +47,8 @@ struct PrenatalParansResultPane: View {
         switch selectedTab {
         case "parans":
             paransView
+        case "legacy":
+            legacyParansView
         case "assumptions":
             AssumptionsListView(assumptions: result.calculationAssumptions ?? [])
         case "diagnostics":
@@ -104,24 +106,89 @@ struct PrenatalParansResultPane: View {
     }
 
     private var paransView: some View {
-        Group {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+            VStack(alignment: .leading, spacing: TS.Spacing.xs) {
+                Text("\(result.methodTrace?.provider ?? "Swiss Ephemeris") · \(result.methodTrace?.function ?? "swe.rise_trans")")
+                    .font(.subheadline.weight(.semibold))
+                Text(result.methodTrace?.pairingRule ?? "按两端本地事件绝对时间差配对")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                if let start = result.methodTrace?.localDayStart, let end = result.methodTrace?.localDayEnd {
+                    Text("本地民用日：\(start) → \(end)")
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+                if result.polarDegradation?.active == true {
+                    Label(
+                        "极区降级：省略不可用升落事件，保留可用中天事件（\(result.polarDegradation?.affectedObjectCount ?? 0) 个对象）",
+                        systemImage: "exclamationmark.triangle"
+                    )
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+                }
+            }
             if result.fixedStarParans.isEmpty {
                 EmptyStateView(
-                    title: "无 Parans 代理行",
+                    title: "无真实 Paran 事件配对",
                     systemImage: "sparkles",
-                    description: "RA 共中天代理未命中恒星。"
+                    description: "当前秒级容许度内没有行星与固定星的本地升落/中天事件配对。"
                 )
             } else {
                 Table(result.fixedStarParans) {
                     TableColumn("行星") { Text($0.planetName ?? $0.planetId ?? "—") }
+                    TableColumn("行星事件") { Text(eventLabel($0.planetEventType)) }
+                    TableColumn("行星本地时间") { Text($0.planetEventLocal ?? "—").monospacedDigit() }
                     TableColumn("恒星") { Text($0.starName ?? "—") }
-                    TableColumn("ΔRA°") {
-                        Text($0.raDeltaDeg.map { String(format: "%.3f", $0) } ?? "—").monospacedDigit()
+                    TableColumn("恒星事件") { Text(eventLabel($0.starEventType)) }
+                    TableColumn("恒星本地时间") { Text($0.starEventLocal ?? "—").monospacedDigit() }
+                    TableColumn("Δt 秒") {
+                        Text($0.eventDeltaSeconds.map { String(format: "%.3f", $0) } ?? "—").monospacedDigit()
                     }
-                    TableColumn("类别") { Text($0.paranClass ?? "—") }
                     TableColumn("method_key") { Text($0.methodKey ?? "—").font(.caption) }
                 }
             }
+        }
+    }
+
+    private var legacyParansView: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+            Text("以下仅为 schema v1 的 ΔRA 共中天代理迁移输出，不等同于真实 Paran 事件。")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            if result.legacyFixedStarParans.isEmpty {
+                EmptyStateView(
+                    title: "未输出兼容代理",
+                    systemImage: "arrow.triangle.2.circlepath",
+                    description: "请求已关闭 legacy 代理，或当前 RA 容许度内无命中。"
+                )
+            } else {
+                Table(result.legacyFixedStarParans) {
+                    TableColumn("行星") { Text($0.planetName ?? $0.planetId ?? "—") }
+                    TableColumn("恒星") { Text($0.starName ?? "—") }
+                    TableColumn("行星 RA") {
+                        Text($0.planetRa.map { String(format: "%.4f°", $0) } ?? "—").monospacedDigit()
+                    }
+                    TableColumn("恒星 RA") {
+                        Text($0.starRa.map { String(format: "%.4f°", $0) } ?? "—").monospacedDigit()
+                    }
+                    TableColumn("ΔRA") {
+                        Text($0.raDeltaDeg.map { String(format: "%.4f°", $0) } ?? "—").monospacedDigit()
+                    }
+                    TableColumn("legacy method") {
+                        Text($0.methodKeyLegacy ?? $0.methodKey ?? "—").font(.caption)
+                    }
+                }
+            }
+        }
+    }
+
+    private func eventLabel(_ value: String?) -> String {
+        switch value {
+        case "rising": return "升"
+        case "culminating": return "上中天"
+        case "setting": return "落"
+        case "lower_culminating": return "下中天"
+        default: return value ?? "—"
         }
     }
 }

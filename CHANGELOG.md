@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-28 — B18 true fixed-star paran event engine
+
+- `prenatal_parans` 后端升级到 schema v2：以 Swiss Ephemeris `swe.rise_trans` 分别求行星/固定星的升、上中天、落、下中天事件，并按秒级容许度配对。
+- 真实事件行新增两端 event type、UTC/出生地本地时间、JD、`event_delta_seconds` 与逐行方法溯源；顶层记录本地民用日边界、Swiss flags 和配对规则。
+- 原 RA co-culmination proxy 移至 `legacy_fixed_star_parans`，保留 v1 method key 作为明确迁移输出。
+- 极区不可用的升落事件不再伪造；保留可用中天事件，并输出对象诊断、降级摘要与 warning。
+- API / Swift 请求新增受校验的 `paran_event_orb_seconds` 与 legacy 开关；默认事件容许度为 240 秒。
+- 聚焦 Python 回归覆盖正常地点四事件事实/时间差、非法配置、legacy 禁用与 89°N 极区只保留可用中天事件。
+- Swift schema v2 模型与结果页区分“Parans 事件”和“兼容代理”，主表展示两端事件、本地时间、秒差、方法以及极区降级状态。
+- Markdown / CSV 改为完整导出真实事件时间、秒差与方法，并以独立区块/行类型保留 legacy RA 代理；Swift fixture 契约新增双语义断言。
+- 拆分 Swift 行标识与 CSV 字段构造，避免宽 schema 表达式触发编译器类型检查超时。
+- README 当前能力矩阵与固定星测试注释同步 schema v2；历史维护记录保留原代理降级背景并标明已被本任务取代。
+- Swift 请求编码回归锁定事件秒数、legacy RA orb 与兼容开关的 JSON key。
+- 极区摘要只统计明确不可用的 rising/setting 事件；其他 Swiss 诊断仍保留在对象级 evidence 中。
+- 验证：B18/固定星/古典聚焦 Python 106；完整门禁 Python 946、Swift 142、Swift build 与全部后端 smoke 全绿；fixture 与 fresh backend 输出一致。
+- 最终 diff 审查确认事件容许度/legacy 开关只由 `runPrenatalParans` 发送，不污染其他 expansion 请求。
+
 ## 2026-07-28 — Classical chart fractional-bound decode regression
 
 - 发布修复版本 `1.4.4 (46)`，替换存在经典排盘解码回归的 `1.4.3 (45)`。

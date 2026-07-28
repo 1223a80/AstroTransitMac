@@ -72,6 +72,11 @@ struct ExpansionStructuredUITests {
         let syz = try #require(summary.prenatalSyzygy)
         #expect(syz.syzygyDegreeUsed != nil)
         #expect(syz.syzygyType != nil)
+        #expect(result.fixedStarParans.first?.planetEventType != nil)
+        #expect(result.fixedStarParans.first?.starEventType != nil)
+        #expect(result.fixedStarParans.first?.eventDeltaSeconds != nil)
+        #expect(result.methodTrace?.localDayStart != nil)
+        #expect(result.polarDegradation?.active == false)
     }
 
     // MARK: - Chrome factory (not assumptions regex)

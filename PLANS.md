@@ -1,3 +1,30 @@
+# B18 True Fixed-star Parans（2026-07-28）
+
+分支：`codex/feature-real-prenatal-parans`
+基线：`fix/classical-json-decode-regression` 的 `4b7a333`（包含已审查的 B18 RA 代理兼容语义）。
+
+## 目标与迁移合同
+
+- `fixed_star_parans` 默认升级为出生地本地民用日内的真实事件配对：行星与固定星各自的 rising / culminating / setting / lower-culminating 事件由 `swe.rise_trans` 独立求得，再按 `paran_event_orb_seconds` 配对。
+- 每行保留两端 event type、UTC / 出生地本地 timestamp、`event_delta_seconds`、完整/代理标记与 Swiss Ephemeris 方法溯源。
+- 旧 ΔRA co-culmination proxy 移至明确的 `legacy_fixed_star_parans`，保留原字段和 `method_key_legacy=fixed_star_paran_ra_proxy_v1`；不把代理行混入真实事件计数。
+- 升落不可得（含极区 circumpolar）时不伪造事件：保留可求得的上下中天事件，输出对象级缺失诊断、顶层 polar degradation 摘要和 warnings。
+- Swift 默认展示真实事件，并提供独立兼容代理页；Markdown / CSV 同时导出真实事件与 legacy 迁移信息。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 合同与 Swiss 调用核验 | ✅ | 已阅读 B18 后端、API、Swift/fixture、导出和 `pyswisseph.rise_trans` 本机签名/flags |
+| 02 后端与输入合同 | ✅ | 四事件求解、配对、UTC/local 时间、方法溯源、legacy 输出、极区降级、参数校验 |
+| 03 聚焦 Python 测试与 sample | ✅ | 正常地点事件事实、时间差、legacy 迁移、极区无伪造事件、sample smoke |
+| 04 Swift / fixture / 导出 | ✅ | Codable、真实事件 UI、legacy 页、Markdown/CSV、真实后端 fixture、契约测试 |
+| 05 门禁与独立提交 | ✅ | focused pytest 106；完整 Python 946、Swift 142、build 与全部 smoke 全绿；diff/fixture 已复核并清理缓存 |
+
+完成条件：真实事件行可追溯且时间字段自洽；旧代理语义可迁移读取；极区只降级不伪造；相关门禁全绿；不打包、不合并，工作树以独立可审查提交收口。
+
+---
+
 # B7–B20 古典进阶 UI（2026-07-20）
 
 真源：`docs/ui-design-b7-b20-2026-07.md` Confirmed r4。
@@ -1477,7 +1504,7 @@ Fixed fixture chart: 2004-08-09T08:16:00Z / 35.0576N 118.3346E / Whole Sign / Eg
 | C17 | Lots source + duplicate groups | done | |
 | C18 | Prenatal syzygy axis | done | |
 | C19 | Heliacal before/after events | done | previous/next fields |
-| C20 | Parans complete or downgrade | done | explicitly downgraded to RA proxy |
+| C20 | Parans complete or downgrade | done | 2026-07-25 proxy downgrade；已由上方 2026-07-28 B18 true-event 任务 supersede |
 | C21 | Ingress mundane chart | done | full ingress chart |
 | C22 | Electional scanner rename | done | daily fact snapshots |
 | C23 | Concordance independence | pending | |
