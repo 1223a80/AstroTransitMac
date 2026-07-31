@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-31 — README and repository handoff alignment
+
+- README 顶部版本口径更新为最近已打包的 `1.4.4 (46)`，并明确区分发布基线与当前源码中的 B18 true fixed-star paran 增量。
+- 补齐当前门禁结果：Python 946、Swift 142、Swift build 与登记 smoke 全部通过。
+- 补充 B18 schema v2 的真实事件配对、240 秒默认事件容许度、legacy RA proxy 迁移开关与极区降级说明。
+- 完成项目目录清理：构建/测试缓存与 Finder 元数据移除，过期 app 包移出 `dist/`，保留最近已打包的 `TransitStudio.app`。
+
 ## 2026-07-28 — B18 true fixed-star paran event engine
 
 - `prenatal_parans` 后端升级到 schema v2：以 Swiss Ephemeris `swe.rise_trans` 分别求行星/固定星的升、上中天、落、下中天事件，并按秒级容许度配对。

@@ -2,7 +2,7 @@
 
 Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界面使用 SwiftUI，计算层使用 Python 与 Swiss Ephemeris；Swift 通过启动随应用打包的 `transit_calc.py` 子进程，以 stdin/stdout JSON 契约取得计算结果。
 
-当前发布版本为 **1.4.2 (44)**。项目覆盖现代、古典、Horary 与吠陀工作流，并提供星盘图、结构化结果页、Markdown / JSON / CSV 导出、部分模式的流式 AI 分析，以及三级生时矫正。
+最近已打包版本为 **1.4.4 (46)**。项目覆盖现代、古典、Horary 与吠陀工作流，并提供星盘图、结构化结果页、Markdown / JSON / CSV 导出、部分模式的流式 AI 分析，以及三级生时矫正。当前源码还包含 B18 固定星 paran 真实事件引擎（schema v2）；该增量尚未另行提升应用版本号或重新打包。
 
 > Transit Studio 首先是一套“可计算、可复算、可审计”的数据工具。部分模块只输出事实、方法与证据，不自动给出吉凶、寿命、择时推荐或 Horary 最终判断。
 
@@ -10,7 +10,8 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 
 | 项目 | 当前实现 |
 |---|---|
-| 应用版本 | 1.4.2 (44) |
+| 最近已打包版本 | 1.4.4 (46) |
+| 当前源码增量 | B18 true fixed-star parans（schema v2；legacy RA proxy 独立迁移输出） |
 | 系统要求 | macOS 13 或更高 |
 | 应用架构 | Swift Package executable；当前打包脚本生成 arm64 `.app` |
 | 前端 | SwiftUI |
@@ -20,11 +21,11 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 | Horary 默认协议 | `horary-data-packet/2.1`，判断无关的数据包 |
 | AI | OpenAI-compatible Chat Completions / SSE 接口；需要用户自行配置 Base URL、模型和 API Key |
 | 自动化验证 | GitHub Actions 在 push 与 pull request 上执行 Swift、Python 和后端 smoke |
-| 1.4.2 本地门禁 | Python 912 项、Swift 140 项、全部登记 smoke 通过 |
+| 当前源码门禁 | Python 946 项、Swift 142 项、Swift build 与全部登记 smoke 通过 |
 
-## 1.4.2 已交付更新
+## 当前已交付能力与 B18 增量
 
-1.4.2 汇总了 B7–B20 计算扩展、古典进阶工作区、Horary v2.1 和主窗口布局收口。以下均为已经接入 UI、后端、模型、导出与测试的现有能力，不是 roadmap。
+1.4.4 是最近已打包并验证的发布基线；当前源码在此基础上保留 B7–B20 计算扩展、古典进阶工作区、Horary v2.1 和主窗口布局收口，并新增 B18 固定星 paran 真实事件引擎。以下均为已经接入 UI、后端、模型、导出与测试的现有能力，不是 roadmap。
 
 ### B7–B20 计算扩展
 
@@ -41,7 +42,7 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 | B15 | Secondary Progression / Solar Arc 多 method profile 事实对照 | 现代 → 推运方法族 |
 | B16 | 当前 Primary Directions 算法命名、profile、限制、诊断与审计 | 古典进阶 → 主限审计 |
 | B17 | 多 significator Circumambulations / Distributions 与多 PD profile | 古典进阶 → 沿界 / 主限扩展 |
-| B18 | 可复核的 prenatal syzygy chart packet 与固定星 RA paran 代理 | 古典进阶 → 产前朔望 / Parans |
+| B18 | 可复核的 prenatal syzygy chart packet；固定星与行星的本地升、上中天、落、下中天真实事件配对；RA 代理独立作为 legacy 迁移输出 | 古典进阶 → 产前朔望 / Parans |
 | B19 | Swiss Ephemeris 轨道节点、近日点 / 远日点和 45° / 90° 等 modulus dial pictures | 现代 → 轨道点 / Dial |
 | B20 | 四至点太阳 ingress 与 electional fact matrix；不做吉时排名 | 古典进阶 → 世俗 / 择时事实 |
 
@@ -174,6 +175,14 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 | 世俗 / 择时事实 | `mundane_electional` | 四至点 ingress 与择时事实矩阵，不排序“吉时” |
 
 八个古典进阶模式拥有独立参数区、结构化结果页、Markdown 章节选择与合并导出，但当前不开放 AI 分析。
+
+#### B18 固定星 Paran 契约
+
+- `fixed_star_parans`（schema v2）分别使用 Swiss Ephemeris `swe.rise_trans` 求行星和固定星的 rising、culminating、setting、lower-culminating 事件，再按绝对事件时间差配对。
+- 每行保留两端事件类型、UTC / 出生地本地时间、JD、`event_delta_seconds`、容许度、方法 key 与方法溯源；默认 `paran_event_orb_seconds` 为 240 秒。
+- 旧的 ΔRA co-culmination proxy 不混入真实事件计数，独立位于 `legacy_fixed_star_parans`；其默认 RA 容许度为 1°，可用 `include_legacy_paran_proxy=false` 关闭。
+- 极区或其他不可求得的升落事件只输出可用事件和对象级诊断，不伪造 paran；顶层 `polar_degradation` 与 warnings 说明降级范围。
+- 请求样例见 [`Examples/sample-prenatal-parans-request.json`](Examples/sample-prenatal-parans-request.json)；真实事件与 legacy 迁移信息均可导出为 Markdown / CSV。
 
 ### Horary
 
