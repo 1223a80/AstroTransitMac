@@ -1,3 +1,42 @@
+# Horary Markdown 重构与导出形状测试（2026-08-01）
+
+分支：待定（用户先处理仓库状态，本任务在其后开工）。当前 HEAD 仍在 `codex/feature-real-prenatal-parans`，工作树干净。
+
+## 背景与动机
+
+- Swift `MarkdownExportBuilder.horary`（`Sources/TransitStudio/MarkdownHoraryExportBuilder.swift`）目前是「markdown 标题骨架 + 每节整行 JSON dump」：文件内 25 处 `stringifyJSON`/`rawValue` 灌装，除 `## N. Section` 标题外几乎全是 JSON，人不可读。
+- 同一功能存在双实现分裂：后端 Python `format_horary_v2_markdown`（`astro_backend_horary_v2.py:2310`）是字段级可读 markdown，Swift 端从不调用、两端无一致性测试。
+- 痛点（用户已确认）：该函数同时供「复制 Markdown」与人阅读和 AI 上下文（`ContentView+AI.swift:89`）使用；原始 JSON 一次约 **40 万 tokens**，可读 markdown 约 **9K tokens**。
+- 已确认决策：**markdown 输出仅保留 markdown 格式可表达的信息**；项目已有独立的 JSON / CSV 导出功能，不需要在 markdown 里内嵌 JSON。
+
+## 目标
+
+1. 重写 `MarkdownHoraryExportBuilder.swift` 为字段级可读 markdown（参考后端 Python 版风格），删除全部整行 JSON dump（禁止 `- full: {...}`、`- {...}` 裸行）。
+2. 证据不丢：schema/provenance 哈希、时间地点、计算配置、角点、宫位、星体、尊贵、相位、接纳、Lots、事件、月亮、可见性、节点、事件图、行星时、considerations、optional modules、validation、display 各节均以 markdown 表格/列表提取完整字段。
+3. AI 上下文复用重构后输出（token 从 ~40 万降至 ~9K 量级），需人工抽查 AI 面板输出质量。
+4. 添加测试（见下），并把「markdown 形状」纳入导出测试规范。
+5. 附带修复 `ExportMenu` 死参数（`ResultToolbarViews.swift`：`markdownProvider` 传入但从未使用，导出菜单无 Markdown 项）。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 现状核对 | 待开始 | 读 `HoraryDataPacketModels.swift` 字段访问器、`HoraryResultTests` / `BackendContractTests` 现有 markdown 断言、后端 Python 版 `format_horary_v2_markdown` 全文 |
+| 02 Swift builder 重写 | 待开始 | `MarkdownHoraryExportBuilder.swift` 字段级重写，删除 stringifyJSON 灌装；`swift build` 通过 |
+| 03 形状契约测试 | 待开始 | 新增 `SwiftTests/MarkdownShapeContractTests.swift`：全部模式 markdown 断言以 `# ` 开头、含 `## ` 节、无裸 JSON 行、无 `- full: {`；Horary 内容断言（具体字段值以可读形式出现）；token 预算断言（markdown 长度显著小于等价 JSON，防止回归 dump 风格） |
+| 04 更新旧断言 | 待开始 | `HoraryResultTests.markdownAndCsvAreDataOnly` / `jsonSwiftRoundTripPreservesEvidenceKeys` 中 `md.contains("geocoding")` 等要求 JSON 字段名出现的断言改为可读形式断言；CSV 与 JSON 断言不动 |
+| 05 ExportMenu 修复 | 待开始 | 导出菜单补「保存 Markdown」项（或删除死参数）；顺带确认三个调用点（classical、horary、通用工具栏） |
+| 06 全量门禁 | 待开始 | `bash check_vibe_changes.sh` 全绿；`CHANGELOG.md` 追加记录；`PLANS.md` 本条目收口 |
+
+## 边界与风险
+
+- 不动后端、不动 fixture：后端输出无变化，`jsonSwiftRoundTripPreservesEvidenceKeys` 的 JSON 保真契约不受影响。
+- `HoraryDataPacket` 的 raw JSON 访问器保留（JSON/CSV 导出依赖），只改 markdown 呈现层。
+- AI 上下文随重构变化，需抽查；若个别证据字段在 markdown 中表达困难，保留字段级提取而非整行 dump。
+- 工作量估算：重构 4–6h + 测试 3–4h + 门禁与收口 0.5–1h ≈ 1.5–2 天（含调试）。
+
+---
+
 # 仓库现状盘点与收口清理（2026-07-31）
 
 目标：在保留现有用户工作与 B18 分支成果的前提下，确认仓库当前所在分支、提交边界、未提交改动和本地产物；只清理可确认的缓存/生成物，完成必要验证并让项目目录保持可交接状态。
