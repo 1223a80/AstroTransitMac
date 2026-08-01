@@ -1,3 +1,25 @@
+# GitHub Actions Modern Timing CSV 编译修复（2026-08-01）
+
+分支：`codex/feature-real-prenatal-parans`。目标是修复 GitHub Actions macOS 15 ARM runner 在 `ModernTimingExports.swift` 的 29 字段 CSV 数组表达式上发生的 Swift 类型推导超时，不改变导出字段、顺序或数据语义。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 失败复核与任务隔离 | 已完成 | 已确认 Actions run `30620846981` 失败于 `ModernTimingExports.swift:133`；现有 Horary 计划已原样独立提交 |
+| 02 CSV schema 重构 | 已完成 | 用命名列枚举与定长 row builder 统一 header、meta、event 行，移除巨大数组表达式和魔法索引 |
+| 03 回归测试 | 已完成 | 覆盖精确表头、各行列数、event/meta provenance 优先级与 RFC 4180 转义；聚焦 14 tests 通过 |
+| 04 本地门禁 | 已完成 | 无缓存 Swift build、聚焦 14 tests、完整 Swift 144 / Python 946 与全部登记 smoke 通过；完整 diff 无边界外改动，缓存已清理 |
+| 05 GitHub 收口 | 进行中 | 独立提交并推送，等待新 Actions run 完成，确认分支远端同步且工作树干净 |
+
+## 边界
+
+- 不修改 Modern Timing JSON 模型、后端数据结构、CSV 字段名及字段顺序。
+- 不通过修改 CI 超时、Xcode 版本或并发数掩盖编译器热点。
+- 不顺带批量重构其他导出器；如发现相似风险，另行记录。
+
+---
+
 # Horary Markdown 重构与导出形状测试（2026-08-01）
 
 分支：待定（用户先处理仓库状态，本任务在其后开工）。当前 HEAD 仍在 `codex/feature-real-prenatal-parans`，工作树干净。

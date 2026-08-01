@@ -110,62 +110,105 @@ extension MarkdownExportBuilder {
     }
 }
 
+private enum ModernTimingCSVColumn: String, CaseIterable {
+    case sourceType = "source_type"
+    case eventType = "event_type"
+    case movingPoint = "moving_point"
+    case targetPoint = "target_point"
+    case targetKind = "target_kind"
+    case aspect
+    case orbLimit = "orb_limit"
+    case enteringUTC = "entering_utc"
+    case exactUTC = "exact_utc"
+    case leavingUTC = "leaving_utc"
+    case exactLocal = "exact_local"
+    case motion
+    case passIndexInWindow = "pass_index_in_window"
+    case passCountInWindow = "pass_count_in_window"
+    case exactOrb = "exact_orb"
+    case methodKey = "method_key"
+    case id
+    case groupID = "group_id"
+    case movingPointID = "moving_point_id"
+    case targetPointID = "target_point_id"
+    case targetAxisBranch = "target_axis_branch"
+    case aspectID = "aspect_id"
+    case aspectAngle = "aspect_angle"
+    case movingLongitude = "moving_longitude"
+    case targetLongitude = "target_longitude"
+    case windowClippedStart = "window_clipped_start"
+    case windowClippedEnd = "window_clipped_end"
+    case targetChartType = "target_chart_type"
+    case targetChartMethod = "target_chart_method"
+}
+
+private struct ModernTimingCSVRow {
+    private static let columnIndexes = Dictionary(
+        uniqueKeysWithValues: ModernTimingCSVColumn.allCases.enumerated().map { ($0.element, $0.offset) }
+    )
+
+    private var values = Array(repeating: "", count: ModernTimingCSVColumn.allCases.count)
+
+    subscript(column: ModernTimingCSVColumn) -> String {
+        get { values[Self.columnIndexes[column]!] }
+        set { values[Self.columnIndexes[column]!] = newValue }
+    }
+
+    var fields: [String] { values }
+}
+
 extension TextExportBuilder {
     static func csv(_ result: ModernTimingResult) -> String {
-        let header = [
-            "source_type", "event_type", "moving_point", "target_point", "target_kind", "aspect", "orb_limit",
-            "entering_utc", "exact_utc", "leaving_utc", "exact_local", "motion",
-            "pass_index_in_window", "pass_count_in_window",
-            "exact_orb", "method_key",
-            "id", "group_id", "moving_point_id", "target_point_id", "target_axis_branch", "aspect_id", "aspect_angle",
-            "moving_longitude", "target_longitude", "window_clipped_start", "window_clipped_end",
-            "target_chart_type", "target_chart_method",
-        ]
-        var rows = [header]
+        let header = ModernTimingCSVColumn.allCases.map(\.rawValue)
+        var rows: [[String]] = [header]
         if result.meta.targetChartType != nil || result.meta.targetChartMethod != nil {
-            var provenanceRow = Array(repeating: "", count: header.count)
-            provenanceRow[0] = "meta"
-            provenanceRow[1] = "target_chart"
-            provenanceRow[header.count - 2] = result.meta.targetChartType ?? ""
-            provenanceRow[header.count - 1] = result.meta.targetChartMethod ?? ""
-            rows.append(provenanceRow)
+            var provenanceRow = ModernTimingCSVRow()
+            provenanceRow[.sourceType] = "meta"
+            provenanceRow[.eventType] = "target_chart"
+            provenanceRow[.targetChartType] = result.meta.targetChartType ?? ""
+            provenanceRow[.targetChartMethod] = result.meta.targetChartMethod ?? ""
+            rows.append(provenanceRow.fields)
         }
-        rows += result.events.map { event in
-            [
-                event.sourceType,
-                event.eventType,
-                event.movingPointName,
-                event.targetPointName ?? "",
-                event.targetPointKind ?? "",
-                event.aspectName ?? "",
-                event.orbLimit.map(timingNumber) ?? "",
-                event.enteringUTC ?? "",
-                event.exactUTC,
-                event.leavingUTC ?? "",
-                event.exactLocal,
-                event.motion,
-                String(event.passIndexInWindow),
-                String(event.passCountInWindow),
-                event.exactOrb.map(timingNumber) ?? "",
-                event.methodKey,
-                event.id,
-                event.groupID,
-                event.movingPointID,
-                event.targetPointID ?? "",
-                event.targetAxisBranch ?? "",
-                event.aspectID ?? "",
-                event.aspectAngle.map(timingNumber) ?? "",
-                timingNumber(event.movingLongitude),
-                event.targetLongitude.map(timingNumber) ?? "",
-                event.windowClippedStart ? "true" : "false",
-                event.windowClippedEnd ? "true" : "false",
-                event.targetChartType ?? result.meta.targetChartType ?? "",
-                event.targetChartMethod ?? result.meta.targetChartMethod ?? "",
-            ]
+        for event in result.events {
+            rows.append(timingCSVRow(for: event, meta: result.meta).fields)
         }
         return rows.map { row in
             row.map(timingCSVEscape).joined(separator: ",")
         }.joined(separator: "\n")
+    }
+
+    private static func timingCSVRow(for event: ModernTimingEvent, meta: ModernTimingMeta) -> ModernTimingCSVRow {
+        var row = ModernTimingCSVRow()
+        row[.sourceType] = event.sourceType
+        row[.eventType] = event.eventType
+        row[.movingPoint] = event.movingPointName
+        row[.targetPoint] = event.targetPointName ?? ""
+        row[.targetKind] = event.targetPointKind ?? ""
+        row[.aspect] = event.aspectName ?? ""
+        row[.orbLimit] = event.orbLimit.map(timingNumber) ?? ""
+        row[.enteringUTC] = event.enteringUTC ?? ""
+        row[.exactUTC] = event.exactUTC
+        row[.leavingUTC] = event.leavingUTC ?? ""
+        row[.exactLocal] = event.exactLocal
+        row[.motion] = event.motion
+        row[.passIndexInWindow] = String(event.passIndexInWindow)
+        row[.passCountInWindow] = String(event.passCountInWindow)
+        row[.exactOrb] = event.exactOrb.map(timingNumber) ?? ""
+        row[.methodKey] = event.methodKey
+        row[.id] = event.id
+        row[.groupID] = event.groupID
+        row[.movingPointID] = event.movingPointID
+        row[.targetPointID] = event.targetPointID ?? ""
+        row[.targetAxisBranch] = event.targetAxisBranch ?? ""
+        row[.aspectID] = event.aspectID ?? ""
+        row[.aspectAngle] = event.aspectAngle.map(timingNumber) ?? ""
+        row[.movingLongitude] = timingNumber(event.movingLongitude)
+        row[.targetLongitude] = event.targetLongitude.map(timingNumber) ?? ""
+        row[.windowClippedStart] = event.windowClippedStart ? "true" : "false"
+        row[.windowClippedEnd] = event.windowClippedEnd ? "true" : "false"
+        row[.targetChartType] = event.targetChartType ?? meta.targetChartType ?? ""
+        row[.targetChartMethod] = event.targetChartMethod ?? meta.targetChartMethod ?? ""
+        return row
     }
 
     private static func timingCSVEscape(_ value: String) -> String {

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-01 — Modern Timing CSV CI compile fix
+
+- 将 29 字段 Modern Timing CSV 从大型数组表达式改为命名列与定长 row builder，统一 header、meta provenance 和 event 行的字段顺序。
+- 移除基于数组尾部偏移的 provenance 魔法索引，保持现有字段名、顺序、数值格式和 event 优先/meta 兜底语义不变。
+- 新增 CSV schema 行宽、provenance 优先级以及逗号/引号/换行转义回归测试。
+- 验证：无缓存 `swift build` 通过；Modern Timing 聚焦 14 tests、完整 Swift 144 tests、Python 946 tests 及全部登记 backend smoke 通过。
+
 ## 2026-07-31 — README and repository handoff alignment
 
 - README 顶部版本口径更新为最近已打包的 `1.4.4 (46)`，并明确区分发布基线与当前源码中的 B18 true fixed-star paran 增量。

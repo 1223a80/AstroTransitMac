@@ -101,6 +101,56 @@ struct ModernTimingContractTests {
         #expect(json.contains("target_chart_method"))
     }
 
+    @Test func timingCSVUsesOneStableSchemaForEveryRow() throws {
+        let expectedHeader = [
+            "source_type", "event_type", "moving_point", "target_point", "target_kind", "aspect", "orb_limit",
+            "entering_utc", "exact_utc", "leaving_utc", "exact_local", "motion",
+            "pass_index_in_window", "pass_count_in_window", "exact_orb", "method_key",
+            "id", "group_id", "moving_point_id", "target_point_id", "target_axis_branch", "aspect_id", "aspect_angle",
+            "moving_longitude", "target_longitude", "window_clipped_start", "window_clipped_end",
+            "target_chart_type", "target_chart_method",
+        ]
+        let encoded = try JSONEncoder().encode(decodedResult())
+        var object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        var meta = try #require(object["meta"] as? [String: Any])
+        meta["target_chart_type"] = "composite"
+        meta["target_chart_method"] = "composite_midpoint"
+        object["meta"] = meta
+
+        var events = try #require(object["events"] as? [[String: Any]])
+        events[0]["target_chart_method"] = "event_snapshot_method"
+        object["events"] = events
+
+        let data = try JSONSerialization.data(withJSONObject: object)
+        let result = try JSONDecoder().decode(ModernTimingResult.self, from: data)
+        let rows = TextExportBuilder.csv(result)
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .map { $0.split(separator: ",", omittingEmptySubsequences: false).map(String.init) }
+
+        #expect(rows.count == result.events.count + 2)
+        #expect(rows[0] == expectedHeader)
+        #expect(rows.allSatisfy { $0.count == expectedHeader.count })
+        #expect(rows[1][0] == "meta")
+        #expect(rows[1][27] == "composite")
+        #expect(rows[1][28] == "composite_midpoint")
+        #expect(rows[2][28] == "event_snapshot_method")
+        #expect(rows[3][28] == "composite_midpoint")
+    }
+
+    @Test func timingCSVEscapesCommaQuoteAndNewline() throws {
+        let encoded = try JSONEncoder().encode(decodedResult())
+        var object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        var events = try #require(object["events"] as? [[String: Any]])
+        events[0]["moving_point_name"] = "土,星 \"R\"\n测试"
+        object["events"] = events
+
+        let data = try JSONSerialization.data(withJSONObject: object)
+        let result = try JSONDecoder().decode(ModernTimingResult.self, from: data)
+        let csv = TextExportBuilder.csv(result)
+
+        #expect(csv.contains("\"土,星 \"\"R\"\"\n测试\""))
+    }
+
     @Test func estimatorMatchesTechniqueEventFormulaAndTargetDeduplication() {
         let start = makeDate(year: 2030, month: 1, day: 1)
         let end = Calendar(identifier: .gregorian).date(byAdding: .day, value: 14, to: start)!
