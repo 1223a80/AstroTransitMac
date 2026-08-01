@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-01 — 测试覆盖补全
+
+- 补齐测试矩阵空白，只加测试与 fixture，生产代码（`Sources/` 与 `Resources/backend/`）零改动：
+  - **scan 模式**：新增 `SwiftTests/Fixtures/scan-result.json`（`Examples/sample-scan-request.json` 的真实后端输出，346 条命中）与 `SwiftTests/ScanResultTests.swift` 4 项——fixture 解码、可空字段、`MarkdownExportBuilder.scan` 表格行数与内容、无命中空状态。
+  - **rectify 生时矫正**：新增 `python_tests/test_rectify.py` 20 项，`astro_backend_rectify.py` 从零直接测试变为完整覆盖——三级窗口候选数（±30m/1min→61、±30s/5s→13、±5s/1s→11）、偏移对称与步长网格、`center_offset_seconds` 平移、step/window 下界钳制、候选结构与 `note`/`tags`/`houses_involved`、`shift_vs_center_days` 公式、错误路径（缺字段、未知时区、坏日期、非数字坐标）、stderr progress 行。
+  - **导出构建器**：新增 `SwiftTests/MarkdownClassicalSectionsTests.swift` 15 项（`MarkdownFormatting` 的 warnings/degree/sectionErrorBlock；`almutenSection`/`hylegSection`/`prenatalSyzygySection`；`primaryDirectionSection` 顺/逆拆分与 `circumambulationSection` 表格）与 `SwiftTests/MarkdownVedicExportBuilderTests.swift` 5 项（基于真实 `vedic-result` fixture 的字段级断言、section 过滤、warnings）。
+  - **LLM SSE 流式解析**：新增 `SwiftTests/LLMAnalysisStreamingTests.swift` 7 项（URLProtocol mock，无网络）——delta 内容与 reasoning 流、event/空行/空 delta 忽略、`[DONE]` 正常结束、`finish_reason=length` 抛 truncated、401 错误 JSON 解码、502 原文回退、畸形 JSON 行跳过。
+- 环境：新建 `.venv`（pyswisseph + pytest），此后 `check_vibe_changes.sh` 可优先使用项目自带 Python。
+- 验证：完整门禁结果见下文（Python 全量、Swift build/test、登记 smoke）。
+
 ## 2026-08-01 — 仓库收口审查修复
 
 - 将本地积压的 42 个提交无冲突快进整合到 `main` 并同步 `origin/main`；确认 GitHub 无开放 PR 后，删除 6 条已吸收远端任务分支和 4 条已精确合并本地分支。

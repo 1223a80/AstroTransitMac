@@ -1,3 +1,26 @@
+# 测试覆盖补全（2026-08-01）
+
+分支：`test/coverage-completion`。目标是把测试矩阵中的空白补上：scan 模式解码与导出、rectify 后端直接测试、古典/Vedic 导出构建器、LLM SSE 流式解析。只新增测试与 fixture，不改生产代码逻辑。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 环境准备 | 已完成 | 新建 `.venv`（pyswisseph 20230604 + pytest 9.1.1），系统 Python 此前缺 pytest；建任务分支 |
+| 02 scan 解码 + fixture + 导出 | 已完成 | 新增 `SwiftTests/Fixtures/scan-result.json`（真实后端输出 346 hits）；`SwiftTests/ScanResultTests.swift` 4 项：fixture 解码、可空字段、Markdown 表格行数与内容、空状态 |
+| 03 rectify 直接测试 | 已完成 | 新增 `python_tests/test_rectify.py` 20 项：三级窗口候选数（61/13/11）、偏移对称与网格、center_offset 平移、step/window 钳制、候选结构与 note/tags、shift_vs_center 公式、错误路径（缺字段/时区/日期/坐标）、stderr progress 行 |
+| 04 导出构建器补全 | 已完成 | 新增 `SwiftTests/MarkdownVedicExportBuilderTests.swift` 5 项（真实 fixture 字段级 + 节过滤 + warnings）；`SwiftTests/MarkdownClassicalSectionsTests.swift` 15 项（MarkdownFormatting 5、almuten/hyleg/prenatal 7、PD/circumambulation 5） |
+| 05 LLM SSE 流式解析 | 已完成 | 新增 `SwiftTests/LLMAnalysisStreamingTests.swift` 7 项（URLProtocol mock：delta 流、event/空行忽略、[DONE]、finish_reason=length 截断、401 JSON 错误、502 原文回退、畸形 JSON 行跳过），`@Suite(.serialized)` 串行化 |
+| 06 完整门禁与收口 | 进行中 | `bash check_vibe_changes.sh`（Python 全量 + Swift build/test + 登记 smoke）；更新 CHANGELOG；检查 diff |
+
+## 边界
+
+- 不修改生产代码（`Sources/` 与 `Resources/backend/` 零改动）；只加测试文件与一份新 fixture。
+- scan fixture 来自 `Examples/sample-scan-request.json` 的真实输出，未手工编辑。
+- 测试中三次修正了对实现行为的误读（rectify angles 含 8 角、sidereal 需 `sidereal_lahiri`、网格候选受 `window_seconds` 裁剪），均以实际行为为准。
+
+---
+
 # GitHub Actions Modern Timing CSV 编译修复（2026-08-01）
 
 分支：`codex/feature-real-prenatal-parans`。目标是修复 GitHub Actions macOS 15 ARM runner 在 `ModernTimingExports.swift` 的 29 字段 CSV 数组表达式上发生的 Swift 类型推导超时，不改变导出字段、顺序或数据语义。

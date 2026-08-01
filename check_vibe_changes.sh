@@ -26,12 +26,12 @@ echo "✅ Python 测试通过"
 echo
 
 echo "2. Swift 构建..."
-swift build 2>&1 | tail -5 || { echo "❌ Swift build 失败"; exit 1; }
+swift build --disable-sandbox 2>&1 | tail -5 || { echo "❌ Swift build 失败"; exit 1; }
 echo "✅ Swift build 成功"
 echo
 
 echo "2b. Swift 测试（解码契约 + 导出）..."
-swift test 2>&1 | tail -2 || { echo "❌ Swift 测试失败"; exit 1; }
+swift test --disable-sandbox 2>&1 | tail -2 || { echo "❌ Swift 测试失败"; exit 1; }
 echo "✅ Swift 测试通过"
 echo
 
