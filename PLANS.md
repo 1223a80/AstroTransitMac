@@ -10,7 +10,7 @@
 | 02 CSV schema 重构 | 已完成 | 用命名列枚举与定长 row builder 统一 header、meta、event 行，移除巨大数组表达式和魔法索引 |
 | 03 回归测试 | 已完成 | 覆盖精确表头、各行列数、event/meta provenance 优先级与 RFC 4180 转义；聚焦 14 tests 通过 |
 | 04 本地门禁 | 已完成 | 无缓存 Swift build、聚焦 14 tests、完整 Swift 144 / Python 946 与全部登记 smoke 通过；完整 diff 无边界外改动，缓存已清理 |
-| 05 GitHub 收口 | 进行中 | 独立提交并推送，等待新 Actions run 完成，确认分支远端同步且工作树干净 |
+| 05 GitHub 收口 | 进行中 | 首次远端复跑的 Swift build 已通过；修复其后暴露的 Python 依赖安装顺序，等待下一次 Actions run 全绿后确认同步 |
 
 ## 边界
 
