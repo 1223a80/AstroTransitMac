@@ -1696,8 +1696,8 @@ Target: review every tracked and untracked working-tree change plus every local 
 | 01 Inventory and task boundaries | completed | Git topology, staged/unstaged/untracked changes, local-only commits, stale branches, generated artifacts, and existing records classified |
 | 02 Code and contract review | completed | All 15 tracked files plus the untracked shape-contract test reviewed against call sites, Horary v2.1, AI prompt, export, and documentation contracts |
 | 03 Repairs and validation | completed | Confirmed defects repaired; focused 74 tests and full Python 946 / Swift 181 / build / 33 smokes / rectify gate passed; full diff and whitespace reviewed |
-| 04 Commit and mainline integration | in progress | Create intentional commits per task, integrate all non-superseded work into `main`, fetch/reconcile safely, and push without rewriting history |
-| 05 Repository cleanup and final audit | pending | Remove build/test caches and stale generated output, retire only fully absorbed local branches, and verify clean/synchronized `main` |
+| 04 Commit and mainline integration | completed | Horary review committed as `d139bab`; 42 local commits fast-forwarded into `main` and pushed without history rewriting; 6 merged remote refs and 4 exactly merged local refs retired |
+| 05 Repository cleanup and final audit | completed | Removed ~505 MB of build/package/venv/test caches; preserved intentional non-cache local data; two non-ancestor refs safely renamed under `archive/`; clean/synchronized `main` verified after closeout push |
 
 Completion criteria: all useful local work is represented by reviewed commits on `main`; superseded branch-only work is explicitly accounted for; required validation is green; caches/generated residue are removed; `git status --short --branch` is clean and local/remote state is verified.
 
@@ -1705,8 +1705,8 @@ Completion criteria: all useful local work is represented by reviewed commits on
 
 | Ref | Disposition |
 |---|---|
-| `codex/feature-horary-markdown-readable` | Current reviewed work; commit once records are closed, then fast-forward into `main` |
-| `codex/fix-horary-markdown-token-budget` (`f3c236e`) | Useful implementation ported and repaired; obsolete `1.4.3 (45)` packaging change deliberately excluded because main is `1.4.4 (46)` |
-| `codex/archive-pre-cleanup-20260724` (`e3d95ba`) | Pre-integration safety snapshot; semantically absorbed by the later Horary/layout/legacy commits; direct merge would regress newer UI and is therefore superseded, not mergeable work |
-| Other local `fix/*` / `codex/feature-real-prenatal-parans` refs | Their tips are ancestors of the current reviewed line and will be retired after `main` advances |
-| Remote `codex/*` refs | All except the current prenatal-parans line are already ancestors of local `main`; remote cleanup follows successful main synchronization |
+| `codex/feature-horary-markdown-readable` | Reviewed as `d139bab`, fast-forwarded into `main`, then local task ref retired |
+| `archive/horary-markdown-token-budget-20260724` (`f3c236e`) | Useful implementation ported and repaired; obsolete `1.4.3 (45)` packaging change deliberately excluded because main is `1.4.4 (46)`; original commit retained as an archive ref |
+| `archive/pre-cleanup-20260724` (`e3d95ba`) | Pre-integration safety snapshot; semantically absorbed by later Horary/layout/legacy commits; direct merge would regress newer UI, so the original commit remains recoverable only as an archive ref |
+| Other local task refs | Four exact ancestors of `main` deleted after integration; no active feature/fix branch remains |
+| Remote `codex/*` refs | Six refs confirmed merged with no open PR, then deleted after `origin/main` reached `d139bab` |
