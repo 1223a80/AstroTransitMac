@@ -5,6 +5,7 @@
 - 将本地积压的 42 个提交无冲突快进整合到 `main` 并同步 `origin/main`；确认 GitHub 无开放 PR 后，删除 6 条已吸收远端任务分支和 4 条已精确合并本地分支。
 - 两条拓扑上未精确合并、但内容已被后续实现取代的本地提交没有强删，统一归档为 `archive/pre-cleanup-20260724` 与 `archive/horary-markdown-token-budget-20260724`，兼顾主分支整洁和历史可恢复性。
 - 删除 `.build`、`dist`、`.venv`、pytest / Python bytecode 与临时目录，释放约 505 MB；保留 `.reasonix` 附件、`maitreya8-reference` 和本地工具设置等非缓存资料。
+- 根据 GitHub 官方 2026-07-20 稳定发布与 `action.yml` 的 Node 24 声明，将 CI 的 `actions/checkout`、`actions/setup-python` 同步升级到 v7，消除最终 main 门禁中的 Node 20 弃用告警。
 - 修复 Horary AI 输入仍隐式夹带默认提示词的问题：无显式 `prompt` 时 Markdown builder 现在只生成数据报告，AI 选择的提示词仅通过 system message 发送一次；复制/保存路径仍显式注入用户配置的 Horary 提示词。
 - 修复接纳表读取不存在的单数 `related_aspect_id`、并把任意证据对象显示成“有”的问题，改为输出真实 `related_aspect_candidate_ids` 和精确时关系状态。
 - `LLMAnalysisClient` 的内置回退提示词改为复用 `AIPromptDefaults`，消除两份 Horary 默认文案漂移。

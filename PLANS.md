@@ -1698,6 +1698,7 @@ Target: review every tracked and untracked working-tree change plus every local 
 | 03 Repairs and validation | completed | Confirmed defects repaired; focused 74 tests and full Python 946 / Swift 181 / build / 33 smokes / rectify gate passed; full diff and whitespace reviewed |
 | 04 Commit and mainline integration | completed | Horary review committed as `d139bab`; 42 local commits fast-forwarded into `main` and pushed without history rewriting; 6 merged remote refs and 4 exactly merged local refs retired |
 | 05 Repository cleanup and final audit | completed | Removed ~505 MB of build/package/venv/test caches; preserved intentional non-cache local data; two non-ancestor refs safely renamed under `archive/`; clean/synchronized `main` verified after closeout push |
+| 06 CI runtime warning cleanup | in progress | Official checkout/setup-python v7 releases and Node 24 runtime declarations verified; workflow upgraded from v4/v5; awaiting the new remote CI run |
 
 Completion criteria: all useful local work is represented by reviewed commits on `main`; superseded branch-only work is explicitly accounted for; required validation is green; caches/generated residue are removed; `git status --short --branch` is clean and local/remote state is verified.
 
