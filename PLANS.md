@@ -22,40 +22,47 @@
 
 # Horary Markdown 重构与导出形状测试（2026-08-01）
 
-分支：待定（用户先处理仓库状态，本任务在其后开工）。当前 HEAD 仍在 `codex/feature-real-prenatal-parans`，工作树干净。
+分支：`codex/feature-horary-markdown-readable`（基于 7690db2 创建）。本条目随进展更新。
 
 ## 背景与动机
 
 - Swift `MarkdownExportBuilder.horary`（`Sources/TransitStudio/MarkdownHoraryExportBuilder.swift`）目前是「markdown 标题骨架 + 每节整行 JSON dump」：文件内 25 处 `stringifyJSON`/`rawValue` 灌装，除 `## N. Section` 标题外几乎全是 JSON，人不可读。
-- 同一功能存在双实现分裂：后端 Python `format_horary_v2_markdown`（`astro_backend_horary_v2.py:2310`）是字段级可读 markdown，Swift 端从不调用、两端无一致性测试。
+- 同一功能存在双实现分裂：app 使用 Swift `MarkdownExportBuilder.horary`；后端 Python `format_horary_v2_markdown`（`astro_backend_horary_v2.py:2310`）是独立诊断 formatter，仍含部分序列化证据片段，Swift 端不调用、两端也不承诺字节一致。
 - 痛点（用户已确认）：该函数同时供「复制 Markdown」与人阅读和 AI 上下文（`ContentView+AI.swift:89`）使用；原始 JSON 一次约 **40 万 tokens**，可读 markdown 约 **9K tokens**。
 - 已确认决策：**markdown 输出仅保留 markdown 格式可表达的信息**；项目已有独立的 JSON / CSV 导出功能，不需要在 markdown 里内嵌 JSON。
+- **关键发现（2026-08-01）**：孤立分支 `codex/fix-horary-markdown-token-budget`（commit `f3c236e`，2026-07-24）已实现过完全相同的方案（可读表格 + 顶部提示词注入 + 体积/形状测试），但从未合并进主线；主线（32a7453→HEAD）从未动过该 builder 文件。本任务改为**移植 f3c236e 修正后合并**，不再从零重写。
 
-## 目标
+## f3c236e 审查结论（2026-08-01，已 review）
 
-1. 重写 `MarkdownHoraryExportBuilder.swift` 为字段级可读 markdown（参考后端 Python 版风格），删除全部整行 JSON dump（禁止 `- full: {...}`、`- {...}` 裸行）。
-2. 证据不丢：schema/provenance 哈希、时间地点、计算配置、角点、宫位、星体、尊贵、相位、接纳、Lots、事件、月亮、可见性、节点、事件图、行星时、considerations、optional modules、validation、display 各节均以 markdown 表格/列表提取完整字段。
-3. AI 上下文复用重构后输出（token 从 ~40 万降至 ~9K 量级），需人工抽查 AI 面板输出质量。
-4. 添加测试（见下），并把「markdown 形状」纳入导出测试规范。
-5. 附带修复 `ExportMenu` 死参数（`ResultToolbarViews.swift`：`markdownProvider` 传入但从未使用，导出菜单无 Markdown 项）。
+**需修正后合并**。已核实：约 30 个 `HoraryV2EvidenceRow` 属性在 7690db2 全部存在（编译兼容），紧凑表格方案可复用；同时确认 nil prompt 重复注入、接纳字段映射、测试覆盖和文档表述仍需修复。除 CHANGELOG/PLANS/BackendContractTests/package_app.sh 外，其余原提交文件主线未动（移植边界清晰）。
+
+修正清单（移植时必须处理）：
+1. **版本号（Blocking）**：跳过 f3c236e 的 `package_app.sh` 版本号改动（1.4.3 (45) 是倒退，主线已是 1.4.4 (46)）。
+2. **AI 提示词去重（Should-fix）**：`ContentView+AI.swift:89` 传 data-only Markdown，当前选中的提示词仅作为 system message 发送；复制/保存路径才在报告顶部显式注入 `appState.aiPromptHorary`。
+3. **文档同步（Should-fix）**：`docs/horary-v2/FIELD_DICTIONARY.md:86` 与 `docs/horary-v2/README.md:50` 仍称 formatter 为 lossless，移植后矛盾，需更新。
+4. **如实记录裁剪**：新版本有意不输出 `event_graph`、`pairwise_geometry`、provenance 完整证据与 display metadata（无损走 JSON 导出），CHANGELOG 须写明，不沿用「不改变 AI 分析链路」的说法。
 
 ## 执行计划
 
 | 阶段 | 状态 | 范围 |
 |---|---|---|
-| 01 现状核对 | 待开始 | 读 `HoraryDataPacketModels.swift` 字段访问器、`HoraryResultTests` / `BackendContractTests` 现有 markdown 断言、后端 Python 版 `format_horary_v2_markdown` 全文 |
-| 02 Swift builder 重写 | 待开始 | `MarkdownHoraryExportBuilder.swift` 字段级重写，删除 stringifyJSON 灌装；`swift build` 通过 |
-| 03 形状契约测试 | 待开始 | 新增 `SwiftTests/MarkdownShapeContractTests.swift`：全部模式 markdown 断言以 `# ` 开头、含 `## ` 节、无裸 JSON 行、无 `- full: {`；Horary 内容断言（具体字段值以可读形式出现）；token 预算断言（markdown 长度显著小于等价 JSON，防止回归 dump 风格） |
-| 04 更新旧断言 | 待开始 | `HoraryResultTests.markdownAndCsvAreDataOnly` / `jsonSwiftRoundTripPreservesEvidenceKeys` 中 `md.contains("geocoding")` 等要求 JSON 字段名出现的断言改为可读形式断言；CSV 与 JSON 断言不动 |
-| 05 ExportMenu 修复 | 待开始 | 导出菜单补「保存 Markdown」项（或删除死参数）；顺带确认三个调用点（classical、horary、通用工具栏） |
-| 06 全量门禁 | 待开始 | `bash check_vibe_changes.sh` 全绿；`CHANGELOG.md` 追加记录；`PLANS.md` 本条目收口 |
+| 01 现状核对 + f3c236e review | ✅ | 冲突面检查（仅 4 个文件两边都改过）；review 完成，结论「需修正后合并」，修正清单见上 |
+| 02 移植 f3c236e | ✅ | 7 个文件检出（BackendContractTests 手工保留主线 eec6bbd prenatal parans 断言）；跳过 package_app.sh 版本号；复制/保存路径显式传 `appState.aiPromptHorary`；同步 Horary 文档；`swift build` 通过 |
+| 03 全模式 markdown 形状测试 | ✅ | 新增 `SwiftTests/MarkdownShapeContractTests.swift`：27 个有 fixture 的模式 + 反向 JSON 断言；统一断言「以 `# ` 标题开头、无裸 JSON 行、无 `- full: {`、体积 < 100KB」；localSpace/astrocartography/modernCycles 为合法的「# 标题+表格」风格，不强制 `## `；28 tests 全绿 |
+| 04 更新旧断言 | ✅ | HoraryResultTests 的 `md.contains("geocoding")` 等 JSON 字段名断言替换为可读节断言（`## 接纳`/`## Lots`/`## 月亮进程与 VOC` 等 + `!contains("{\"")`）；BackendContractTests horary 断言改 `## 相位`/`显示容许度`；CSV/JSON 断言不动 |
+| 05 ExportMenu 修复 | ✅ | `ExportMenu` 补「复制/保存 Markdown」（.md 扩展名），markdownProvider 死参数正式消费；classical/horary/通用工具栏三调用点自动受益 |
+| 06 全量门禁 | ✅ | Python 946 passed；Swift build + 172 tests 全绿（本环境需 `--disable-sandbox`）；33 个 backend smoke + rectify（total_candidates=3）全过；CHANGELOG 已追加；本条目收口 |
+| 07 review 后修复 | ✅ | 裸 JSON 检测加强（整行 / `- {` / `: {` 三形态 + ```json 代码块豁免）；AI 路径提示词去重（customSystemPrompt 单一承担）；结构断言收紧；全量 172 tests 全绿 |
+| 08 仓库收口复审 | ✅ | 修复 nil prompt 重复文案、接纳映射失真、双份 AI 默认文案漂移；35/35 fixture + 合成 JSON detector 全覆盖；聚焦 74 项及完整 Python 946 / Swift 181 / build / 33 smokes / rectify 全绿 |
 
 ## 边界与风险
 
 - 不动后端、不动 fixture：后端输出无变化，`jsonSwiftRoundTripPreservesEvidenceKeys` 的 JSON 保真契约不受影响。
 - `HoraryDataPacket` 的 raw JSON 访问器保留（JSON/CSV 导出依赖），只改 markdown 呈现层。
-- AI 上下文随重构变化，需抽查；若个别证据字段在 markdown 中表达困难，保留字段级提取而非整行 dump。
-- 工作量估算：重构 4–6h + 测试 3–4h + 门禁与收口 0.5–1h ≈ 1.5–2 天（含调试）。
+- AI 上下文随重构变化（体积大减、内容为字段级），需人工抽查 AI 面板输出质量。
+- 老用户 UserDefaults 已存的 `aiPromptHorary` 不会被新默认文案覆盖（`defaults ?? default` 语义），可接受，不迁移。
+- 工作量估算（移植路径）：移植 1–2h + 形状测试 3–4h + 修正与门禁 1h ≈ 1 天（含调试）。
+
 
 ---
 
@@ -1677,3 +1684,29 @@ Reproduction: classical natal chart for 2004-08-09 16:16 GMT+8, 35.0576N / 118.3
 | 06 Cleanup and commit | done | Build/test/package caches removed; records and final diff synchronized for the regression fix plus authorized scan-limit changes |
 
 Completion criteria: the reported classical chart decodes and renders without the raw-JSON error; full validation is green; the corrected app replaces the broken installation; the final worktree is clean.
+
+---
+
+# Repository Full Review, Mainline Integration, and Cleanup (2026-08-01)
+
+Target: review every tracked and untracked working-tree change plus every local branch not yet represented on `main`; preserve valid work, repair confirmed defects, integrate the final logical commits into `main`, synchronize the remote only after validation, and leave the repository free of build/test caches and pending Git changes.
+
+| Phase | Status | Scope |
+|---|---|---|
+| 01 Inventory and task boundaries | completed | Git topology, staged/unstaged/untracked changes, local-only commits, stale branches, generated artifacts, and existing records classified |
+| 02 Code and contract review | completed | All 15 tracked files plus the untracked shape-contract test reviewed against call sites, Horary v2.1, AI prompt, export, and documentation contracts |
+| 03 Repairs and validation | completed | Confirmed defects repaired; focused 74 tests and full Python 946 / Swift 181 / build / 33 smokes / rectify gate passed; full diff and whitespace reviewed |
+| 04 Commit and mainline integration | in progress | Create intentional commits per task, integrate all non-superseded work into `main`, fetch/reconcile safely, and push without rewriting history |
+| 05 Repository cleanup and final audit | pending | Remove build/test caches and stale generated output, retire only fully absorbed local branches, and verify clean/synchronized `main` |
+
+Completion criteria: all useful local work is represented by reviewed commits on `main`; superseded branch-only work is explicitly accounted for; required validation is green; caches/generated residue are removed; `git status --short --branch` is clean and local/remote state is verified.
+
+## Branch accounting
+
+| Ref | Disposition |
+|---|---|
+| `codex/feature-horary-markdown-readable` | Current reviewed work; commit once records are closed, then fast-forward into `main` |
+| `codex/fix-horary-markdown-token-budget` (`f3c236e`) | Useful implementation ported and repaired; obsolete `1.4.3 (45)` packaging change deliberately excluded because main is `1.4.4 (46)` |
+| `codex/archive-pre-cleanup-20260724` (`e3d95ba`) | Pre-integration safety snapshot; semantically absorbed by the later Horary/layout/legacy commits; direct merge would regress newer UI and is therefore superseded, not mergeable work |
+| Other local `fix/*` / `codex/feature-real-prenatal-parans` refs | Their tips are ancestors of the current reviewed line and will be retired after `main` advances |
+| Remote `codex/*` refs | All except the current prenatal-parans line are already ancestors of local `main`; remote cleanup follows successful main synchronization |

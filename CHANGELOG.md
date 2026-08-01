@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-01 — 仓库收口审查修复
+
+- 修复 Horary AI 输入仍隐式夹带默认提示词的问题：无显式 `prompt` 时 Markdown builder 现在只生成数据报告，AI 选择的提示词仅通过 system message 发送一次；复制/保存路径仍显式注入用户配置的 Horary 提示词。
+- 修复接纳表读取不存在的单数 `related_aspect_id`、并把任意证据对象显示成“有”的问题，改为输出真实 `related_aspect_candidate_ids` 和精确时关系状态。
+- `LLMAnalysisClient` 的内置回退提示词改为复用 `AIPromptDefaults`，消除两份 Horary 默认文案漂移。
+- Markdown 形状门禁补齐此前漏掉的 8 份现有 fixture，并用真实 JSON 解析覆盖对象、数字数组、列表项、键值前缀与代码围栏；Swift/Python Horary Markdown 文档改为如实区分 app 可读导出与后端诊断 formatter。
+- 验证：聚焦 Markdown 形状 37、Horary 4、AppState 1、BackendContract 32 项全绿；完整门禁 Python 946、Swift 181（24 suites）、Swift build、33 个 backend smoke 与 rectify 全绿。
+
+## 2026-08-01 — Horary Markdown 可读化与全模式导出形状测试
+
+- 移植孤儿分支 `codex/fix-horary-markdown-token-budget`（f3c236e，2026-07-24 从未合并进主线）的 Horary Markdown 瘦身方案：`MarkdownExportBuilder.horary` 从「markdown 标题 + 每节整行 JSON dump」（约 40 万 tokens）重写为 17 个主节的字段级可读表格（约 9K tokens），覆盖问题/起盘信息、计算设置、角点、宫位、天体、尊贵、相位、接纳、Lots、事件、可见性、月交点、判断前事实等；`stringifyJSON`/`rawValue` 残留为零，无损证据明确由 JSON 导出承担。
+- 复制/保存 Markdown 时在顶部注入 `appState.aiPromptHorary`；AI 分析则接收 data-only Markdown，并通过 system message 单独发送当前选中的提示词，避免重复与冲突。
+- 新增 Markdown 形状契约测试 `MarkdownShapeContractTests`：覆盖全部 35 份现有结果 fixture，统一断言「以 `# ` 标题开头、无裸 JSON 对象/数组（代码块围栏豁免）、无 `- full: {` 内嵌、体积 < 100KB」，外加 JSON 导出不得伪装成 markdown 的反向断言。
+- `ExportMenu` 死参数修复：导出菜单补上「复制 / 保存 Markdown」项（此前 `markdownProvider` 传入但从未消费，菜单只有 JSON/CSV）。
+- 文档同步：`docs/horary-v2/FIELD_DICTIONARY.md` 与 `README.md` 移除错误的 lossless formatter 表述，如实区分 app 的字段级可读导出与 Python 诊断 formatter；无损路径为 JSON 导出。
+- 边界：不涉及后端与 fixture，Horary JSON 保真契约（`jsonSwiftRoundTripPreservesEvidenceKeys`）不变；跳过旧分支的版本号改动（保持 1.4.4 (46)）。
+- 验证：最终 MarkdownShapeContractTests 37 tests、全量 Swift 181 tests、Python 946 tests、Swift build、33 个 backend smoke 与 rectify 全绿。
+
 ## 2026-08-01 — Modern Timing CSV CI compile fix
 
 - 将 29 字段 Modern Timing CSV 从大型数组表达式改为命名列与定长 row builder，统一 header、meta provenance 和 event 行的字段顺序。

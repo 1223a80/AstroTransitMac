@@ -9,9 +9,11 @@ struct ExportMenu: View {
 
     var body: some View {
         Menu {
+            CopyMarkdownButton(title: "复制 Markdown", textProvider: markdownProvider)
             CopyMarkdownButton(title: "复制 JSON", textProvider: jsonProvider)
             CopyMarkdownButton(title: "复制 CSV", textProvider: csvProvider)
             Divider()
+            SaveTextButton(title: "保存 Markdown", defaultFilename: "\(basename).md", textProvider: markdownProvider)
             SaveTextButton(title: "保存 JSON", defaultFilename: "\(basename).json", textProvider: jsonProvider)
             SaveTextButton(title: "保存 CSV", defaultFilename: "\(basename).csv", textProvider: csvProvider)
         } label: {

@@ -83,8 +83,10 @@ Sunrise/sunset bounds, day/hour rulers, unequal hours, polar reason codes; ASC e
 
 ## Markdown
 
-- **Full** (`MarkdownExportBuilder.horary` / Python `format_horary_v2_markdown`): lossless dump for AI.
+- **App / Swift** (`MarkdownExportBuilder.horary`): compact field-level Markdown for humans and AI; deliberately selective.
+- **Backend diagnostic helper** (`format_horary_v2_markdown`): separate structural formatter used by Python-side diagnostics; it may retain serialized evidence fragments and is not the app export path.
 - **Summary**: human skim only (`docs/examples/horary-data-packet-v2-summary.md`).
+- **Lossless source**: JSON export only; neither Markdown formatter is a lossless packet representation.
 
 ## Forbidden judgment fields
 

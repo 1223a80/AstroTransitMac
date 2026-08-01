@@ -47,7 +47,7 @@ Unknown packet versions are rejected instead of being silently routed to the cur
 
 ## Markdown / AI
 
-`MarkdownExportBuilder.horary` and Python `format_horary_v2_markdown` are lossless formatters of the canonical packet. AI analysis receives this data-only Markdown.
+`MarkdownExportBuilder.horary` produces the app's compact field-level report. AI analysis receives that data-only report and sends the selected analysis prompt separately as its system message. Python's `format_horary_v2_markdown` remains a separate diagnostic structural formatter and may include serialized evidence fragments. Both are selective; the lossless evidence path is the JSON export.
 
 ## Migration
 

@@ -624,7 +624,8 @@ struct BackendContractTests {
         #expect(wheel.aspects.allSatisfy { ["合相", "冲相", "刑相", "拱相", "六合"].contains($0.type) })
 
         let markdown = MarkdownExportBuilder.horary(result)
-        #expect(markdown.contains("aspect_orb") || markdown.contains("display_orb") || markdown.contains("Aspect"))
+        #expect(markdown.contains("## 相位"))
+        #expect(markdown.contains("显示容许度"))
         #expect(!markdown.lowercased().contains("machine summary"))
 
         let csv = TextExportBuilder.csv(result)

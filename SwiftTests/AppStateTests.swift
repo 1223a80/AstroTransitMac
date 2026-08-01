@@ -16,5 +16,7 @@ struct AppStateTests {
         #expect(state.savedLLMModels.contains("deepseek-v4-flash"))
         #expect(state.savedLLMModels.contains("deepseek-v4-pro"))
         #expect(state.aiReasoningEffort == "max")
+        #expect(state.aiPromptHorary == AIPromptDefaults.text(for: "horary"))
+        #expect(!state.aiPromptHorary.isEmpty)
     }
 }

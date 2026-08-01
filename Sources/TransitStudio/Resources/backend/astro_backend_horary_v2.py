@@ -2308,7 +2308,7 @@ def sign_exit_days(body_id: str) -> int:
 
 
 def format_horary_v2_markdown(packet: dict[str, Any]) -> str:
-    """Lossless structural Markdown from v2 packet — no conclusions."""
+    """Selective diagnostic Markdown from a v2 packet — no conclusions."""
     lines: list[str] = [
         f"# Horary Data Packet {packet['schema']['schema_id']}",
         "",

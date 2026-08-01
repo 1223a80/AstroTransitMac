@@ -168,6 +168,11 @@ struct AppSettingsView: View {
                         RoundedRectangle(cornerRadius: TS.Radius.chip)
                             .stroke(Color.secondary.opacity(0.25))
                     )
+                if appState.aiPromptStyle == "horary" {
+                    Text("Horary 提示词也会放在“复制 / 保存 Markdown”的数据报告最前面。")
+                        .font(TS.Font.label)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             VStack(alignment: .leading, spacing: TS.Spacing.md) {

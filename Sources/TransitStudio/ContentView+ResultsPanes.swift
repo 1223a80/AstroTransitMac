@@ -519,9 +519,22 @@ extension ContentView {
                 VStack(alignment: .leading, spacing: TS.Spacing.lg) {
                     HStack(spacing: TS.Spacing.md) {
                         Spacer(minLength: 0)
-                        CopyMarkdownButton(title: "复制 Markdown", textProvider: { MarkdownExportBuilder.horary(calcVM.horaryResult!) })
+                        CopyMarkdownButton(
+                            title: "复制 Markdown",
+                            textProvider: {
+                                MarkdownExportBuilder.horary(
+                                    calcVM.horaryResult!,
+                                    prompt: appState.aiPromptHorary
+                                )
+                            }
+                        )
                         ExportMenu(
-                            markdownProvider: { MarkdownExportBuilder.horary(calcVM.horaryResult!) },
+                            markdownProvider: {
+                                MarkdownExportBuilder.horary(
+                                    calcVM.horaryResult!,
+                                    prompt: appState.aiPromptHorary
+                                )
+                            },
                             jsonProvider: { TextExportBuilder.json(calcVM.horaryResult!) },
                             csvProvider: { TextExportBuilder.csv(calcVM.horaryResult!) },
                             basename: "horary_chart"

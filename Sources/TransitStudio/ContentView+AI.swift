@@ -86,6 +86,8 @@ extension ContentView {
         }
         await analyze(
             title: "Horary 问题分析",
+            // Keep the report data-only here. The selected prompt is sent once,
+            // as customSystemPrompt inside analyze().
             markdown: MarkdownExportBuilder.horary(horaryResult),
             streamKey: "horary",
             assignText: { aiVM.horaryAnalysis = $0 },
