@@ -7,6 +7,7 @@
 - 新增 CSV schema 行宽、provenance 优先级以及逗号/引号/换行转义回归测试。
 - 验证：无缓存 `swift build` 通过；Modern Timing 聚焦 14 tests、完整 Swift 144 tests、Python 946 tests 及全部登记 backend smoke 通过。
 - 首次远端复跑确认 Swift build 已修复；随后暴露既有测试顺序问题，CI 现于 `swift test` 前安装 Python 及 `pyswisseph` 依赖，确保 Swift 端真实后端解码测试具备运行环境。
+- GitHub Actions run `30681991389` 最终全绿：Swift build、Swift tests、Python tests 与 backend smoke 全部通过。
 
 ## 2026-07-31 — README and repository handoff alignment
 
