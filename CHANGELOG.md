@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-02 — Horary 行星日/时、事件窗口与证据展示修复
+
+- **行星日/时（planetary_day_hour）不再对 GMT±N 时区降级 UTC**：`astro_backend_horary_v2_modules.py` 删除 `ZoneInfo` 强制回退，直接使用 chart 自身 tzinfo（IANA 或 `GMT+8` 固定偏移均支持 `.astimezone`）；`_planetary_hours`/`_iso_local` 类型标注放宽为 `tzinfo`。修复 Swift `GMTOffset` 标签（产品默认路径）下行星日主星恒错一天、24 段行星时 ruler 序列错位、`start_local/end_local` 变 UTC 标签、`asc_ruler_vs_hour_ruler` 事实错误及每次请求的误导性警告。
+- **日出/日落事件补齐过去窗口**：`_build_events` 的探针改为覆盖整个 `eventPastDays` 窗口（每日一个探针 + 去重），过去 4 天窗口内的 8 个 sunrise/sunset 事件不再缺失，事件时间线与 sign_ingress/station/house_change/月相一致。
+- **`_jd_ut_to_local` 进位修复**：改用 `timedelta` 构建 UTC 时刻，23:59:59.x 的秒/分/时进位现在会正确滚动日历日，不再产生日期少一天的边缘错误。
+- **证据 tab 展示 JSON**：`HoraryV2JSONValue` 实现 `CustomStringConvertible` + `prettyJSON`（稳定键序、标准 JSON 引号与字符串转义），月亮/VOC、可见性、尊贵归属三个 tab 不再输出 Swift 枚举反射调试文本；`HoraryJSONBlockView` 统一复用同一实现。
+- **日出/日落探针上限**：探针天数按 400 天封顶（与 station 搜索一致），超大 `eventPastDays/eventFutureDays` 不会触发数千次星历调用。
+- **契约维护**：`SwiftTests/Fixtures/horary-result.json` 与 `docs/examples/horary-data-packet-v2-linyi-golden.json` 按 docs/validation.md 重新生成（4 空格缩进保持一致）；重新生成顺带修正了历史遗留的 golden receptions 漂移（旧的 `JUPITER|VENUS|bound` 行是错误接纳，引擎早已修正）。
+- 测试：新增 4 项 Python 回归（GMT+8 标签行星日/时与 IANA 完全一致、过去窗口 8 个日出日落事件、`_jd_ut_to_local` 跨天进位、常规转换）与 1 项 Swift 回归（prettyJSON 输出）；全量 Python 969 passed / 1 skipped，Swift 213 tests / 28 suites，horary/classical/visibility/cycles/scan/vedic smoke 全绿。
+
 ## 2026-08-02 — 最后修改审查与发布收口
 
 - 复核 `test/coverage-completion` 的全部新增测试、门禁脚本和 346 条扫描 fixture；fixture 已由 `Examples/sample-scan-request.json` 重新生成并逐字比对一致。

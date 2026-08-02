@@ -6,7 +6,7 @@ mode=classical_visibility
 from __future__ import annotations
 
 import math
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, tzinfo
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -73,7 +73,7 @@ def _iso_utc(dt: datetime | None) -> str | None:
     return dt.astimezone(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 
-def _iso_local(dt: datetime, zone: ZoneInfo) -> str:
+def _iso_local(dt: datetime, zone: tzinfo) -> str:
     return dt.astimezone(zone).isoformat(timespec="milliseconds")
 
 
@@ -209,7 +209,7 @@ def _heliacal_events(
     altitude_m: float,
     observer_age: float,
     warnings: list[str],
-    display_zone: ZoneInfo,
+    display_zone: tzinfo,
 ) -> list[dict[str, Any]]:
     geopos = (longitude, latitude, altitude_m)
     datm = (1013.25, 15.0, 40.0, 0.15)  # pressure hPa, temp C, RH, meteorological range km-ish
@@ -361,7 +361,7 @@ def _planetary_hours(
     latitude: float,
     longitude: float,
     altitude_m: float,
-    display_zone: ZoneInfo,
+    display_zone: tzinfo,
     warnings: list[str],
 ) -> dict[str, Any]:
     # Work in display zone local civil day.
@@ -546,7 +546,7 @@ def calculate_classical_visibility(request: dict[str, Any], warnings: list[str])
                 altitude_m=altitude_m,
                 observer_age=observer_age,
                 warnings=warnings,
-                display_zone=display_zone,  # type: ignore[arg-type]
+                display_zone=display_zone,
             )
         except Exception as exc:
             section_errors["heliacal"] = str(exc)

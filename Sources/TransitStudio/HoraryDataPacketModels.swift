@@ -189,6 +189,61 @@ enum HoraryV2JSONValue: Codable {
     func bool(_ key: String) -> Bool? { self[key]?.boolValue }
 }
 
+// MARK: - Pretty JSON display
+
+extension HoraryV2JSONValue: CustomStringConvertible {
+    /// Readable JSON text (stable key order), used by `String(describing:)`
+    /// call sites in the horary evidence tabs.
+    var description: String { prettyJSON }
+
+    var prettyJSON: String { prettyJSONText(indent: 0) }
+
+    private func prettyJSONText(indent: Int) -> String {
+        let pad = String(repeating: "  ", count: indent)
+        switch self {
+        case .null: return "null"
+        case .bool(let b): return String(b)
+        case .number(let n): return String(n)
+        case .string(let s): return "\"\(Self.escapedJSON(s))\""
+        case .array(let arr):
+            if arr.isEmpty { return "[]" }
+            let body = arr.map { $0.prettyJSONText(indent: indent + 1) }.joined(separator: ",\n\(pad)  ")
+            return "[\n\(pad)  \(body)\n\(pad)]"
+        case .object(let obj):
+            if obj.isEmpty { return "{}" }
+            let keys = obj.keys.sorted()
+            let body = keys.map { k in "\"\(k)\": \(obj[k]!.prettyJSONText(indent: indent + 1))" }.joined(separator: ",\n\(pad)  ")
+            return "{\n\(pad)  \(body)\n\(pad)}"
+        }
+    }
+
+    /// JSON string escaping so control chars / quotes cannot break the text.
+    private static func escapedJSON(_ s: String) -> String {
+        var out = ""
+        out.reserveCapacity(s.count)
+        for ch in s.unicodeScalars {
+            switch ch {
+            case "\\": out += "\\\\"
+            case "\"": out += "\\\""
+            case "\n": out += "\\n"
+            case "\r": out += "\\r"
+            case "\t": out += "\\t"
+            default:
+                if ch.value < 0x20 {
+                    out += String(format: "\\u%04x", ch.value)
+                } else {
+                    out.unicodeScalars.append(ch)
+                }
+            }
+        }
+        return out
+    }
+}
+
+extension Dictionary where Key == String, Value == HoraryV2JSONValue {
+    var prettyJSON: String { HoraryV2JSONValue.object(self).prettyJSON }
+}
+
 struct HoraryV2Schema: Codable {
     let name: String
     let version: String

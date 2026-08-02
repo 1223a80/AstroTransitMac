@@ -40,7 +40,7 @@ struct HoraryMoonDataView: View {
                 Text("Moon index (full JSON)")
                     .font(TS.Font.sectionTitle)
                 if let moon {
-                    Text(String(describing: moon).prefix(8000))
+                    Text((moon.prettyJSON).prefix(8000))
                         .font(.system(.caption, design: .monospaced))
                         .textSelection(.enabled)
                 } else {
@@ -61,7 +61,7 @@ struct HoraryJSONBlockView: View {
             VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 Text(title).font(TS.Font.sectionTitle)
                 if let value {
-                    Text(pretty(value))
+                    Text(value.prettyJSON)
                         .font(.system(.caption, design: .monospaced))
                         .textSelection(.enabled)
                 } else {
@@ -69,26 +69,6 @@ struct HoraryJSONBlockView: View {
                 }
             }
             .padding(TS.Padding.resultContent)
-        }
-    }
-
-    private func pretty(_ v: HoraryV2JSONValue, indent: Int = 0) -> String {
-        let pad = String(repeating: "  ", count: indent)
-        switch v {
-        case .null: return "null"
-        case .bool(let b): return String(b)
-        case .number(let n): return String(n)
-        case .string(let s): return "\"\(s)\""
-        case .array(let arr):
-            if arr.isEmpty { return "[]" }
-            let body = arr.prefix(40).map { pretty($0, indent: indent + 1) }.joined(separator: ",\n\(pad)  ")
-            let more = arr.count > 40 ? "\n\(pad)  … +\(arr.count - 40) items" : ""
-            return "[\n\(pad)  \(body)\(more)\n\(pad)]"
-        case .object(let obj):
-            let keys = obj.keys.sorted()
-            let body = keys.prefix(60).map { k in "\(k): \(pretty(obj[k]!, indent: indent + 1))" }.joined(separator: ",\n\(pad)  ")
-            let more = keys.count > 60 ? "\n\(pad)  … +\(keys.count - 60) keys" : ""
-            return "{\n\(pad)  \(body)\(more)\n\(pad)}"
         }
     }
 }
@@ -100,7 +80,7 @@ struct HoraryVisibilityTableView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: TS.Spacing.md) {
                 ForEach(rows) { v in
-                    Text(String(describing: v.raw).prefix(500))
+                    Text(v.raw.prettyJSON.prefix(500))
                         .font(TS.Font.label)
                         .textSelection(.enabled)
                     Divider()

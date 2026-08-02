@@ -861,16 +861,10 @@ def _event_row(
 
 def _jd_ut_to_local(jd_ut: float, chart_dt: datetime) -> datetime:
     year, month, day, hour_f = swe.revjul(jd_ut, swe.GREG_CAL)
-    hour = int(hour_f)
-    minute = int((hour_f - hour) * 60.0)
-    second = int(round((((hour_f - hour) * 60.0) - minute) * 60.0))
-    if second >= 60:
-        second = 0
-        minute += 1
-    if minute >= 60:
-        minute = 0
-        hour += 1
-    utc = datetime(int(year), int(month), int(day), hour % 24, minute, max(0, min(second, 59)), tzinfo=timezone.utc)
+    # Build via timedelta so second/minute/hour carry (including hour_f >= 24
+    # edge cases) also rolls the calendar day instead of silently losing it.
+    total_seconds = round(hour_f * 3600.0)
+    utc = datetime(int(year), int(month), int(day), 0, 0, tzinfo=timezone.utc) + timedelta(seconds=total_seconds)
     if chart_dt.tzinfo is not None:
         return utc.astimezone(chart_dt.tzinfo)
     return utc.replace(tzinfo=None)
@@ -1123,13 +1117,16 @@ def _build_events(
                         extras={"threshold_deg": threshold},
                     ))
 
-    # Sunrise / sunset (next within window; also previous day boundary if in past window)
+    # Sunrise / sunset: one probe per civil day across the past window (plus
+    # future_days+1) catches every rise/set inside it; each probe returns the
+    # next event after that probe. Probe span is capped to match the station
+    # search horizon so huge event windows cannot trigger thousands of swe calls.
+    max_probe_days = 400
     for rise, etype in ((True, "sunrise"), (False, "sunset")):
-        exact = _next_sun_rise_or_set(chart_dt - timedelta(days=1), latitude, longitude, altitude_m, rise)
-        # walk forward up to future_days+1
-        probes = [chart_dt - timedelta(hours=1)]
-        for day_off in range(0, int(future_days) + 2):
-            probes.append(chart_dt + timedelta(days=day_off))
+        probes = [
+            chart_dt + timedelta(days=day_off)
+            for day_off in range(-min(int(past_days), max_probe_days) - 1, min(int(future_days), max_probe_days) + 2)
+        ]
         seen_jd: set[str] = set()
         for probe in probes:
             exact = _next_sun_rise_or_set(probe, latitude, longitude, altitude_m, rise)

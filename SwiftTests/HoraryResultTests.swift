@@ -3,6 +3,36 @@ import Testing
 @testable import TransitStudio
 
 struct HoraryResultTests {
+    @Test func jsonValuePrettyJSONIsReadableJSON() throws {
+        // Structured value: stable key order, JSON-like braces, no enum reflection.
+        let v = HoraryV2JSONValue.object([
+            "b": .number(2.5),
+            "a": .array([.string("x"), .bool(true)]),
+            "c": .null,
+            "d": .string("quote\"backslash\\newline\n"),
+        ])
+        let text = v.prettyJSON
+        #expect(text.hasPrefix("{\n"))
+        #expect(text.contains("\"a\": [\n"))
+        #expect(text.contains("\"b\": 2.5"))
+        #expect(text.contains("null"))
+        #expect(text.contains("\"d\": \"quote\\\"backslash\\\\newline\\n\""))
+        #expect(!text.contains("HoraryV2JSONValue"))
+        #expect(text.range(of: "\"a\"")!.lowerBound < text.range(of: "\"b\"")!.lowerBound)
+
+        // Fixture-backed value: description must render JSON, not enum debug text.
+        let fixtureURL = Bundle.module.url(forResource: "horary-result", withExtension: "json", subdirectory: "Fixtures")
+            ?? Bundle.module.url(forResource: "horary-result", withExtension: "json")
+        let url = try #require(fixtureURL)
+        let data = try Data(contentsOf: url)
+        let result = try JSONDecoder().decode(HoraryDataPacket.self, from: data)
+        let moon = try #require(result.moon)
+        let described = String(describing: moon)
+        #expect(described.hasPrefix("{"))
+        #expect(!described.contains("object("))
+        #expect(!described.contains("HoraryV2JSONValue"))
+    }
+
     @Test func decodeHoraryDataPacketV2() throws {
         let fixtureURL = Bundle.module.url(forResource: "horary-result", withExtension: "json", subdirectory: "Fixtures")
             ?? Bundle.module.url(forResource: "horary-result", withExtension: "json")

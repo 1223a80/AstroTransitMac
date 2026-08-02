@@ -6,6 +6,7 @@ import json
 import math
 import subprocess
 import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -17,6 +18,7 @@ from astro_backend_horary_v2 import (
     assert_no_forbidden_fields,
     calculate_horary_v2,
     format_horary_v2_markdown,
+    _jd_ut_to_local,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -390,6 +392,22 @@ class TestEventsAndMoon:
                 (x["datetime_utc"] for x in past), reverse=True
             )
 
+    def test_past_window_sunrise_sunset_events_present(self) -> None:
+        """Regression: rise/set events must cover the full past window, not only
+        the hour before the query (missing events broke the timeline contract)."""
+        packet, _ = _packet(LINYI_REQUEST)  # eventPastDays defaults to 4
+        past_rise_set = [
+            e for e in packet["events"]
+            if e["event_type"] in ("sunrise", "sunset")
+            and e["offset_seconds_from_query"] < 0
+        ]
+        # 4 full days before the query: one sunrise + one sunset per day.
+        assert len(past_rise_set) == 8, [e["id"] for e in past_rise_set]
+        types = sorted(e["event_type"] for e in past_rise_set)
+        assert types == ["sunrise"] * 4 + ["sunset"] * 4
+        # Oldest past rise/set sits within the 4-day window start.
+        assert min(e["offset_seconds_from_query"] for e in past_rise_set) > -4 * 86400
+
 
 class TestReceptionsLotsVisibility:
     def test_reception_unique_ids(self) -> None:
@@ -455,6 +473,26 @@ class TestTimezoneAndErrors:
         packet, _ = _packet(LINYI_REQUEST)
         assert packet["time_and_location"]["utc_offset_seconds"] == 8 * 3600
         assert packet["time_and_location"]["dst_active"] is False
+
+    def test_jd_ut_to_local_carries_calendar_day(self, monkeypatch) -> None:
+        """Regression: second/minute carry at 23:59:59.x must roll the day."""
+        import astro_backend_horary_v2 as hv2
+        from types import SimpleNamespace
+
+        fake = SimpleNamespace(revjul=lambda jd, cal: (2026, 6, 15, 23.9999), GREG_CAL=1)
+        monkeypatch.setattr(hv2, "swe", fake)
+        chart = datetime(2026, 6, 16, 8, 0, tzinfo=timezone(timedelta(hours=8)))
+        out = hv2._jd_ut_to_local(0.0, chart)
+        assert out.astimezone(timezone.utc) == datetime(2026, 6, 16, 0, 0, tzinfo=timezone.utc)
+
+    def test_jd_ut_to_local_regular(self) -> None:
+        """Normal conversion keeps the exact minute/second."""
+        from astro_backend_core import swe
+
+        jd = swe.julday(2026, 6, 15, 6.5, swe.GREG_CAL)
+        chart = datetime(2026, 6, 15, 14, 30, tzinfo=timezone(timedelta(hours=8)))
+        out = _jd_ut_to_local(jd, chart)
+        assert out.astimezone(timezone.utc) == datetime(2026, 6, 15, 6, 30, 0, tzinfo=timezone.utc)
 
     def test_invalid_latitude_via_api(self) -> None:
         req = copy.deepcopy(LINYI_REQUEST)
@@ -641,6 +679,26 @@ class TestV21Modules:
         assert asc_vs is not None
         assert asc_vs.get("hour_ruler_id") is not None
         assert isinstance(asc_vs.get("same_planet"), bool)
+
+    def test_planetary_day_hour_gmt_offset_label(self) -> None:
+        """Regression: GMT±N labels (Swift GMTOffset) must keep their offset for
+        weekday/rulers/local labels instead of falling back to UTC."""
+        gmt = copy.deepcopy(LINYI_REQUEST)
+        gmt["chart"]["moment"]["timezone"] = "GMT+8"
+        packet, warnings = _packet(gmt)
+        assert not any("planetary_day_hour" in w and "non-IANA" in w for w in warnings), warnings
+        pdh = packet["planetary_day_hour"]
+        assert pdh.get("status") == "ok", pdh
+        assert pdh.get("sunrise_local", "").endswith("+08:00")
+        assert pdh.get("sunset_local", "").endswith("+08:00")
+        for hour in pdh.get("hours") or []:
+            assert hour["start_local"].endswith("+08:00")
+            assert hour["end_local"].endswith("+08:00")
+        # Same absolute offset as Asia/Shanghai on a DST-free date: identical table.
+        iana, _ = _packet(LINYI_REQUEST)
+        assert pdh["weekday_local"] == iana["planetary_day_hour"]["weekday_local"]
+        assert pdh["day_ruler_id"] == iana["planetary_day_hour"]["day_ruler_id"]
+        assert pdh["hours"] == iana["planetary_day_hour"]["hours"]
 
     def test_no_self_mutual_reception(self) -> None:
         packet, _ = _packet(LINYI_REQUEST)

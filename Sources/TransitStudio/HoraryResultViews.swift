@@ -190,7 +190,7 @@ struct HoraryDignitiesView: View {
                     .font(TS.Font.label)
                     .foregroundStyle(.secondary)
                 ForEach(dignities) { d in
-                    Text(String(describing: d.raw).prefix(240))
+                    Text(d.raw.prettyJSON.prefix(240))
                         .font(TS.Font.label)
                         .textSelection(.enabled)
                     Divider()

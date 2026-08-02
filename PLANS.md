@@ -1752,3 +1752,30 @@ Completion criteria: all useful local work is represented by reviewed commits on
 | 04 打包覆盖与清理 | 已完成 | 已覆盖 `/Applications/TransitStudio.app`；版本、签名、arm64、哈希、无 pyc 与包内 Horary v2.1 smoke 均通过；清理约 723 MB 产物/缓存 |
 
 ---
+
+---
+
+# Horary 计算正确性与展示修复（2026-08-02）
+
+分支：`fix/horary-timezone-events`。目标：修 4 个已确认问题——
+(1) `planetary_day_hour` 对 GMT±N 固定偏移时区强制降级 UTC（行星日主星/行星时恒错一天、误报警告）；
+(2) Swift 三个 tab 用 `String(describing:)` 展示枚举反射文本而非 JSON；
+(3) `_build_events` 日出/日落不扫描过去窗口（过去事件缺失）；
+(4) `_jd_ut_to_local` 秒/分进位后 `hour%24` 不递增 day（日期少一天）。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 后端 planetary_day_hour | 已完成 | `astro_backend_horary_v2_modules.py:704-729` 去掉 ZoneInfo 强制降级，直接使用 chart tzinfo（固定偏移/IANA/naive 三态）；`_planetary_hours`/`_iso_local` 类型标注放宽为 `tzinfo`；补 GMT+8 回归测试 |
+| 02 后端日出日落过去窗口 | 已完成 | `astro_backend_horary_v2.py:1126-1148` 过去窗口按日探针扫描；补过去事件断言测试 |
+| 03 后端 `_jd_ut_to_local` 进位 | 已完成 | `astro_backend_horary_v2.py:862-876` 用 timedelta 构建 UTC 消除手写进位；补进位单测 |
+| 04 fixture/golden 再生成 | 已完成 | events 变化属有意 schema 行为变更，按 docs/validation.md 重新生成 `SwiftTests/Fixtures/horary-result.json` 与 `docs/examples/horary-data-packet-v2-linyi-golden.json`，确认 python golden 测试 |
+| 05 Swift 三 tab 展示 | 已完成 | `HoraryV2JSONValue` 实现 `CustomStringConvertible`（pretty JSON），三处 `String(describing:)` 直接输出 JSON |
+| 06 门禁 | 已完成 | pytest 全量 + swift build/test + horary smoke + `check_vibe_changes.sh`；CHANGELOG 更新 |
+
+## 边界
+
+- 不改变 v2.1 顶层键结构与 Swift 解码契约（`HoraryV2JSONValue` 仅加 description，不改 Codable）。
+- 不改 golden 输入；重新生成的 fixture/golden 与后端输出一致，不手编。
+- separating refranation / VOC 重复 / aspects 双份等其余发现仅记录不修（用户选定范围）。

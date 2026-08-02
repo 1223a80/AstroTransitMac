@@ -4,9 +4,8 @@ planetary day/hour, considerations, declination, antiscia contacts, fixed stars,
 from __future__ import annotations
 
 import math
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, tzinfo
 from typing import Any
-from zoneinfo import ZoneInfo
 
 from astro_backend_classical_dignity import JOY_HOUSE, SIGN_ELEMENTS, SIGN_GENDER
 from astro_backend_core import (
@@ -697,43 +696,20 @@ def planetary_day_hour(
 ) -> dict[str, Any]:
     """Unequal planetary day/hour table for the chart moment.
 
-    Prefer the chart's IANA zone for weekday + local timestamps; only fall back
-    when tzinfo has no key (fixed offset / naive).
+    Display zone is the chart's own tzinfo: an IANA ``ZoneInfo`` when the
+    moment was resolved from an IANA name, or a fixed-offset ``timezone`` for
+    GMT±N labels (e.g. Swift's ``GMTOffset`` "GMT+8"). Both support
+    ``.astimezone``; only a naive chart falls back to UTC.
     """
     ref_utc = chart_dt.astimezone(timezone.utc)
-    display_zone: ZoneInfo | timezone
-    tz = chart_dt.tzinfo
-    key = getattr(tz, "key", None) if tz is not None else None
-    if key:
-        try:
-            display_zone = ZoneInfo(str(key))
-        except Exception:
-            display_zone = ZoneInfo("UTC")
-    elif tz is not None:
-        # Fixed offset without IANA key: keep offset for local labels.
-        display_zone = tz  # type: ignore[assignment]
-    else:
-        display_zone = ZoneInfo("UTC")
-
-    # _planetary_hours expects ZoneInfo for .astimezone; wrap fixed offsets.
-    if not isinstance(display_zone, ZoneInfo):
-        try:
-            offset = chart_dt.utcoffset() or timedelta(0)
-            # Build a fixed ZoneInfo-like path via UTC labels if needed
-            display_zone = ZoneInfo("UTC")
-            warnings.append(
-                f"planetary_day_hour: non-IANA timezone {tz!r} (offset={offset}); "
-                "weekday/local labels use UTC"
-            )
-        except Exception:
-            display_zone = ZoneInfo("UTC")
+    display_zone: tzinfo = chart_dt.tzinfo if chart_dt.tzinfo is not None else timezone.utc
 
     raw = _planetary_hours(
         reference_utc=ref_utc,
         latitude=latitude,
         longitude=longitude,
         altitude_m=altitude_m,
-        display_zone=display_zone,  # type: ignore[arg-type]
+        display_zone=display_zone,
         warnings=warnings,
     )
     raw["rule_id"] = "planetary_hours.unequal.chaldean.v1"

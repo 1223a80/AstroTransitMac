@@ -2102,10 +2102,10 @@
                 "sect_used": "night"
             },
             "bounds": {
-                "ruler_id": "JUPITER",
-                "ruler_en": "Jupiter",
-                "ruler_zh": "\u6728\u661f",
-                "start_degree_in_sign": 13.0,
+                "ruler_id": "VENUS",
+                "ruler_en": "Venus",
+                "ruler_zh": "\u91d1\u661f",
+                "start_degree_in_sign": 7.0,
                 "end_degree_in_sign": 17.0,
                 "system": "egyptian"
             },
@@ -18221,46 +18221,6 @@
             }
         },
         {
-            "id": "JUPITER|VENUS|bound",
-            "receiver_id": "JUPITER",
-            "received_body_id": "VENUS",
-            "dignity_type": "bound",
-            "direction": "receiver_disposes_received",
-            "related_aspect_candidate_ids": [
-                "JUPITER|VENUS|conjunction",
-                "JUPITER|VENUS|opposition",
-                "JUPITER|VENUS|sextile",
-                "JUPITER|VENUS|square",
-                "JUPITER|VENUS|trine"
-            ],
-            "sign_index": 5,
-            "systems": {
-                "bounds": "egyptian",
-                "triplicity": "dorothean",
-                "decan": "chaldean_faces"
-            },
-            "rule_id": "reception.directed.v2",
-            "algorithm_version": "horary-v2.1-modules-2026-07",
-            "relation_at_query": true,
-            "relation_at_next_aspect_exact": {
-                "status": "no_related_future_exact",
-                "reason_code": "no_next_exact_among_related_aspect_candidates",
-                "related_aspect_candidate_ids": [
-                    "JUPITER|VENUS|conjunction",
-                    "JUPITER|VENUS|opposition",
-                    "JUPITER|VENUS|sextile",
-                    "JUPITER|VENUS|square",
-                    "JUPITER|VENUS|trine"
-                ],
-                "holds": null
-            },
-            "relation_changes_if_sign_exit_before_exact": {
-                "status": "no_related_future_exact",
-                "changes": null,
-                "rule_id": "reception.pre_exact_sign_exit.v2"
-            }
-        },
-        {
             "id": "JUPITER|VENUS|detriment",
             "receiver_id": "JUPITER",
             "received_body_id": "VENUS",
@@ -18813,7 +18773,7 @@
                     "sign_index": 5,
                     "domicile_ruler_id": "MERCURY",
                     "exaltation_ruler_id": "MERCURY",
-                    "bound_ruler_id": "JUPITER",
+                    "bound_ruler_id": "VENUS",
                     "decan_ruler_id": "VENUS",
                     "triplicity_active_ruler_id": "MOON",
                     "detriment_ruler_id": "JUPITER",
@@ -18868,7 +18828,7 @@
                     "sign_index": 5,
                     "domicile_ruler_id": "MERCURY",
                     "exaltation_ruler_id": "MERCURY",
-                    "bound_ruler_id": "JUPITER",
+                    "bound_ruler_id": "VENUS",
                     "decan_ruler_id": "VENUS",
                     "triplicity_active_ruler_id": "MOON",
                     "detriment_ruler_id": "JUPITER",
@@ -19671,6 +19631,34 @@
             }
         },
         {
+            "id": "VENUS|VENUS|bound",
+            "receiver_id": "VENUS",
+            "received_body_id": "VENUS",
+            "dignity_type": "bound",
+            "direction": "receiver_disposes_received",
+            "related_aspect_candidate_ids": [],
+            "sign_index": 5,
+            "systems": {
+                "bounds": "egyptian",
+                "triplicity": "dorothean",
+                "decan": "chaldean_faces"
+            },
+            "rule_id": "reception.directed.v2",
+            "algorithm_version": "horary-v2.1-modules-2026-07",
+            "relation_at_query": true,
+            "relation_at_next_aspect_exact": {
+                "status": "no_related_future_exact",
+                "reason_code": "no_next_exact_among_related_aspect_candidates",
+                "related_aspect_candidate_ids": [],
+                "holds": null
+            },
+            "relation_changes_if_sign_exit_before_exact": {
+                "status": "no_related_future_exact",
+                "changes": null,
+                "rule_id": "reception.pre_exact_sign_exit.v2"
+            }
+        },
+        {
             "id": "VENUS|VENUS|decan",
             "receiver_id": "VENUS",
             "received_body_id": "VENUS",
@@ -20123,7 +20111,7 @@
                 "distance_to_next_cusp_deg": 22.674467
             },
             "domicile_ruler_id": "MERCURY",
-            "bounds_ruler_id": "JUPITER",
+            "bounds_ruler_id": "VENUS",
             "decan_ruler_id": "VENUS",
             "triplicity_active_ruler_id": "MOON",
             "source_tradition": "Lilly",
@@ -20227,7 +20215,7 @@
                 "distance_to_next_cusp_deg": 22.674467
             },
             "domicile_ruler_id": "MERCURY",
-            "bounds_ruler_id": "JUPITER",
+            "bounds_ruler_id": "VENUS",
             "decan_ruler_id": "VENUS",
             "triplicity_active_ruler_id": "MOON",
             "source_tradition": "AbuMa'shar",
@@ -22959,6 +22947,23 @@
             "in_configured_window": true
         },
         {
+            "id": "sunrise|SUN|20260719T210636Z",
+            "event_type": "sunrise",
+            "body_ids": [
+                "SUN"
+            ],
+            "aspect_id": null,
+            "datetime_utc": "2026-07-19T21:06:36Z",
+            "datetime_local": "2026-07-20 05:06",
+            "offset_seconds_from_query": -321504,
+            "root_error_deg": null,
+            "rule_id": "event.sunrise.swiss_rise_trans.v1",
+            "algorithm_version": "horary-v2.1-2026-07",
+            "in_configured_window": true,
+            "state_before": "below_horizon",
+            "state_after": "above_horizon"
+        },
+        {
             "id": "aspect_exact|MOON|SATURN|opposition|20260720T081602Z",
             "event_type": "aspect_exact",
             "body_ids": [
@@ -22995,6 +23000,23 @@
             "in_configured_window": true
         },
         {
+            "id": "sunset|SUN|20260720T111902Z",
+            "event_type": "sunset",
+            "body_ids": [
+                "SUN"
+            ],
+            "aspect_id": null,
+            "datetime_utc": "2026-07-20T11:19:02Z",
+            "datetime_local": "2026-07-20 19:19",
+            "offset_seconds_from_query": -270358,
+            "root_error_deg": null,
+            "rule_id": "event.sunset.swiss_rise_trans.v1",
+            "algorithm_version": "horary-v2.1-2026-07",
+            "in_configured_window": true,
+            "state_before": "above_horizon",
+            "state_after": "below_horizon"
+        },
+        {
             "id": "aspect_exact|MOON|MERCURY|square|20260720T121836Z",
             "event_type": "aspect_exact",
             "body_ids": [
@@ -23011,6 +23033,23 @@
             "rule_id": "event.aspect_exact.from_candidates.v2",
             "algorithm_version": "horary-v2.1-aspects-2026-07",
             "in_configured_window": true
+        },
+        {
+            "id": "sunrise|SUN|20260720T210718Z",
+            "event_type": "sunrise",
+            "body_ids": [
+                "SUN"
+            ],
+            "aspect_id": null,
+            "datetime_utc": "2026-07-20T21:07:18Z",
+            "datetime_local": "2026-07-21 05:07",
+            "offset_seconds_from_query": -235062,
+            "root_error_deg": null,
+            "rule_id": "event.sunrise.swiss_rise_trans.v1",
+            "algorithm_version": "horary-v2.1-2026-07",
+            "in_configured_window": true,
+            "state_before": "below_horizon",
+            "state_after": "above_horizon"
         },
         {
             "id": "house_change|MARS|20260721T012706Z",
@@ -23053,6 +23092,40 @@
             "in_configured_window": true
         },
         {
+            "id": "sunset|SUN|20260721T111826Z",
+            "event_type": "sunset",
+            "body_ids": [
+                "SUN"
+            ],
+            "aspect_id": null,
+            "datetime_utc": "2026-07-21T11:18:26Z",
+            "datetime_local": "2026-07-21 19:18",
+            "offset_seconds_from_query": -183994,
+            "root_error_deg": null,
+            "rule_id": "event.sunset.swiss_rise_trans.v1",
+            "algorithm_version": "horary-v2.1-2026-07",
+            "in_configured_window": true,
+            "state_before": "above_horizon",
+            "state_after": "below_horizon"
+        },
+        {
+            "id": "sunrise|SUN|20260721T210800Z",
+            "event_type": "sunrise",
+            "body_ids": [
+                "SUN"
+            ],
+            "aspect_id": null,
+            "datetime_utc": "2026-07-21T21:08:00Z",
+            "datetime_local": "2026-07-22 05:08",
+            "offset_seconds_from_query": -148620,
+            "root_error_deg": null,
+            "rule_id": "event.sunrise.swiss_rise_trans.v1",
+            "algorithm_version": "horary-v2.1-2026-07",
+            "in_configured_window": true,
+            "state_before": "below_horizon",
+            "state_after": "above_horizon"
+        },
+        {
             "id": "aspect_exact|MOON|JUPITER|square|20260721T224931Z",
             "event_type": "aspect_exact",
             "body_ids": [
@@ -23071,6 +23144,23 @@
             "in_configured_window": true
         },
         {
+            "id": "sunset|SUN|20260722T111749Z",
+            "event_type": "sunset",
+            "body_ids": [
+                "SUN"
+            ],
+            "aspect_id": null,
+            "datetime_utc": "2026-07-22T11:17:49Z",
+            "datetime_local": "2026-07-22 19:17",
+            "offset_seconds_from_query": -97631,
+            "root_error_deg": null,
+            "rule_id": "event.sunset.swiss_rise_trans.v1",
+            "algorithm_version": "horary-v2.1-2026-07",
+            "in_configured_window": true,
+            "state_before": "above_horizon",
+            "state_after": "below_horizon"
+        },
+        {
             "id": "aspect_exact|MOON|VENUS|sextile|20260722T173704Z",
             "event_type": "aspect_exact",
             "body_ids": [
@@ -23087,6 +23177,23 @@
             "rule_id": "event.aspect_exact.from_candidates.v2",
             "algorithm_version": "horary-v2.1-aspects-2026-07",
             "in_configured_window": true
+        },
+        {
+            "id": "sunrise|SUN|20260722T210843Z",
+            "event_type": "sunrise",
+            "body_ids": [
+                "SUN"
+            ],
+            "aspect_id": null,
+            "datetime_utc": "2026-07-22T21:08:43Z",
+            "datetime_local": "2026-07-23 05:08",
+            "offset_seconds_from_query": -62177,
+            "root_error_deg": null,
+            "rule_id": "event.sunrise.swiss_rise_trans.v1",
+            "algorithm_version": "horary-v2.1-2026-07",
+            "in_configured_window": true,
+            "state_before": "below_horizon",
+            "state_after": "above_horizon"
         },
         {
             "id": "aspect_exact|MOON|MERCURY|trine|20260722T214831Z",
@@ -23143,6 +23250,23 @@
                 "integer_house": 8
             },
             "direction": "previous"
+        },
+        {
+            "id": "sunset|SUN|20260723T111710Z",
+            "event_type": "sunset",
+            "body_ids": [
+                "SUN"
+            ],
+            "aspect_id": null,
+            "datetime_utc": "2026-07-23T11:17:10Z",
+            "datetime_local": "2026-07-23 19:17",
+            "offset_seconds_from_query": -11270,
+            "root_error_deg": null,
+            "rule_id": "event.sunset.swiss_rise_trans.v1",
+            "algorithm_version": "horary-v2.1-2026-07",
+            "in_configured_window": true,
+            "state_before": "above_horizon",
+            "state_after": "below_horizon"
         },
         {
             "id": "sunrise|SUN|20260723T210925Z",
@@ -25079,10 +25203,18 @@
             },
             {
                 "body_id": "SUN",
-                "previous_event_id": "aspect_exact|SUN|MOON|square|20260721T110536Z",
+                "previous_event_id": "sunset|SUN|20260723T111710Z",
                 "next_event_id": "sunrise|SUN|20260723T210925Z",
                 "ordered_event_ids": [
+                    "sunrise|SUN|20260719T210636Z",
+                    "sunset|SUN|20260720T111902Z",
+                    "sunrise|SUN|20260720T210718Z",
                     "aspect_exact|SUN|MOON|square|20260721T110536Z",
+                    "sunset|SUN|20260721T111826Z",
+                    "sunrise|SUN|20260721T210800Z",
+                    "sunset|SUN|20260722T111749Z",
+                    "sunrise|SUN|20260722T210843Z",
+                    "sunset|SUN|20260723T111710Z",
                     "sunrise|SUN|20260723T210925Z",
                     "solar_under_beams_boundary|SUN|MERCURY|20260724T042211Z",
                     "sunset|SUN|20260724T111629Z",
@@ -27092,7 +27224,7 @@
                         "sign_index": 5,
                         "domicile_ruler_id": "MERCURY",
                         "exaltation_ruler_id": "MERCURY",
-                        "bound_ruler_id": "SATURN",
+                        "bound_ruler_id": "MARS",
                         "decan_ruler_id": "MERCURY",
                         "triplicity_active_ruler_id": "MOON",
                         "detriment_ruler_id": "JUPITER",
@@ -28145,7 +28277,7 @@
                         "sign_index": 5,
                         "domicile_ruler_id": "MERCURY",
                         "exaltation_ruler_id": "MERCURY",
-                        "bound_ruler_id": "JUPITER",
+                        "bound_ruler_id": "VENUS",
                         "decan_ruler_id": "VENUS",
                         "triplicity_active_ruler_id": "MOON",
                         "detriment_ruler_id": "JUPITER",
@@ -35599,7 +35731,7 @@
         "aspect_count": 105,
         "aspect_candidate_count": 105,
         "aspects_in_display_orb_count": 4,
-        "event_count": 116,
+        "event_count": 124,
         "lot_count": 56
     },
     "display": {
