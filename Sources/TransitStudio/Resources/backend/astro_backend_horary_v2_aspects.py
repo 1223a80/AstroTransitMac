@@ -15,6 +15,7 @@ from astro_backend_ephemeris import body_speed_at
 from astro_backend_horary import (
     ASPECT_NAMES,
     CLASSICAL_ANGLES,
+    application_continuity_interruption,
     body_exits_sign_before,
     exact_datetime_result_for_signature,
     next_exact_for_pair,
@@ -222,18 +223,32 @@ def build_aspect_candidates(
                 exact_dt, reason = exact_datetime_result_for_signature(
                     chart_dt, fake_a, fake_b, signature, warnings, sidereal=sidereal,
                 )
-                # When separating at chart, still try next root without applying gate for event timeline.
+                # When separating at chart, still try next root without applying
+                # gate for event timeline — but validate it the same way applying
+                # roots are: sign exit and application continuity (refranation).
                 if exact_dt is None and app_lab == "separating":
-                    # Search next crossing without applying gate
                     nxt = next_exact_for_pair(
                         chart_dt, left_id, right_id, angle, warnings, warning_keys,
                         max_days=int(event_future_days) + 1, step_hours=6, sidereal=sidereal,
                     )
-                    if nxt is not None:
-                        exact_dt = nxt
-                        reason = "future_root_found_while_separating_at_query"
-                    else:
+                    if nxt is None:
                         reason = reason or "no_future_root"
+                    else:
+                        interruption = application_continuity_interruption(
+                            chart_dt, nxt, fake_a, fake_b, angle,
+                            warnings, warning_keys, sidereal,
+                        )
+                        if interruption is not None:
+                            reason = interruption
+                        elif body_exits_sign_before(
+                            chart_dt, nxt, left_id, warnings, warning_keys, sidereal=sidereal
+                        ) or body_exits_sign_before(
+                            chart_dt, nxt, right_id, warnings, warning_keys, sidereal=sidereal
+                        ):
+                            reason = "sign exit before perfection while separating"
+                        else:
+                            exact_dt = nxt
+                            reason = "future_root_found_while_separating_at_query"
 
                 prev_exact = previous_exact_for_pair(
                     chart_dt, left_id, right_id, angle, warnings, warning_keys,

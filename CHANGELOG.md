@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-02 — Horary 离相候选 refranation 防护
+
+- **separating 候选成相防护**：`astro_backend_horary.py` 抽取 `nearest_branch_offset` 与 `application_continuity_interruption`（沿分支采样检测 refranation/逆行打断），`astro_backend_horary_v2_aspects.py` 的离相（separating）fallback 从裸 `next_exact_for_pair` 改为与入相路径同等的完整校验（连续性采样 + 换座检查）。虚假的"未来成相"预测被正确拦截：`next_exact.root_status` 由 `found` 变 `not_found`，`refranation_detected` 正确置位。
+- **契约维护**：`SwiftTests/Fixtures/horary-result.json` 与 Linyi golden 重新生成——events 从 124 条收敛到 105 条（移除 19 个被拦截的 aspect_exact），`aspect_candidates.next_exact` 对应更新；无新增事件。
+- **待办文档**：其余审计项（秒精度起盘、VOC 重复、性能、schema、Swift 体验等）整理至 `docs/horary-remaining-fixes.md`，按用户安排次日参照执行。
+- 验证：全量 Python 969 passed / 1 skipped（含 v1 horary 72 项回归），Swift 213 tests / 28 suites。
+
 ## 2026-08-02 — Horary 行星日/时、事件窗口与证据展示修复
 
 - **行星日/时（planetary_day_hour）不再对 GMT±N 时区降级 UTC**：`astro_backend_horary_v2_modules.py` 删除 `ZoneInfo` 强制回退，直接使用 chart 自身 tzinfo（IANA 或 `GMT+8` 固定偏移均支持 `.astimezone`）；`_planetary_hours`/`_iso_local` 类型标注放宽为 `tzinfo`。修复 Swift `GMTOffset` 标签（产品默认路径）下行星日主星恒错一天、24 段行星时 ruler 序列错位、`start_local/end_local` 变 UTC 标签、`asc_ruler_vs_hour_ruler` 事实错误及每次请求的误导性警告。

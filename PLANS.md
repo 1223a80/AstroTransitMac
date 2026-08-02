@@ -1779,3 +1779,24 @@ Completion criteria: all useful local work is represented by reviewed commits on
 - 不改变 v2.1 顶层键结构与 Swift 解码契约（`HoraryV2JSONValue` 仅加 description，不改 Codable）。
 - 不改 golden 输入；重新生成的 fixture/golden 与后端输出一致，不手编。
 - separating refranation / VOC 重复 / aspects 双份等其余发现仅记录不修（用户选定范围）。
+
+---
+
+# Horary 离相候选 refranation 防护（2026-08-02 晚）
+
+分支：`fix/horary-timezone-events`（延续）。目标：修 separating 候选 next_exact 无 refranation/换座防护的问题。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 抽取连续性检查 | 已完成 | `astro_backend_horary.py` 新增 `nearest_branch_offset` + `application_continuity_interruption`（原 exact_datetime_result_for_signature 内采样逻辑），行为不变 |
+| 02 aspects fallback 接入 | 已完成 | `astro_backend_horary_v2_aspects.py` separating fallback 用完整校验（连续性 + 换座），移除裸 next_exact_for_pair 直接采纳 |
+| 03 fixture/golden 再生成 | 已完成 | events 124→105（移除 19 个被拦截 aspect_exact），candidates next_exact 同步 |
+| 04 门禁 | 已完成 | 全量 Python 969 / Swift 213 全绿；v1 horary 72 项回归通过 |
+| 05 文档与收口 | 已完成 | 剩余审计项整理至 `docs/horary-remaining-fixes.md`（含秒精度起盘等，用户次日参照执行） |
+
+## 边界
+
+- 不改 `exact_datetime_result_for_signature` 对入相路径的默认行为（抽取后回归验证 v1 72 项）。
+- separating 拒绝 root 时 reason 为 "refranation: ..." / "sign exit before perfection while separating" / "ephemeris unavailable ..."。

@@ -775,12 +775,8 @@ def exact_datetime_result_for_signature(
     if aspect_id is None:
         return None, "unknown aspect"
     angle = CLASSICAL_ANGLES[aspect_id]
-    branch_offset = min(
-        aspect_offsets_for_angle(angle),
-        key=lambda offset: abs(relative_orb_for_pair_at(
-            chart_dt, left_row["id"], right_row["id"], angle,
-            warnings, warning_keys, offset, sidereal,
-        ) or 0.0),
+    branch_offset = nearest_branch_offset(
+        chart_dt, left_row, right_row, angle, warnings, warning_keys, sidereal,
     )
     deadline = perfection_deadline_for_pair(
         chart_dt,
@@ -814,10 +810,61 @@ def exact_datetime_result_for_signature(
     # The future root may belong to a new application after a station.  Follow
     # the selected signed-orb branch on the UTC timeline and reject the root as
     # soon as the currently converging orb genuinely turns away.
+    interruption = application_continuity_interruption(
+        chart_dt, exact, left_row, right_row, angle, warnings, warning_keys, sidereal,
+    )
+    if interruption is not None:
+        return None, interruption
+
+    return exact, "degree perfection"
+
+
+def nearest_branch_offset(
+    chart_dt: datetime,
+    left_row: dict[str, Any],
+    right_row: dict[str, Any],
+    angle: float,
+    warnings: list[str],
+    warning_keys: set[str],
+    sidereal: bool = False,
+) -> float:
+    """Signed-orb branch closest to the current separation for ``angle``."""
+    return min(
+        aspect_offsets_for_angle(angle),
+        key=lambda offset: abs(relative_orb_for_pair_at(
+            chart_dt, left_row["id"], right_row["id"], angle,
+            warnings, warning_keys, offset, sidereal,
+        ) or 0.0),
+    )
+
+
+def application_continuity_interruption(
+    chart_dt: datetime,
+    exact: datetime,
+    left_row: dict[str, Any],
+    right_row: dict[str, Any],
+    angle: float,
+    warnings: list[str],
+    warning_keys: set[str],
+    sidereal: bool = False,
+) -> str | None:
+    """Sample the signed-orb branch from ``chart_dt`` to ``exact`` and report
+    whether the application genuinely turns away before perfection.
+
+    Returns ``None`` when the orb converges monotonically (or converges after
+    an initial separating phase), otherwise a human-readable interruption
+    reason ("refranation: ...", ephemeris unavailable, ...). Shared by the
+    applying-root path (``exact_datetime_result_for_signature``) and the
+    separating-at-query fallback in the v2 aspect candidates, so both detect
+    refranation / interruption the same way.
+    """
     start_utc, _ = _to_utc_for_search(chart_dt)
     exact_utc, _ = _to_utc_for_search(exact)
     span_seconds = max((exact_utc - start_utc).total_seconds(), 0.0)
     sample_count = max(2, min(2048, int(span_seconds / 21600.0) + 1))
+    branch_offset = nearest_branch_offset(
+        chart_dt, left_row, right_row, angle, warnings, warning_keys, sidereal,
+    )
     previous_abs: float | None = None
     converged = False
     tolerance = 1e-4
@@ -828,16 +875,15 @@ def exact_datetime_result_for_signature(
             warnings, warning_keys, branch_offset, sidereal,
         )
         if value is None:
-            return None, "ephemeris unavailable while checking application continuity"
+            return "ephemeris unavailable while checking application continuity"
         current_abs = abs(value)
         if previous_abs is not None:
             if current_abs < previous_abs - tolerance:
                 converged = True
             elif converged and current_abs > previous_abs + tolerance:
-                return None, "refranation: application interrupted before perfection"
+                return "refranation: application interrupted before perfection"
         previous_abs = current_abs
-
-    return exact, "degree perfection"
+    return None
 
 
 def key_significator_links(
