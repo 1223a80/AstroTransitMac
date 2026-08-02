@@ -1748,7 +1748,7 @@ Completion criteria: all useful local work is represented by reviewed commits on
 |---|---|---|
 | 01 差异与合同审查 | 已完成 | fixture 逐字复现；修正可空字段、中心平移两处弱断言及 SSE mock 清理 |
 | 02 完整验证 | 已完成 | Python 965 passed / 1 skipped；Swift 212 tests / 28 suites；build 与 34 个 backend smoke 全绿 |
-| 03 合并与版本收口 | 进行中 | 版本提升为 1.4.5 (47)，提交、快进合并 `main` 并推送 |
-| 04 打包覆盖与清理 | 待执行 | 覆盖 `/Applications`、核验版本/可执行文件、清缓存与最终状态 |
+| 03 合并与版本收口 | 已完成 | 两条提交快进合并 `main`；版本提升为 1.4.5 (47)；最终记录提交后推送 |
+| 04 打包覆盖与清理 | 已完成 | 已覆盖 `/Applications/TransitStudio.app`；版本、签名、arm64、哈希、无 pyc 与包内 Horary v2.1 smoke 均通过；清理约 723 MB 产物/缓存 |
 
 ---

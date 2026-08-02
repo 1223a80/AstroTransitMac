@@ -6,7 +6,9 @@
 - 修正两处名义覆盖但断言不足的测试：scan 可空字段改用同时包含缺失键与显式 `null` 的合成载荷；rectify 中心偏移改为实际比较本地中心时间与 JD，而不只检查不变的相对 offset。
 - SSE mock 在成功或抛错路径均清空全局 handler 并注销协议，避免残留状态污染后续测试。
 - 发布版本提升至 `1.4.5 (47)`，纳入上次安装基线后的 B18 真实固定星 paran、Horary 可读 Markdown、CI 运行时升级与本轮测试覆盖补全。
-- 完整门禁通过：Python 965 passed / 1 skipped，Swift 212 tests / 28 suites，Swift build 与全部 34 个登记 backend smoke（含 rectify）全绿；覆盖安装结果在打包后回填。
+- 完整门禁通过：Python 965 passed / 1 skipped，Swift 212 tests / 28 suites，Swift build 与全部 34 个登记 backend smoke（含 rectify）全绿。
+- `1.4.5 (47)` 已覆盖安装到 `/Applications/TransitStudio.app`；Info.plist、ad-hoc 签名、arm64 架构、构建/安装二进制哈希、包内无 pyc 与安装包内 Horary v2.1 后端 smoke 全部核验通过。
+- 删除 `.build`、`dist`、`.venv`、pytest/Python 缓存与临时打包目录，释放约 723 MB；正式安装包保留在 `/Applications`。
 
 ## 2026-08-01 — 测试覆盖补全
 
