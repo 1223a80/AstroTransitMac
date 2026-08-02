@@ -11,7 +11,7 @@
 | 03 rectify 直接测试 | 已完成 | 新增 `python_tests/test_rectify.py` 20 项：三级窗口候选数（61/13/11）、偏移对称与网格、center_offset 平移、step/window 钳制、候选结构与 note/tags、shift_vs_center 公式、错误路径（缺字段/时区/日期/坐标）、stderr progress 行 |
 | 04 导出构建器补全 | 已完成 | 新增 `SwiftTests/MarkdownVedicExportBuilderTests.swift` 5 项（真实 fixture 字段级 + 节过滤 + warnings）；`SwiftTests/MarkdownClassicalSectionsTests.swift` 15 项（MarkdownFormatting 5、almuten/hyleg/prenatal 7、PD/circumambulation 5） |
 | 05 LLM SSE 流式解析 | 已完成 | 新增 `SwiftTests/LLMAnalysisStreamingTests.swift` 7 项（URLProtocol mock：delta 流、event/空行忽略、[DONE]、finish_reason=length 截断、401 JSON 错误、502 原文回退、畸形 JSON 行跳过），`@Suite(.serialized)` 串行化 |
-| 06 完整门禁与收口 | 进行中 | `bash check_vibe_changes.sh`（Python 全量 + Swift build/test + 登记 smoke）；更新 CHANGELOG；检查 diff |
+| 06 完整门禁与收口 | 已完成 | Python 965 passed / 1 skipped；Swift build + 212 tests / 28 suites；全部登记 smoke（含 rectify）全绿；diff 已复核 |
 
 ## 边界
 
@@ -1734,3 +1734,21 @@ Completion criteria: all useful local work is represented by reviewed commits on
 | `archive/pre-cleanup-20260724` (`e3d95ba`) | Pre-integration safety snapshot; semantically absorbed by later Horary/layout/legacy commits; direct merge would regress newer UI, so the original commit remains recoverable only as an archive ref |
 | Other local task refs | Four exact ancestors of `main` deleted after integration; no active feature/fix branch remains |
 | Remote `codex/*` refs | Six refs confirmed merged with no open PR, then deleted after `origin/main` reached `d139bab` |
+# 最后修改审查、再次收口与覆盖安装（2026-08-02）
+
+## 目标
+
+- 审查 `test/coverage-completion` 相对 `main` 的最后一次提交，确认测试、fixture 与门禁脚本没有掩盖缺陷或引入不稳定性。
+- 审查通过后运行完整门禁，合并回 `main`，按改动规模更新应用版本并提交、推送。
+- 打包并覆盖 `/Applications` 中现有应用，验证安装产物后清理构建与测试缓存。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 差异与合同审查 | 已完成 | fixture 逐字复现；修正可空字段、中心平移两处弱断言及 SSE mock 清理 |
+| 02 完整验证 | 已完成 | Python 965 passed / 1 skipped；Swift 212 tests / 28 suites；build 与 34 个 backend smoke 全绿 |
+| 03 合并与版本收口 | 进行中 | 版本提升为 1.4.5 (47)，提交、快进合并 `main` 并推送 |
+| 04 打包覆盖与清理 | 待执行 | 覆盖 `/Applications`、核验版本/可执行文件、清缓存与最终状态 |
+
+---

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-02 — 最后修改审查与发布收口
+
+- 复核 `test/coverage-completion` 的全部新增测试、门禁脚本和 346 条扫描 fixture；fixture 已由 `Examples/sample-scan-request.json` 重新生成并逐字比对一致。
+- 修正两处名义覆盖但断言不足的测试：scan 可空字段改用同时包含缺失键与显式 `null` 的合成载荷；rectify 中心偏移改为实际比较本地中心时间与 JD，而不只检查不变的相对 offset。
+- SSE mock 在成功或抛错路径均清空全局 handler 并注销协议，避免残留状态污染后续测试。
+- 发布版本提升至 `1.4.5 (47)`，纳入上次安装基线后的 B18 真实固定星 paran、Horary 可读 Markdown、CI 运行时升级与本轮测试覆盖补全。
+- 完整门禁通过：Python 965 passed / 1 skipped，Swift 212 tests / 28 suites，Swift build 与全部 34 个登记 backend smoke（含 rectify）全绿；覆盖安装结果在打包后回填。
+
 ## 2026-08-01 — 测试覆盖补全
 
 - 补齐测试矩阵空白，只加测试与 fixture，生产代码（`Sources/` 与 `Resources/backend/`）零改动：

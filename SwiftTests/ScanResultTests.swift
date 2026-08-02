@@ -43,29 +43,76 @@ struct ScanResultTests {
         #expect(first.exactLongitude >= 0 && first.exactLongitude < 360)
     }
 
-    @Test func nullableHitFieldsDecodeAsOptionalTypes() throws {
-        let data = try fixtureData("scan-result")
+    @Test func nullableHitFieldsDecodeWhenMissingOrNull() throws {
+        let data = Data(#"""
+        {
+          "meta": {
+            "label": "Optional fields",
+            "scan_kind": "aspect",
+            "start_utc": "2026-01-01T00:00:00+00:00",
+            "end_utc": "2026-01-02T00:00:00+00:00",
+            "ephemeris": "Swiss Ephemeris",
+            "target_count": 1
+          },
+          "hits": [
+            {
+              "id": "missing-optionals",
+              "window": "test",
+              "date_time_local": "2026-01-01 12:00",
+              "transit_body_id": "SUN",
+              "transit_body_name": "太阳",
+              "aspect_id": "conjunction",
+              "aspect_name": "合相",
+              "target_name": "Natal Sun",
+              "target_longitude": 10.0,
+              "transit_longitude": 10.0,
+              "transit_position": "10°00'00\" 白羊",
+              "exact_longitude": 10.0
+            },
+            {
+              "id": "null-optionals",
+              "window": "test",
+              "date_time_local": "2026-01-01 13:00",
+              "transit_body_id": "MOON",
+              "transit_body_name": "月亮",
+              "aspect_id": "square",
+              "aspect_name": "刑相",
+              "aspect_angle": null,
+              "target_name": "Natal Moon",
+              "target_longitude": 20.0,
+              "target_position": null,
+              "transit_longitude": 110.0,
+              "transit_position": "20°00'00\" 巨蟹",
+              "exact_transit_position": null,
+              "exact_longitude": 110.0,
+              "orb": null,
+              "phase": null,
+              "scan_step": null,
+              "exact_method": null,
+              "max_orb": null,
+              "priority_score": null,
+              "priority_grade": null
+            }
+          ],
+          "warnings": []
+        }
+        """#.utf8)
         let result = try JSONDecoder().decode(ScanResult.self, from: data)
 
-        // These fields are optional in the wire contract; decoding must not
-        // crash on missing values and must map null to nil.
+        #expect(result.hits.count == 2)
         for hit in result.hits {
-            _ = hit.aspectAngle
-            _ = hit.targetPosition
-            _ = hit.exactTransitPosition
-            _ = hit.orb
-            _ = hit.phase
-            _ = hit.scanStep
-            _ = hit.exactMethod
-            _ = hit.maxOrb
-            _ = hit.priorityScore
-            _ = hit.priorityGrade
+            #expect(hit.aspectAngle == nil)
+            #expect(hit.targetPosition == nil)
+            #expect(hit.exactTransitPosition == nil)
+            #expect(hit.orb == nil)
+            #expect(hit.phase == nil)
+            #expect(hit.scanStep == nil)
+            #expect(hit.exactMethod == nil)
+            #expect(hit.maxOrb == nil)
+            #expect(hit.priorityScore == nil)
+            #expect(hit.priorityGrade == nil)
+            #expect(hit.priorityGradeSortValue.isEmpty)
         }
-
-        // Every hit must carry its identity and the two sort/grade helpers.
-        let ids = Set(result.hits.map(\.id))
-        #expect(ids.count == result.hits.count)
-        #expect(result.hits.allSatisfy { $0.priorityGradeSortValue == ($0.priorityGrade ?? "") })
     }
 
     @Test func markdownScanExportRendersMetadataAndEveryHitRow() throws {

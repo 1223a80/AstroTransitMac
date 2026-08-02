@@ -2,7 +2,7 @@
 
 Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界面使用 SwiftUI，计算层使用 Python 与 Swiss Ephemeris；Swift 通过启动随应用打包的 `transit_calc.py` 子进程，以 stdin/stdout JSON 契约取得计算结果。
 
-最近已打包版本为 **1.4.4 (46)**。项目覆盖现代、古典、Horary 与吠陀工作流，并提供星盘图、结构化结果页、Markdown / JSON / CSV 导出、部分模式的流式 AI 分析，以及三级生时矫正。当前源码还包含 B18 固定星 paran 真实事件引擎（schema v2）；该增量尚未另行提升应用版本号或重新打包。
+最近已打包版本为 **1.4.5 (47)**。项目覆盖现代、古典、Horary 与吠陀工作流，并提供星盘图、结构化结果页、Markdown / JSON / CSV 导出、部分模式的流式 AI 分析，以及三级生时矫正；本版包含 B18 固定星 paran 真实事件引擎（schema v2）、Horary 可读 Markdown 与补全后的测试矩阵。
 
 > Transit Studio 首先是一套“可计算、可复算、可审计”的数据工具。部分模块只输出事实、方法与证据，不自动给出吉凶、寿命、择时推荐或 Horary 最终判断。
 
@@ -10,8 +10,8 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 
 | 项目 | 当前实现 |
 |---|---|
-| 最近已打包版本 | 1.4.4 (46) |
-| 当前源码增量 | B18 true fixed-star parans（schema v2；legacy RA proxy 独立迁移输出） |
+| 最近已打包版本 | 1.4.5 (47) |
+| 本版发布重点 | B18 true fixed-star parans、Horary 可读 Markdown、完整导出/流式/rectify/scan 测试覆盖 |
 | 系统要求 | macOS 13 或更高 |
 | 应用架构 | Swift Package executable；当前打包脚本生成 arm64 `.app` |
 | 前端 | SwiftUI |
@@ -25,7 +25,7 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 
 ## 当前已交付能力与 B18 增量
 
-1.4.4 是最近已打包并验证的发布基线；当前源码在此基础上保留 B7–B20 计算扩展、古典进阶工作区、Horary v2.1 和主窗口布局收口，并新增 B18 固定星 paran 真实事件引擎。以下均为已经接入 UI、后端、模型、导出与测试的现有能力，不是 roadmap。
+1.4.5 是最近已打包并验证的发布基线；当前源码包含 B7–B20 计算扩展、古典进阶工作区、Horary v2.1、主窗口布局收口、B18 固定星 paran 真实事件引擎与可读 Markdown 导出。以下均为已经接入 UI、后端、模型、导出与测试的现有能力，不是 roadmap。
 
 ### B7–B20 计算扩展
 

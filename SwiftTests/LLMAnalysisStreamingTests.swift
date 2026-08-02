@@ -47,7 +47,10 @@ struct LLMAnalysisStreamingTests {
         _ operation: () async throws -> Void
     ) async throws {
         URLProtocol.registerClass(MockURLProtocol.self)
-        defer { URLProtocol.unregisterClass(MockURLProtocol.self) }
+        defer {
+            MockURLProtocol.handler = nil
+            URLProtocol.unregisterClass(MockURLProtocol.self)
+        }
         MockURLProtocol.handler = { request in
             #expect(request.url?.path == "/v1/chat/completions")
             #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer test-key")
@@ -60,7 +63,6 @@ struct LLMAnalysisStreamingTests {
             return (response, Data(body.utf8))
         }
         try await operation()
-        MockURLProtocol.handler = nil
     }
 
     private func collectChunks(

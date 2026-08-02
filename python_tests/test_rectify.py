@@ -66,12 +66,19 @@ class TestWindowGeneration:
         assert all(off % 5 == 0 for off in offsets)
 
     def test_center_offset_seconds_shifts_the_whole_window(self) -> None:
-        response = compute_window(_base_request(center_offset_seconds=120, window_minutes=3, step_minutes=3))
-        offsets = [c["offset_seconds"] for c in response["candidates"]]
-        # The window is shifted: candidates are relative to the shifted center.
+        baseline = compute_window(_base_request(window_minutes=3, step_minutes=3))
+        response = compute_window(
+            _base_request(center_offset_seconds=120, window_minutes=3, step_minutes=3)
+        )
+        offsets = [candidate["offset_seconds"] for candidate in response["candidates"]]
+        # Relative offsets stay centered while the actual center advances two minutes.
         assert offsets == [-180, 0, 180]
         assert response["center_offset_index"] == 1
-        assert response["candidates"][1]["offset_seconds"] == 0
+        baseline_center = baseline["candidates"][baseline["center_offset_index"]]
+        shifted_center = response["candidates"][response["center_offset_index"]]
+        assert baseline_center["birth_local"] == "1990-01-01 12:00"
+        assert shifted_center["birth_local"] == "1990-01-01 12:02"
+        assert shifted_center["meta"]["jd"] > baseline_center["meta"]["jd"]
 
     def test_step_seconds_clamped_to_at_least_one(self) -> None:
         response = compute_window(_base_request(window_seconds=30, step_seconds=0))
