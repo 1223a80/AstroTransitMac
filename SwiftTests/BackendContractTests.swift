@@ -611,7 +611,8 @@ struct BackendContractTests {
         #expect(result.schema.schemaId.hasPrefix("horary-data-packet/2."))
         #expect(result.calculationConfig.aspectOrbDeg == 3)
         if let candidates = result.aspectCandidates {
-            #expect(candidates.count >= result.aspects.count || candidates.count == 105)
+            // aspects is the v2.1 compat alias of aspect_candidates → counts match.
+            #expect(candidates.count >= result.aspects.count)
             #expect(candidates.contains { $0.withinDisplayOrb != nil || $0.absoluteOrbDeg != nil })
         }
 

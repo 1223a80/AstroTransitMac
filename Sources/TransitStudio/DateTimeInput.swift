@@ -3,24 +3,26 @@ import SwiftUI
 struct DateTimeInput: View {
     @Binding var date: Date
     let timeZone: TimeZone
+    var showsSeconds: Bool = false
     @State private var text = ""
     @FocusState private var isEditing: Bool
 
-    init(date: Binding<Date>, timeZone: TimeZone = .current) {
+    init(date: Binding<Date>, timeZone: TimeZone = .current, showsSeconds: Bool = false) {
         _date = date
         self.timeZone = timeZone
+        self.showsSeconds = showsSeconds
     }
 
-    static func makeFormatter(timeZone: TimeZone) -> DateFormatter {
+    static func makeFormatter(timeZone: TimeZone, showsSeconds: Bool = false) -> DateFormatter {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        formatter.dateFormat = showsSeconds ? "yyyy-MM-dd HH:mm:ss" : "yyyy-MM-dd HH:mm"
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = timeZone
         return formatter
     }
 
     private var formatter: DateFormatter {
-        Self.makeFormatter(timeZone: timeZone)
+        Self.makeFormatter(timeZone: timeZone, showsSeconds: showsSeconds)
     }
 
     var body: some View {
@@ -34,7 +36,7 @@ struct DateTimeInput: View {
                     }
                 }
 
-            TextField("yyyy-MM-dd HH:mm", text: $text)
+            TextField(showsSeconds ? "yyyy-MM-dd HH:mm:ss" : "yyyy-MM-dd HH:mm", text: $text)
                 .textFieldStyle(.roundedBorder)
                 .monospacedDigit()
                 .focused($isEditing)

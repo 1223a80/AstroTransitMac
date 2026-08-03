@@ -25,6 +25,8 @@ struct ChartMoment: Codable {
     let hour: Int
     let minute: Int
     let timezone: String
+    /// Optional second precision. Absent for legacy requests (backend defaults 0).
+    var second: Int? = nil
 }
 
 struct AspectRequest: Codable {

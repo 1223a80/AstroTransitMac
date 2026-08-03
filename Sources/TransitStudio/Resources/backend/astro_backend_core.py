@@ -165,6 +165,16 @@ def resolve_timezone(zone_text: Any):
         raise ValueError(f"未知时区：{zone_text}") from exc
 
 
+def _moment_second(moment: dict[str, Any]) -> int:
+    raw = moment.get("second")
+    if raw is None:
+        return 0
+    second = int(raw)
+    if not (0 <= second <= 59):
+        raise ValueError("moment.second 必须在 0-59 之间")
+    return second
+
+
 def moment_to_local_datetime(moment: dict[str, Any]) -> datetime:
     zone_text = str(moment.get("timezone", "")).strip()
     offset_match = re.fullmatch(r"(?:GMT|UTC)?\s*([+-])\s*(\d{1,2})(?::?(\d{2}))?", zone_text, re.IGNORECASE)
@@ -176,6 +186,7 @@ def moment_to_local_datetime(moment: dict[str, Any]) -> datetime:
             int(moment["day"]),
             int(moment["hour"]),
             int(moment["minute"]),
+            _moment_second(moment),
             tzinfo=zone,
         )
 
@@ -190,6 +201,7 @@ def moment_to_local_datetime(moment: dict[str, Any]) -> datetime:
         int(moment["day"]),
         int(moment["hour"]),
         int(moment["minute"]),
+        _moment_second(moment),
     )
     candidates = [naive.replace(tzinfo=zone, fold=fold) for fold in (0, 1)]
     valid = [

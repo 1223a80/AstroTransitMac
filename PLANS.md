@@ -1,3 +1,29 @@
+# Horary 剩余修复清单 A–J（2026-08-03）
+
+分支：`fix/horary-timezone-events`（延续）。目标：按 `docs/horary-remaining-fixes.md` 审计清单完成全部待修项，重生成受影响 fixture/golden，全量验证后收口。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 现状核对 | 已完成 | 逐项阅读 A-J 对应代码与契约；确认 golden/fixture 重生成路径（transit_calc.py 输出重定向） |
+| 02 A 秒精度起盘 | 已完成 | `ChartMoment.second`（可选）、`makeMoment` 读秒、后端两分支 second 支持（0-59 校验）、`DateTimeInput showsSeconds`（horary 开启）；Python 2 项 + Swift 1 项回归 |
+| 03 B VOC rule B 独立 | 已完成 | `_moon_index` 增 `future_any`（不截断 sign_exit）；rule B 与 rule A 判定集合不同；`_voc_interval` start>end 输出 complete=false；golden 事件 105→106（新增 1 个 void_of_course_start） |
+| 04 C/D/E/F 后端 | 已完成 | C: 删 `_build_events` aspect_exact 段（events 不变）；D: `_station_kind` 兜底推断 + 单测；E: packetVersion 入 canonical（"2" hash 不变）；F: optional_modules 去占位键 |
+| 05 G/H 清理与契约 | 已完成 | G: 删 `_build_pairwise`/`_applying_with_motion`/死 import/空循环，修 2 处类型标注，去 `==105` 魔数；H: schema 补 required 与 8 组 properties，FIELD_DICTIONARY 同步 |
+| 06 I Swift 体验 | 已完成 | AI promptStyle 参数（horary 固定）；runHorary 清残留；orb 钳制 0...10；删 12 个未用类型；FNV-1a 稳定 id |
+| 07 J 测试 + fixture 重生成 | 已完成 | top-level 键补齐、refranation 回归；golden/fixture 重生成并核对（hash 不变、事件 id 变化仅 1 个 VOC start） |
+| 08 全量门禁 | 已完成 | Python 973 passed / 1 skipped；Swift build + 214 tests / 28 suites；check_vibe_changes.sh 全部 smoke 全绿；重建 .venv（pyswisseph 2.10.3.2 + pytest 9.1.1） |
+| 09 文档收口 | 进行中 | CHANGELOG 已追加；docs/horary-remaining-fixes.md 全部标记完成；PLANS 本条目 |
+
+## 边界
+
+- 不改 v2.1 顶层键结构（Swift 无损袋解码契约不变）；事件/VOC/optional_modules 内容变化属有意行为变更，fixture/golden 按 docs/validation.md 重生成，未手编。
+- rule B 采用「未来任何成相（4 天窗口）阻止 VOC」语义（方案 1），未删 rule_id，保持消费者兼容。
+- 版本号与打包未动（用户未要求）；`.venv` 按 check_vibe_changes.sh 设计重建。
+
+---
+
 # 测试覆盖补全（2026-08-01）
 
 分支：`test/coverage-completion`。目标是把测试矩阵中的空白补上：scan 模式解码与导出、rectify 后端直接测试、古典/Vedic 导出构建器、LLM SSE 流式解析。只新增测试与 fixture，不改生产代码逻辑。

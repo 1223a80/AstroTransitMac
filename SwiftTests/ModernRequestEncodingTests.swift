@@ -306,6 +306,16 @@ struct ModernRequestEncodingTests {
         #expect(dict["include_legacy_paran_proxy"] as? Bool == true)
     }
 
+    @Test func chartMomentSecondEncodesOnlyWhenPresent() throws {
+        let legacy = ChartMoment(year: 1990, month: 1, day: 1, hour: 12, minute: 0, timezone: "Asia/Shanghai")
+        let legacyDict = try encodedDictionary(legacy)
+        #expect(legacyDict["second"] == nil, "legacy moment must not emit a second key")
+
+        let precise = ChartMoment(year: 1990, month: 1, day: 1, hour: 12, minute: 0, timezone: "Asia/Shanghai", second: 30)
+        let preciseDict = try encodedDictionary(precise)
+        #expect(preciseDict["second"] as? Int == 30)
+    }
+
     private func encodedDictionary<T: Encodable>(_ value: T) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         return try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])

@@ -198,7 +198,7 @@ def _resolve_lot_ref(
     return 0.0
 
 
-def _formula_text(day_p1: str, day_p2: str, night_p1: str, night_p2: str) -> tuple[str, str, str, str]:
+def _formula_text(day_p1: str, day_p2: str, night_p1: str, night_p2: str) -> tuple[str, str]:
     """Convert specifiers to human-readable formula text."""
     def fmt(spec: str) -> str:
         if spec.startswith("planet:"):

@@ -361,81 +361,9 @@ struct HoraryV2Armc: Codable {
     }
 }
 
-struct HoraryV2Body: Codable, Identifiable {
-    var id: String { bodyId }
-    let bodyId: String
-    let names: HoraryV2Names
-    let ecliptic: HoraryV2Ecliptic
-    let sign: HoraryV2SignDisplay
-    let equatorial: HoraryV2Equatorial
-    let horizontal: HoraryV2Horizontal
-    let house: HoraryV2BodyHouse
-    let motion: HoraryV2Motion
-    let ephemerisSource: String?
-    let accidental: HoraryV2JSONValue?
-    let distanceToAnglesDeg: HoraryV2JSONValue?
-    let eventsIndex: HoraryV2JSONValue?
-    let precision: HoraryV2JSONValue?
-    let nodeMode: String?
-    let nodeRole: String?
-    let southDerivation: String?
-    let participatesInDomicileRulership: Bool?
-    let participatesInClassicalDignities: Bool?
-
-    enum CodingKeys: String, CodingKey {
-        case bodyId = "body_id"
-        case names, ecliptic, sign, equatorial, horizontal, house, motion
-        case ephemerisSource = "ephemeris_source"
-        case accidental
-        case distanceToAnglesDeg = "distance_to_angles_deg"
-        case eventsIndex = "events_index"
-        case precision
-        case nodeMode = "node_mode"
-        case nodeRole = "node_role"
-        case southDerivation = "south_derivation"
-        case participatesInDomicileRulership = "participates_in_domicile_rulership"
-        case participatesInClassicalDignities = "participates_in_classical_dignities"
-    }
-}
-
 struct HoraryV2Names: Codable {
     let en: String
     let zh: String
-}
-
-struct HoraryV2Ecliptic: Codable {
-    let longitudeDeg: Double
-    let latitudeDeg: Double?
-    let distanceAu: Double?
-    let longitudeSpeedDegPerDay: Double?
-    enum CodingKeys: String, CodingKey {
-        case longitudeDeg = "longitude_deg"
-        case latitudeDeg = "latitude_deg"
-        case distanceAu = "distance_au"
-        case longitudeSpeedDegPerDay = "longitude_speed_deg_per_day"
-    }
-}
-
-struct HoraryV2Equatorial: Codable {
-    let rightAscensionDeg: Double?
-    let declinationDeg: Double?
-    let hourAngleDeg: Double?
-    enum CodingKeys: String, CodingKey {
-        case rightAscensionDeg = "right_ascension_deg"
-        case declinationDeg = "declination_deg"
-        case hourAngleDeg = "hour_angle_deg"
-    }
-}
-
-struct HoraryV2Horizontal: Codable {
-    let azimuthDeg: Double?
-    let altitudeTrueDeg: Double?
-    let aboveHorizon: Bool?
-    enum CodingKeys: String, CodingKey {
-        case azimuthDeg = "azimuth_deg"
-        case altitudeTrueDeg = "altitude_true_deg"
-        case aboveHorizon = "above_horizon"
-    }
 }
 
 struct HoraryV2BodyHouse: Codable {
@@ -448,21 +376,6 @@ struct HoraryV2BodyHouse: Codable {
         case continuousHouse = "continuous_house"
         case distanceFromPreviousCuspDeg = "distance_from_previous_cusp_deg"
         case distanceToNextCuspDeg = "distance_to_next_cusp_deg"
-    }
-}
-
-struct HoraryV2Motion: Codable {
-    let state: String
-    let longitudeSpeedDegPerDay: Double?
-    let meanLongitudeSpeedDegPerDay: Double?
-    let speedToMeanRatio: Double?
-    let ruleId: String?
-    enum CodingKeys: String, CodingKey {
-        case state
-        case longitudeSpeedDegPerDay = "longitude_speed_deg_per_day"
-        case meanLongitudeSpeedDegPerDay = "mean_longitude_speed_deg_per_day"
-        case speedToMeanRatio = "speed_to_mean_ratio"
-        case ruleId = "rule_id"
     }
 }
 
@@ -626,11 +539,23 @@ struct HoraryV2EvidenceRow: Codable, Identifiable {
             return "\(a)|\(b)"
         }
         // Deterministic fallback from sorted raw keys (stable across redraws).
+        // FNV-1a is used instead of keys.hashValue, which is re-seeded per
+        // process and therefore not stable across launches.
         if case .object(let obj) = raw {
             let keys = obj.keys.sorted().joined(separator: ",")
-            return "row|\(keys.hashValue)"
+            return "row|\(Self.stableHash(keys))"
         }
         return "row|empty"
+    }
+
+    /// FNV-1a 64-bit hash — deterministic across processes and launches.
+    static func stableHash(_ text: String) -> String {
+        var hash: UInt64 = 14695981039346656037
+        for byte in text.utf8 {
+            hash ^= UInt64(byte)
+            hash &*= 1099511628211
+        }
+        return String(hash, radix: 16)
     }
 
     init(raw: HoraryV2JSONValue) {
@@ -899,191 +824,6 @@ struct HoraryV2EvidenceRow: Codable, Identifiable {
 
 typealias HoraryV2Reception = HoraryV2EvidenceRow
 typealias HoraryV2Lot = HoraryV2EvidenceRow
-
-struct HoraryV2Event: Codable, Identifiable {
-    let id: String
-    let eventType: String
-    let bodyIds: [String]
-    let aspectId: String?
-    let datetimeUtc: String
-    let datetimeLocal: String
-    let offsetSecondsFromQuery: Int
-    enum CodingKeys: String, CodingKey {
-        case id
-        case eventType = "event_type"
-        case bodyIds = "body_ids"
-        case aspectId = "aspect_id"
-        case datetimeUtc = "datetime_utc"
-        case datetimeLocal = "datetime_local"
-        case offsetSecondsFromQuery = "offset_seconds_from_query"
-    }
-}
-
-struct HoraryV2Moon: Codable {
-    let phaseAngleDeg: Double?
-    let illuminationFraction: Double?
-    let ageDaysApprox: Double?
-    let signExit: HoraryV2SignExit?
-    let lastExactAspectInCurrentSign: HoraryV2MoonAspectRef?
-    let nextExactAspectInCurrentSign: HoraryV2MoonAspectRef?
-    let pastExactAspectsInCurrentSign: [HoraryV2MoonAspectRef]
-    let futureExactAspectsInCurrentSign: [HoraryV2MoonAspectRef]
-    let aspectsInNextSign: [HoraryV2MoonAspectRef]
-    let voidOfCourseRules: [HoraryV2VocRule]
-
-    enum CodingKeys: String, CodingKey {
-        case phaseAngleDeg = "phase_angle_deg"
-        case illuminationFraction = "illumination_fraction"
-        case ageDaysApprox = "age_days_approx"
-        case signExit = "sign_exit"
-        case lastExactAspectInCurrentSign = "last_exact_aspect_in_current_sign"
-        case nextExactAspectInCurrentSign = "next_exact_aspect_in_current_sign"
-        case pastExactAspectsInCurrentSign = "past_exact_aspects_in_current_sign"
-        case futureExactAspectsInCurrentSign = "future_exact_aspects_in_current_sign"
-        case aspectsInNextSign = "aspects_in_next_sign"
-        case voidOfCourseRules = "void_of_course_rules"
-    }
-}
-
-struct HoraryV2SignExit: Codable {
-    let datetimeLocal: String?
-    let datetimeUtc: String?
-    let remainingArcDeg: Double?
-    let remainingSeconds: Int?
-    enum CodingKeys: String, CodingKey {
-        case datetimeLocal = "datetime_local"
-        case datetimeUtc = "datetime_utc"
-        case remainingArcDeg = "remaining_arc_deg"
-        case remainingSeconds = "remaining_seconds"
-    }
-}
-
-struct HoraryV2MoonAspectRef: Codable {
-    let targetId: String?
-    let aspectId: String?
-    let datetimeLocal: String?
-    let datetimeUtc: String?
-    enum CodingKeys: String, CodingKey {
-        case targetId = "target_id"
-        case aspectId = "aspect_id"
-        case datetimeLocal = "datetime_local"
-        case datetimeUtc = "datetime_utc"
-    }
-}
-
-struct HoraryV2VocRule: Codable, Identifiable {
-    var id: String { ruleId }
-    let ruleId: String
-    let value: Bool
-    let algorithmVersion: String?
-    enum CodingKeys: String, CodingKey {
-        case ruleId = "rule_id"
-        case value
-        case algorithmVersion = "algorithm_version"
-    }
-}
-
-struct HoraryV2Visibility: Codable, Identifiable {
-    var id: String { bodyId }
-    let bodyId: String
-    let eclipticSeparationFromSunDeg: Double?
-    let sphericalSeparationFromSunDeg: Double?
-    let morningEvening: String?
-    let visible: Bool?
-    let visibleReasonCode: String?
-    let phaseAngleDeg: Double?
-    let illuminationFraction: Double?
-    let apparentMagnitude: Double?
-    let angularDiameterArcsec: Double?
-    let solarElongationDeg: Double?
-    let sunAltitudeDeg: Double?
-    let bodyAltitudeDeg: Double?
-    let visibilityModelId: String?
-    let atmosphere: HoraryV2JSONValue?
-    let thresholds: HoraryV2JSONValue?
-    let solarConditionFlags: HoraryV2JSONValue?
-    let phenoSource: String?
-    let morningEveningDefinition: String?
-    let algorithmVersion: String?
-
-    enum CodingKeys: String, CodingKey {
-        case bodyId = "body_id"
-        case eclipticSeparationFromSunDeg = "ecliptic_separation_from_sun_deg"
-        case sphericalSeparationFromSunDeg = "spherical_separation_from_sun_deg"
-        case morningEvening = "morning_evening"
-        case visible
-        case visibleReasonCode = "visible_reason_code"
-        case phaseAngleDeg = "phase_angle_deg"
-        case illuminationFraction = "illumination_fraction"
-        case apparentMagnitude = "apparent_magnitude"
-        case angularDiameterArcsec = "angular_diameter_arcsec"
-        case solarElongationDeg = "solar_elongation_deg"
-        case sunAltitudeDeg = "sun_altitude_deg"
-        case bodyAltitudeDeg = "body_altitude_deg"
-        case visibilityModelId = "visibility_model_id"
-        case atmosphere
-        case thresholds
-        case solarConditionFlags = "solar_condition_flags"
-        case phenoSource = "pheno_source"
-        case morningEveningDefinition = "morning_evening_definition"
-        case algorithmVersion = "algorithm_version"
-    }
-}
-
-struct HoraryV2OptionalModules: Codable {
-    let antiscia: [HoraryV2Antiscia]?
-    let viaCombusta: [HoraryV2ViaCombusta]?
-    let dodecatemoria: [HoraryV2Dodecatemoria]?
-    let antisciaContacts: HoraryV2JSONValue?
-    let declinationContacts: HoraryV2JSONValue?
-    let declinationMoonSequence: HoraryV2JSONValue?
-    let fixedStars: HoraryV2JSONValue?
-    let planetaryHour: HoraryV2JSONValue?
-    let nodes: HoraryV2JSONValue?
-    let declinationParallels: HoraryV2JSONValue?
-
-    enum CodingKeys: String, CodingKey {
-        case antiscia
-        case viaCombusta = "via_combusta"
-        case dodecatemoria
-        case antisciaContacts = "antiscia_contacts"
-        case declinationContacts = "declination_contacts"
-        case declinationMoonSequence = "declination_moon_sequence"
-        case fixedStars = "fixed_stars"
-        case planetaryHour = "planetary_hour"
-        case nodes
-        case declinationParallels = "declination_parallels"
-    }
-}
-
-struct HoraryV2Antiscia: Codable {
-    let bodyId: String
-    let antisciaLongitudeDeg: Double?
-    let contraAntisciaLongitudeDeg: Double?
-    enum CodingKeys: String, CodingKey {
-        case bodyId = "body_id"
-        case antisciaLongitudeDeg = "antiscia_longitude_deg"
-        case contraAntisciaLongitudeDeg = "contra_antiscia_longitude_deg"
-    }
-}
-
-struct HoraryV2ViaCombusta: Codable {
-    let bodyId: String
-    let inViaCombusta: Bool
-    enum CodingKeys: String, CodingKey {
-        case bodyId = "body_id"
-        case inViaCombusta = "in_via_combusta"
-    }
-}
-
-struct HoraryV2Dodecatemoria: Codable {
-    let bodyId: String
-    let dodecatemoriaLongitudeDeg: Double?
-    enum CodingKeys: String, CodingKey {
-        case bodyId = "body_id"
-        case dodecatemoriaLongitudeDeg = "dodecatemoria_longitude_deg"
-    }
-}
 
 struct HoraryV2Validation: Codable {
     let warnings: [String]

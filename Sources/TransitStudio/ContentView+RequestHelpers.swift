@@ -52,11 +52,15 @@ func selectedAspectRequests(orb: Double) -> [AspectRequest] {
         return String(format: "%.2f°", value)
     }
 
-    func makeMoment(from date: Date, gmtOffset: Double? = nil) -> ChartMoment {
+    func makeMoment(from date: Date, gmtOffset: Double? = nil, includeSeconds: Bool = false) -> ChartMoment {
         var calendar = Calendar(identifier: .gregorian)
         let effectiveOffset = gmtOffset ?? self.gmtOffset
         calendar.timeZone = timeZone(for: effectiveOffset)
-        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+        var requested: Set<Calendar.Component> = [.year, .month, .day, .hour, .minute]
+        if includeSeconds {
+            requested.insert(.second)
+        }
+        let components = calendar.dateComponents(requested, from: date)
 
         return ChartMoment(
             year: components.year ?? 2000,
@@ -64,7 +68,8 @@ func selectedAspectRequests(orb: Double) -> [AspectRequest] {
             day: components.day ?? 1,
             hour: components.hour ?? 0,
             minute: components.minute ?? 0,
-            timezone: timezoneLabel(for: effectiveOffset)
+            timezone: timezoneLabel(for: effectiveOffset),
+            second: includeSeconds ? components.second : nil
         )
     }
 

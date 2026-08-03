@@ -75,11 +75,14 @@ Sunrise/sunset bounds, day/hour rulers, unequal hours, polar reason codes; ASC e
 
 | Key | Content |
 |---|---|
-| `declination_parallels` / `declination_contacts` | Parallel / contra-parallel with independent declination orb |
+| `declination_contacts` | Parallel / contra-parallel with independent declination orb |
 | `declination_moon_sequence` | Moon prev/next declination contacts |
 | `antiscia` / `antiscia_contacts` | Positions + contact matrix (bodies, angles, cusps, lots, nodes) |
 | `fixed_stars` | Versioned core traditional catalog + contacts/events |
 | `via_combusta` / `dodecatemoria` | Neutral placement facts |
+| `nodes` | Mean/true node mode + node body rows (mirrors top-level `nodes`) |
+
+No `not_computed_in_core` placeholder keys are emitted: every key carries real data. Declination parallel data lives under `declination_contacts` (there is no separate `declination_parallels` key).
 
 ## Markdown
 

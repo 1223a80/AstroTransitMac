@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-03 — Horary 剩余修复清单 A–J 全部落地
+
+按 `docs/horary-remaining-fixes.md` 审计清单完成全部待修项（含 fixture/golden 重生成）：
+
+- **A. 秒精度起盘时刻**：`ChartMoment` 新增可选 `second`（缺省不编码，兼容旧请求），`makeMoment` 支持 `includeSeconds`（仅 Horary 起盘开启，其它模式请求不变）；后端 `moment_to_local_datetime` 两分支支持 second（0-59 校验、数字字符串宽容）；`DateTimeInput` 支持 `showsSeconds`（Horary 起盘时间开启，可手输 `yyyy-MM-dd HH:mm:ss`）。
+- **B. VOC rule B 独立判定**：`_moon_index` 新增 `future_any`（4 天窗口不截断 sign_exit），rule B 现为「未来任何成相都阻止 VOC」——与 rule A 的差异恰在成相晚于星座出口的情形（此前两条 rule 恒等输出）；`_voc_interval` 对 start>end 输出 `complete=false`。Linyi golden 的 `void_of_course_rules` 与 `considerations_evidence` 同步更新，新增 1 个 `void_of_course_start` 事件（106 个事件）。
+- **C. `_build_events` 性能**：删除被整批丢弃的 aspect_exact 生成段及 `aspects` 参数，事件只走 `aspect_exact_events_from_candidates` 重建路径；events 输出不变（golden 事件 id 集合核对一致）。
+- **D. `_search_station` kind 兜底**：抽取 `_station_kind(before, after)`——after 缺失时按 before 方向推断（direct→retro / retro→direct），双缺失回退中性 `station`，不再默认错标 `station_retrograde`。
+- **E. `packetVersion` 溯源哈希**：`input_canonical["packetVersion"]` 取真实请求值（缺省 "2"）；`"2"` 请求 hash 不变（golden 断言通过），`"2.1"` 等别名可溯源。
+- **F. `optional_modules` 占位键**：移除 `not_computed_in_core` 占位（`declination_parallels`/`fixed_stars`/`planetary_hour`），只输出真实数据键；schema 与 `FIELD_DICTIONARY.md` 同步。
+- **G. 死代码与类型标注**：删除未调用的 `_build_pairwise`/`_applying_with_motion` 及死 import；`considerations_evidence` 空 for 循环；`_formula_text` 标注改 `tuple[str,str]`；`declination_parallels` 标注改 dict|list 联合；`BackendContractTests` `==105` 魔数逃生口移除。
+- **H. schema 与文档契约**：`horary-data-packet-2.1.json` required 补 `aspects_in_display_orb`/`display`；bodies 补 sign/motion/equatorial/horizontal/names 定义、ecliptic 补 3 个缺键；receptions 改 `related_aspect_candidate_ids` 并补键；aspect_candidates/events/lots/validation 键补全；optional_modules/nodes 定义细化。
+- **I. Swift 端体验**：`analyze()` 支持 `promptStyle` 参数，Horary AI 分析固定使用 horary 提示词（不再受全局 `aiPromptStyle` 影响）；`runHorary` 起盘前清旧 `horaryResult` 与 AI 文本（失败重算不残留旧盘）；`horaryAspectOrb` 钳制 0.1...10（清空不再导致轮盘无相位线）；删除 12 个未进入解码路径的类型化模型（`HoraryV2Body`/`HoraryV2Moon`/`HoraryV2OptionalModules` 等，均经 grep 确认无引用）；`HoraryV2EvidenceRow.id` fallback 改用 FNV-1a 稳定哈希（跨进程一致）。
+- **J. 测试补强**：`test_top_level_sections_present` 键列表补齐 8 键；新增 separating-refranation 回归（2026-10-21 Mercury-Jupiter square → `next_exact.root_status == "not_found"` 且 reason 含 refranation）、`_station_kind` 兜底推断、`moment_second` 精度与校验（Python 3 项 + Swift 1 项）。
+- **契约维护**：`SwiftTests/Fixtures/horary-result.json` 与 Linyi golden 重新生成（VOC 规则/事件与 optional_modules 键集变化属有意 schema 行为变更）；`input_hash` 与事件 id 集合核对无意外漂移。
+- 验证：全量 Python 973 passed / 1 skipped；Swift build + 214 tests / 28 suites；`check_vibe_changes.sh` 全部 smoke（含 rectify）全绿。
+
 ## 2026-08-02 — Horary 离相候选 refranation 防护
 
 - **separating 候选成相防护**：`astro_backend_horary.py` 抽取 `nearest_branch_offset` 与 `application_continuity_interruption`（沿分支采样检测 refranation/逆行打断），`astro_backend_horary_v2_aspects.py` 的离相（separating）fallback 从裸 `next_exact_for_pair` 改为与入相路径同等的完整校验（连续性采样 + 换座检查）。虚假的"未来成相"预测被正确拦截：`next_exact.root_status` 由 `found` 变 `not_found`，`refranation_detected` 正确置位。

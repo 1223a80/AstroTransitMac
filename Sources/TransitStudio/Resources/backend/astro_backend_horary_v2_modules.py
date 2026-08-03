@@ -779,10 +779,6 @@ def considerations_evidence(
     from astro_backend_core import SIGN_RULERS
     if asc is not None:
         asc_ruler = SIGN_RULERS[zodiac_sign_index(asc)]
-        hour_ruler = None
-        for h in planetary.get("hours") or []:
-            # current hour detection if present
-            pass
         current = planetary.get("current_hour") or planetary.get("current")
         if isinstance(current, dict):
             hour_ruler = current.get("ruler_id")
@@ -885,7 +881,7 @@ def declination_parallels(
     sidereal: bool = False,
     past_days: float = 30.0,
     future_days: float = 60.0,
-) -> list[dict[str, Any]]:
+) -> dict[str, Any] | list[dict[str, Any]]:
     warnings = warnings if warnings is not None else []
     rows = []
     ids = [b for b in bodies if b.get("equatorial", {}).get("declination_deg") is not None]

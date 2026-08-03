@@ -17,7 +17,6 @@ from typing import Any
 
 from astro_backend_classical import (
     CLASSICAL_ASPECTS,
-    applying_label,
     aspect_offsets_for_angle,
     classical_aspect_signature,
     signed_aspect_orb,
@@ -78,7 +77,6 @@ from astro_backend_horary import (
     STATION_SPEED_MINIMUM,
     STATION_SPEED_RATIO,
     body_exits_sign_before,
-    exact_datetime_result_for_signature,
     next_exact_for_pair,
     next_sign_exit_for_body,
     previous_exact_for_pair,
@@ -579,11 +577,7 @@ def _search_station(
             exact = a_utc.astimezone(chart_dt.tzinfo) if chart_dt.tzinfo else a_utc.replace(tzinfo=None)
             after = body_speed_at(exact + timedelta(hours=1), spec, warnings, warning_keys, sidereal=sidereal)
             before = body_speed_at(exact - timedelta(hours=1), spec, warnings, warning_keys, sidereal=sidereal)
-            kind = "station_direct" if after and after[0] > 0 else "station_retrograde"
-            if before and after and before[0] > 0 and after[0] < 0:
-                kind = "station_retrograde"
-            elif before and after and before[0] < 0 and after[0] > 0:
-                kind = "station_direct"
+            kind = _station_kind(before, after)
             return {
                 "kind": kind,
                 "datetime_local": format_local(exact),
@@ -596,170 +590,33 @@ def _search_station(
     return None
 
 
+def _station_kind(
+    before: tuple[float, ...] | None,
+    after: tuple[float, ...] | None,
+) -> str:
+    """Station direction label from pre/post speed samples (deg/day).
+
+    Both samples available → the transition direction wins (direct→retrograde =
+    station_retrograde, retrograde→direct = station_direct). Only the after
+    sample → its sign decides. Only the before sample → infer the opposite
+    (direct into the station → retrograde out, and vice versa). Neither sample
+    → neutral "station" (never guess a direction).
+    """
+    if before and after:
+        if before[0] > 0 and after[0] < 0:
+            return "station_retrograde"
+        if before[0] < 0 and after[0] > 0:
+            return "station_direct"
+    if after is not None:
+        return "station_direct" if after[0] > 0 else "station_retrograde"
+    if before is not None:
+        return "station_retrograde" if before[0] > 0 else "station_direct"
+    return "station"
+
+
 def _pair_key(a: str, b: str) -> str:
     left, right = sorted((a, b))
     return f"{left}|{right}"
-
-
-def _applying_with_motion(
-    chart_dt: datetime,
-    left_id: str,
-    right_id: str,
-    angle: float,
-    left_speed: float,
-    right_speed: float,
-    left_lon: float,
-    right_lon: float,
-    warnings: list[str],
-    sidereal: bool,
-) -> tuple[str, dict[str, Any]]:
-    """Determine applying/separating using relative motion; evidence includes speeds."""
-    orb = signed_aspect_orb(left_lon, right_lon, angle)
-    rel_speed = left_speed - right_speed
-    if abs(orb) < 1e-9:
-        label = "applying"  # exact at chart moment
-        zh = "入相"
-    elif abs(rel_speed) < 1e-12:
-        label = "separating"
-        zh = "离相"
-    else:
-        zh = "入相" if orb * rel_speed < 0 else "离相"
-        label = "applying" if zh == "入相" else "separating"
-    return label, {
-        "signed_orb_deg": _r(orb, 8),
-        "relative_speed_deg_per_day": _r(rel_speed, 8),
-        "method": "signed_orb_times_relative_speed",
-        "label_zh": zh,
-    }
-
-
-def _build_pairwise(
-    chart_dt: datetime,
-    bodies: list[dict[str, Any]],
-    aspect_orb: float,
-    warnings: list[str],
-    sidereal: bool,
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    by_id = {b["body_id"]: b for b in bodies}
-    ids = [b["body_id"] for b in bodies]
-    geometry_rows: list[dict[str, Any]] = []
-    aspect_rows: list[dict[str, Any]] = []
-    warning_keys: set[str] = set()
-
-    for i, left_id in enumerate(ids):
-        for right_id in ids[i + 1 :]:
-            left = by_id[left_id]
-            right = by_id[right_id]
-            lon_a = left["ecliptic"]["longitude_deg"]
-            lon_b = right["ecliptic"]["longitude_deg"]
-            spd_a = left["ecliptic"]["longitude_speed_deg_per_day"] or 0.0
-            spd_b = right["ecliptic"]["longitude_speed_deg_per_day"] or 0.0
-            raw_sep = norm360(lon_b - lon_a)
-            min_sep = angular_separation(lon_a, lon_b)
-            rel_speed = spd_a - spd_b
-            nearest_aspect = None
-            nearest_delta = None
-            for aspect_name_zh, angle in CLASSICAL_ASPECTS.items():
-                delta = abs(min_sep - angle)
-                if nearest_delta is None or delta < nearest_delta:
-                    nearest_delta = delta
-                    nearest_aspect = {
-                        "aspect_id": ASPECT_EN.get(aspect_name_zh, aspect_name_zh),
-                        "aspect_angle_deg": angle,
-                        "delta_to_aspect_deg": _r(delta, 8),
-                        "within_orb": delta <= aspect_orb,
-                    }
-
-            pair = {
-                "id": _pair_key(left_id, right_id),
-                "body_a_id": left_id,
-                "body_b_id": right_id,
-                "raw_separation_deg": _r(raw_sep, 8),
-                "minimum_separation_deg": _r(min_sep, 8),
-                "relative_speed_deg_per_day": _r(rel_speed, 8),
-                "motion_direction": "converging" if (nearest_aspect and nearest_aspect["within_orb"] and applying_label(
-                    {"longitude": lon_a, "speed": spd_a},
-                    {"longitude": lon_b, "speed": spd_b},
-                    nearest_aspect["aspect_angle_deg"],
-                ) == "入相") else "diverging",
-                "deltas_to_aspect_angles": [
-                    {
-                        "aspect_id": ASPECT_EN[name],
-                        "angle_deg": ang,
-                        "delta_deg": _r(abs(min_sep - ang), 8),
-                    }
-                    for name, ang in sorted(CLASSICAL_ASPECTS.items(), key=lambda kv: kv[1])
-                ],
-                "nearest_aspect": nearest_aspect,
-                "orb_limit_deg": aspect_orb,
-                "geometry_type": "zodiacal",
-                "algorithm_version": ALGORITHM_VERSION,
-            }
-            geometry_rows.append(pair)
-
-            # Degree aspects within orb
-            fake_a = {"id": left_id, "name": left["names"]["zh"], "longitude": lon_a, "speed": spd_a}
-            fake_b = {"id": right_id, "name": right["names"]["zh"], "longitude": lon_b, "speed": spd_b}
-            for aspect_name_zh, angle in CLASSICAL_ASPECTS.items():
-                orb = abs(min_sep - angle)
-                if orb > aspect_orb:
-                    continue
-                apply_label, apply_ev = _applying_with_motion(
-                    chart_dt, left_id, right_id, angle, spd_a, spd_b, lon_a, lon_b, warnings, sidereal,
-                )
-                signature = (aspect_name_zh, "degree", orb, apply_ev["label_zh"], "degree-based aspect")
-                exact_dt, reason = exact_datetime_result_for_signature(
-                    chart_dt, fake_a, fake_b, signature, warnings, sidereal=sidereal,
-                )
-                prev_exact = previous_exact_for_pair(
-                    chart_dt, left_id, right_id, angle, warnings, warning_keys,
-                    max_days=int(DEFAULT_EVENT_PAST_DAYS) + 1, step_hours=6, sidereal=sidereal,
-                )
-                left_exit_before = False
-                right_exit_before = False
-                refranation = reason.startswith("refranation") if reason else False
-                if exact_dt is not None:
-                    left_exit_before = body_exits_sign_before(
-                        chart_dt, exact_dt, left_id, warnings, warning_keys, sidereal=sidereal
-                    )
-                    right_exit_before = body_exits_sign_before(
-                        chart_dt, exact_dt, right_id, warnings, warning_keys, sidereal=sidereal
-                    )
-                aspect_id = ASPECT_EN[aspect_name_zh]
-                aspect_rows.append({
-                    "id": f"{_pair_key(left_id, right_id)}|{aspect_id}",
-                    "body_a_id": left_id,
-                    "body_b_id": right_id,
-                    "aspect_id": aspect_id,
-                    "aspect_angle_deg": angle,
-                    "orb_deg": _r(orb, 8),
-                    "orb_limit_deg": aspect_orb,
-                    "within_orb": True,
-                    "application": apply_label,
-                    "application_evidence": apply_ev,
-                    "previous_exact": {
-                        "datetime_local": format_local(prev_exact) if prev_exact else None,
-                        "datetime_utc": prev_exact.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if prev_exact else None,
-                    } if prev_exact else None,
-                    "next_exact": {
-                        "datetime_local": format_local(exact_dt) if exact_dt else None,
-                        "datetime_utc": exact_dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if exact_dt else None,
-                        "root_status": "found" if exact_dt else "not_found",
-                        "root_reason": reason,
-                    },
-                    "sign_exit_before_exact": {
-                        "body_a": left_exit_before,
-                        "body_b": right_exit_before,
-                    },
-                    "refranation_detected": refranation,
-                    "geometry_type": "zodiacal",
-                    "rule_id": "aspect.ptolemaic.degree.v1",
-                    "algorithm_version": ALGORITHM_VERSION,
-                })
-
-    geometry_rows.sort(key=lambda r: r["id"])
-    aspect_rows.sort(key=lambda r: r["id"])
-    return geometry_rows, aspect_rows
 
 
 def _build_receptions(
@@ -998,7 +855,6 @@ def _build_events(
     chart_dt: datetime,
     body_ids: list[str],
     bodies: list[dict[str, Any]],
-    aspects: list[dict[str, Any]],
     past_days: float,
     future_days: float,
     warnings: list[str],
@@ -1016,38 +872,9 @@ def _build_events(
     window_start = chart_dt - timedelta(days=past_days)
     window_end = chart_dt + timedelta(days=future_days)
 
-    # Aspect exacts from aspect rows + past searches
-    for asp in aspects:
-        ne = asp.get("next_exact") or {}
-        if ne.get("datetime_local"):
-            # parse via existing search already done; re-search for datetime object
-            exact = next_exact_for_pair(
-                chart_dt, asp["body_a_id"], asp["body_b_id"],
-                CLASSICAL_ANGLES[asp["aspect_id"]], warnings, warning_keys,
-                max_days=int(future_days) + 1, step_hours=6, sidereal=sidereal,
-            )
-            if exact is not None and window_start <= exact <= window_end:
-                events.append(_event_row(
-                    "aspect_exact", exact, chart_dt,
-                    [asp["body_a_id"], asp["body_b_id"]],
-                    aspect_id=asp["aspect_id"],
-                    rule_id="event.aspect_exact.v1",
-                    extras={"application_at_query": asp["application"]},
-                ))
-        pe = asp.get("previous_exact")
-        if pe and pe.get("datetime_local"):
-            prev = previous_exact_for_pair(
-                chart_dt, asp["body_a_id"], asp["body_b_id"],
-                CLASSICAL_ANGLES[asp["aspect_id"]], warnings, warning_keys,
-                max_days=int(past_days) + 1, step_hours=6, sidereal=sidereal,
-            )
-            if prev is not None and window_start <= prev <= window_end:
-                events.append(_event_row(
-                    "aspect_exact", prev, chart_dt,
-                    [asp["body_a_id"], asp["body_b_id"]],
-                    aspect_id=asp["aspect_id"],
-                    rule_id="event.aspect_exact.v1",
-                ))
+    # Note: aspect_exact events are NOT generated here — they are rebuilt from
+    # the full candidate matrix by aspect_exact_events_from_candidates() in
+    # calculate_horary_v2 (display-orb-independent), which is the only path used.
 
     # Sign exits
     for body_id in body_ids:
@@ -1251,7 +1078,6 @@ def _build_events(
 def _moon_index(
     chart_dt: datetime,
     bodies: list[dict[str, Any]],
-    events: list[dict[str, Any]],
     warnings: list[str],
     sidereal: bool,
 ) -> dict[str, Any]:
@@ -1277,6 +1103,7 @@ def _moon_index(
     classical_targets = [b for b in CLASSICAL_BODY_IDS if b != "MOON"]
     past_in_sign: list[dict[str, Any]] = []
     future_in_sign: list[dict[str, Any]] = []
+    future_any: list[dict[str, Any]] = []
     for target_id in classical_targets:
         for aspect_id, angle in CLASSICAL_ANGLES.items():
             prev = previous_exact_for_pair(
@@ -1297,7 +1124,15 @@ def _moon_index(
                 chart_dt, "MOON", target_id, angle, warnings, warning_keys,
                 max_days=4, step_hours=1, sidereal=sidereal,
             )
-            if nxt is not None and (sign_exit is None or nxt <= sign_exit):
+            if nxt is None:
+                continue
+            future_any.append({
+                "target_id": target_id,
+                "aspect_id": aspect_id,
+                "datetime_local": format_local(nxt),
+                "datetime_utc": nxt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            })
+            if sign_exit is None or nxt <= sign_exit:
                 future_in_sign.append({
                     "target_id": target_id,
                     "aspect_id": aspect_id,
@@ -1307,6 +1142,7 @@ def _moon_index(
 
     past_in_sign.sort(key=lambda r: r["datetime_utc"], reverse=True)
     future_in_sign.sort(key=lambda r: r["datetime_utc"])
+    future_any.sort(key=lambda r: r["datetime_utc"])
 
     after_ingress: list[dict[str, Any]] = []
     if sign_exit is not None:
@@ -1353,15 +1189,25 @@ def _moon_index(
             try:
                 s = datetime.strptime(start_utc, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
                 e = datetime.strptime(end_utc, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-                duration = int((e - s).total_seconds())
+                if s <= e:
+                    duration = int((e - s).total_seconds())
             except ValueError:
                 duration = None
+        if duration is not None:
+            reason_code = None
+        elif start_utc is None or end_utc is None:
+            reason_code = "interval_partial_missing_endpoint"
+        else:
+            # Both endpoints exist but the VOC start lies after the sign exit
+            # (rule B counts exacts past the sign boundary) — no interval inside
+            # the current sign.
+            reason_code = "interval_start_after_end"
         return {
             "start_datetime_utc": start_utc,
             "end_datetime_utc": end_utc,
             "duration_seconds": duration,
-            "complete": start_utc is not None and end_utc is not None,
-            "reason_code": None if (start_utc and end_utc) else "interval_partial_missing_endpoint",
+            "complete": duration is not None,
+            "reason_code": reason_code,
         }
 
     sign_exit_utc = (
@@ -1378,17 +1224,17 @@ def _moon_index(
         last_future_exact_utc=last_future_utc,
         sign_exit_utc=sign_exit_utc,
     )
-    # Rule B: same aspect set but only count future exacts that are currently applying
-    # at the query snapshot (degree application label via relative speed) — independent rule_id.
-    applying_future = [
-        row for row in future_in_sign
-        # conservative: all future_in_sign are exacts searched forward = applying completions
-    ]
-    voc_applying_only = len(applying_future) == 0
+    # Rule B: independent traditional-leaning check — any future exact within the
+    # 4-day search window, WITHOUT the sign-exit truncation. A perfection that will
+    # only occur after the moon leaves the current sign still counts as an
+    # unfinished task here, so the two rules disagree exactly when the only
+    # pending exact lies beyond the sign boundary.
+    last_future_any_utc = future_any[-1]["datetime_utc"] if future_any else None
+    voc_any_future_exact = len(future_any) == 0
     rule_b_interval = _voc_interval(
-        value_at_query=voc_applying_only,
+        value_at_query=voc_any_future_exact,
         last_exact_utc=last_past_utc,
-        last_future_exact_utc=last_future_utc,
+        last_future_exact_utc=last_future_any_utc,
         sign_exit_utc=sign_exit_utc,
     )
 
@@ -1417,20 +1263,21 @@ def _moon_index(
         {
             "rule_id": "voc.modern_exact_before_sign_exit.applying_completions.v1",
             "algorithm_version": ALGORITHM_VERSION,
-            "value": voc_applying_only,
+            "value": voc_any_future_exact,
             "definition": {
-                "counts_applying_only": True,
+                "counts_applying_only": False,
                 "requires_exact_perfection": True,
                 "bodies": classical_targets,
                 "aspects": list(CLASSICAL_ANGLES.keys()),
                 "uses_aspect_orb_at_query": False,
                 "traditional_seven_only": True,
                 "ptolemaic_only": True,
-                "note": "Separate rule_id for consumers; currently same completion set as v1",
+                "sign_exit_truncation": False,
+                "note": "Independent of rule v1: counts ANY future exact in the 4-day window without sign-exit truncation; a perfection after the sign boundary still voids the rule",
             },
             "interval": rule_b_interval,
             "evidence": {
-                "future_exact_count_before_sign_exit": len(applying_future),
+                "future_exact_count_any_window": len(future_any),
                 "sign_exit_utc": sign_exit_utc,
             },
         },
@@ -1711,19 +1558,10 @@ def _optional_modules(
         "antiscia": antiscia,
         "via_combusta": via,
         "dodecatemoria": dodeka,
-        "declination_parallels": {
-            "status": "not_computed_in_core",
-            "reason_code": "optional_module_deferred",
-        },
-        "fixed_stars": {
-            "status": "not_computed_in_core",
-            "reason_code": "optional_module_deferred",
-            "note": "Use classical_visibility / fixed star modules for star data",
-        },
-        "planetary_hour": {
-            "status": "not_computed_in_core",
-            "reason_code": "optional_module_deferred",
-        },
+        # No "not_computed_in_core" placeholder keys: optional modules are appended
+        # in calculate_horary_v2 only when their real data exists
+        # (antiscia_contacts / declination_contacts / declination_moon_sequence /
+        # fixed_stars / nodes).
     }
 
 
@@ -1993,21 +1831,21 @@ def calculate_horary_v2(request: dict[str, Any], warnings: list[str]) -> dict[st
     lots = _build_lots_v2(angles, body_pos_map, cusps, is_day, bounds_system, triplicity_system, warnings)
 
     # Moon index first so VOC intervals can feed the unified event stream.
-    moon = _moon_index(chart_dt, bodies, [], warnings, sidereal)
+    moon = _moon_index(chart_dt, bodies, warnings, sidereal)
     events = _build_events(
-        chart_dt, [b["body_id"] for b in bodies], bodies, aspects_in_display_orb,
+        chart_dt, [b["body_id"] for b in bodies], bodies,
         event_past_days, event_future_days, warnings, sidereal, latitude, longitude, sun_lon,
         cusps=cusps,
         altitude_m=altitude_m,
         moon_index=moon,
     )
-    # Replace/merge aspect_exact from full candidates (not display-filtered)
-    non_aspect_events = [e for e in events if e.get("event_type") != "aspect_exact"]
+    # aspect_exact events come exclusively from the full candidate matrix
+    # (display-orb-independent), so no filtering of stale duplicates is needed.
     aspect_events = aspect_exact_events_from_candidates(
         chart_dt, aspect_candidates, event_past_days, event_future_days,
     )
     events = sorted(
-        {e["id"]: e for e in (non_aspect_events + aspect_events)}.values(),
+        {e["id"]: e for e in (events + aspect_events)}.values(),
         key=lambda e: (e["offset_seconds_from_query"], e["id"]),
     )
     graph = event_graph(
@@ -2149,7 +1987,7 @@ def calculate_horary_v2(request: dict[str, Any], warnings: list[str]) -> dict[st
         "antisciaOrb": antiscia_orb,
         "nodeMode": node_mode,
         "bodyIds": body_ids,
-        "packetVersion": "2",
+        "packetVersion": str(request.get("packetVersion") or "2"),
     }
     calc_config = {
         "house_system": house_system,

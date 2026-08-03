@@ -1509,11 +1509,16 @@ extension ContentView {
             return
         }
 
+        // Clear the stale result up front so a failed rerun cannot leave the
+        // previous chart behind for the AI panel / export to analyze.
+        calcVM.horaryResult = nil
+        aiVM.clear(modeKey: "horary")
+
         await performRun {
             let request = HoraryRequest(
                 mode: "horary",
                 chart: HoraryChartSettings(
-                    moment: makeMoment(from: horaryDate, gmtOffset: horaryGmtOffset),
+                    moment: makeMoment(from: horaryDate, gmtOffset: horaryGmtOffset, includeSeconds: true),
                     latitude: coords.latitude,
                     longitude: coords.longitude,
                     houseSystem: horaryHouseSystem,

@@ -175,7 +175,7 @@ extension ContentView {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             HStack {
                 Text("起盘时间").foregroundStyle(.secondary)
-                DateTimeInput(date: $horaryDate, timeZone: timeZone(for: horaryGmtOffset))
+                DateTimeInput(date: $horaryDate, timeZone: timeZone(for: horaryGmtOffset), showsSeconds: true)
                 Button("现在") { horaryDate = Date() }
             }
             HStack {
@@ -203,6 +203,14 @@ extension ContentView {
                 TextField("3.0", value: $horaryAspectOrb, format: .number)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 64)
+                    .onChange(of: horaryAspectOrb) { newValue in
+                        // Keep the display orb in a sane range: an empty field
+                        // would otherwise fall back to 0 and hide every aspect.
+                        let clamped = min(max(newValue, 0.1), 10)
+                        if clamped != newValue {
+                            horaryAspectOrb = clamped
+                        }
+                    }
                 Text("°").foregroundStyle(.secondary)
             }
             Text("显示容许度仅过滤 within_display_orb；全量相位候选与 exact 事件始终计算。")

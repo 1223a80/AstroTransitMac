@@ -116,13 +116,21 @@ class TestSchemaAndForbidden:
             "dignities",
             "pairwise_geometry",
             "aspects",
+            "aspect_candidates",
+            "aspects_in_display_orb",
+            "display_orb_deg",
             "receptions",
             "lots",
             "events",
+            "event_graph",
             "moon",
             "visibility",
+            "planetary_day_hour",
+            "considerations_evidence",
+            "nodes",
             "optional_modules",
             "validation",
+            "display",
         ):
             assert key in packet
 
@@ -165,6 +173,49 @@ class TestLinyiGolden:
         assert packet["calculation_config"]["house_system"] == "regiomontanus"
         assert packet["calculation_config"]["bounds_system"] == "egyptian"
         assert packet["calculation_config"]["triplicity_system"] == "dorothean"
+
+    def test_moment_second_precision_changes_jd_and_utc_datetime(self) -> None:
+        """Regression: second-precision chart moments must flow into JD/UTC.
+
+        Legacy requests without a second key stay at :00 and keep their hash.
+        """
+        base = copy.deepcopy(LINYI_REQUEST)
+        with_second = copy.deepcopy(LINYI_REQUEST)
+        with_second["chart"]["moment"]["second"] = 30
+
+        base_packet, _ = _packet(base)
+        sec_packet, _ = _packet(with_second)
+
+        assert base_packet["time_and_location"]["utc_datetime"].endswith(":00Z")
+        assert sec_packet["time_and_location"]["utc_datetime"].endswith(":30Z")
+        delta_seconds = (
+            sec_packet["time_and_location"]["jd_ut"] - base_packet["time_and_location"]["jd_ut"]
+        ) * 86400
+        assert 29.0 < delta_seconds < 31.0
+
+    def test_moment_second_validated(self) -> None:
+        """Out-of-range or non-integer second values are rejected."""
+        from astro_backend_core import moment_to_local_datetime
+
+        bad_high = dict(LINYI_REQUEST["chart"]["moment"], second=60)
+        with pytest.raises(ValueError):
+            moment_to_local_datetime(bad_high)
+        bad_neg = dict(LINYI_REQUEST["chart"]["moment"], second=-1)
+        with pytest.raises(ValueError):
+            moment_to_local_datetime(bad_neg)
+        bad_type = dict(LINYI_REQUEST["chart"]["moment"], second="x")
+        with pytest.raises(ValueError):
+            moment_to_local_datetime(bad_type)
+        ok = moment_to_local_datetime(dict(LINYI_REQUEST["chart"]["moment"], second=30))
+        assert ok.second == 30
+        # Numeric string is tolerated like the other moment fields
+        ok_str = moment_to_local_datetime(dict(LINYI_REQUEST["chart"]["moment"], second="30"))
+        assert ok_str.second == 30
+        # GMT fixed-offset path also honors second
+        ok_gmt = moment_to_local_datetime(
+            dict(LINYI_REQUEST["chart"]["moment"], timezone="GMT+8", second=30)
+        )
+        assert ok_gmt.second == 30
 
 
 class TestDeterminism:
@@ -210,6 +261,36 @@ class TestDeterminism:
         restored = json.loads(raw)
         assert restored["schema"]["schema_id"] == packet["schema"]["schema_id"]
         assert len(restored["bodies"]) == len(packet["bodies"])
+
+    def test_refranation_interrupted_next_exact_not_found(self) -> None:
+        """Regression: 2026-10-21 00:00 UTC Mercury-Jupiter square.
+
+        Mercury stations retrograde ~day 3 and the orb diverges before
+        converging again — the original application is refranation. The
+        candidate's next_exact must be reported as not_found with the
+        interruption reason instead of a fake future perfection.
+        """
+        request = copy.deepcopy(LINYI_REQUEST)
+        request["chart"]["moment"] = {
+            "year": 2026, "month": 10, "day": 21,
+            "hour": 0, "minute": 0, "timezone": "UTC",
+        }
+        request["chart"]["latitude"] = 0.0
+        request["chart"]["longitude"] = -60.0
+        request["chart"]["houseSystem"] = "whole_sign"
+        request["questionText"] = "refranation regression"
+        packet, _ = _packet(request)
+
+        square = None
+        for c in packet["aspect_candidates"]:
+            if "MERCURY" in (c["body_a_id"], c["body_b_id"]) and "JUPITER" in (c["body_a_id"], c["body_b_id"]) and c["aspect_id"] == "square":
+                square = c
+                break
+        assert square is not None, "Mercury-Jupiter square candidate missing"
+        ne = square.get("next_exact") or {}
+        assert ne.get("root_status") == "not_found", f"expected not_found, got {ne}"
+        reason = ne.get("root_reason") or ""
+        assert "refranation" in reason or "interrupt" in reason, f"unexpected reason: {reason}"
 
 
 class TestHousesAndAngles:
@@ -391,6 +472,23 @@ class TestEventsAndMoon:
             assert [x["datetime_utc"] for x in past] == sorted(
                 (x["datetime_utc"] for x in past), reverse=True
             )
+
+    def test_station_kind_fallback_inference(self) -> None:
+        """Station direction must not default to retrograde when the after
+        sample is unavailable — infer from before, else stay neutral."""
+        from astro_backend_horary_v2 import _station_kind
+
+        # Both samples: transition wins.
+        assert _station_kind((1.0,), (-1.0,)) == "station_retrograde"
+        assert _station_kind((-1.0,), (1.0,)) == "station_direct"
+        # Only after sample: its sign decides.
+        assert _station_kind(None, (1.0,)) == "station_direct"
+        assert _station_kind(None, (-1.0,)) == "station_retrograde"
+        # Only before sample: infer the opposite direction after the station.
+        assert _station_kind((1.0,), None) == "station_retrograde"
+        assert _station_kind((-1.0,), None) == "station_direct"
+        # Neither sample: neutral, never guess.
+        assert _station_kind(None, None) == "station"
 
     def test_past_window_sunrise_sunset_events_present(self) -> None:
         """Regression: rise/set events must cover the full past window, not only

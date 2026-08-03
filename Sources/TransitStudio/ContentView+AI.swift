@@ -90,6 +90,7 @@ extension ContentView {
             // as customSystemPrompt inside analyze().
             markdown: MarkdownExportBuilder.horary(horaryResult),
             streamKey: "horary",
+            promptStyle: "horary",
             assignText: { aiVM.horaryAnalysis = $0 },
             assignReasoning: { aiVM.horaryReasoning = $0 }
         )
@@ -133,6 +134,7 @@ extension ContentView {
         title: String,
         markdown: String,
         streamKey: String,
+        promptStyle: String? = nil,
         assignText: @escaping (String) -> Void,
         assignReasoning: @escaping (String) -> Void
     ) async {
@@ -153,12 +155,17 @@ extension ContentView {
             reasoningEffort: appState.aiReasoningEffort
         )
 
+        // Mode-specific callers (e.g. Horary) pin their own prompt style so the
+        // analysis always uses the matching prompt, regardless of the global
+        // aiPromptStyle selection.
+        let effectiveStyle = promptStyle ?? appState.aiPromptStyle
+
         let stream = LLMAnalysisClient().analyzeStreaming(
             title: title,
             structuredMarkdown: markdown,
             note: appState.aiNote,
-            promptStyle: appState.aiPromptStyle,
-            customSystemPrompt: selectedAIPromptText,
+            promptStyle: effectiveStyle,
+            customSystemPrompt: selectedAIPromptText(for: effectiveStyle),
             configuration: config
         )
 
@@ -242,7 +249,11 @@ extension ContentView {
     }
 
     var selectedAIPromptText: String {
-        switch appState.aiPromptStyle {
+        selectedAIPromptText(for: appState.aiPromptStyle)
+    }
+
+    func selectedAIPromptText(for style: String) -> String {
+        switch style {
         case "natal":
             return appState.aiPromptNatal
         case "transit":
