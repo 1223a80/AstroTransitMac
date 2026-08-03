@@ -8,11 +8,11 @@
 |---|---|---|
 | 01 现状核对 | 已完成 | 逐项阅读 A-J 对应代码与契约；确认 golden/fixture 重生成路径（transit_calc.py 输出重定向） |
 | 02 A 秒精度起盘 | 已完成 | `ChartMoment.second`（可选）、`makeMoment` 读秒、后端两分支 second 支持（0-59 校验）、`DateTimeInput showsSeconds`（horary 开启）；Python 2 项 + Swift 1 项回归 |
-| 03 B VOC rule B 独立 | 已完成 | `_moon_index` 增 `future_any`（不截断 sign_exit）；rule B 与 rule A 判定集合不同；`_voc_interval` start>end 输出 complete=false；golden 事件 105→106（新增 1 个 void_of_course_start） |
+| 03 B VOC rule B 独立 | 已完成 | `_moon_index` 增 `future_any`（不截断 sign_exit）；rule B 与 rule A 判定集合不同；`_voc_interval` start>end 输出 complete=false；发布前审查阻止倒置区间进入事件流，最终事件仍为 105 |
 | 04 C/D/E/F 后端 | 已完成 | C: 删 `_build_events` aspect_exact 段（events 不变）；D: `_station_kind` 兜底推断 + 单测；E: packetVersion 入 canonical（"2" hash 不变）；F: optional_modules 去占位键 |
 | 05 G/H 清理与契约 | 已完成 | G: 删 `_build_pairwise`/`_applying_with_motion`/死 import/空循环，修 2 处类型标注，去 `==105` 魔数；H: schema 补 required 与 8 组 properties，FIELD_DICTIONARY 同步 |
-| 06 I Swift 体验 | 已完成 | AI promptStyle 参数（horary 固定）；runHorary 清残留；orb 钳制 0...10；删 12 个未用类型；FNV-1a 稳定 id |
-| 07 J 测试 + fixture 重生成 | 已完成 | top-level 键补齐、refranation 回归；golden/fixture 重生成并核对（hash 不变、事件 id 变化仅 1 个 VOC start） |
+| 06 I Swift 体验 | 已完成 | AI promptStyle 参数（horary 固定）；runHorary 清残留；orb 钳制 0.1...10；删 12 个未用类型；FNV-1a 稳定 id |
+| 07 J 测试 + fixture 重生成 | 已完成 | top-level 键补齐、refranation 回归；golden/fixture 重生成并核对（hash 不变、最终事件 id 集合不漂移，VOC 边界归属回到有效 rule A） |
 | 08 全量门禁 | 已完成 | Python 973 passed / 1 skipped；Swift build + 214 tests / 28 suites；check_vibe_changes.sh 全部 smoke 全绿；重建 .venv（pyswisseph 2.10.3.2 + pytest 9.1.1） |
 | 09 文档收口 | 已完成 | CHANGELOG 已追加；docs/horary-remaining-fixes.md 全部标记完成；PLANS 本条目；review 后修复（makeMoment 秒仅 horary、orb 下限 0.1、rule B definition/reason_code 细化）已并入；提交 40551fc |
 
@@ -1826,3 +1826,20 @@ Completion criteria: all useful local work is represented by reviewed commits on
 
 - 不改 `exact_datetime_result_for_signature` 对入相路径的默认行为（抽取后回归验证 v1 72 项）。
 - separating 拒绝 root 时 reason 为 "refranation: ..." / "sign exit before perfection while separating" / "ephemeris unavailable ..."。
+
+---
+
+# 最新 Horary 分支审查、合并与覆盖发布（2026-08-03）
+
+分支：`fix/horary-timezone-events`；基线：`main`。目标：审查该分支相对主线的全部 4 个提交及 27 个文件，确认实现、JSON 契约、fixture、测试与文档一致；若无未解决问题，则完成全量门禁、合并主线、按改动规模更新版本、打包覆盖 `/Applications/TransitStudio.app`、验证安装产物、清理缓存并提交发布记录。
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 分支边界与逐项审查 | 已完成 | 已核对 Git 拓扑、4 个提交、27 个文件、调用点、Horary v2.1 schema 与 fixture 来源；确认并归类多项收口问题 |
+| 02 缺陷修复与聚焦验证 | 已完成 | 修复行星时缺失崩溃/日出前夜间时段、JD 跨日、零速 station、倒置 VOC 事件、秒精度展示及 3 类 schema 类型漂移；Python 聚焦 130、Swift 聚焦 19 全绿 |
+| 03 完整门禁 | 已完成 | `check_vibe_changes.sh` 全绿（Python 980、Swift 214 / 28 suites、全部 smoke）；实时 fixture/golden 语义一致；`git diff --check` 与完整 diff 复核通过 |
+| 04 主线合并与版本收口 | 进行中 | 审查通过；提交审查修复后快进合并 `main`，更新补丁版本并提交对应记录 |
+| 05 打包覆盖与产物验证 | 待开始 | 覆盖 `/Applications`，验证版本、签名、架构、包内后端与文件一致性 |
+| 06 清理与最终同步检查 | 待开始 | 清理构建/测试/打包缓存，复核完整 diff、Git 状态与提交边界 |
+
+完成标准：无未解决审查发现；全部必需验证通过；已安装应用与本次主线源码/版本一致；缓存已清理；最终 Git 状态和提交记录清楚可核查。

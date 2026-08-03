@@ -779,6 +779,7 @@ def considerations_evidence(
     from astro_backend_core import SIGN_RULERS
     if asc is not None:
         asc_ruler = SIGN_RULERS[zodiac_sign_index(asc)]
+        hour_ruler = None
         current = planetary.get("current_hour") or planetary.get("current")
         if isinstance(current, dict):
             hour_ruler = current.get("ruler_id")

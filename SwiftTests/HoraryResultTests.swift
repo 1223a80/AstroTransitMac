@@ -10,6 +10,7 @@ struct HoraryResultTests {
             "a": .array([.string("x"), .bool(true)]),
             "c": .null,
             "d": .string("quote\"backslash\\newline\n"),
+            "key\"newline\n": .string("value"),
         ])
         let text = v.prettyJSON
         #expect(text.hasPrefix("{\n"))
@@ -17,8 +18,13 @@ struct HoraryResultTests {
         #expect(text.contains("\"b\": 2.5"))
         #expect(text.contains("null"))
         #expect(text.contains("\"d\": \"quote\\\"backslash\\\\newline\\n\""))
+        #expect(text.contains("\"key\\\"newline\\n\": \"value\""))
         #expect(!text.contains("HoraryV2JSONValue"))
         #expect(text.range(of: "\"a\"")!.lowerBound < text.range(of: "\"b\"")!.lowerBound)
+        let reparsed = try #require(
+            JSONSerialization.jsonObject(with: Data(text.utf8)) as? [String: Any]
+        )
+        #expect(reparsed["key\"newline\n"] as? String == "value")
 
         // Fixture-backed value: description must render JSON, not enum debug text.
         let fixtureURL = Bundle.module.url(forResource: "horary-result", withExtension: "json", subdirectory: "Fixtures")

@@ -20490,10 +20490,10 @@
             "datetime_local": "2026-07-24 09:06",
             "offset_seconds_from_query": 38519,
             "root_error_deg": null,
-            "rule_id": "voc.modern_exact_before_sign_exit.applying_completions.v1",
+            "rule_id": "voc.modern_exact_before_sign_exit.v1",
             "algorithm_version": "horary-v2.1-2026-07",
             "in_configured_window": true,
-            "voc_rule_id": "voc.modern_exact_before_sign_exit.applying_completions.v1"
+            "voc_rule_id": "voc.modern_exact_before_sign_exit.v1"
         },
         {
             "id": "solar_under_beams_boundary|SUN|MERCURY|20260724T042211Z",
@@ -20602,22 +20602,6 @@
             "in_configured_window": true,
             "state_before": "above_horizon",
             "state_after": "below_horizon"
-        },
-        {
-            "id": "void_of_course_start|MOON|20260725T145812Z",
-            "event_type": "void_of_course_start",
-            "body_ids": [
-                "MOON"
-            ],
-            "aspect_id": null,
-            "datetime_utc": "2026-07-25T14:58:12Z",
-            "datetime_local": "2026-07-25 22:58",
-            "offset_seconds_from_query": 174792,
-            "root_error_deg": null,
-            "rule_id": "voc.modern_exact_before_sign_exit.applying_completions.v1",
-            "algorithm_version": "horary-v2.1-2026-07",
-            "in_configured_window": true,
-            "voc_rule_id": "voc.modern_exact_before_sign_exit.applying_completions.v1"
         },
         {
             "id": "sunrise|SUN|20260725T211052Z",
@@ -21988,7 +21972,6 @@
                     "sign_ingress|MOON|20260724T010659Z",
                     "void_of_course_end|MOON|20260724T010659Z",
                     "house_change|MOON|20260725T083812Z",
-                    "void_of_course_start|MOON|20260725T145812Z",
                     "lunar_phase_exact|MOON|SUN|opposition|20260729T143543Z",
                     "solar_under_beams_boundary|SUN|MOON|20260811T150800Z",
                     "solar_combust_boundary|SUN|MOON|20260812T023313Z",
@@ -22972,7 +22955,6 @@
                 "sign_ingress|MOON|20260724T010659Z",
                 "void_of_course_end|MOON|20260724T010659Z",
                 "house_change|MOON|20260725T083812Z",
-                "void_of_course_start|MOON|20260725T145812Z",
                 "lunar_phase_exact|MOON|SUN|opposition|20260729T143543Z",
                 "solar_under_beams_boundary|SUN|MOON|20260811T150800Z",
                 "solar_combust_boundary|SUN|MOON|20260812T023313Z",
@@ -29197,7 +29179,7 @@
         "aspect_count": 105,
         "aspect_candidate_count": 105,
         "aspects_in_display_orb_count": 4,
-        "event_count": 106,
+        "event_count": 105,
         "lot_count": 56
     },
     "display": {

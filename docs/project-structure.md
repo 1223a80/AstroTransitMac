@@ -6,7 +6,8 @@
 - `README.md` - user-facing overview and basic run instructions.
 - `AGENTS.md` - project-specific instructions for coding agents.
 - `PLANS.md` / `CHANGELOG.md` - task plans and human-readable change log (see AGENTS.md change discipline).
-- `requirements.txt` - Python dependency list. Currently requires `pyswisseph`.
+- `requirements.txt` - Python runtime dependency list. Currently requires `pyswisseph`.
+- `requirements-dev.txt` - validation dependencies (`pytest` + required JSON Schema validation) layered on the runtime requirements.
 - `package_app.sh` - local app packaging script (bumps version, installs to /Applications by default).
 - `check_vibe_changes.sh` - one-shot local validation gate (pytest + swift build/test + backend smokes).
 - `.github/workflows/ci.yml` - GitHub Actions: swift build/test + pytest + backend smokes on every push.

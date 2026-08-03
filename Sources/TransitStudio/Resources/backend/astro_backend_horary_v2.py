@@ -181,6 +181,10 @@ def _sign_display(lon: float) -> dict[str, Any]:
     deg = sign_degree(lon)
     minutes = (deg % 1.0) * 60.0
     seconds = (minutes % 1.0) * 60.0
+    # Three-decimal rounding can turn 59.9996 into the invalid DMS value 60.000
+    # while the underlying longitude is still inside the current sign. Clamp at
+    # the largest representable sub-minute value to preserve sign consistency.
+    display_seconds = min(float(_r(seconds, 3) or 0.0), 59.999)
     return {
         "sign_index": idx,
         "sign_id": SIGN_EN[idx].lower(),
@@ -190,7 +194,7 @@ def _sign_display(lon: float) -> dict[str, Any]:
         "dms": {
             "degrees": int(deg),
             "minutes": int(minutes),
-            "seconds": _r(seconds, 3),
+            "seconds": display_seconds,
         },
         "display_zh": f"{int(deg)}°{int(minutes):02d}' {SIGNS[idx]}",
         "display_en": f"{int(deg)}°{int(minutes):02d}' {SIGN_EN[idx]}",
@@ -602,15 +606,17 @@ def _station_kind(
     (direct into the station → retrograde out, and vice versa). Neither sample
     → neutral "station" (never guess a direction).
     """
-    if before and after:
-        if before[0] > 0 and after[0] < 0:
+    before_sign = 0 if not before or before[0] == 0 else (1 if before[0] > 0 else -1)
+    after_sign = 0 if not after or after[0] == 0 else (1 if after[0] > 0 else -1)
+    if before_sign and after_sign:
+        if before_sign > 0 and after_sign < 0:
             return "station_retrograde"
-        if before[0] < 0 and after[0] > 0:
+        if before_sign < 0 and after_sign > 0:
             return "station_direct"
-    if after is not None:
-        return "station_direct" if after[0] > 0 else "station_retrograde"
-    if before is not None:
-        return "station_retrograde" if before[0] > 0 else "station_direct"
+    if after_sign:
+        return "station_direct" if after_sign > 0 else "station_retrograde"
+    if before_sign:
+        return "station_retrograde" if before_sign > 0 else "station_direct"
     return "station"
 
 
@@ -1038,6 +1044,12 @@ def _build_events(
     if moon_index is not None:
         for rule in moon_index.get("void_of_course_rules", []):
             interval = rule.get("interval") or {}
+            # An inverted interval explicitly means there is no VOC span inside
+            # the current sign. Emitting its endpoints would create a false
+            # "end before start" pair and can overwrite another rule's valid
+            # boundary because event IDs intentionally describe physical events.
+            if interval.get("reason_code") == "interval_start_after_end":
+                continue
             start_s = interval.get("start_datetime_utc")
             end_s = interval.get("end_datetime_utc")
             if start_s:
@@ -1974,6 +1986,11 @@ def calculate_horary_v2(request: dict[str, Any], warnings: list[str]) -> dict[st
     dst_active = bool(dst and dst.total_seconds() != 0)
     tz_name = str(chart["moment"].get("timezone", ""))
 
+    packet_version = str(
+        request.get("packetVersion")
+        or request.get("packet_version")
+        or "2"
+    ).strip().lower()
     input_canonical = {
         "mode": "horary",
         "chart": chart,
@@ -1987,7 +2004,7 @@ def calculate_horary_v2(request: dict[str, Any], warnings: list[str]) -> dict[st
         "antisciaOrb": antiscia_orb,
         "nodeMode": node_mode,
         "bodyIds": body_ids,
-        "packetVersion": str(request.get("packetVersion") or "2"),
+        "packetVersion": packet_version,
     }
     calc_config = {
         "house_system": house_system,
@@ -2048,7 +2065,11 @@ def calculate_horary_v2(request: dict[str, Any], warnings: list[str]) -> dict[st
             "aberration_light_time": "Swiss Ephemeris defaults (included in SE positions)",
         },
         "time_and_location": {
-            "local_datetime": format_local(chart_dt),
+            "local_datetime": (
+                chart_dt.strftime("%Y-%m-%d %H:%M:%S")
+                if chart["moment"].get("second") is not None
+                else format_local(chart_dt)
+            ),
             "utc_datetime": chart_dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "utc_datetime_iso": chart_utc_iso,
             "timezone": tz_name,

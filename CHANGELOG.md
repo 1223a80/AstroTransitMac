@@ -1,11 +1,26 @@
 # Changelog
 
+## 2026-08-03 — Horary 最新分支发布前审查修复
+
+- 修复 `planetary_day_hour` 无当前行星时时 `considerations_evidence` 读取未初始化 `hour_ruler`、导致极区/日出不可用请求整包失败的问题；现在输出 `hour_ruler_id=null`、`same_planet=null`。
+- 修复本地日出前错误使用“当天日出起算表”、导致 `status=ok` 却无 `current_hour` 的问题；凌晨时刻现在使用前一民用日的日落后夜间行星时，并补齐可见性 JD→UTC 换算在 23:59:59.x 进位时的日历跨日。
+- 修复 `_station_kind` 把零速样本默认当作逆行方向的问题：仅在存在非零前/后采样时推断方向，否则返回中性 `station`。
+- 修复后端明确支持的 `packet_version` 蛇形别名未进入 provenance canonical input 的问题；同一 `2.1` 值无论使用驼峰或蛇形键均生成相同输入哈希，并与默认 `2` 可区分。
+- 修复倒置的 VOC rule B 区间仍被生成为“结束早于开始”的时间线事件、并覆盖 rule A 同时刻正确事件归属的问题；`interval_start_after_end` 现仅保留在月亮证据中，不再产生虚假边界事件。
+- 实际启用此前被 `importorskip` 跳过的 Horary v2.1 JSON Schema 校验，发现并修正 `sign.dms`、receptions `relation_at_query`、events `state_before/state_after` 三类定义漂移（原始 188 条验证错误归并为 3 类）。
+- 修复临近星座边界时 DMS 秒数由三位小数四舍五入成非法 `60.000` 的边界值；现在保持当前星座并钳制为最大可表示的 `59.999`。
+- 补齐秒精度起盘的本地时间展示：请求显式携带 `second` 时，顶层 `local_datetime`（结果页与 Markdown 共用）显示到秒；未携带该键的旧请求继续保持分钟格式。
+- 新增 `requirements-dev.txt`，CI 与开发文档统一安装 `pytest` 和 `jsonschema`；schema 门禁现在同时验证实时包、Linyi golden 与 Swift fixture，缺少校验器会直接失败而非静默跳过。
+- 增加行星时不可用与 station 零速回归覆盖，并纠正计划中 Horary 显示容许度下限的记录为 `0.1`。
+- 补齐 Horary pretty JSON 对对象键名的标准 JSON 转义，确保合法但含引号/控制字符的键不会生成无效展示文本。
+- 发布前验证：Horary/Python 聚焦 130 项、Swift 聚焦 19 项全绿；实时后端输出与 Swift fixture、Linyi golden 语义一致；完整 `check_vibe_changes.sh` 通过（Python 980 项、Swift 214 项 / 28 suites、全部注册后端 smoke 与 rectify smoke）。
+
 ## 2026-08-03 — Horary 剩余修复清单 A–J 全部落地
 
 按 `docs/horary-remaining-fixes.md` 审计清单完成全部待修项（含 fixture/golden 重生成）：
 
 - **A. 秒精度起盘时刻**：`ChartMoment` 新增可选 `second`（缺省不编码，兼容旧请求），`makeMoment` 支持 `includeSeconds`（仅 Horary 起盘开启，其它模式请求不变）；后端 `moment_to_local_datetime` 两分支支持 second（0-59 校验、数字字符串宽容）；`DateTimeInput` 支持 `showsSeconds`（Horary 起盘时间开启，可手输 `yyyy-MM-dd HH:mm:ss`）。
-- **B. VOC rule B 独立判定**：`_moon_index` 新增 `future_any`（4 天窗口不截断 sign_exit），rule B 现为「未来任何成相都阻止 VOC」——与 rule A 的差异恰在成相晚于星座出口的情形（此前两条 rule 恒等输出）；`_voc_interval` 对 start>end 输出 `complete=false`。Linyi golden 的 `void_of_course_rules` 与 `considerations_evidence` 同步更新，新增 1 个 `void_of_course_start` 事件（106 个事件）。
+- **B. VOC rule B 独立判定**：`_moon_index` 新增 `future_any`（4 天窗口不截断 sign_exit），rule B 现为「未来任何成相都阻止 VOC」——与 rule A 的差异恰在成相晚于星座出口的情形（此前两条 rule 恒等输出）；`_voc_interval` 对 start>end 输出 `complete=false`。Linyi golden 的 `void_of_course_rules` 与 `considerations_evidence` 同步更新；发布前审查进一步阻止该倒置区间生成虚假事件，最终仍为 105 个事件。
 - **C. `_build_events` 性能**：删除被整批丢弃的 aspect_exact 生成段及 `aspects` 参数，事件只走 `aspect_exact_events_from_candidates` 重建路径；events 输出不变（golden 事件 id 集合核对一致）。
 - **D. `_search_station` kind 兜底**：抽取 `_station_kind(before, after)`——after 缺失时按 before 方向推断（direct→retro / retro→direct），双缺失回退中性 `station`，不再默认错标 `station_retrograde`。
 - **E. `packetVersion` 溯源哈希**：`input_canonical["packetVersion"]` 取真实请求值（缺省 "2"）；`"2"` 请求 hash 不变（golden 断言通过），`"2.1"` 等别名可溯源。
@@ -14,7 +29,7 @@
 - **H. schema 与文档契约**：`horary-data-packet-2.1.json` required 补 `aspects_in_display_orb`/`display`；bodies 补 sign/motion/equatorial/horizontal/names 定义、ecliptic 补 3 个缺键；receptions 改 `related_aspect_candidate_ids` 并补键；aspect_candidates/events/lots/validation 键补全；optional_modules/nodes 定义细化。
 - **I. Swift 端体验**：`analyze()` 支持 `promptStyle` 参数，Horary AI 分析固定使用 horary 提示词（不再受全局 `aiPromptStyle` 影响）；`runHorary` 起盘前清旧 `horaryResult` 与 AI 文本（失败重算不残留旧盘）；`horaryAspectOrb` 钳制 0.1...10（清空不再导致轮盘无相位线）；删除 12 个未进入解码路径的类型化模型（`HoraryV2Body`/`HoraryV2Moon`/`HoraryV2OptionalModules` 等，均经 grep 确认无引用）；`HoraryV2EvidenceRow.id` fallback 改用 FNV-1a 稳定哈希（跨进程一致）。
 - **J. 测试补强**：`test_top_level_sections_present` 键列表补齐 8 键；新增 separating-refranation 回归（2026-10-21 Mercury-Jupiter square → `next_exact.root_status == "not_found"` 且 reason 含 refranation）、`_station_kind` 兜底推断、`moment_second` 精度与校验（Python 3 项 + Swift 1 项）。
-- **契约维护**：`SwiftTests/Fixtures/horary-result.json` 与 Linyi golden 重新生成（VOC 规则/事件与 optional_modules 键集变化属有意 schema 行为变更）；`input_hash` 与事件 id 集合核对无意外漂移。
+- **契约维护**：`SwiftTests/Fixtures/horary-result.json` 与 Linyi golden 重新生成（VOC 规则证据与 optional_modules 键集变化属有意 schema 行为变更）；`input_hash` 与最终事件 id 集合核对无意外漂移，VOC 边界归属修正为仍有有效区间的 rule A。
 - 验证：全量 Python 973 passed / 1 skipped；Swift build + 214 tests / 28 suites；`check_vibe_changes.sh` 全部 smoke（含 rectify）全绿。
 
 ## 2026-08-02 — Horary 离相候选 refranation 防护

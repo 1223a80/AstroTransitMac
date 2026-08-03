@@ -9,6 +9,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import jsonschema
 import pytest
 
 from astro_backend_core import BODY_REGISTRY, CLASSICAL_BODY_IDS, swe
@@ -135,10 +136,18 @@ class TestSchemaAndForbidden:
             assert key in packet
 
     def test_jsonschema_validates_packet(self) -> None:
-        jsonschema = pytest.importorskip("jsonschema")
         schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
-        packet, _ = _packet(LINYI_REQUEST)
-        jsonschema.validate(instance=packet, schema=schema)
+        live, _ = _packet(LINYI_REQUEST)
+        packets = {
+            "live": live,
+            "golden": json.loads(GOLDEN_PATH.read_text(encoding="utf-8")),
+            "swift_fixture": json.loads(FIXTURE_PATH.read_text(encoding="utf-8")),
+        }
+        for label, packet in packets.items():
+            try:
+                jsonschema.validate(instance=packet, schema=schema)
+            except jsonschema.ValidationError as exc:
+                pytest.fail(f"{label} violates Horary v2.1 schema: {exc.message}")
 
 
 class TestLinyiGolden:
@@ -188,6 +197,8 @@ class TestLinyiGolden:
 
         assert base_packet["time_and_location"]["utc_datetime"].endswith(":00Z")
         assert sec_packet["time_and_location"]["utc_datetime"].endswith(":30Z")
+        assert base_packet["time_and_location"]["local_datetime"] == "2026-07-23 22:25"
+        assert sec_packet["time_and_location"]["local_datetime"] == "2026-07-23 22:25:30"
         delta_seconds = (
             sec_packet["time_and_location"]["jd_ut"] - base_packet["time_and_location"]["jd_ut"]
         ) * 86400
@@ -262,6 +273,22 @@ class TestDeterminism:
         assert restored["schema"]["schema_id"] == packet["schema"]["schema_id"]
         assert len(restored["bodies"]) == len(packet["bodies"])
 
+    def test_packet_version_aliases_are_preserved_in_provenance_hash(self) -> None:
+        baseline, _ = _packet(LINYI_REQUEST)
+
+        camel_request = copy.deepcopy(LINYI_REQUEST)
+        camel_request["packetVersion"] = "2.1"
+        camel, _ = _packet(camel_request)
+
+        snake_request = copy.deepcopy(LINYI_REQUEST)
+        snake_request.pop("packetVersion")
+        snake_request["packet_version"] = "2.1"
+        snake, _ = _packet(snake_request)
+
+        assert camel["provenance"]["input_hash_sha256"] != baseline["provenance"]["input_hash_sha256"]
+        assert snake["provenance"]["input_hash_sha256"] == camel["provenance"]["input_hash_sha256"]
+        assert snake["provenance"]["config_hash_sha256"] == baseline["provenance"]["config_hash_sha256"]
+
     def test_refranation_interrupted_next_exact_not_found(self) -> None:
         """Regression: 2026-10-21 00:00 UTC Mercury-Jupiter square.
 
@@ -320,6 +347,13 @@ class TestHousesAndAngles:
 
 
 class TestBodiesAndMotion:
+    def test_sign_dms_never_rounds_seconds_to_sixty(self) -> None:
+        from astro_backend_horary_v2 import _sign_display
+
+        sign = _sign_display(29.9999999)
+        assert sign["sign_index"] == 0
+        assert sign["dms"] == {"degrees": 29, "minutes": 59, "seconds": 59.999}
+
     def test_classical_seven(self) -> None:
         packet, _ = _packet(LINYI_REQUEST)
         ids = [b["body_id"] for b in packet["bodies"]]
@@ -473,6 +507,32 @@ class TestEventsAndMoon:
                 (x["datetime_utc"] for x in past), reverse=True
             )
 
+    def test_inverted_voc_interval_does_not_emit_false_boundaries(self) -> None:
+        packet, _ = _packet(LINYI_REQUEST)
+        inverted_rule_ids = {
+            rule["rule_id"]
+            for rule in packet["moon"]["void_of_course_rules"]
+            if (rule.get("interval") or {}).get("reason_code") == "interval_start_after_end"
+        }
+        assert inverted_rule_ids, "fixture must exercise the inverted-interval path"
+        assert not any(
+            event.get("event_type") in {"void_of_course_start", "void_of_course_end"}
+            and event.get("voc_rule_id") in inverted_rule_ids
+            for event in packet["events"]
+        )
+
+        valid_rules = {
+            rule["rule_id"]
+            for rule in packet["moon"]["void_of_course_rules"]
+            if (rule.get("interval") or {}).get("complete") is True
+        }
+        valid_boundaries = {
+            event["event_type"]
+            for event in packet["events"]
+            if event.get("voc_rule_id") in valid_rules
+        }
+        assert valid_boundaries == {"void_of_course_start", "void_of_course_end"}
+
     def test_station_kind_fallback_inference(self) -> None:
         """Station direction must not default to retrograde when the after
         sample is unavailable — infer from before, else stay neutral."""
@@ -489,6 +549,12 @@ class TestEventsAndMoon:
         assert _station_kind((-1.0,), None) == "station_direct"
         # Neither sample: neutral, never guess.
         assert _station_kind(None, None) == "station"
+        # A zero-speed-only side has no direction evidence: stay neutral or use
+        # the non-zero side, never silently classify zero as retrograde.
+        assert _station_kind(None, (0.0,)) == "station"
+        assert _station_kind((0.0,), None) == "station"
+        assert _station_kind((-1.0,), (0.0,)) == "station_direct"
+        assert _station_kind((1.0,), (0.0,)) == "station_retrograde"
 
     def test_past_window_sunrise_sunset_events_present(self) -> None:
         """Regression: rise/set events must cover the full past window, not only
@@ -797,6 +863,21 @@ class TestV21Modules:
         assert pdh["weekday_local"] == iana["planetary_day_hour"]["weekday_local"]
         assert pdh["day_ruler_id"] == iana["planetary_day_hour"]["day_ruler_id"]
         assert pdh["hours"] == iana["planetary_day_hour"]["hours"]
+
+    def test_considerations_allow_unavailable_planetary_hour(self) -> None:
+        """Polar/missing sunrise data must yield null evidence, not crash the packet."""
+        from astro_backend_horary_v2_modules import considerations_evidence
+
+        rows = considerations_evidence(
+            {"ASC": 0.0},
+            [],
+            {"void_of_course_rules": [], "sign_exit": None},
+            {"status": "unavailable", "hours": []},
+            {},
+        )
+        ruler_fact = next(row for row in rows if row["id"] == "asc_ruler_vs_hour_ruler")
+        assert ruler_fact["hour_ruler_id"] is None
+        assert ruler_fact["same_planet"] is None
 
     def test_no_self_mutual_reception(self) -> None:
         packet, _ = _packet(LINYI_REQUEST)

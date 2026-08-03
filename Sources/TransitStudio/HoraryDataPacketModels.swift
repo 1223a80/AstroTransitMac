@@ -212,7 +212,9 @@ extension HoraryV2JSONValue: CustomStringConvertible {
         case .object(let obj):
             if obj.isEmpty { return "{}" }
             let keys = obj.keys.sorted()
-            let body = keys.map { k in "\"\(k)\": \(obj[k]!.prettyJSONText(indent: indent + 1))" }.joined(separator: ",\n\(pad)  ")
+            let body = keys.map { k in
+                "\"\(Self.escapedJSON(k))\": \(obj[k]!.prettyJSONText(indent: indent + 1))"
+            }.joined(separator: ",\n\(pad)  ")
             return "{\n\(pad)  \(body)\n\(pad)}"
         }
     }

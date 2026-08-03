@@ -88,25 +88,11 @@ def _require_moment(value: Any, label: str) -> datetime:
 
 def _utc_from_jd(jd: float) -> datetime:
     year, month, day, hour = swe.revjul(jd, swe.GREG_CAL)
-    whole_hours = int(hour)
-    minutes_f = (hour - whole_hours) * 60.0
-    whole_minutes = int(minutes_f)
-    seconds_f = (minutes_f - whole_minutes) * 60.0
-    whole_seconds = int(seconds_f)
-    micros = int(round((seconds_f - whole_seconds) * 1_000_000))
-    if micros >= 1_000_000:
-        whole_seconds += 1
-        micros -= 1_000_000
-    if whole_seconds >= 60:
-        whole_minutes += 1
-        whole_seconds -= 60
-    if whole_minutes >= 60:
-        whole_hours += 1
-        whole_minutes -= 60
+    total_microseconds = round(float(hour) * 3_600_000_000.0)
     return datetime(
-        int(year), int(month), int(day),
-        whole_hours % 24, whole_minutes, whole_seconds, max(0, micros),
-        tzinfo=timezone.utc,
+        int(year), int(month), int(day), tzinfo=timezone.utc,
+    ) + timedelta(
+        microseconds=total_microseconds,
     )
 
 
@@ -372,6 +358,18 @@ def _planetary_hours(
     sunrise, sunset, notes = _sun_rise_set(seed, latitude, longitude, altitude_m, warnings)
     for note in notes:
         warnings.append(f"行星时太阳升落：{note}")
+
+    # Before today's sunrise, the active planetary hour belongs to the night
+    # that began at the previous civil day's sunset. Rebase the table on that
+    # previous sunrise instead of returning status=ok with current_hour=null.
+    if sunrise is not None and reference_utc < sunrise:
+        previous_midnight = local_midnight - timedelta(days=1)
+        previous_seed = previous_midnight.astimezone(timezone.utc) - timedelta(hours=6)
+        sunrise, sunset, previous_notes = _sun_rise_set(
+            previous_seed, latitude, longitude, altitude_m, warnings,
+        )
+        for note in previous_notes:
+            warnings.append(f"行星时前一日太阳升落：{note}")
     if sunrise is None or sunset is None:
         return {
             "status": "unavailable",

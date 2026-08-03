@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from types import SimpleNamespace
 
 from astro_backend_api import validate_required_fields
 from astro_backend_visibility import calculate_classical_visibility, _planetary_hours
@@ -71,6 +72,34 @@ def test_planetary_hours_unequal_and_chaldean() -> None:
     assert day[0]["ruler_id"] == hours["day_ruler_id"]
     # Unequal: day length != night length generally.
     assert abs(hours["day_hour_minutes"] - hours["night_hour_minutes"]) > 0.01
+
+
+def test_planetary_hours_before_sunrise_use_previous_night() -> None:
+    ref = datetime(2026, 7, 22, 17, 0, tzinfo=timezone.utc)  # 01:00 Jul 23 Asia/Shanghai
+    hours = _planetary_hours(
+        reference_utc=ref,
+        latitude=35.0924,
+        longitude=118.3465,
+        altitude_m=0,
+        display_zone=ZoneInfo("Asia/Shanghai"),
+        warnings=[],
+    )
+    assert hours["status"] == "ok"
+    assert hours["sunrise_local"].startswith("2026-07-22T")
+    assert hours["next_sunrise_local"].startswith("2026-07-23T")
+    assert hours["weekday_local"] == "Wednesday"
+    assert hours["current_hour"] is not None
+    assert hours["current_hour"]["period"] == "night"
+
+
+def test_utc_from_jd_carries_calendar_day(monkeypatch) -> None:
+    import astro_backend_visibility as visibility
+
+    fake = SimpleNamespace(revjul=lambda jd, cal: (2026, 6, 15, 23.9999999999), GREG_CAL=1)
+    monkeypatch.setattr(visibility, "swe", fake)
+    assert visibility._utc_from_jd(0.0) == datetime(
+        2026, 6, 16, 0, 0, tzinfo=timezone.utc,
+    )
 
 
 def test_polar_degrades_without_fake_hours() -> None:

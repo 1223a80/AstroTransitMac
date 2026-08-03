@@ -417,7 +417,8 @@ AstroTransitMac/
 ├── package_app.sh                         release 构建、签名与安装脚本
 ├── check_vibe_changes.sh                  一键本地门禁
 ├── Package.swift                          Swift Package 清单
-├── requirements.txt                       Python 依赖
+├── requirements.txt                       Python 运行依赖
+├── requirements-dev.txt                   Python 测试与契约校验依赖
 ├── AGENTS.md                              项目施工规则与高风险契约
 ├── PLANS.md                               任务计划与执行记录
 └── CHANGELOG.md                           人类可读变更记录
@@ -448,7 +449,7 @@ CI 当前使用 macOS 15 与 Python 3.12。
 cd AstroTransitMac
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt pytest
+python -m pip install -r requirements-dev.txt
 ```
 
 项目的一键门禁会优先使用 `.venv/bin/python`。
