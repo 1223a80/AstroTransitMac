@@ -15,6 +15,8 @@
 - 增加行星时不可用与 station 零速回归覆盖，并纠正计划中 Horary 显示容许度下限的记录为 `0.1`。
 - 补齐 Horary pretty JSON 对对象键名的标准 JSON 转义，确保合法但含引号/控制字符的键不会生成无效展示文本。
 - 发布前验证：Horary/Python 聚焦 130 项、Swift 聚焦 19 项全绿；实时后端输出与 Swift fixture、Linyi golden 语义一致；完整 `check_vibe_changes.sh` 通过（Python 980 项、Swift 214 项 / 28 suites、全部注册后端 smoke 与 rectify smoke）。
+- `1.4.6 (48)` 已覆盖安装到 `/Applications/TransitStudio.app`；Info.plist、ad-hoc 签名、arm64 架构、构建/安装应用全目录一致、二进制 SHA-256 一致、包内无 pyc 均核验通过。安装包内 Horary v2.1 后端 smoke 通过 schema 校验并与 Swift fixture 完全一致（105 个事件，当前行星时 Mars）。
+- 删除 `.build`、`dist`、`.venv`、pytest/Python 缓存、临时验证输出与打包目录，释放约 659 MB；正式安装包保留在 `/Applications`。
 
 ## 2026-08-03 — Horary 剩余修复清单 A–J 全部落地
 
