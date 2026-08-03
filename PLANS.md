@@ -14,7 +14,7 @@
 | 06 I Swift 体验 | 已完成 | AI promptStyle 参数（horary 固定）；runHorary 清残留；orb 钳制 0...10；删 12 个未用类型；FNV-1a 稳定 id |
 | 07 J 测试 + fixture 重生成 | 已完成 | top-level 键补齐、refranation 回归；golden/fixture 重生成并核对（hash 不变、事件 id 变化仅 1 个 VOC start） |
 | 08 全量门禁 | 已完成 | Python 973 passed / 1 skipped；Swift build + 214 tests / 28 suites；check_vibe_changes.sh 全部 smoke 全绿；重建 .venv（pyswisseph 2.10.3.2 + pytest 9.1.1） |
-| 09 文档收口 | 进行中 | CHANGELOG 已追加；docs/horary-remaining-fixes.md 全部标记完成；PLANS 本条目 |
+| 09 文档收口 | 已完成 | CHANGELOG 已追加；docs/horary-remaining-fixes.md 全部标记完成；PLANS 本条目；review 后修复（makeMoment 秒仅 horary、orb 下限 0.1、rule B definition/reason_code 细化）已并入；提交 40551fc |
 
 ## 边界
 
