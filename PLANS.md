@@ -1838,8 +1838,8 @@ Completion criteria: all useful local work is represented by reviewed commits on
 | 01 分支边界与逐项审查 | 已完成 | 已核对 Git 拓扑、4 个提交、27 个文件、调用点、Horary v2.1 schema 与 fixture 来源；确认并归类多项收口问题 |
 | 02 缺陷修复与聚焦验证 | 已完成 | 修复行星时缺失崩溃/日出前夜间时段、JD 跨日、零速 station、倒置 VOC 事件、秒精度展示及 3 类 schema 类型漂移；Python 聚焦 130、Swift 聚焦 19 全绿 |
 | 03 完整门禁 | 已完成 | `check_vibe_changes.sh` 全绿（Python 980、Swift 214 / 28 suites、全部 smoke）；实时 fixture/golden 语义一致；`git diff --check` 与完整 diff 复核通过 |
-| 04 主线合并与版本收口 | 进行中 | 审查通过；提交审查修复后快进合并 `main`，更新补丁版本并提交对应记录 |
-| 05 打包覆盖与产物验证 | 待开始 | 覆盖 `/Applications`，验证版本、签名、架构、包内后端与文件一致性 |
+| 04 主线合并与版本收口 | 已完成 | 审查修复提交 `5537f10`；分支 5 个提交已快进合并 `main`；版本提升至 `1.4.6 (48)` |
+| 05 打包覆盖与产物验证 | 进行中 | 覆盖 `/Applications`，验证版本、签名、架构、包内后端与文件一致性 |
 | 06 清理与最终同步检查 | 待开始 | 清理构建/测试/打包缓存，复核完整 diff、Git 状态与提交边界 |
 
 完成标准：无未解决审查发现；全部必需验证通过；已安装应用与本次主线源码/版本一致；缓存已清理；最终 Git 状态和提交记录清楚可核查。

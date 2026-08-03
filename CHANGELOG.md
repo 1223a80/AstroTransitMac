@@ -2,6 +2,7 @@
 
 ## 2026-08-03 — Horary 最新分支发布前审查修复
 
+- 发布版本提升至 `1.4.6 (48)`；已审查分支及发布前修复通过完整门禁后快进合并至本地 `main`。
 - 修复 `planetary_day_hour` 无当前行星时时 `considerations_evidence` 读取未初始化 `hour_ruler`、导致极区/日出不可用请求整包失败的问题；现在输出 `hour_ruler_id=null`、`same_planet=null`。
 - 修复本地日出前错误使用“当天日出起算表”、导致 `status=ok` 却无 `current_hour` 的问题；凌晨时刻现在使用前一民用日的日落后夜间行星时，并补齐可见性 JD→UTC 换算在 23:59:59.x 进位时的日历跨日。
 - 修复 `_station_kind` 把零速样本默认当作逆行方向的问题：仅在存在非零前/后采样时推断方向，否则返回中性 `station`。
