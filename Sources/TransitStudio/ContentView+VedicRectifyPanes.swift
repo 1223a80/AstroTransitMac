@@ -22,6 +22,10 @@ extension ContentView {
                     s2Index: $calcVM.rectifyS2Index,
                     activeLevel: $calcVM.rectifyActiveLevel,
                     level3ResponseID: $calcVM.rectifyLevel3ResponseID,
+                    evidenceResponse: $calcVM.rectificationEvidenceResponse,
+                    isRunningEvidence: $calcVM.isRunningRectificationEvidence,
+                    evidenceProgress: $calcVM.rectificationEvidenceProgress,
+                    evidenceProgressText: $calcVM.rectificationEvidenceProgressText,
                     onComputeLevel2: { offsetSec in
                         // Invalidate in-flight immediately, before debounce fires
                         calcVM.rectifyLevel2Gen += 1
@@ -33,6 +37,21 @@ extension ContentView {
                         calcVM.rectifyLevel3Gen += 1
                         calcVM.rectifyLevel3Task?.cancel()
                         calcVM.rectifyLevel3Task = Task { await runRectifyLevel3(offsetSeconds: offsetSec) }
+                    },
+                    onComputeEvidence: { events, offsetSec in
+                        calcVM.rectificationEvidenceGeneration += 1
+                        calcVM.rectificationEvidenceTask?.cancel()
+                        calcVM.rectificationEvidenceTask = Task {
+                            await runRectificationEvidence(events: events, offsetSeconds: offsetSec)
+                        }
+                    },
+                    onInvalidateEvidence: {
+                        calcVM.rectificationEvidenceGeneration += 1
+                        calcVM.rectificationEvidenceTask?.cancel()
+                        calcVM.rectificationEvidenceTask = nil
+                        calcVM.isRunningRectificationEvidence = false
+                        calcVM.rectificationEvidenceProgress = 0
+                        calcVM.rectificationEvidenceProgressText = ""
                     }
                 )
             } else {

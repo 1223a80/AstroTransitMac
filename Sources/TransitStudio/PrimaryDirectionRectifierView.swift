@@ -11,12 +11,19 @@ struct PrimaryDirectionRectifierView: View {
     @Binding var s2Index: Int
     @Binding var activeLevel: Int
     @Binding var level3ResponseID: Int
+    @Binding var evidenceResponse: RectificationEvidenceResponse?
+    @Binding var isRunningEvidence: Bool
+    @Binding var evidenceProgress: Double
+    @Binding var evidenceProgressText: String
 
     let onComputeLevel2: (Int) -> Void
     let onComputeLevel3: (Int) -> Void
+    let onComputeEvidence: ([RectificationEvidenceSourceEvent], Int) -> Void
+    let onInvalidateEvidence: () -> Void
 
     @State private var s3Index = 0
     @State private var computeTask: Task<Void, Never>?
+    @State private var selectedPanel = "directions"
 
     // Filter state
     @State private var filterKeyword = ""
@@ -35,15 +42,39 @@ struct PrimaryDirectionRectifierView: View {
             sliderSection
                 .padding(.bottom, 6)
             Divider()
-            filterBar
-                .padding(.vertical, 6)
+            Picker("工作区", selection: $selectedPanel) {
+                Text("方向浏览").tag("directions")
+                Text("事件证据").tag("evidence")
+            }
+            .pickerStyle(.segmented)
+            .frame(maxWidth: 320)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
             Divider()
-            directionTable
+            if selectedPanel == "evidence" {
+                RectificationEvidenceWorkspace(
+                    candidateTime: activeLocalTimeString,
+                    absoluteOffsetSeconds: absoluteOffsetSeconds,
+                    timeZone: timeZone,
+                    response: $evidenceResponse,
+                    isRunning: $isRunningEvidence,
+                    progress: $evidenceProgress,
+                    progressText: $evidenceProgressText,
+                    onCompute: onComputeEvidence
+                )
+            } else {
+                filterBar
+                    .padding(.vertical, 6)
+                Divider()
+                directionTable
+            }
         }
         .onChange(of: level3ResponseID) { _ in
             guard let l3 = level3Response else { return }
             s3Index = l3.centerOffsetIndex
             activeLevel = 3
+            evidenceResponse = nil
+            onInvalidateEvidence()
         }
         .onDisappear {
             computeTask?.cancel()
@@ -149,7 +180,12 @@ struct PrimaryDirectionRectifierView: View {
                     label: "1秒",
                     value: Binding(
                         get: { s3Index },
-                        set: { s3Index = $0; activeLevel = 3 }
+                        set: {
+                            s3Index = $0
+                            activeLevel = 3
+                            evidenceResponse = nil
+                            onInvalidateEvidence()
+                        }
                     ),
                     range: 0...max(0, l3.candidates.count - 1),
                     minText: rangeLabel(l3.candidates.first, l3.candidates.last),
@@ -234,6 +270,8 @@ struct PrimaryDirectionRectifierView: View {
         activeLevel = 1
         level2Response = nil
         level3Response = nil
+        evidenceResponse = nil
+        onInvalidateEvidence()
         s2Index = 0
         s3Index = 0
         computeTask = Task {
@@ -247,6 +285,8 @@ struct PrimaryDirectionRectifierView: View {
         computeTask?.cancel()
         activeLevel = 2
         level3Response = nil
+        evidenceResponse = nil
+        onInvalidateEvidence()
         s3Index = 0
         computeTask = Task {
             try? await Task.sleep(nanoseconds: 300_000_000)

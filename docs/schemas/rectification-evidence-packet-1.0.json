@@ -1,0 +1,425 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://transitstudio.local/schemas/rectification-evidence-packet-1.0.json",
+  "title": "Rectification Evidence Packet 1.0",
+  "description": "Method-separated birth-time rectification evidence. It deliberately contains no aggregate score or automatic best time.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "meta",
+    "requested_config",
+    "method_profiles",
+    "events",
+    "candidates",
+    "warnings",
+    "calculation_assumptions"
+  ],
+  "properties": {
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "schema_id"],
+      "properties": {
+        "name": { "const": "rectification-evidence-packet" },
+        "version": { "const": "1.0" },
+        "schema_id": { "const": "rectification-evidence-packet/1.0" }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "candidate_count",
+        "event_count",
+        "zodiac",
+        "house_system_requested",
+        "display_timezone",
+        "scientific_validation",
+        "automatic_best_time"
+      ],
+      "properties": {
+        "mode": { "const": "rectify_evidence" },
+        "candidate_count": { "type": "integer", "minimum": 1 },
+        "event_count": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "zodiac": { "type": "string" },
+        "house_system_requested": { "type": "string" },
+        "display_timezone": { "type": "string", "minLength": 1 },
+        "scientific_validation": { "const": "not_established" },
+        "automatic_best_time": { "const": false }
+      }
+    },
+    "requested_config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference_birth",
+        "candidate_window_seconds",
+        "candidate_step_seconds",
+        "max_candidates",
+        "primary_direction_keys",
+        "target_angle_ids",
+        "max_age",
+        "max_evidence_rows_per_family",
+        "confirmed_heavy_scan",
+        "timing_technique_ids",
+        "timing_techniques"
+      ],
+      "properties": {
+        "reference_birth": { "$ref": "#/$defs/referenceBirth" },
+        "candidate_window_seconds": { "type": "integer", "minimum": 0 },
+        "candidate_step_seconds": { "type": "integer", "minimum": 1 },
+        "max_candidates": { "type": "integer", "minimum": 1 },
+        "primary_direction_keys": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["naibod_mean", "one_degree_per_year"] }
+        },
+        "target_angle_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["ASC", "MC", "DSC", "IC"] }
+        },
+        "max_age": { "type": "number", "minimum": 0 },
+        "max_evidence_rows_per_family": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "confirmed_heavy_scan": { "type": "boolean" },
+        "timing_technique_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["transit", "secondary_progression", "solar_arc"] }
+        },
+        "timing_techniques": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/timingTechnique" }
+        }
+      }
+    },
+    "method_profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/methodProfile" }
+    },
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": { "$ref": "#/$defs/sourceEvent" }
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/candidate" }
+    },
+    "warnings": { "$ref": "#/$defs/stringArray" },
+    "calculation_assumptions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "chartMoment": {
+      "type": "object",
+      "required": ["year", "month", "day", "hour", "minute", "timezone"],
+      "properties": {
+        "year": { "type": "integer" },
+        "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "day": { "type": "integer", "minimum": 1, "maximum": 31 },
+        "hour": { "type": "integer", "minimum": 0, "maximum": 23 },
+        "minute": { "type": "integer", "minimum": 0, "maximum": 59 },
+        "second": { "type": "integer", "minimum": 0, "maximum": 59 },
+        "timezone": { "type": "string", "minLength": 1 },
+        "fold": { "type": "integer", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": true
+    },
+    "referenceBirth": {
+      "type": "object",
+      "required": ["moment", "latitude", "longitude"],
+      "properties": {
+        "moment": { "$ref": "#/$defs/chartMoment" },
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+        "houseSystem": { "type": "string" },
+        "house_system": { "type": "string" },
+        "zodiac": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "sourceEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "category",
+        "description",
+        "source_quality",
+        "confidence",
+        "holdout",
+        "start",
+        "end"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "source_quality": {
+          "enum": [
+            "documented_exact",
+            "documented_day",
+            "remembered_day",
+            "remembered_period",
+            "approximate"
+          ]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "holdout": { "type": "boolean" },
+        "start": { "$ref": "#/$defs/chartMoment" },
+        "end": { "$ref": "#/$defs/chartMoment" }
+      }
+    },
+    "timingTechnique": {
+      "type": "object",
+      "required": ["id", "moving_body_ids", "event_types", "aspects"],
+      "properties": {
+        "id": { "enum": ["transit", "secondary_progression", "solar_arc"] },
+        "moving_body_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "event_types": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": { "const": "aspect" }
+        },
+        "aspects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "angle", "orb"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "angle": { "type": "number", "minimum": 0, "maximum": 180 },
+              "orb": { "type": "number", "minimum": 0 }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "methodProfile": {
+      "type": "object",
+      "required": ["profile_id", "family", "status", "role", "independence_group"],
+      "properties": {
+        "profile_id": { "type": "string", "minLength": 1 },
+        "family": {
+          "enum": ["primary_motion", "transit", "secondary_progression", "solar_arc"]
+        },
+        "status": { "type": "string" },
+        "role": { "type": "string" },
+        "independence_group": { "type": "string" },
+        "note": { "type": "string" },
+        "includes": { "$ref": "#/$defs/stringArray" },
+        "excludes": { "$ref": "#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    },
+    "primaryMotionEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_family",
+        "independence_group",
+        "window_hit_count",
+        "nearest_distance_days",
+        "evidence",
+        "truncated"
+      ],
+      "properties": {
+        "method_family": { "const": "primary_motion" },
+        "independence_group": { "const": "primary_motion" },
+        "window_hit_count": { "type": "integer", "minimum": 0 },
+        "nearest_distance_days": { "type": ["number", "null"], "minimum": 0 },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/primaryMotionRow" }
+        },
+        "truncated": { "type": "boolean" }
+      }
+    },
+    "primaryMotionRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "method_profile",
+        "method_family",
+        "method_status",
+        "independence_group",
+        "key_profile",
+        "key_rate_deg_per_year",
+        "promissor_id",
+        "promissor",
+        "significator_id",
+        "significator",
+        "aspect_type",
+        "direction_type",
+        "arc_signed",
+        "arc_abs",
+        "age_years",
+        "event_datetime_after_birth",
+        "event_date_after_birth",
+        "proxy",
+        "complete_primary_directions_suite",
+        "geometry",
+        "event_id",
+        "distance_to_event_window_days",
+        "inside_event_window"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "method_profile": { "const": "primary_motion_planet_to_angles_v1" },
+        "method_family": { "const": "primary_motion" },
+        "method_status": { "const": "formal_geometry_subset" },
+        "independence_group": { "const": "primary_motion" },
+        "key_profile": { "enum": ["naibod_mean", "one_degree_per_year"] },
+        "key_rate_deg_per_year": { "type": "number", "exclusiveMinimum": 0 },
+        "promissor_id": { "type": "string" },
+        "promissor": { "type": "string" },
+        "significator_id": { "enum": ["ASC", "MC", "DSC", "IC"] },
+        "significator": { "enum": ["ASC", "MC", "DSC", "IC"] },
+        "aspect_type": { "const": "conjunction" },
+        "direction_type": { "enum": ["direct", "converse_label"] },
+        "arc_signed": { "type": "number", "minimum": -180, "maximum": 180 },
+        "arc_abs": { "type": "number", "minimum": 0, "maximum": 180 },
+        "age_years": { "type": "number", "minimum": 0 },
+        "event_datetime_after_birth": { "type": "string" },
+        "event_date_after_birth": { "type": "string" },
+        "proxy": { "const": false },
+        "complete_primary_directions_suite": { "const": false },
+        "geometry": { "type": "object" },
+        "event_id": { "type": "string" },
+        "distance_to_event_window_days": { "type": "number", "minimum": 0 },
+        "inside_event_window": { "type": "boolean" }
+      }
+    },
+    "timingFamily": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_family",
+        "independence_group",
+        "exact_hit_count",
+        "evidence",
+        "truncated"
+      ],
+      "properties": {
+        "method_family": { "enum": ["transit", "secondary_progression", "solar_arc"] },
+        "independence_group": {
+          "enum": ["transit", "day_for_year", "day_for_year_solar_anchor"]
+        },
+        "exact_hit_count": { "type": "integer", "minimum": 0 },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "source_type",
+              "exact_utc",
+              "event_id",
+              "distance_to_event_midpoint_days"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "truncated": { "type": "boolean" }
+      }
+    },
+    "eventEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "event_category",
+        "holdout",
+        "primary_motion",
+        "families",
+        "timing_meta",
+        "section_errors"
+      ],
+      "properties": {
+        "event_id": { "type": "string" },
+        "event_category": { "type": "string" },
+        "holdout": { "type": "boolean" },
+        "primary_motion": { "$ref": "#/$defs/primaryMotionEvidence" },
+        "families": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["transit", "secondary_progression", "solar_arc"],
+          "properties": {
+            "transit": { "$ref": "#/$defs/timingFamily" },
+            "secondary_progression": { "$ref": "#/$defs/timingFamily" },
+            "solar_arc": { "$ref": "#/$defs/timingFamily" }
+          }
+        },
+        "timing_meta": { "type": ["object", "null"] },
+        "section_errors": { "type": ["array", "object", "null"] }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "offset_seconds",
+        "birth_local",
+        "birth_utc",
+        "house_system",
+        "angles",
+        "family_hit_counts",
+        "evidence_by_event",
+        "warnings"
+      ],
+      "properties": {
+        "offset_seconds": { "type": "integer" },
+        "birth_local": { "type": "string" },
+        "birth_utc": { "type": "string" },
+        "house_system": { "type": "string" },
+        "angles": {
+          "type": "object",
+          "required": ["ASC", "MC", "DSC", "IC"],
+          "additionalProperties": { "type": "number" }
+        },
+        "family_hit_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["primary_motion", "transit", "secondary_progression", "solar_arc"],
+          "properties": {
+            "primary_motion": { "type": "integer", "minimum": 0 },
+            "transit": { "type": "integer", "minimum": 0 },
+            "secondary_progression": { "type": "integer", "minimum": 0 },
+            "solar_arc": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "evidence_by_event": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/eventEvidence" }
+        },
+        "warnings": { "$ref": "#/$defs/stringArray" }
+      }
+    }
+  }
+}

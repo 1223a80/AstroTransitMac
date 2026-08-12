@@ -35,6 +35,7 @@ python3 -m pytest python_tests/test_classical.py -v   # classical dignity, timin
 python3 -m pytest python_tests/test_horary.py -v      # legacy horary helpers (significators/advanced); call calculate_horary directly
 python3 -m pytest python_tests/test_horary_v2.py -v   # horary data packet v2 (default production path)
 python3 -m pytest python_tests/test_scan.py -v        # scan engine: aspect matching, priority scoring, ingress/station
+python3 -m pytest python_tests/test_rectify_evidence.py -v  # backend-only rectification theory/evidence packet
 python3 -m pytest python_tests/test_contracts.py -v   # integration: JSON contract for all modes
 ```
 
@@ -107,6 +108,7 @@ swift test --filter ClassicalResultTests   # classical model JSON decoding
 swift test --filter HoraryResultTests      # horary model JSON decoding
 swift test --filter TransitResultTests     # transit/moment model JSON decoding
 swift test --filter RectifyResultTests     # rectify model JSON decoding + request encoding
+swift test --filter RectificationEvidenceTests  # evidence request/response, event validation, progress and method boundaries
 swift test --filter MarkdownExportTests    # markdown export for classical and transit
 swift test --filter BackendContractTests   # vedic/synastry/composite/davison/progression/solar-arc/harmonic/horary decoding against real backend output fixtures
 ```

@@ -1670,6 +1670,87 @@ extension ContentView {
         }
     }
 
+    @MainActor
+    func runRectificationEvidence(
+        events: [RectificationEvidenceSourceEvent],
+        offsetSeconds: Int
+    ) async {
+        guard let coords = requireCoordinates(birthLatitude, birthLongitude), !events.isEmpty else { return }
+        let generation = calcVM.rectificationEvidenceGeneration
+        let candidateDate = natalDate.addingTimeInterval(TimeInterval(offsetSeconds))
+        let request = RectificationEvidenceRequest(
+            birth: BirthSettings(
+                moment: makeMoment(from: candidateDate, includeSeconds: true),
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+                houseSystem: selectedHouseSystem,
+                zodiac: selectedZodiac,
+                boundsSystem: selectedBoundsSystem,
+                triplicitySystem: selectedTriplicitySystem
+            ),
+            events: events,
+            // The app stores fixed GMT offsets, while Modern Timing requires
+            // an IANA display zone. Exact UTC is localized in Swift below.
+            displayTimezone: "UTC",
+            candidateWindowSeconds: 0,
+            candidateStepSeconds: 1,
+            maxCandidates: 1,
+            primaryDirectionKeys: ["naibod_mean"],
+            targetAngleIDs: ["ASC", "MC", "DSC", "IC"],
+            maxAge: 120,
+            maxEvidenceRowsPerFamily: 12,
+            confirmedHeavyScan: false
+        )
+
+        calcVM.isRunningRectificationEvidence = true
+        calcVM.rectificationEvidenceProgress = 0
+        calcVM.rectificationEvidenceProgressText = "准备事件证据计算"
+        calcVM.rectificationEvidenceResponse = nil
+
+        do {
+            let response = try await RectifyClient.fetchEvidence(
+                request: request,
+                pythonPath: appState.pythonPath,
+                progressCallback: { [self] update in
+                    Task { @MainActor in
+                        guard generation == calcVM.rectificationEvidenceGeneration else { return }
+                        if let label = update.label, label.hasPrefix("rectify_evidence:") {
+                            calcVM.rectificationEvidenceProgress = update.progress
+                            calcVM.rectificationEvidenceProgressText = "事件证据 \(Int(update.progress * 100))%"
+                        } else if let label = update.label {
+                            calcVM.rectificationEvidenceProgressText = rectificationProgressLabel(label)
+                        }
+                    }
+                }
+            )
+            guard generation == calcVM.rectificationEvidenceGeneration else { return }
+            calcVM.rectificationEvidenceResponse = response
+            calcVM.rectificationEvidenceProgress = 1
+            calcVM.rectificationEvidenceProgressText = "事件证据计算完成"
+            calcVM.isRunningRectificationEvidence = false
+        } catch is CancellationError {
+            guard generation == calcVM.rectificationEvidenceGeneration else { return }
+            calcVM.isRunningRectificationEvidence = false
+        } catch {
+            guard generation == calcVM.rectificationEvidenceGeneration else { return }
+            calcVM.isRunningRectificationEvidence = false
+            calcVM.errorMessage = error.localizedDescription
+        }
+    }
+
+    private func rectificationProgressLabel(_ label: String) -> String {
+        let parts = label.split(separator: ":", maxSplits: 1).map(String.init)
+        guard parts.count == 2 else { return "正在计算事件证据" }
+        let family: String
+        switch parts[0] {
+        case "transit": family = "行运"
+        case "secondary_progression": family = "次限"
+        case "solar_arc": family = "太阳弧"
+        default: family = parts[0]
+        }
+        return "\(family) · \(parts[1])"
+    }
+
     // MARK: - Vedic Calculation
 
     @MainActor

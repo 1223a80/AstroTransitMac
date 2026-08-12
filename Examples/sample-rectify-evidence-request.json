@@ -1,0 +1,52 @@
+{
+  "mode": "rectify_evidence",
+  "birth": {
+    "moment": {
+      "year": 1990,
+      "month": 1,
+      "day": 1,
+      "hour": 12,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "houseSystem": "placidus",
+    "zodiac": "tropical",
+    "boundsSystem": "egyptian",
+    "triplicitySystem": "dorothean"
+  },
+  "events": [
+    {
+      "id": "career-event-1",
+      "category": "career",
+      "description": "Synthetic contract example around a known primary-motion hit; replace with real sourced data.",
+      "source_quality": "documented_day",
+      "confidence": 1.0,
+      "holdout": true,
+      "start": {
+        "year": 2025,
+        "month": 4,
+        "day": 14,
+        "hour": 0,
+        "minute": 0,
+        "timezone": "Asia/Shanghai"
+      },
+      "end": {
+        "year": 2025,
+        "month": 4,
+        "day": 15,
+        "hour": 0,
+        "minute": 0,
+        "timezone": "Asia/Shanghai"
+      }
+    }
+  ],
+  "display_timezone": "Asia/Shanghai",
+  "candidate_window_seconds": 0,
+  "candidate_step_seconds": 60,
+  "primary_direction_keys": ["naibod_mean"],
+  "target_angle_ids": ["ASC", "MC", "DSC", "IC"],
+  "max_age": 120,
+  "max_evidence_rows_per_family": 4
+}

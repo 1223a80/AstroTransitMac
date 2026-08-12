@@ -59,10 +59,15 @@ struct AuditFrontendStateTests {
         let model = CalculationViewModel()
         let task = Task<Void, Never> { try? await Task.sleep(nanoseconds: 10_000_000_000) }
         model.rectifyLevel2Task = task
+        model.rectificationEvidenceTask = task
         let oldGeneration = model.rectifyLevel2Gen
+        let oldEvidenceGeneration = model.rectificationEvidenceGeneration
         model.invalidateRectifyResults()
         await Task.yield()
         #expect(task.isCancelled)
         #expect(model.rectifyLevel2Gen == oldGeneration + 1)
+        #expect(model.rectificationEvidenceGeneration == oldEvidenceGeneration + 1)
+        #expect(model.rectificationEvidenceResponse == nil)
+        #expect(model.isRunningRectificationEvidence == false)
     }
 }

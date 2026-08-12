@@ -63,6 +63,7 @@ final class CalculationViewModel: ObservableObject {
     @Published var rectifyResponse: RectifyResponse?
     @Published var rectifyLevel2Response: RectifyResponse?
     @Published var rectifyLevel3Response: RectifyResponse?
+    @Published var rectificationEvidenceResponse: RectificationEvidenceResponse?
     @Published var vedicResult: VedicResult?
     @Published var modernResultData: ModernResultData?
     /// Multi-mode cache for classical-expansion results (D6 merge export).
@@ -97,19 +98,31 @@ final class CalculationViewModel: ObservableObject {
     @Published var rectifyLevel2Gen = 0
     @Published var rectifyLevel3Gen = 0
     @Published var rectifyLevel3ResponseID = 0
+    @Published var isRunningRectificationEvidence = false
+    @Published var rectificationEvidenceProgress = 0.0
+    @Published var rectificationEvidenceProgressText = ""
+    @Published var rectificationEvidenceGeneration = 0
     var rectifyLevel2Task: Task<Void, Never>?
     var rectifyLevel3Task: Task<Void, Never>?
+    var rectificationEvidenceTask: Task<Void, Never>?
 
     func invalidateRectifyResults() {
         rectifyLevel2Task?.cancel()
         rectifyLevel3Task?.cancel()
+        rectificationEvidenceTask?.cancel()
         rectifyLevel2Task = nil
         rectifyLevel3Task = nil
+        rectificationEvidenceTask = nil
         rectifyLevel2Gen += 1
         rectifyLevel3Gen += 1
+        rectificationEvidenceGeneration += 1
         rectifyResponse = nil
         rectifyLevel2Response = nil
         rectifyLevel3Response = nil
+        rectificationEvidenceResponse = nil
+        isRunningRectificationEvidence = false
+        rectificationEvidenceProgress = 0
+        rectificationEvidenceProgressText = ""
         rectifyActiveLevel = 1
         rectifyS1Index = 0
         rectifyS2Index = 0

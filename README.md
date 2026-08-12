@@ -254,6 +254,8 @@ v2.1 **不自动输出**：
 
 第一级由用户点击“计算生时矫正”启动；第二、三级在上一级滑杆停止后自动运行。后端通过 stderr 输出 JSON progress 行，Swift 客户端实时显示进度。
 
+生时矫正结果区的「事件证据」工作区会以当前三级滑杆候选为 reference birth，调用 backend-only `mode=rectify_evidence` / `rectification-evidence-packet/1.0`。用户可以维护结构化人生事件窗口，并按候选、事件和方法家族查看行星至四轴的主运动几何子集，以及行运、次限和太阳弧对候选四轴的精确求根证据；方法按独立性组分开输出，不生成总分或自动选定出生时间。理论、字段和验证边界见 [docs/rectify-theory/](docs/rectify-theory/README.md)。
+
 ### 吠陀 / Jyotish
 
 吠陀模式支持：
@@ -349,7 +351,7 @@ astro_backend_api.py
         ├── classical / audit / visibility modules
         ├── horary v2.1 modules
         ├── vedic modules
-        └── rectify module
+        └── rectify / rectify evidence modules
         │  JSON response via stdout
         ▼
 Swift Codable models → result panes / wheel / exports / AI context
@@ -359,7 +361,7 @@ Swift Codable models → result panes / wheel / exports / AI context
 
 ## 支持的后端 mode
 
-当前 `astro_backend_api.validate_required_fields()` 注册 34 个 mode：
+当前 `astro_backend_api.validate_required_fields()` 注册 35 个 mode：
 
 ```text
 moment
@@ -368,6 +370,7 @@ vedic
 horary
 scan
 rectify
+rectify_evidence
 synastry
 composite
 davison

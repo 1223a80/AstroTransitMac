@@ -1,3 +1,91 @@
+# 生时矫正证据包 SwiftUI 接入（2026-08-12）
+
+分支：`codex/feature-rectify-evidence-ui`。目标：在保留现有 `rectify` 三级滑杆契约与 backend-only sample/Schema 合同的前提下，将已完成的 `mode=rectify_evidence` / `rectification-evidence-packet/1.0` 接入生时矫正界面；事件窗口由用户维护，证据按候选、事件和方法家族独立呈现，不合成总分、不自动推荐唯一出生时间。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 契约与 UI 约束审阅 | 已完成 | 完整核对未提交后端契约、Schema/sample、理论文档、现有 Swift 模型/客户端/视图与测试调用链；确认固定 GMT display timezone 兼容边界 |
+| 02 Codable 与客户端接入 | 已完成 | 扩展请求/响应模型；当前滑杆候选作为单一 reference birth；复用 300 秒共享客户端的取消、结构化错误与标签进度 |
+| 03 事件编辑与证据视图 | 已完成 | 实现最多 20 条人生事件窗口增删改；按候选/事件/家族展示独立证据及截断、绕极、精度、section errors、方法边界 |
+| 04 Swift 回归测试 | 已完成 | 新增 4 项 evidence 合同测试并扩展失效取消测试；聚焦 Swift 4 项、相关 Python 41 项通过；Swift build 通过 |
+| 05 完整验证与收口 | 已完成 | check_vibe：Python 1001、Swift 218、build 与全部 smoke 全绿；最终 Swift 219 全绿；完整 diff/三级滑杆/禁止排名边界复核，缓存清理并生成独立提交 |
+
+## 边界
+
+- 不修改现有 `mode=rectify` 的三层候选数量、窗口、步长、触发顺序或滑杆交互。
+- 不把四个方法家族合并成总分，不排序或标注“最佳候选”，不自动推荐唯一出生时间。
+- 不把 backend-only sample 注册为应用普通模式，也不破坏已发布 JSON Schema；不合并 `main`、不打包或安装。
+- 本分支同时承接尚未提交的理论内核成果与本次 Swift UI 消费端改动，最终以一个边界清晰、可审查的独立提交收口。
+
+---
+
+# 生时矫正理论内核（2026-08-06）
+
+分支：`codex/feature-rectify-theory-core`。目标：先完成后端理论、稳定契约、测试与文档，不接 Swift UI、不打包；把当前简化主限代理与正式方法、事件证据和辅助技术严格分层，为后续应用层提供可审计接口。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 理论与现有能力审计 | 已完成 | 确认 B16/B17 仍为代理；Modern Timing 精确求根、method families 可复用；Animodar/沿界/年主只作未来 context，不能冒充独立分钟证据 |
+| 02 后端理论核心 | 已完成 | 新增结构化事件、候选、方法 profile 与证据模型；主运动、行运、次限、太阳弧按独立性组分离，不输出总分/最佳时间 |
+| 03 主限基础强化 | 已完成 | 新增含黄纬的行星→四轴主运动正式几何子集、双 key、绕极诊断和高精度时刻；legacy proxy 保持不变，未命名为完整 Placidus/Regiomontanus |
+| 04 API 与样例 | 已完成 | 新增 `mode=rectify_evidence`、结构化校验、sample request、本地/CI smoke；现有 rectify UI 契约未改 |
+| 05 聚焦测试 | 已完成 | 新增 21 项，连同 rectify/Modern Timing/method families/PD audit/distributions 共 83 项通过 |
+| 06 文档 | 已完成 | 新增理论规格、字段字典、外部验证/盲测协议；README、后端契约、项目结构索引同步 |
+| 07 验证与收口 | 已完成 | 完整门禁 Python 1001、Swift 214、Swift build 与全部 backend smoke 通过；sample 命中主运动证据且通过 JSON Schema；diff/任务边界复核完成，构建与 Python 缓存已清理 |
+
+## 边界
+
+- 本阶段不接入 `PrimaryDirectionRectifierView`，不改变现有三级滑杆行为，不做版本号或安装包。
+- 占星技术只声明传统/计算口径，不声称科学有效性；输出证据与不确定性，不自动宣称“真实出生秒”。
+- 只有已落实且可测试的算法才能列为正式 profile；历史方法、代理和实验方法必须显式区分。
+- 复用现有 Swiss Ephemeris、Modern Timing 求根和 method-family 原语，不复制平行计算栈。
+
+---
+
+# Mercury Hayz 与 Firdaria 交点宫位 Bug 审查（2026-08-05）
+
+目标：只读核实两个报告问题的真实性、影响范围、现有测试缺口与建议修复方向；不修改生产代码。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 实现与调用链核对 | 已完成 | 确认 Mercury 文本状态不能作为布尔值；确认古典快照仅含七曜，交点另有真/平均 ID |
+| 02 最小复现与测试审计 | 已完成 | 四组 Mercury 方向/昼夜组合复现；2061 北交点主限复现空数组；现有测试均未覆盖目标行为 |
+| 03 结论收口 | 已完成 | 两个问题均成立；校正 Bug 1 影响描述与 Bug 2 字段表述，记录交点口径决策点并复核 diff 边界 |
+
+## 边界
+
+- 不修改生产代码、测试、fixture、版本号或安装包。
+- 仅运行聚焦的只读检查与最小复现，不运行与本次审查无关的全量门禁。
+
+---
+
+# 项目深度了解（2026-08-03）
+
+目标：通读 AGENTS.md / README / docs / 关键源码与测试入口，形成可交接的项目全貌；只读了解，不改代码。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 规范与文档 | 已完成 | AGENTS.md、README、PLANS/CHANGELOG 结构、docs 索引 |
+| 02 架构链路 | 已完成 | transit_calc.py → astro_backend_api.py → 各模式模块；Swift BackendClient / ModernBackendClient / RectifyClient |
+| 03 UI 与状态 | 已完成 | ContentView、CalculationViewModel、AIAnalysisViewModel、导航与运行流程 |
+| 04 契约与验证 | 已完成 | backend-contracts、validation、fixture 重生成规则、check_vibe_changes.sh、CI |
+| 05 收口 | 已完成 | git 状态核对（main ahead 10、工作树干净）、无缓存产物、PLANS 记录 |
+
+## 边界
+
+- 本次不修改任何代码、不运行全量门禁；仅阅读与记录。
+- 后续实际改动任务仍需按 AGENTS.md 建分支、补测试、更新 CHANGELOG 并跑门禁。
+
+---
+
 # Horary 剩余修复清单 A–J（2026-08-03）
 
 分支：`fix/horary-timezone-events`（延续）。目标：按 `docs/horary-remaining-fixes.md` 审计清单完成全部待修项，重生成受影响 fixture/golden，全量验证后收口。

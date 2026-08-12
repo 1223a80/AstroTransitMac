@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-08-12 — 生时矫正证据包 SwiftUI 接入（开发中）
+
+- 在独立分支登记 UI 接入任务：保留现有 `rectify` 三级滑杆与 backend-only sample/Schema 合同，计划让用户维护人生事件窗口，并以当前滑杆候选为中心请求 `rectification-evidence-packet/1.0`。
+- 明确呈现边界：主运动、行运、次限与太阳弧证据按候选/事件独立显示，同时暴露截断、绕极、精度和方法限制；不生成总分或自动推荐唯一出生时间。
+- 补齐 evidence 请求/响应 Codable：覆盖事件来源与 holdout、候选、四方法家族、主运动几何诊断、Modern Timing 精确命中、截断标志、method profiles、警告与动态 section errors；客户端复用带 300 秒超时、取消、结构化后端错误和带标签进度的共享进程通道，原 `rectify` 客户端行为不变。
+- 将 evidence 独立运行状态接入 `CalculationViewModel` 与生时矫正 pane：请求以三级滑杆当前绝对候选为唯一 reference candidate，不另起候选排名；事件求根内部使用 UTC IANA 输出并由 Swift 按当前固定 GMT 偏移呈现，支持任务取消、世代防陈旧响应、家族进度文案与结构化错误回传。
+- 生时矫正结果区新增「方向浏览 / 事件证据」工作区，不改变原滑杆与方向过滤表。事件证据区支持最多 20 条窗口的增删改、秒级起止、类别、说明、来源质量、confidence 与 holdout；滑杆候选变化会使旧证据失效，需按当前候选重新计算。
+- 新增按候选→事件→方法家族的可审计结果视图：分别呈现主运动、行运、次限、太阳弧的原始命中（明确标注非评分），展示精确时刻/弧度/orb/pass、返回行截断、Modern Timing 搜索窗口截断、候选与全局警告（含绕极）、动态 section errors、方法状态/独立性组/排除范围及非完整主限边界。
+- 首轮编译校正移除事件响应不必要的 `Equatable` 约束，并让事件 ChartMoment 直接按实际 `TimeZone` 拆分日期分量，避免半小时/四十五分钟固定偏移被十进制字符串误读。
+- 补上候选切换并发边界：分钟、5 秒、1 秒任一级变化或新 level-3 响应都会取消在途 evidence 任务、推进世代并清空旧结果；计算期间锁定事件编辑，避免旧候选或旧事件请求回写当前界面。
+- 新增 Swift 合同测试，覆盖当前候选单点请求编码、事件来源/holdout/秒精度、完整方法分离响应解码、截断与窗口裁剪、绕极警告、主运动几何精度、section errors、禁止总分/最佳时间字段、事件校验、5:45 固定偏移拆分、带标签进度，以及全局 rectify 失效时的 evidence 任务取消。
+- 文档从 backend-only 理论阶段更新为实际消费边界：`rectify_evidence` 仍不是独立导航 mode，而由现有 `.rectify` 的事件证据工作区以当前候选单点调用；记录固定 GMT→UTC IANA→Swift 本地化路径，并把外部数值交叉验证明确设为任何评分/排名/唯一时间推荐的前置条件，而非阻止原始证据 UI。
+- 阶段性验证：Swift build 通过；`RectificationEvidenceTests` 4/4、`test_rectify_evidence.py + test_rectify.py` 41/41 通过。项目 `.venv` 已按国内清华镜像重建（Python 3.11、pyswisseph 2.10.3.2、pytest 9.1.1、jsonschema 4.26.0），供完整门禁使用。
+- 审查补强增加静态 UI 契约测试：四方法家族、截断、绕极、方法独立性与「非评分」必须可见，同时禁止 aggregate/best/rectified-time 字段和“最佳候选/推荐时间”文案进入 evidence view。
+- 最终验证：`check_vibe_changes.sh` 全绿（Python 1001、Swift build、Swift 218 / 29 suites、全部登记 backend smoke）；增加最终 UI 边界测试后完整 Swift 219 / 29 suites 再次全绿。复核确认 legacy `rectify` 仍为 61 / 13 / 11 候选与 1 分钟 / 5 秒 / 1 秒步长，sample/JSON Schema 未改造成应用普通 mode，也没有总分、排序或唯一出生时间输出。
+- 最终文案审查把四轴的 9 位小数明确标为“输出保留位数、并非验证精度”，避免将 JSON 数值分辨率误读为方法准确度。
+
+## 2026-08-06 — 生时矫正理论内核（开发中）
+
+- 新增可审计的 `primary_motion_planet_to_angles_v1` 后端几何子集：用包含行星黄纬的黄道→赤道转换，分别按赤经、斜升和斜降计算行星至 MC/IC/ASC/DSC 的主运动弧；支持 Naibod mean 与 1°/年 key、绕极诊断和未舍入年龄/事件时刻。
+- 契约明确声明该实现是角度方向的正式几何子集，不冒充完整 Placidus/Regiomontanus 主限；非角度 significator、mundane/zodiacal aspects、under-the-pole 与完整 converse 仍排除在外。
+- 新增后端 `rectification-evidence-packet/1.0` 计算核心：对同一组有来源质量、置信度及 holdout 标记的人生事件窗口逐候选计算主运动角度方向、行运→本命轴、次限→本命轴与太阳弧→本命轴证据；按方法家族和独立性组分开输出，不生成任意总分或“最佳出生秒”。
+- 新核心复用 Modern Timing 的精确求根与既有 day-for-year / true-solar-arc 原语，限制候选数、事件数和证据行数；事件窗口和方法配置均进入可审计请求，不用模糊事件日期自动猜测容许期。
+- 后端 API 注册独立 `mode=rectify_evidence`，要求结构化 `birth`、非空 `events` 与 IANA `display_timezone`；现有 `mode=rectify` 和 Swift 三级滑杆契约保持不变。
+- 新增聚焦 Python 覆盖：黄道→赤道转换含黄纬、绕极升降守卫、四轴零弧基准、主运动高精度字段、key 拒绝、结构化必填、候选网格、事件来源/holdout、坐标与工作量限制、方法独立性分组及禁止自动最佳时间。
+- 新增 `Examples/sample-rectify-evidence-request.json`，并把新 mode 加入本地一键门禁与 GitHub Actions backend smoke；样例只用单候选和单事件窗口验证完整方法链，不作为真实矫正数据。
+- 新增 `docs/rectify-theory/` 理论、字段字典与验证协议：记录主运动公式、明确排除的完整主限部分、方法依赖关系、事件来源/holdout 规则、禁止输出的评分字段、外部数值交叉验证和未来盲化恢复测试；README、后端契约与项目结构索引同步。
+- 收口审查修正长期方向时刻的 DST 口径：象征日数按 UTC elapsed duration 累加后再转回出生时区；响应 `method_profiles` 只列实际启用家族，并在 requested config 明示 timing technique IDs，避免禁用技术仍看似参与计算。
+- 文档收口同步后端 mode 总数、架构图和 validation 聚焦命令，避免新增 backend-only mode 后 README 仍停留在 34 个入口。
+- 契约加固：新增 `rectification-evidence-packet/1.0` JSON Schema；响应完整回显实际采用的 timing technique 配置，示例窗口改为命中已知主运动证据的合成契约样例。
+- 应用边界复核：`rectify_evidence` 只注册为 backend-only API，不加入 Swift/Python 共享的应用模式常量；本阶段不暗示 Swift 导航、模型或界面已经接入。
+- 请求校验加固：拒绝重复 timing technique、重复 `aspect` event type 以及缺失/非有限的 aspect angle/orb，保证所有成功响应都能满足已发布 Schema。
+- 可复现性补全：证据包回显原始出生基准、候选硬上限与 heavy-scan 开关；单独保存 packet 即可恢复地点、时区和完整有效配置。
+- 最终验证：`python_tests/test_rectify_evidence.py` 21 项、相关矩阵 83 项通过；完整 `check_vibe_changes.sh` 通过（Python 1001、Swift build、Swift 214 / 28 suites、全部登记 backend smoke）。样例通过 JSON Schema 且命中 1 条主运动窗口证据；`.build`、pytest/Python 缓存及本次 `/tmp` 验证环境已清理。
+
 ## 2026-08-03 — Horary 最新分支发布前审查修复
 
 - 发布版本提升至 `1.4.6 (48)`；已审查分支及发布前修复通过完整门禁后快进合并至本地 `main`。

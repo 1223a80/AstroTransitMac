@@ -10,7 +10,7 @@ Run the backend directly with:
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-request.json
 ```
 
-`transit_calc.py` calls `astro_backend_api.main()`, which requires an explicit supported `request.mode`. Unknown, misspelled, or empty modes return a JSON error instead of silently falling back to moment calculation. Supported modes are `moment`, `classical`, `vedic`, `horary`, `scan`, `rectify`, `synastry`, `composite`, `davison`, `progression`, `solar_arc`, and `harmonic`.
+`transit_calc.py` calls `astro_backend_api.main()`, which requires an explicit supported `request.mode`. Unknown, misspelled, or empty modes return a JSON error instead of silently falling back to moment calculation. Supported modes include `moment`, `classical`, `vedic`, `horary`, `scan`, `rectify`, backend-only `rectify_evidence`, `synastry`, `composite`, `davison`, `progression`, `solar_arc`, `harmonic`, and the registered modern/classical expansion modes.
 
 Moment objects accept fixed offsets such as `GMT+5:30` and IANA zone names. For an IANA local time inside a DST spring-forward gap, the backend rejects the nonexistent time. For an ambiguous fall-back time, callers must include `fold: 0` or `fold: 1`.
 

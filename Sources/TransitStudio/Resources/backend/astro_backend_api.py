@@ -837,7 +837,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
     """Return the structured input error for missing or invalid fields."""
     mode = request.get("mode", "")
     supported_modes = {
-        "moment", "classical", "vedic", "horary", "scan", "rectify",
+        "moment", "classical", "vedic", "horary", "scan", "rectify", "rectify_evidence",
         "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
         "modern_return", "modern_timing", "midpoint", "progressed_composite",
         "relocation", "modern_cycles", "astrocartography", "local_space",
@@ -866,6 +866,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "horary": ["chart"],
         "scan": ["start", "end"],
         "rectify": ["birth_date", "center_time"],
+        "rectify_evidence": ["birth", "events", "display_timezone"],
         "synastry": ["person_a", "person_b"],
         "composite": ["person_a", "person_b"],
         "davison": ["person_a", "person_b"],
@@ -1051,6 +1052,8 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         if packet_version not in HORARY_V1_PACKET_VERSIONS | HORARY_V2_PACKET_VERSIONS:
             invalid.append("packetVersion is unsupported; use 2 (default) or 1/legacy")
     _PERSON_MOMENT_FIELDS = ("year", "month", "day", "hour", "minute", "timezone")
+    if mode == "rectify_evidence" and "birth" in request:
+        validate_exact_person(request["birth"], "birth")
     if mode in ("synastry", "composite", "davison", "progressed_composite"):
         for side in ("person_a", "person_b"):
             if side in request:
@@ -1868,6 +1871,9 @@ def main() -> None:
         elif mode == "rectify":
             from astro_backend_rectify import compute_window
             response = compute_window(request)
+        elif mode == "rectify_evidence":
+            from astro_backend_rectify_evidence import compute_rectification_evidence
+            response = compute_rectification_evidence(request)
         elif mode == "synastry":
             from astro_backend_synastry import calculate_synastry
             response = calculate_synastry(request, warnings)

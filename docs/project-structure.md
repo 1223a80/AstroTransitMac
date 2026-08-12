@@ -50,6 +50,8 @@ Important backend files:
 - `astro_backend_scan.py` - transit window scan and crossing refinement.
 - `astro_backend_horary.py` - horary mode.
 - `astro_backend_primary_directions.py` and `astro_backend_circumambulations.py` - classical timing submodules.
+- `astro_backend_rectify_primary_motion.py` and `astro_backend_rectify_evidence.py` - backend-only rectification theory core: auditable planet-to-angle primary motion plus event-window evidence from primary motion, transit, progression, and solar arc.
+- `RectifyModels.swift`, `RectifyClient.swift`, `PrimaryDirectionRectifierView.swift`, and `RectificationEvidenceView.swift` - preserve the legacy three-level candidate selector while consuming the evidence packet for editable life-event windows and method-separated presentation.
 
 ## Tests And Examples
 

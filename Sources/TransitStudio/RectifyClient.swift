@@ -113,6 +113,22 @@ enum RectifyClient {
             state.finish(.failure(CancellationError()))
         }
     }
+
+    /// Evidence scans use the shared 300-second process runner because one
+    /// event fans out into three exact-root timing families. Progress labels
+    /// are preserved so the UI can distinguish family work from completed
+    /// candidate/event packets.
+    static func fetchEvidence(
+        request: RectificationEvidenceRequest,
+        pythonPath: String,
+        progressCallback: (@Sendable (BackendProgressUpdate) -> Void)? = nil
+    ) async throws -> RectificationEvidenceResponse {
+        try await BackendClient.run(
+            request: request,
+            pythonPath: pythonPath,
+            progressCallback: progressCallback
+        )
+    }
 }
 
 private final class RectifyContinuationState: @unchecked Sendable {
