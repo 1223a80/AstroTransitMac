@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-14 — KP 与生时矫正合并发布
+
+- 生时矫正证据工作区基线与 KP 1–249 完整接入已整理为独立任务提交；KP 提交为 `e4f3d07`，任务分支 `codex/feature-kp-horary` 已推送并确认与远端一致。
+- `main` 已无冲突快进合并并推送 `origin/main`；合并后本地与远端提交差为 `0/0`。
+- 发布前门禁通过：Python 1014 项、Swift 223 项 / 30 suites、Swift build、全部登记 smoke、KP fixture 与 JSON Schema 均成功；构建与 Python 缓存已清理。
+- 两份 2026-08-13 架构重设计/评审文档及其记录属于另一任务，已保留在本地并排除出本次提交和合并。
+
 ## 2026-08-14 — GitHub 钥匙串授权误报防护
 
 - 在项目 `AGENTS.md` 固化 macOS 钥匙串与 Codex 沙箱规则：沙箱内的 `gh auth status` 可能因无法读取登录钥匙串而把有效凭证误报为无效，禁止仅凭该结果要求用户重复授权。
