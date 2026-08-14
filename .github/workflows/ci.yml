@@ -35,7 +35,7 @@ jobs:
         run: |
           python Sources/TransitStudio/Resources/backend/transit_calc.py \
             < Examples/sample-request.json > /dev/null
-          for sample in classical scan horary vedic-ai harmonic synastry modern-solar-return modern-lunar-return modern-mercury-return modern-timing midpoint modern-timing-midpoint modern-timing-composite modern-timing-davison progressed-composite relocation modern-cycles declination-timing retrograde-cycles classical-visibility planetary-synodic hellenistic-condition-audit draconic-heliocentric classical-derivatives astrocartography local-space mundane-electional orbital-dial prenatal-parans distributions-pd primary-directions-audit method-families time-lords-extended rectify-evidence; do
+          for sample in classical scan horary kp-horary vedic-ai harmonic synastry modern-solar-return modern-lunar-return modern-mercury-return modern-timing midpoint modern-timing-midpoint modern-timing-composite modern-timing-davison progressed-composite relocation modern-cycles declination-timing retrograde-cycles classical-visibility planetary-synodic hellenistic-condition-audit draconic-heliocentric classical-derivatives astrocartography local-space mundane-electional orbital-dial prenatal-parans distributions-pd primary-directions-audit method-families time-lords-extended rectify-evidence; do
             echo "smoke: $sample"
             python Sources/TransitStudio/Resources/backend/transit_calc.py \
               < "Examples/sample-${sample}-request.json" > /dev/null

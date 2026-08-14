@@ -42,6 +42,34 @@ struct BackendContractTests {
         #expect(result.meta.ayanamshaName?.isEmpty == false)
     }
 
+    @Test func decodeKPHoraryResultFromRealOutput() throws {
+        let result = try JSONDecoder().decode(
+            KPHoraryResult.self,
+            from: fixtureData("kp-horary-result")
+        )
+
+        #expect(result.schema.schemaID == "kp-horary-data-packet/1.0")
+        #expect(result.question.horaryNumber == 123)
+        #expect(result.question.focusHouse == 7)
+        #expect(result.calculationConfig.zodiac == "sidereal_krishnamurti")
+        #expect(result.calculationConfig.houseSystem == "placidus")
+        #expect(result.calculationConfig.automaticJudgment == false)
+        #expect(result.planets.count == 9)
+        #expect(result.houses.count == 12)
+        #expect(result.planetSignificators.count == 9)
+        #expect(result.houseSignificators.count == 12)
+        #expect(result.focusHouse.house == 7)
+        #expect(result.houseSolution.residualDegrees < 0.00001)
+
+        let markdown = MarkdownExportBuilder.kpHorary(result)
+        let csv = TextExportBuilder.csv(result)
+        #expect(markdown.contains("KP 占卜数据包"))
+        #expect(markdown.contains("行星使用提问时刻"))
+        #expect(markdown.contains("自动裁决：关闭"))
+        #expect(csv.contains("planet_significator"))
+        #expect(csv.contains("house_significator"))
+    }
+
     @Test func decodeSynastryResult() throws {
         let result = try JSONDecoder().decode(SynastryResult.self, from: fixtureData("synastry-result"))
 

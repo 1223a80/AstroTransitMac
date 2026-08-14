@@ -43,6 +43,9 @@ struct ContentView: View {
     @State var horaryLongitude = "121.4737"
     @State var horaryGmtOffset = 8.0
     @State var horaryQuestionText = ""
+    @State var kpHoraryNumber = 1
+    @State var kpFocusHouse = 7
+    @State var kpNodeMode = "mean"
     @StateObject var currentLocationManager = CurrentLocationManager()
     @State var selectedHouseSystem = "whole_sign"
     /// Horary-only house system; independent of natal/classical `selectedHouseSystem`.
@@ -398,7 +401,9 @@ struct ContentView: View {
                     .truncationMode(.middle)
             }
             Spacer(minLength: TS.Spacing.md)
-            if practiceMode != .vedic {
+            if mode == .kpHorary {
+                Text("Krishnamurti Sidereal · Placidus")
+            } else if practiceMode != .vedic {
                 Text("\(houseSystemLabel) · \(zodiacLabel)")
             } else {
                 Text("Sidereal · \(vedicAyanamsha.capitalized)")

@@ -60,6 +60,7 @@ final class CalculationViewModel: ObservableObject {
     @Published var modernTimingResult: ModernTimingResult?
     @Published var classicalResult: ClassicalResult?
     @Published var horaryResult: HoraryDataPacket?
+    @Published var kpHoraryResult: KPHoraryResult?
     @Published var rectifyResponse: RectifyResponse?
     @Published var rectifyLevel2Response: RectifyResponse?
     @Published var rectifyLevel3Response: RectifyResponse?
@@ -131,6 +132,7 @@ final class CalculationViewModel: ObservableObject {
     // MARK: - Tab Selection
     @Published var classicalSelectedTab = "planets"
     @Published var horarySelectedTab = "overview"
+    @Published var kpHorarySelectedTab = "overview"
     @Published var modernNatalSelectedTab = "natal_positions"
     @Published var momentSelectedTab = "aspects"
     @Published var scanSelectedTab = "timeline"

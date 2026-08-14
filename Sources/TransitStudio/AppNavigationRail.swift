@@ -153,6 +153,7 @@ struct AppNavigationRail: View {
     private var vedicModeButtons: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.sm) {
             navigationButton(title: "吠陀排盘", icon: "sun.max.circle", mode: .settings)
+            navigationButton(title: "KP 占卜", icon: "number.circle", mode: .kpHorary)
         }
     }
 

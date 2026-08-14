@@ -22,6 +22,7 @@ enum PracticeMode: String, CaseIterable, Identifiable {
 enum CalculationMode: String, CaseIterable, Identifiable {
     case settings
     case horary
+    case kpHorary = "kp_horary"
     case moment
     case scan
     case rectify
@@ -34,6 +35,8 @@ enum CalculationMode: String, CaseIterable, Identifiable {
             return "本命设置"
         case .horary:
             return "Horary"
+        case .kpHorary:
+            return "KP 占卜"
         case .moment:
             return "时间点"
         case .scan:

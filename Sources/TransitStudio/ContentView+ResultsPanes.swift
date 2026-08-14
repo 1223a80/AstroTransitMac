@@ -43,6 +43,8 @@ extension ContentView {
             return modernSubModeRunTitle(modernSubMode)
         case .horary:
             return "Horary 起盘"
+        case .kpHorary:
+            return "KP 起盘"
         case .moment:
             return "计算时间点"
         case .scan:
@@ -103,6 +105,12 @@ extension ContentView {
         case .horary:
             return parseDouble(horaryLatitude) == nil
                 || parseDouble(horaryLongitude) == nil
+                || horaryQuestionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case .kpHorary:
+            return parseDouble(horaryLatitude) == nil
+                || parseDouble(horaryLongitude) == nil
+                || !(1...249).contains(kpHoraryNumber)
+                || !(1...12).contains(kpFocusHouse)
                 || horaryQuestionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         case .moment:
             return selectedNatalBodies.isEmpty || selectedTransitBodies.isEmpty || selectedAspectRequests(orb: globalOrb).isEmpty
@@ -252,6 +260,8 @@ extension ContentView {
             return modernSubModeResultsPane(modernSubMode)
         case .horary:
             return AnyView(horaryResultsPane)
+        case .kpHorary:
+            return AnyView(kpHoraryResultsPane)
         case .moment:
             return AnyView(momentResultsPane)
         case .scan:

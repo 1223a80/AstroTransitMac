@@ -69,6 +69,8 @@ extension ContentView {
             }
         case .horary:
             await runHorary()
+        case .kpHorary:
+            await runKPHorary()
         case .moment:
             await runCalculation()
         case .scan:
@@ -135,6 +137,7 @@ extension ContentView {
                 aiVM.clear(modeKey: modernSubMode == .natal ? "natal" : modernSubMode.rawValue)
             }
         case .horary: aiVM.clear(modeKey: "horary")
+        case .kpHorary: break
         case .moment: aiVM.clear(modeKey: "moment")
         case .scan:
             if !isModernTimingWorkspace {
@@ -1535,6 +1538,45 @@ extension ContentView {
                 requireEphemeris: appState.requireEphemeris
             )
             calcVM.horaryResult = try await BackendClient.horary(request: request, pythonPath: appState.pythonPath)
+        }
+    }
+
+    @MainActor
+    func runKPHorary() async {
+        guard let coords = requireCoordinates(
+            horaryLatitude,
+            horaryLongitude,
+            errorText: "KP 占卜经纬度需要是数字。"
+        ) else { return }
+        let question = horaryQuestionText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !question.isEmpty else {
+            calcVM.errorMessage = "请输入 KP 占卜问题文本。"
+            return
+        }
+
+        calcVM.kpHoraryResult = nil
+        await performRun {
+            let request = KPHoraryRequest(
+                mode: "kp_horary",
+                chart: KPHoraryChartSettings(
+                    moment: makeMoment(from: horaryDate, gmtOffset: horaryGmtOffset, includeSeconds: true),
+                    latitude: coords.latitude,
+                    longitude: coords.longitude
+                ),
+                questionText: question,
+                placeName: horaryPlaceName.trimmingCharacters(in: .whitespacesAndNewlines),
+                horaryNumber: kpHoraryNumber,
+                focusHouse: kpFocusHouse,
+                nodeMode: kpNodeMode,
+                ephemerisPath: normalizedEphemerisPath,
+                noAsteroids: appState.noAsteroids,
+                requireEphemeris: appState.requireEphemeris
+            )
+            calcVM.kpHoraryResult = try await BackendClient.kpHorary(
+                request: request,
+                pythonPath: appState.pythonPath
+            )
+            calcVM.kpHorarySelectedTab = "overview"
         }
     }
 

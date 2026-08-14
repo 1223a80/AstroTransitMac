@@ -6,6 +6,12 @@
 
 set -euo pipefail
 
+# Keep validation isolated from macOS user-site packages (which may live in a
+# sandbox-inaccessible Library path) and avoid leaving Python cache files in
+# the source tree.
+export PYTHONNOUSERSITE=1
+export PYTHONDONTWRITEBYTECODE=1
+
 echo "========================================"
 echo "Vibe Coding 改动验证脚本"
 echo "========================================"
@@ -40,6 +46,7 @@ echo "3. 关键 smoke 测试（legacy + modern return/timing/midpoint + rectify�
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-request.json > /dev/null && echo "✅ moment smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-scan-request.json > /dev/null && echo "✅ scan smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-horary-request.json > /dev/null && echo "✅ horary smoke OK"
+"$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-kp-horary-request.json > /dev/null && echo "✅ KP horary smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-vedic-ai-request.json > /dev/null && echo "✅ vedic smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-harmonic-request.json > /dev/null && echo "✅ harmonic smoke OK"
 "$PY" Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-modern-solar-return-request.json > /dev/null && echo "✅ modern solar return smoke OK"

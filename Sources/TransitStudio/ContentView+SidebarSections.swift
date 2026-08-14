@@ -52,6 +52,12 @@ extension ContentView {
                 collapsible("地点") { horaryLocationSection }
                 collapsible("古典参数") { classicalParameterSection }
             })
+        case .kpHorary:
+            return AnyView(VStack(alignment: .leading, spacing: TS.Spacing.xl) {
+                collapsible("KP 数字与问题") { kpHoraryQuestionSection }
+                collapsible("地点") { horaryLocationSection }
+                collapsible("计算口径") { kpHoraryMethodSection }
+            })
         case .moment:
             return AnyView(VStack(alignment: .leading, spacing: TS.Spacing.xl) {
                 collapsible("时间") { momentTimeSection }
@@ -228,6 +234,86 @@ extension ContentView {
                             .stroke(Color.secondary.opacity(0.25))
                     )
             }
+        }
+    }
+
+    var kpHoraryQuestionSection: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.lg) {
+            HStack {
+                Text("提问时间").foregroundStyle(.secondary)
+                DateTimeInput(date: $horaryDate, timeZone: timeZone(for: horaryGmtOffset), showsSeconds: true)
+                Button("现在") { horaryDate = Date() }
+            }
+            HStack {
+                Text("提问时区").foregroundStyle(.secondary)
+                Spacer()
+                gmtOffsetControl($horaryGmtOffset)
+            }
+            HStack {
+                Text("KP 数字")
+                    .foregroundStyle(.secondary)
+                Spacer()
+                TextField("1–249", value: $kpHoraryNumber, format: .number)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 72)
+                    .multilineTextAlignment(.trailing)
+                    .monospacedDigit()
+                    .accessibilityLabel("KP 数字，可直接输入 1 到 249")
+                    .onChange(of: kpHoraryNumber) { newValue in
+                        let clamped = min(max(newValue, 1), 249)
+                        if clamped != newValue {
+                            kpHoraryNumber = clamped
+                        }
+                    }
+                Stepper("", value: $kpHoraryNumber, in: 1...249)
+                    .labelsHidden()
+                    .accessibilityLabel("微调 KP 数字")
+            }
+            HStack {
+                Text("焦点宫位").foregroundStyle(.secondary)
+                Spacer()
+                Picker("", selection: $kpFocusHouse) {
+                    ForEach(1...12, id: \.self) { house in
+                        Text("第 \(house) 宫").tag(house)
+                    }
+                }
+                .labelsHidden()
+                .frame(maxWidth: 150)
+            }
+            HStack {
+                Text("交点口径").foregroundStyle(.secondary)
+                Spacer()
+                Picker("", selection: $kpNodeMode) {
+                    Text("平均交点").tag("mean")
+                    Text("真交点").tag("true")
+                }
+                .labelsHidden()
+                .frame(maxWidth: 150)
+            }
+            VStack(alignment: .leading, spacing: TS.Spacing.md) {
+                Text("问题文本")
+                    .font(TS.Font.label)
+                    .foregroundStyle(.secondary)
+                TextEditor(text: $horaryQuestionText)
+                    .font(TS.Font.body)
+                    .frame(height: 120)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: TS.Radius.chip)
+                            .stroke(Color.secondary.opacity(0.25))
+                    )
+            }
+        }
+    }
+
+    var kpHoraryMethodSection: some View {
+        VStack(alignment: .leading, spacing: TS.Spacing.md) {
+            LabeledContent("黄道", value: "Krishnamurti Sidereal")
+            LabeledContent("宫制", value: "Placidus")
+            LabeledContent("数字范围", value: "1–249")
+            Text("行星按提问时刻计算；所选数字只确定 KP 上升区间和对应宫头。结果提供求解时刻与残差，不自动给出 yes/no 或吉凶裁决。")
+                .font(TS.Font.label)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 

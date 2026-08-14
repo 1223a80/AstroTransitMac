@@ -1,0 +1,2101 @@
+{
+  "mode": "kp_horary",
+  "schema": {
+    "name": "kp-horary-data-packet",
+    "version": "1.0",
+    "schema_id": "kp-horary-data-packet/1.0"
+  },
+  "question": {
+    "text": "KP frontend contract sample",
+    "horary_number": 123,
+    "focus_house": 7,
+    "place_name": "上海市"
+  },
+  "time_and_location": {
+    "question_local": "2026-08-12T16:00:00+08:00",
+    "question_utc": "2026-08-12T08:00:00+00:00",
+    "house_solution_utc": "2026-08-12T02:10:10.437767+00:00",
+    "timezone": "Asia/Shanghai",
+    "latitude": 31.2304,
+    "longitude": 121.4737
+  },
+  "calculation_config": {
+    "zodiac": "sidereal_krishnamurti",
+    "ayanamsha": "Krishnamurti",
+    "ayanamsha_degrees_at_question": 24.1319940020079,
+    "house_system": "placidus",
+    "node_mode": "mean",
+    "planet_time_policy": "question_time",
+    "house_time_policy": "number_selected_ascendant_with_question_time_planets",
+    "number_longitude_policy": "segment_midpoint",
+    "automatic_judgment": false
+  },
+  "horary_number": {
+    "number": 123,
+    "interval_start_longitude": 176.11111111111111,
+    "interval_end_longitude": 177.88888888888889,
+    "representative_longitude": 177.0,
+    "interior_offset_degrees": 0.8888888888888857,
+    "longitude": 177.0,
+    "sign": "处女",
+    "degree_text": "27°00'00\" 处女",
+    "sign_lord": {
+      "id": "MERCURY",
+      "name": "水星"
+    },
+    "nakshatra": {
+      "index": 14,
+      "name": "Chitra",
+      "name_zh": "质多罗",
+      "lord": {
+        "id": "MARS",
+        "name": "火星"
+      },
+      "pada": 2,
+      "start_longitude": 173.33333333333334,
+      "end_longitude": 186.66666666666666
+    },
+    "sub_lord": {
+      "id": "JUPITER",
+      "name": "木星",
+      "start_longitude": 176.11111111111111,
+      "end_longitude": 177.88888888888889
+    },
+    "sub_sub_lord": {
+      "id": "VENUS",
+      "name": "金星",
+      "start_longitude": 176.98518518518517,
+      "end_longitude": 177.28148148148148
+    }
+  },
+  "house_solution": {
+    "target_ascendant": 177.0,
+    "solved_ascendant": 176.99999996172514,
+    "residual_degrees": 3.827486239060818e-08,
+    "evaluations": 383,
+    "search_window_days": 1.1
+  },
+  "angles": [
+    {
+      "id": "ASC",
+      "name": "上升",
+      "longitude": 176.99999996172514,
+      "sign": "处女",
+      "degree_text": "27°00'00\" 处女",
+      "sign_lord": {
+        "id": "MERCURY",
+        "name": "水星"
+      },
+      "nakshatra": {
+        "index": 14,
+        "name": "Chitra",
+        "name_zh": "质多罗",
+        "lord": {
+          "id": "MARS",
+          "name": "火星"
+        },
+        "pada": 2,
+        "start_longitude": 173.33333333333334,
+        "end_longitude": 186.66666666666666
+      },
+      "sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 176.11111111111111,
+        "end_longitude": 177.88888888888889
+      },
+      "sub_sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 176.98518518518517,
+        "end_longitude": 177.28148148148148
+      }
+    },
+    {
+      "id": "MC",
+      "name": "天顶",
+      "longitude": 88.62137391205226,
+      "sign": "双子",
+      "degree_text": "28°37'17\" 双子",
+      "sign_lord": {
+        "id": "MERCURY",
+        "name": "水星"
+      },
+      "nakshatra": {
+        "index": 7,
+        "name": "Punarvasu",
+        "name_zh": "颇勒古尼",
+        "lord": {
+          "id": "JUPITER",
+          "name": "木星"
+        },
+        "pada": 3,
+        "start_longitude": 80.0,
+        "end_longitude": 93.33333333333333
+      },
+      "sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 86.55555555555556,
+        "end_longitude": 88.77777777777777
+      },
+      "sub_sub_lord": {
+        "id": "MERCURY",
+        "name": "水星",
+        "start_longitude": 88.33333333333333,
+        "end_longitude": 88.64814814814815
+      }
+    },
+    {
+      "id": "DSC",
+      "name": "下降",
+      "longitude": 356.99999996172517,
+      "sign": "双鱼",
+      "degree_text": "27°00'00\" 双鱼",
+      "sign_lord": {
+        "id": "JUPITER",
+        "name": "木星"
+      },
+      "nakshatra": {
+        "index": 27,
+        "name": "Revati",
+        "name_zh": "哩伐底",
+        "lord": {
+          "id": "MERCURY",
+          "name": "水星"
+        },
+        "pada": 4,
+        "start_longitude": 346.6666666666667,
+        "end_longitude": 360.0
+      },
+      "sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 356.1111111111111,
+        "end_longitude": 357.8888888888889
+      },
+      "sub_sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 356.9851851851852,
+        "end_longitude": 357.2814814814815
+      }
+    },
+    {
+      "id": "IC",
+      "name": "天底",
+      "longitude": 268.62137391205226,
+      "sign": "射手",
+      "degree_text": "28°37'17\" 射手",
+      "sign_lord": {
+        "id": "JUPITER",
+        "name": "木星"
+      },
+      "nakshatra": {
+        "index": 21,
+        "name": "Uttara Ashadha",
+        "name_zh": "后阿沙陀",
+        "lord": {
+          "id": "SUN",
+          "name": "太阳"
+        },
+        "pada": 1,
+        "start_longitude": 266.6666666666667,
+        "end_longitude": 280.0
+      },
+      "sub_lord": {
+        "id": "MARS",
+        "name": "火星",
+        "start_longitude": 268.44444444444446,
+        "end_longitude": 269.22222222222223
+      },
+      "sub_sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 268.60648148148147,
+        "end_longitude": 268.7101851851852
+      }
+    }
+  ],
+  "planets": [
+    {
+      "id": "SUN",
+      "name": "太阳",
+      "longitude": 115.51359506247775,
+      "sign": "巨蟹",
+      "degree_text": "25°30'49\" 巨蟹",
+      "sign_lord": {
+        "id": "MOON",
+        "name": "月亮"
+      },
+      "nakshatra": {
+        "index": 9,
+        "name": "Ashlesha",
+        "name_zh": "阿沙莱沙",
+        "lord": {
+          "id": "MERCURY",
+          "name": "水星"
+        },
+        "pada": 3,
+        "start_longitude": 106.66666666666667,
+        "end_longitude": 120.0
+      },
+      "sub_lord": {
+        "id": "RAHU",
+        "name": "罗睺",
+        "start_longitude": 114.11111111111111,
+        "end_longitude": 116.11111111111111
+      },
+      "sub_sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 115.39444444444445,
+        "end_longitude": 115.72777777777777
+      },
+      "house": 10,
+      "latitude": 8.501025080921136e-05,
+      "declination": 14.9242,
+      "speed": 0.9601156239661952,
+      "retrograde": false,
+      "ephemeris": "Swiss Ephemeris"
+    },
+    {
+      "id": "MOON",
+      "name": "月亮",
+      "longitude": 110.0982056156714,
+      "sign": "巨蟹",
+      "degree_text": "20°05'54\" 巨蟹",
+      "sign_lord": {
+        "id": "MOON",
+        "name": "月亮"
+      },
+      "nakshatra": {
+        "index": 9,
+        "name": "Ashlesha",
+        "name_zh": "阿沙莱沙",
+        "lord": {
+          "id": "MERCURY",
+          "name": "水星"
+        },
+        "pada": 2,
+        "start_longitude": 106.66666666666667,
+        "end_longitude": 120.0
+      },
+      "sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 109.33333333333333,
+        "end_longitude": 111.55555555555556
+      },
+      "sub_sub_lord": {
+        "id": "MARS",
+        "name": "火星",
+        "start_longitude": 110.0,
+        "end_longitude": 110.12962962962963
+      },
+      "house": 10,
+      "latitude": 1.417940865315137,
+      "declination": 17.9155,
+      "speed": 14.528372353097891,
+      "retrograde": false,
+      "ephemeris": "Swiss Ephemeris"
+    },
+    {
+      "id": "MARS",
+      "name": "火星",
+      "longitude": 66.51351457399268,
+      "sign": "双子",
+      "degree_text": "06°30'49\" 双子",
+      "sign_lord": {
+        "id": "MERCURY",
+        "name": "水星"
+      },
+      "nakshatra": {
+        "index": 5,
+        "name": "Mrigashira",
+        "name_zh": "密伽尸罗",
+        "lord": {
+          "id": "MARS",
+          "name": "火星"
+        },
+        "pada": 4,
+        "start_longitude": 53.333333333333336,
+        "end_longitude": 66.66666666666667
+      },
+      "sub_lord": {
+        "id": "MOON",
+        "name": "月亮",
+        "start_longitude": 65.55555555555556,
+        "end_longitude": 66.66666666666667
+      },
+      "sub_sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 66.42592592592592,
+        "end_longitude": 66.61111111111111
+      },
+      "house": 9,
+      "latitude": 0.24877745413996435,
+      "declination": 23.6852,
+      "speed": 0.6615766798491862,
+      "retrograde": false,
+      "ephemeris": "Swiss Ephemeris"
+    },
+    {
+      "id": "MERCURY",
+      "name": "水星",
+      "longitude": 100.27069398954369,
+      "sign": "巨蟹",
+      "degree_text": "10°16'14\" 巨蟹",
+      "sign_lord": {
+        "id": "MOON",
+        "name": "月亮"
+      },
+      "nakshatra": {
+        "index": 8,
+        "name": "Pushya",
+        "name_zh": "鬼宿",
+        "lord": {
+          "id": "SATURN",
+          "name": "土星"
+        },
+        "pada": 3,
+        "start_longitude": 93.33333333333333,
+        "end_longitude": 106.66666666666667
+      },
+      "sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 98.11111111111111,
+        "end_longitude": 100.33333333333333
+      },
+      "sub_sub_lord": {
+        "id": "KETU",
+        "name": "计都",
+        "start_longitude": 100.20370370370371,
+        "end_longitude": 100.33333333333333
+      },
+      "house": 10,
+      "latitude": 0.531383867416468,
+      "declination": 19.674,
+      "speed": 1.748267027776219,
+      "retrograde": false,
+      "ephemeris": "Swiss Ephemeris"
+    },
+    {
+      "id": "JUPITER",
+      "name": "木星",
+      "longitude": 105.32814866530963,
+      "sign": "巨蟹",
+      "degree_text": "15°19'41\" 巨蟹",
+      "sign_lord": {
+        "id": "MOON",
+        "name": "月亮"
+      },
+      "nakshatra": {
+        "index": 8,
+        "name": "Pushya",
+        "name_zh": "鬼宿",
+        "lord": {
+          "id": "SATURN",
+          "name": "土星"
+        },
+        "pada": 4,
+        "start_longitude": 93.33333333333333,
+        "end_longitude": 106.66666666666667
+      },
+      "sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 104.88888888888889,
+        "end_longitude": 106.66666666666667
+      },
+      "sub_sub_lord": {
+        "id": "SATURN",
+        "name": "土星",
+        "start_longitude": 105.12592592592593,
+        "end_longitude": 105.4074074074074
+      },
+      "house": 10,
+      "latitude": 0.49418692235177275,
+      "declination": 18.3599,
+      "speed": 0.21952739651844194,
+      "retrograde": false,
+      "ephemeris": "Swiss Ephemeris"
+    },
+    {
+      "id": "VENUS",
+      "name": "金星",
+      "longitude": 161.36632950122666,
+      "sign": "处女",
+      "degree_text": "11°21'59\" 处女",
+      "sign_lord": {
+        "id": "MERCURY",
+        "name": "水星"
+      },
+      "nakshatra": {
+        "index": 13,
+        "name": "Hasta",
+        "name_zh": "诃斯塔",
+        "lord": {
+          "id": "MOON",
+          "name": "月亮"
+        },
+        "pada": 1,
+        "start_longitude": 160.0,
+        "end_longitude": 173.33333333333334
+      },
+      "sub_lord": {
+        "id": "MARS",
+        "name": "火星",
+        "start_longitude": 161.11111111111111,
+        "end_longitude": 161.88888888888889
+      },
+      "sub_sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 161.27314814814815,
+        "end_longitude": 161.37685185185185
+      },
+      "house": 12,
+      "latitude": -1.0939672143787724,
+      "declination": -3.1896,
+      "speed": 0.97788058220017,
+      "retrograde": false,
+      "ephemeris": "Swiss Ephemeris"
+    },
+    {
+      "id": "SATURN",
+      "name": "土星",
+      "longitude": 350.3845944649218,
+      "sign": "双鱼",
+      "degree_text": "20°23'05\" 双鱼",
+      "sign_lord": {
+        "id": "JUPITER",
+        "name": "木星"
+      },
+      "nakshatra": {
+        "index": 27,
+        "name": "Revati",
+        "name_zh": "哩伐底",
+        "lord": {
+          "id": "MERCURY",
+          "name": "水星"
+        },
+        "pada": 2,
+        "start_longitude": 346.6666666666667,
+        "end_longitude": 360.0
+      },
+      "sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 349.3333333333333,
+        "end_longitude": 351.55555555555554
+      },
+      "sub_sub_lord": {
+        "id": "RAHU",
+        "name": "罗睺",
+        "start_longitude": 350.1296296296296,
+        "end_longitude": 350.462962962963
+      },
+      "house": 6,
+      "latitude": -2.576304214666238,
+      "declination": 3.3467,
+      "speed": -0.027789203431345416,
+      "retrograde": true,
+      "ephemeris": "Swiss Ephemeris"
+    },
+    {
+      "id": "RAHU",
+      "name": "罗睺",
+      "longitude": 306.2108823782733,
+      "sign": "水瓶",
+      "degree_text": "06°12'39\" 水瓶",
+      "sign_lord": {
+        "id": "SATURN",
+        "name": "土星"
+      },
+      "nakshatra": {
+        "index": 23,
+        "name": "Dhanishtha",
+        "name_zh": "达尼什塔",
+        "lord": {
+          "id": "MARS",
+          "name": "火星"
+        },
+        "pada": 4,
+        "start_longitude": 293.3333333333333,
+        "end_longitude": 306.6666666666667
+      },
+      "sub_lord": {
+        "id": "MOON",
+        "name": "月亮",
+        "start_longitude": 305.55555555555554,
+        "end_longitude": 306.6666666666667
+      },
+      "sub_sub_lord": {
+        "id": "MERCURY",
+        "name": "水星",
+        "start_longitude": 306.2037037037037,
+        "end_longitude": 306.3611111111111
+      },
+      "house": 5,
+      "latitude": 5.294857131898989e-16,
+      "declination": -11.3497,
+      "speed": -0.0529919622859811,
+      "retrograde": true,
+      "ephemeris": "Swiss Ephemeris"
+    },
+    {
+      "id": "KETU",
+      "name": "计都",
+      "longitude": 126.21088237827331,
+      "sign": "狮子",
+      "degree_text": "06°12'39\" 狮子",
+      "sign_lord": {
+        "id": "SUN",
+        "name": "太阳"
+      },
+      "nakshatra": {
+        "index": 10,
+        "name": "Magha",
+        "name_zh": "摩伽",
+        "lord": {
+          "id": "KETU",
+          "name": "计都"
+        },
+        "pada": 2,
+        "start_longitude": 120.0,
+        "end_longitude": 133.33333333333334
+      },
+      "sub_lord": {
+        "id": "RAHU",
+        "name": "罗睺",
+        "start_longitude": 125.55555555555556,
+        "end_longitude": 127.55555555555556
+      },
+      "sub_sub_lord": {
+        "id": "SATURN",
+        "name": "土星",
+        "start_longitude": 126.12222222222222,
+        "end_longitude": 126.43888888888888
+      },
+      "house": 11,
+      "latitude": 5.294857131898989e-16,
+      "declination": 11.3497,
+      "speed": -0.0529919622859811,
+      "retrograde": true,
+      "ephemeris": "Swiss Ephemeris"
+    }
+  ],
+  "houses": [
+    {
+      "house": 1,
+      "longitude": 176.99999996172514,
+      "sign": "处女",
+      "degree_text": "27°00'00\" 处女",
+      "sign_lord": {
+        "id": "MERCURY",
+        "name": "水星"
+      },
+      "nakshatra": {
+        "index": 14,
+        "name": "Chitra",
+        "name_zh": "质多罗",
+        "lord": {
+          "id": "MARS",
+          "name": "火星"
+        },
+        "pada": 2,
+        "start_longitude": 173.33333333333334,
+        "end_longitude": 186.66666666666666
+      },
+      "sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 176.11111111111111,
+        "end_longitude": 177.88888888888889
+      },
+      "sub_sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 176.98518518518517,
+        "end_longitude": 177.28148148148148
+      }
+    },
+    {
+      "house": 2,
+      "longitude": 205.47440716466738,
+      "sign": "天秤",
+      "degree_text": "25°28'28\" 天秤",
+      "sign_lord": {
+        "id": "VENUS",
+        "name": "金星"
+      },
+      "nakshatra": {
+        "index": 16,
+        "name": "Vishakha",
+        "name_zh": "毗萨迦",
+        "lord": {
+          "id": "JUPITER",
+          "name": "木星"
+        },
+        "pada": 2,
+        "start_longitude": 200.0,
+        "end_longitude": 213.33333333333334
+      },
+      "sub_lord": {
+        "id": "MERCURY",
+        "name": "水星",
+        "start_longitude": 203.88888888888889,
+        "end_longitude": 205.77777777777777
+      },
+      "sub_sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 205.22685185185185,
+        "end_longitude": 205.4787037037037
+      }
+    },
+    {
+      "house": 3,
+      "longitude": 236.28357052177634,
+      "sign": "天蝎",
+      "degree_text": "26°17'01\" 天蝎",
+      "sign_lord": {
+        "id": "MARS",
+        "name": "火星"
+      },
+      "nakshatra": {
+        "index": 18,
+        "name": "Jyeshtha",
+        "name_zh": "阇耶瑟他",
+        "lord": {
+          "id": "MERCURY",
+          "name": "水星"
+        },
+        "pada": 3,
+        "start_longitude": 226.66666666666666,
+        "end_longitude": 240.0
+      },
+      "sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 236.11111111111111,
+        "end_longitude": 237.88888888888889
+      },
+      "sub_sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 236.11111111111111,
+        "end_longitude": 236.34814814814814
+      }
+    },
+    {
+      "house": 4,
+      "longitude": 268.62137391205226,
+      "sign": "射手",
+      "degree_text": "28°37'17\" 射手",
+      "sign_lord": {
+        "id": "JUPITER",
+        "name": "木星"
+      },
+      "nakshatra": {
+        "index": 21,
+        "name": "Uttara Ashadha",
+        "name_zh": "后阿沙陀",
+        "lord": {
+          "id": "SUN",
+          "name": "太阳"
+        },
+        "pada": 1,
+        "start_longitude": 266.6666666666667,
+        "end_longitude": 280.0
+      },
+      "sub_lord": {
+        "id": "MARS",
+        "name": "火星",
+        "start_longitude": 268.44444444444446,
+        "end_longitude": 269.22222222222223
+      },
+      "sub_sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 268.60648148148147,
+        "end_longitude": 268.7101851851852
+      }
+    },
+    {
+      "house": 5,
+      "longitude": 300.87474590607235,
+      "sign": "水瓶",
+      "degree_text": "00°52'29\" 水瓶",
+      "sign_lord": {
+        "id": "SATURN",
+        "name": "土星"
+      },
+      "nakshatra": {
+        "index": 23,
+        "name": "Dhanishtha",
+        "name_zh": "达尼什塔",
+        "lord": {
+          "id": "MARS",
+          "name": "火星"
+        },
+        "pada": 3,
+        "start_longitude": 293.3333333333333,
+        "end_longitude": 306.6666666666667
+      },
+      "sub_lord": {
+        "id": "MERCURY",
+        "name": "水星",
+        "start_longitude": 300.0,
+        "end_longitude": 301.8888888888889
+      },
+      "sub_sub_lord": {
+        "id": "MOON",
+        "name": "月亮",
+        "start_longitude": 300.787037037037,
+        "end_longitude": 300.94444444444446
+      }
+    },
+    {
+      "house": 6,
+      "longitude": 330.8298371047266,
+      "sign": "双鱼",
+      "degree_text": "00°49'47\" 双鱼",
+      "sign_lord": {
+        "id": "JUPITER",
+        "name": "木星"
+      },
+      "nakshatra": {
+        "index": 25,
+        "name": "Purva Bhadrapada",
+        "name_zh": "前跋达罗",
+        "lord": {
+          "id": "JUPITER",
+          "name": "木星"
+        },
+        "pada": 4,
+        "start_longitude": 320.0,
+        "end_longitude": 333.3333333333333
+      },
+      "sub_lord": {
+        "id": "MARS",
+        "name": "火星",
+        "start_longitude": 330.55555555555554,
+        "end_longitude": 331.3333333333333
+      },
+      "sub_sub_lord": {
+        "id": "SATURN",
+        "name": "土星",
+        "start_longitude": 330.8212962962963,
+        "end_longitude": 330.94444444444446
+      }
+    },
+    {
+      "house": 7,
+      "longitude": 356.9999999617251,
+      "sign": "双鱼",
+      "degree_text": "27°00'00\" 双鱼",
+      "sign_lord": {
+        "id": "JUPITER",
+        "name": "木星"
+      },
+      "nakshatra": {
+        "index": 27,
+        "name": "Revati",
+        "name_zh": "哩伐底",
+        "lord": {
+          "id": "MERCURY",
+          "name": "水星"
+        },
+        "pada": 4,
+        "start_longitude": 346.6666666666667,
+        "end_longitude": 360.0
+      },
+      "sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 356.1111111111111,
+        "end_longitude": 357.8888888888889
+      },
+      "sub_sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 356.9851851851852,
+        "end_longitude": 357.2814814814815
+      }
+    },
+    {
+      "house": 8,
+      "longitude": 25.474407164667376,
+      "sign": "白羊",
+      "degree_text": "25°28'28\" 白羊",
+      "sign_lord": {
+        "id": "MARS",
+        "name": "火星"
+      },
+      "nakshatra": {
+        "index": 2,
+        "name": "Bharani",
+        "name_zh": "跋赖尼",
+        "lord": {
+          "id": "VENUS",
+          "name": "金星"
+        },
+        "pada": 4,
+        "start_longitude": 13.333333333333334,
+        "end_longitude": 26.666666666666668
+      },
+      "sub_lord": {
+        "id": "MERCURY",
+        "name": "水星",
+        "start_longitude": 24.0,
+        "end_longitude": 25.88888888888889
+      },
+      "sub_sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 25.337962962962962,
+        "end_longitude": 25.589814814814815
+      }
+    },
+    {
+      "house": 9,
+      "longitude": 56.28357052177633,
+      "sign": "金牛",
+      "degree_text": "26°17'01\" 金牛",
+      "sign_lord": {
+        "id": "VENUS",
+        "name": "金星"
+      },
+      "nakshatra": {
+        "index": 5,
+        "name": "Mrigashira",
+        "name_zh": "密伽尸罗",
+        "lord": {
+          "id": "MARS",
+          "name": "火星"
+        },
+        "pada": 1,
+        "start_longitude": 53.333333333333336,
+        "end_longitude": 66.66666666666667
+      },
+      "sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 56.111111111111114,
+        "end_longitude": 57.888888888888886
+      },
+      "sub_sub_lord": {
+        "id": "JUPITER",
+        "name": "木星",
+        "start_longitude": 56.111111111111114,
+        "end_longitude": 56.34814814814815
+      }
+    },
+    {
+      "house": 10,
+      "longitude": 88.62137391205226,
+      "sign": "双子",
+      "degree_text": "28°37'17\" 双子",
+      "sign_lord": {
+        "id": "MERCURY",
+        "name": "水星"
+      },
+      "nakshatra": {
+        "index": 7,
+        "name": "Punarvasu",
+        "name_zh": "颇勒古尼",
+        "lord": {
+          "id": "JUPITER",
+          "name": "木星"
+        },
+        "pada": 3,
+        "start_longitude": 80.0,
+        "end_longitude": 93.33333333333333
+      },
+      "sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 86.55555555555556,
+        "end_longitude": 88.77777777777777
+      },
+      "sub_sub_lord": {
+        "id": "MERCURY",
+        "name": "水星",
+        "start_longitude": 88.33333333333333,
+        "end_longitude": 88.64814814814815
+      }
+    },
+    {
+      "house": 11,
+      "longitude": 120.87474590607235,
+      "sign": "狮子",
+      "degree_text": "00°52'29\" 狮子",
+      "sign_lord": {
+        "id": "SUN",
+        "name": "太阳"
+      },
+      "nakshatra": {
+        "index": 10,
+        "name": "Magha",
+        "name_zh": "摩伽",
+        "lord": {
+          "id": "KETU",
+          "name": "计都"
+        },
+        "pada": 1,
+        "start_longitude": 120.0,
+        "end_longitude": 133.33333333333334
+      },
+      "sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 120.77777777777777,
+        "end_longitude": 123.0
+      },
+      "sub_sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 120.77777777777777,
+        "end_longitude": 121.14814814814815
+      }
+    },
+    {
+      "house": 12,
+      "longitude": 150.8298371047266,
+      "sign": "处女",
+      "degree_text": "00°49'47\" 处女",
+      "sign_lord": {
+        "id": "MERCURY",
+        "name": "水星"
+      },
+      "nakshatra": {
+        "index": 12,
+        "name": "Uttara Phalguni",
+        "name_zh": "后颇勒古尼",
+        "lord": {
+          "id": "SUN",
+          "name": "太阳"
+        },
+        "pada": 2,
+        "start_longitude": 146.66666666666666,
+        "end_longitude": 160.0
+      },
+      "sub_lord": {
+        "id": "RAHU",
+        "name": "罗睺",
+        "start_longitude": 149.22222222222223,
+        "end_longitude": 151.22222222222223
+      },
+      "sub_sub_lord": {
+        "id": "VENUS",
+        "name": "金星",
+        "start_longitude": 150.50555555555556,
+        "end_longitude": 150.8388888888889
+      }
+    }
+  ],
+  "ruling_planets": [
+    {
+      "source": "ascendant_sign_lord",
+      "planet": {
+        "id": "MERCURY",
+        "name": "水星"
+      }
+    },
+    {
+      "source": "ascendant_star_lord",
+      "planet": {
+        "id": "MARS",
+        "name": "火星"
+      }
+    },
+    {
+      "source": "ascendant_sub_lord",
+      "planet": {
+        "id": "JUPITER",
+        "name": "木星"
+      }
+    },
+    {
+      "source": "moon_sign_lord",
+      "planet": {
+        "id": "MOON",
+        "name": "月亮"
+      }
+    },
+    {
+      "source": "moon_star_lord",
+      "planet": {
+        "id": "MERCURY",
+        "name": "水星"
+      }
+    },
+    {
+      "source": "moon_sub_lord",
+      "planet": {
+        "id": "VENUS",
+        "name": "金星"
+      }
+    },
+    {
+      "source": "local_weekday_lord",
+      "planet": {
+        "id": "MERCURY",
+        "name": "水星"
+      }
+    }
+  ],
+  "planet_significators": [
+    {
+      "planet": {
+        "id": "SUN",
+        "name": "太阳"
+      },
+      "direct": {
+        "planet": {
+          "id": "SUN",
+          "name": "太阳"
+        },
+        "occupied_house": 10,
+        "owned_houses": [
+          11
+        ]
+      },
+      "star_lord_scope": {
+        "planet": {
+          "id": "MERCURY",
+          "name": "水星"
+        },
+        "occupied_house": 10,
+        "owned_houses": [
+          1,
+          10,
+          12
+        ]
+      },
+      "sub_lord_scope": {
+        "planet": {
+          "id": "RAHU",
+          "name": "罗睺"
+        },
+        "occupied_house": 5,
+        "owned_houses": []
+      },
+      "candidate_houses": [
+        1,
+        5,
+        10,
+        11,
+        12
+      ],
+      "policy": "transparent_sources_no_weighting"
+    },
+    {
+      "planet": {
+        "id": "MOON",
+        "name": "月亮"
+      },
+      "direct": {
+        "planet": {
+          "id": "MOON",
+          "name": "月亮"
+        },
+        "occupied_house": 10,
+        "owned_houses": []
+      },
+      "star_lord_scope": {
+        "planet": {
+          "id": "MERCURY",
+          "name": "水星"
+        },
+        "occupied_house": 10,
+        "owned_houses": [
+          1,
+          10,
+          12
+        ]
+      },
+      "sub_lord_scope": {
+        "planet": {
+          "id": "VENUS",
+          "name": "金星"
+        },
+        "occupied_house": 12,
+        "owned_houses": [
+          2,
+          9
+        ]
+      },
+      "candidate_houses": [
+        1,
+        2,
+        9,
+        10,
+        12
+      ],
+      "policy": "transparent_sources_no_weighting"
+    },
+    {
+      "planet": {
+        "id": "MARS",
+        "name": "火星"
+      },
+      "direct": {
+        "planet": {
+          "id": "MARS",
+          "name": "火星"
+        },
+        "occupied_house": 9,
+        "owned_houses": [
+          3,
+          8
+        ]
+      },
+      "star_lord_scope": {
+        "planet": {
+          "id": "MARS",
+          "name": "火星"
+        },
+        "occupied_house": 9,
+        "owned_houses": [
+          3,
+          8
+        ]
+      },
+      "sub_lord_scope": {
+        "planet": {
+          "id": "MOON",
+          "name": "月亮"
+        },
+        "occupied_house": 10,
+        "owned_houses": []
+      },
+      "candidate_houses": [
+        3,
+        8,
+        9,
+        10
+      ],
+      "policy": "transparent_sources_no_weighting"
+    },
+    {
+      "planet": {
+        "id": "MERCURY",
+        "name": "水星"
+      },
+      "direct": {
+        "planet": {
+          "id": "MERCURY",
+          "name": "水星"
+        },
+        "occupied_house": 10,
+        "owned_houses": [
+          1,
+          10,
+          12
+        ]
+      },
+      "star_lord_scope": {
+        "planet": {
+          "id": "SATURN",
+          "name": "土星"
+        },
+        "occupied_house": 6,
+        "owned_houses": [
+          5
+        ]
+      },
+      "sub_lord_scope": {
+        "planet": {
+          "id": "VENUS",
+          "name": "金星"
+        },
+        "occupied_house": 12,
+        "owned_houses": [
+          2,
+          9
+        ]
+      },
+      "candidate_houses": [
+        1,
+        2,
+        5,
+        6,
+        9,
+        10,
+        12
+      ],
+      "policy": "transparent_sources_no_weighting"
+    },
+    {
+      "planet": {
+        "id": "JUPITER",
+        "name": "木星"
+      },
+      "direct": {
+        "planet": {
+          "id": "JUPITER",
+          "name": "木星"
+        },
+        "occupied_house": 10,
+        "owned_houses": [
+          4,
+          6,
+          7
+        ]
+      },
+      "star_lord_scope": {
+        "planet": {
+          "id": "SATURN",
+          "name": "土星"
+        },
+        "occupied_house": 6,
+        "owned_houses": [
+          5
+        ]
+      },
+      "sub_lord_scope": {
+        "planet": {
+          "id": "JUPITER",
+          "name": "木星"
+        },
+        "occupied_house": 10,
+        "owned_houses": [
+          4,
+          6,
+          7
+        ]
+      },
+      "candidate_houses": [
+        4,
+        5,
+        6,
+        7,
+        10
+      ],
+      "policy": "transparent_sources_no_weighting"
+    },
+    {
+      "planet": {
+        "id": "VENUS",
+        "name": "金星"
+      },
+      "direct": {
+        "planet": {
+          "id": "VENUS",
+          "name": "金星"
+        },
+        "occupied_house": 12,
+        "owned_houses": [
+          2,
+          9
+        ]
+      },
+      "star_lord_scope": {
+        "planet": {
+          "id": "MOON",
+          "name": "月亮"
+        },
+        "occupied_house": 10,
+        "owned_houses": []
+      },
+      "sub_lord_scope": {
+        "planet": {
+          "id": "MARS",
+          "name": "火星"
+        },
+        "occupied_house": 9,
+        "owned_houses": [
+          3,
+          8
+        ]
+      },
+      "candidate_houses": [
+        2,
+        3,
+        8,
+        9,
+        10,
+        12
+      ],
+      "policy": "transparent_sources_no_weighting"
+    },
+    {
+      "planet": {
+        "id": "SATURN",
+        "name": "土星"
+      },
+      "direct": {
+        "planet": {
+          "id": "SATURN",
+          "name": "土星"
+        },
+        "occupied_house": 6,
+        "owned_houses": [
+          5
+        ]
+      },
+      "star_lord_scope": {
+        "planet": {
+          "id": "MERCURY",
+          "name": "水星"
+        },
+        "occupied_house": 10,
+        "owned_houses": [
+          1,
+          10,
+          12
+        ]
+      },
+      "sub_lord_scope": {
+        "planet": {
+          "id": "VENUS",
+          "name": "金星"
+        },
+        "occupied_house": 12,
+        "owned_houses": [
+          2,
+          9
+        ]
+      },
+      "candidate_houses": [
+        1,
+        2,
+        5,
+        6,
+        9,
+        10,
+        12
+      ],
+      "policy": "transparent_sources_no_weighting"
+    },
+    {
+      "planet": {
+        "id": "RAHU",
+        "name": "罗睺"
+      },
+      "direct": {
+        "planet": {
+          "id": "RAHU",
+          "name": "罗睺"
+        },
+        "occupied_house": 5,
+        "owned_houses": []
+      },
+      "star_lord_scope": {
+        "planet": {
+          "id": "MARS",
+          "name": "火星"
+        },
+        "occupied_house": 9,
+        "owned_houses": [
+          3,
+          8
+        ]
+      },
+      "sub_lord_scope": {
+        "planet": {
+          "id": "MOON",
+          "name": "月亮"
+        },
+        "occupied_house": 10,
+        "owned_houses": []
+      },
+      "candidate_houses": [
+        3,
+        5,
+        8,
+        9,
+        10
+      ],
+      "policy": "transparent_sources_no_weighting"
+    },
+    {
+      "planet": {
+        "id": "KETU",
+        "name": "计都"
+      },
+      "direct": {
+        "planet": {
+          "id": "KETU",
+          "name": "计都"
+        },
+        "occupied_house": 11,
+        "owned_houses": []
+      },
+      "star_lord_scope": {
+        "planet": {
+          "id": "KETU",
+          "name": "计都"
+        },
+        "occupied_house": 11,
+        "owned_houses": []
+      },
+      "sub_lord_scope": {
+        "planet": {
+          "id": "RAHU",
+          "name": "罗睺"
+        },
+        "occupied_house": 5,
+        "owned_houses": []
+      },
+      "candidate_houses": [
+        5,
+        11
+      ],
+      "policy": "transparent_sources_no_weighting"
+    }
+  ],
+  "house_significators": [
+    {
+      "house": 1,
+      "cusp_sign_lord": {
+        "id": "MERCURY",
+        "name": "水星"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": []
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": []
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": [
+            {
+              "id": "SUN",
+              "name": "太阳"
+            },
+            {
+              "id": "MOON",
+              "name": "月亮"
+            },
+            {
+              "id": "SATURN",
+              "name": "土星"
+            }
+          ]
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "MERCURY",
+              "name": "水星"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    },
+    {
+      "house": 2,
+      "cusp_sign_lord": {
+        "id": "VENUS",
+        "name": "金星"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": []
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": []
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": []
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "VENUS",
+              "name": "金星"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    },
+    {
+      "house": 3,
+      "cusp_sign_lord": {
+        "id": "MARS",
+        "name": "火星"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": []
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": []
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": [
+            {
+              "id": "MARS",
+              "name": "火星"
+            },
+            {
+              "id": "RAHU",
+              "name": "罗睺"
+            }
+          ]
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "MARS",
+              "name": "火星"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    },
+    {
+      "house": 4,
+      "cusp_sign_lord": {
+        "id": "JUPITER",
+        "name": "木星"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": []
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": []
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": []
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "JUPITER",
+              "name": "木星"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    },
+    {
+      "house": 5,
+      "cusp_sign_lord": {
+        "id": "SATURN",
+        "name": "土星"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": []
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": [
+            {
+              "id": "RAHU",
+              "name": "罗睺"
+            }
+          ]
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": [
+            {
+              "id": "MERCURY",
+              "name": "水星"
+            },
+            {
+              "id": "JUPITER",
+              "name": "木星"
+            }
+          ]
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "SATURN",
+              "name": "土星"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    },
+    {
+      "house": 6,
+      "cusp_sign_lord": {
+        "id": "JUPITER",
+        "name": "木星"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": [
+            {
+              "id": "MERCURY",
+              "name": "水星"
+            },
+            {
+              "id": "JUPITER",
+              "name": "木星"
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": [
+            {
+              "id": "SATURN",
+              "name": "土星"
+            }
+          ]
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": []
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "JUPITER",
+              "name": "木星"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    },
+    {
+      "house": 7,
+      "cusp_sign_lord": {
+        "id": "JUPITER",
+        "name": "木星"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": []
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": []
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": []
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "JUPITER",
+              "name": "木星"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    },
+    {
+      "house": 8,
+      "cusp_sign_lord": {
+        "id": "MARS",
+        "name": "火星"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": []
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": []
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": [
+            {
+              "id": "MARS",
+              "name": "火星"
+            },
+            {
+              "id": "RAHU",
+              "name": "罗睺"
+            }
+          ]
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "MARS",
+              "name": "火星"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    },
+    {
+      "house": 9,
+      "cusp_sign_lord": {
+        "id": "VENUS",
+        "name": "金星"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": [
+            {
+              "id": "MARS",
+              "name": "火星"
+            },
+            {
+              "id": "RAHU",
+              "name": "罗睺"
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": [
+            {
+              "id": "MARS",
+              "name": "火星"
+            }
+          ]
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": []
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "VENUS",
+              "name": "金星"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    },
+    {
+      "house": 10,
+      "cusp_sign_lord": {
+        "id": "MERCURY",
+        "name": "水星"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": [
+            {
+              "id": "SUN",
+              "name": "太阳"
+            },
+            {
+              "id": "MOON",
+              "name": "月亮"
+            },
+            {
+              "id": "VENUS",
+              "name": "金星"
+            },
+            {
+              "id": "SATURN",
+              "name": "土星"
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": [
+            {
+              "id": "SUN",
+              "name": "太阳"
+            },
+            {
+              "id": "MOON",
+              "name": "月亮"
+            },
+            {
+              "id": "MERCURY",
+              "name": "水星"
+            },
+            {
+              "id": "JUPITER",
+              "name": "木星"
+            }
+          ]
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": [
+            {
+              "id": "SUN",
+              "name": "太阳"
+            },
+            {
+              "id": "MOON",
+              "name": "月亮"
+            },
+            {
+              "id": "SATURN",
+              "name": "土星"
+            }
+          ]
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "MERCURY",
+              "name": "水星"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    },
+    {
+      "house": 11,
+      "cusp_sign_lord": {
+        "id": "SUN",
+        "name": "太阳"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": [
+            {
+              "id": "KETU",
+              "name": "计都"
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": [
+            {
+              "id": "KETU",
+              "name": "计都"
+            }
+          ]
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": []
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "SUN",
+              "name": "太阳"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    },
+    {
+      "house": 12,
+      "cusp_sign_lord": {
+        "id": "MERCURY",
+        "name": "水星"
+      },
+      "tiers": [
+        {
+          "tier": 1,
+          "source": "planets_in_stars_of_occupants",
+          "planets": []
+        },
+        {
+          "tier": 2,
+          "source": "occupants",
+          "planets": [
+            {
+              "id": "VENUS",
+              "name": "金星"
+            }
+          ]
+        },
+        {
+          "tier": 3,
+          "source": "planets_in_stars_of_cusp_sign_lord",
+          "planets": [
+            {
+              "id": "SUN",
+              "name": "太阳"
+            },
+            {
+              "id": "MOON",
+              "name": "月亮"
+            },
+            {
+              "id": "SATURN",
+              "name": "土星"
+            }
+          ]
+        },
+        {
+          "tier": 4,
+          "source": "cusp_sign_lord",
+          "planets": [
+            {
+              "id": "MERCURY",
+              "name": "水星"
+            }
+          ]
+        }
+      ],
+      "policy": "candidate_tiers_no_automatic_verdict"
+    }
+  ],
+  "focus_house": {
+    "house": 7,
+    "cusp_sign_lord": {
+      "id": "JUPITER",
+      "name": "木星"
+    },
+    "tiers": [
+      {
+        "tier": 1,
+        "source": "planets_in_stars_of_occupants",
+        "planets": []
+      },
+      {
+        "tier": 2,
+        "source": "occupants",
+        "planets": []
+      },
+      {
+        "tier": 3,
+        "source": "planets_in_stars_of_cusp_sign_lord",
+        "planets": []
+      },
+      {
+        "tier": 4,
+        "source": "cusp_sign_lord",
+        "planets": [
+          {
+            "id": "JUPITER",
+            "name": "木星"
+          }
+        ]
+      }
+    ],
+    "policy": "candidate_tiers_no_automatic_verdict"
+  },
+  "node_representations": [
+    {
+      "node": {
+        "id": "RAHU",
+        "name": "罗睺"
+      },
+      "occupied_house": 5,
+      "sign_lord": {
+        "id": "SATURN",
+        "name": "土星"
+      },
+      "star_lord": {
+        "id": "MARS",
+        "name": "火星"
+      },
+      "sub_lord": {
+        "id": "MOON",
+        "name": "月亮"
+      },
+      "policy": "direct_connections_only_no_conjunction_or_aspect_inference"
+    },
+    {
+      "node": {
+        "id": "KETU",
+        "name": "计都"
+      },
+      "occupied_house": 11,
+      "sign_lord": {
+        "id": "SUN",
+        "name": "太阳"
+      },
+      "star_lord": {
+        "id": "KETU",
+        "name": "计都"
+      },
+      "sub_lord": {
+        "id": "RAHU",
+        "name": "罗睺"
+      },
+      "policy": "direct_connections_only_no_conjunction_or_aspect_inference"
+    }
+  ],
+  "warnings": []
+}

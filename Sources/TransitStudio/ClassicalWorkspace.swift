@@ -111,13 +111,16 @@ enum PracticeModeTransition {
         case .modern:
             result.modernSubMode = ClassicalExpansionCatalog.clampForNonClassicalPractice(modernSubMode)
             // Horary / rectify under classical (or any) → modern: land on settings + natal.
-            if calculationMode == .horary || calculationMode == .rectify {
+            if calculationMode == .horary || calculationMode == .kpHorary || calculationMode == .rectify {
                 result.calculationMode = .settings
                 result.modernSubMode = .natal
             }
         case .classical:
             // Safe default: natal chart workspace (user re-picks expansion leaf).
             result.classicalSettingsWorkspace = .natalChart
+            if calculationMode == .kpHorary {
+                result.calculationMode = .settings
+            }
         case .vedic:
             result.modernSubMode = ClassicalExpansionCatalog.clampForNonClassicalPractice(modernSubMode)
         }

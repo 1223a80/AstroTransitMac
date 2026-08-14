@@ -837,7 +837,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
     """Return the structured input error for missing or invalid fields."""
     mode = request.get("mode", "")
     supported_modes = {
-        "moment", "classical", "vedic", "horary", "scan", "rectify", "rectify_evidence",
+        "moment", "classical", "vedic", "horary", "kp_horary", "scan", "rectify", "rectify_evidence",
         "synastry", "composite", "davison", "progression", "solar_arc", "harmonic",
         "modern_return", "modern_timing", "midpoint", "progressed_composite",
         "relocation", "modern_cycles", "astrocartography", "local_space",
@@ -864,6 +864,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "classical": ["birth", "reference"],
         "vedic": ["birth"],
         "horary": ["chart"],
+        "kp_horary": ["chart", "horary_number"],
         "scan": ["start", "end"],
         "rectify": ["birth_date", "center_time"],
         "rectify_evidence": ["birth", "events", "display_timezone"],
@@ -999,7 +1000,7 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                 for key in ("year", "month", "day", "hour", "minute", "timezone"):
                     if key not in birth_moment:
                         missing.append(f"birth.moment.{key}")
-    if mode == "horary" and "chart" in request:
+    if mode in {"horary", "kp_horary"} and "chart" in request:
         chart = request["chart"]
         if not isinstance(chart, dict):
             invalid.append("chart must be an object")
@@ -1026,31 +1027,46 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             if longitude is not None and (not _is_finite_number(longitude) or not -180 <= float(longitude) <= 180):
                 invalid.append("chart.longitude must be a number in [-180, 180]")
 
-            option_contracts = {
-                "houseSystem": ("regiomontanus", ALL_HOUSE_SYSTEMS),
-                "zodiac": ("tropical", ALL_ZODIACS),
-                "boundsSystem": ("egyptian", ALL_BOUNDS_SYSTEMS),
-                "triplicitySystem": ("dorothean", ALL_TRIPLICITY_SYSTEMS),
-            }
-            for field, (default, allowed) in option_contracts.items():
-                value = chart.get(field, default)
-                if not isinstance(value, str) or value not in allowed:
-                    invalid.append(
-                        f"chart.{field} must be one of: {', '.join(allowed)}"
-                    )
-        question_text = request.get("questionText")
-        if not isinstance(question_text, str) or not question_text.strip():
-            missing.append("questionText")
-        aspect_orb = request.get("aspectOrb", 3.0)
-        if not _is_finite_number(aspect_orb) or not 0 <= float(aspect_orb) <= 10:
-            invalid.append("aspectOrb must be a number in [0, 10]")
-        packet_version = str(
-            request.get("packetVersion")
-            or request.get("packet_version")
-            or "2"
-        ).strip().lower()
-        if packet_version not in HORARY_V1_PACKET_VERSIONS | HORARY_V2_PACKET_VERSIONS:
-            invalid.append("packetVersion is unsupported; use 2 (default) or 1/legacy")
+            if mode == "horary":
+                option_contracts = {
+                    "houseSystem": ("regiomontanus", ALL_HOUSE_SYSTEMS),
+                    "zodiac": ("tropical", ALL_ZODIACS),
+                    "boundsSystem": ("egyptian", ALL_BOUNDS_SYSTEMS),
+                    "triplicitySystem": ("dorothean", ALL_TRIPLICITY_SYSTEMS),
+                }
+                for field, (default, allowed) in option_contracts.items():
+                    value = chart.get(field, default)
+                    if not isinstance(value, str) or value not in allowed:
+                        invalid.append(
+                            f"chart.{field} must be one of: {', '.join(allowed)}"
+                        )
+        if mode == "horary":
+            question_text = request.get("questionText")
+            if not isinstance(question_text, str) or not question_text.strip():
+                missing.append("questionText")
+            aspect_orb = request.get("aspectOrb", 3.0)
+            if not _is_finite_number(aspect_orb) or not 0 <= float(aspect_orb) <= 10:
+                invalid.append("aspectOrb must be a number in [0, 10]")
+            packet_version = str(
+                request.get("packetVersion")
+                or request.get("packet_version")
+                or "2"
+            ).strip().lower()
+            if packet_version not in HORARY_V1_PACKET_VERSIONS | HORARY_V2_PACKET_VERSIONS:
+                invalid.append("packetVersion is unsupported; use 2 (default) or 1/legacy")
+        else:
+            number = request.get("horary_number")
+            if isinstance(number, bool) or not isinstance(number, int) or not 1 <= number <= 249:
+                invalid.append("horary_number must be an integer in [1, 249]")
+            focus_house = request.get("focus_house", 1)
+            if isinstance(focus_house, bool) or not isinstance(focus_house, int) or not 1 <= focus_house <= 12:
+                invalid.append("focus_house must be an integer in [1, 12]")
+            node_mode = request.get("node_mode", "mean")
+            if not isinstance(node_mode, str) or node_mode not in {"mean", "true"}:
+                invalid.append("node_mode must be mean or true")
+            question_text = request.get("question_text")
+            if not isinstance(question_text, str) or not question_text.strip():
+                missing.append("question_text")
     _PERSON_MOMENT_FIELDS = ("year", "month", "day", "hour", "minute", "timezone")
     if mode == "rectify_evidence" and "birth" in request:
         validate_exact_person(request["birth"], "birth")
@@ -1863,6 +1879,9 @@ def main() -> None:
                 # validate_required_fields rejects this path; keep an explicit
                 # guard so future refactors cannot silently route version typos.
                 raise ValueError(f"unsupported horary packetVersion: {packet_version}")
+        elif mode == "kp_horary":
+            from astro_backend_kp import calculate_kp_horary
+            response = calculate_kp_horary(request, warnings)
         elif mode == "classical":
             response = calculate_classical(request, warnings)
         elif mode == "vedic":

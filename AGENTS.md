@@ -156,6 +156,7 @@ echo '{"mode":"rectify","birth_date":"1990-01-01","center_time":"12:00","timezon
 ## Git Workflow
 
 - This project is now a Git repository with `main` tracking `origin/main`.
+- **macOS Keychain / Codex sandbox rule:** `gh auth status` executed inside the restricted sandbox cannot reliably read the macOS login keychain and may falsely report a valid GitHub token as invalid. Before asking the human to authenticate again, rerun `gh auth status` outside the sandbox with the required approval and confirm the keyring result there. Run GitHub credential-dependent operations (`gh api`, `git fetch`, `git pull`, `git push`, and PR creation) outside the sandbox as well. Never start a second device-login flow solely because the sandboxed check reported `token invalid`.
 - Treat `main` as the review baseline, not the default scratch space for experimental edits.
 - For non-trivial work, create a task branch first. Branch names should be descriptive, such as `feature/modern-ui-export` or `fix/rectify-timeout`.
 - Keep one task per branch. Do not mix unrelated fixes into the same branch just because the files are nearby.

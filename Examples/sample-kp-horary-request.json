@@ -1,0 +1,20 @@
+{
+  "mode": "kp_horary",
+  "chart": {
+    "moment": {
+      "year": 2026,
+      "month": 8,
+      "day": 12,
+      "hour": 16,
+      "minute": 0,
+      "timezone": "Asia/Shanghai"
+    },
+    "latitude": 31.2304,
+    "longitude": 121.4737
+  },
+  "question_text": "KP frontend contract sample",
+  "place_name": "上海市",
+  "horary_number": 123,
+  "focus_house": 7,
+  "node_mode": "mean"
+}

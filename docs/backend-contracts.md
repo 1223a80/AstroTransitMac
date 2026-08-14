@@ -10,9 +10,22 @@ Run the backend directly with:
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-request.json
 ```
 
-`transit_calc.py` calls `astro_backend_api.main()`, which requires an explicit supported `request.mode`. Unknown, misspelled, or empty modes return a JSON error instead of silently falling back to moment calculation. Supported modes include `moment`, `classical`, `vedic`, `horary`, `scan`, `rectify`, backend-only `rectify_evidence`, `synastry`, `composite`, `davison`, `progression`, `solar_arc`, `harmonic`, and the registered modern/classical expansion modes.
+`transit_calc.py` calls `astro_backend_api.main()`, which requires an explicit supported `request.mode`. Unknown, misspelled, or empty modes return a JSON error instead of silently falling back to moment calculation. Supported modes include `moment`, `classical`, `vedic`, western `horary`, independent `kp_horary`, `scan`, `rectify`, backend-only `rectify_evidence`, `synastry`, `composite`, `davison`, `progression`, `solar_arc`, `harmonic`, and the registered modern/classical expansion modes.
 
 Moment objects accept fixed offsets such as `GMT+5:30` and IANA zone names. For an IANA local time inside a DST spring-forward gap, the backend rejects the nonexistent time. For an ambiguous fall-back time, callers must include `fold: 0` or `fold: 1`.
+
+## KP Horary 1.0
+
+`mode=kp_horary` returns `kp-horary-data-packet/1.0`; it is independent of western `horary-data-packet/2.1`. The request requires an exact `chart`, non-empty `question_text`, and `horary_number` in `1...249`; `focus_house` defaults to 1 and `node_mode` accepts `mean` or `true`.
+
+The engine generates the 249 sign-safe intervals from exact Vimshottari proportions, uses each interval midpoint as its unambiguous chart representative, uses Krishnamurti sidereal zodiac and Placidus houses, and emits:
+
+- the selected number interval and its sign / Nakshatra / sub-lord / sub-sub-lord hierarchy;
+- question-time planets, number-selected house cusps, angles, ruling-planet sources, and explicit solve diagnostics;
+- planet-wise source scopes, four transparent house-significator tiers, focus-house extraction, and separate node representations;
+- calculation policies and both `question_utc` and `house_solution_utc`, so the number-selected Ascendant construction remains auditable.
+
+The packet is data-only: `automatic_judgment=false`, with no yes/no result, verdict, aggregate score, or invented confidence. Published Schema: `docs/schemas/kp-horary-data-packet-1.0.json`; sample: `Examples/sample-kp-horary-request.json`.
 
 ## Classical Top-Level Fields
 

@@ -29,7 +29,8 @@ Important Swift files:
   - `ContentView+ResultsPanes.swift` - run section + modern natal / moment / scan / horary panes.
   - `ContentView+ClassicalPane.swift`, `ContentView+ModernPanes.swift`, `ContentView+VedicRectifyPanes.swift` - the remaining panes.
   - `ClassicalResultViews.swift` (tables) + `ClassicalTimingViews.swift` + `ClassicalOverviewViews.swift` - classical result UI.
-  - `Vedic*.swift` - one file per vedic data page.
+- `Vedic*.swift` - one file per vedic data page.
+- `KPHoraryModels.swift` / `KPHoraryViews.swift` / `KPHoraryExports.swift` - typed `kp-horary-data-packet/1.0`, the complete KP result workspace, and Markdown/JSON/CSV exports.
 - `ResultToolbarViews.swift` - tab bar + export toolbar; `resultTabTitle()` derives toolbar titles from the same tab lists that feed the toolbar (do not reintroduce per-pane title switches).
 - `LLMAnalysisClient.swift` / `AIAnalysisView.swift` / `ContentView+AI.swift` - streaming AI analysis (SSE via `bytes.lines`, ~100ms publish throttling).
 - `MarkdownExportBuilder.swift` and `TextExportBuilder.swift` - export surfaces that must stay in sync with backend schema.
@@ -49,6 +50,7 @@ Important backend files:
 - `astro_backend_classical_audit.py` - prenatal syzygy, almuten figuris, and hyleg/alcocoden audit helpers.
 - `astro_backend_scan.py` - transit window scan and crossing refinement.
 - `astro_backend_horary.py` - horary mode.
+- `astro_backend_kp.py` - independent, judgment-free KP 1–249 horary packet: exact sub-lord table generation, Krishnamurti sidereal positions, number-selected Placidus cusps, hierarchy and significator sources.
 - `astro_backend_primary_directions.py` and `astro_backend_circumambulations.py` - classical timing submodules.
 - `astro_backend_rectify_primary_motion.py` and `astro_backend_rectify_evidence.py` - backend-only rectification theory core: auditable planet-to-angle primary motion plus event-window evidence from primary motion, transit, progression, and solar arc.
 - `RectifyModels.swift`, `RectifyClient.swift`, `PrimaryDirectionRectifierView.swift`, and `RectificationEvidenceView.swift` - preserve the legacy three-level candidate selector while consuming the evidence packet for editable life-event windows and method-separated presentation.
@@ -56,10 +58,10 @@ Important backend files:
 ## Tests And Examples
 
 - `python_tests/` - pytest coverage for backend math and classical contracts.
-- `SwiftTests/` - Swift Codable/model tests, including `BackendContractTests` which decode real backend outputs.
+- `SwiftTests/` - Swift Codable/model tests, including KP request/navigation tests and `BackendContractTests` which decode real backend outputs.
 - `SwiftTests/Fixtures/` - captured backend outputs used by `BackendContractTests`. Regenerate after an intentional schema change with:
   `python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-<mode>-request.json > SwiftTests/Fixtures/<mode>-result.json`
-- `Examples/` - sample JSON requests for backend smoke tests (one per mode, including horary and vedic).
+- `Examples/` - sample JSON requests for backend smoke tests (one per mode, including western horary, KP horary, and vedic).
 
 ## Generated Or Local-Only Folders
 

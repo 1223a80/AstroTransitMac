@@ -522,6 +522,39 @@ struct HoraryRequest: Codable {
     }
 }
 
+/// Minimal chart input for KP horary. Method settings are fixed by the KP
+/// packet contract (Krishnamurti sidereal + Placidus), not user-overridable.
+struct KPHoraryChartSettings: Codable {
+    let moment: ChartMoment
+    let latitude: Double
+    let longitude: Double
+}
+
+struct KPHoraryRequest: Codable {
+    let mode: String
+    let chart: KPHoraryChartSettings
+    let questionText: String
+    let placeName: String
+    let horaryNumber: Int
+    let focusHouse: Int
+    let nodeMode: String
+    let ephemerisPath: String?
+    let noAsteroids: Bool
+    let requireEphemeris: String
+
+    enum CodingKeys: String, CodingKey {
+        case mode, chart
+        case questionText = "question_text"
+        case placeName = "place_name"
+        case horaryNumber = "horary_number"
+        case focusHouse = "focus_house"
+        case nodeMode = "node_mode"
+        case ephemerisPath = "ephemeris_path"
+        case noAsteroids = "no_asteroids"
+        case requireEphemeris = "require_ephemeris"
+    }
+}
+
 struct VedicRequest: Codable {
     let mode: String
     let birth: BirthSettings

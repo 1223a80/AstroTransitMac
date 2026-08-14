@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astrotransitmac.local/schemas/kp-horary-data-packet-1.0.json",
+  "title": "KP Horary Data Packet 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mode", "schema", "question", "time_and_location", "calculation_config",
+    "horary_number", "house_solution", "angles", "planets", "houses",
+    "ruling_planets", "planet_significators", "house_significators",
+    "focus_house", "node_representations", "warnings"
+  ],
+  "properties": {
+    "mode": { "const": "kp_horary" },
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "schema_id"],
+      "properties": {
+        "name": { "const": "kp-horary-data-packet" },
+        "version": { "const": "1.0" },
+        "schema_id": { "const": "kp-horary-data-packet/1.0" }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "horary_number", "focus_house", "place_name"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "horary_number": { "type": "integer", "minimum": 1, "maximum": 249 },
+        "focus_house": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "place_name": { "type": "string" }
+      }
+    },
+    "time_and_location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question_local", "question_utc", "house_solution_utc", "timezone", "latitude", "longitude"],
+      "properties": {
+        "question_local": { "type": "string", "format": "date-time" },
+        "question_utc": { "type": "string", "format": "date-time" },
+        "house_solution_utc": { "type": "string", "format": "date-time" },
+        "timezone": { "type": "string", "minLength": 1 },
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      }
+    },
+    "calculation_config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "zodiac", "ayanamsha", "ayanamsha_degrees_at_question", "house_system",
+        "node_mode", "planet_time_policy", "house_time_policy",
+        "number_longitude_policy", "automatic_judgment"
+      ],
+      "properties": {
+        "zodiac": { "const": "sidereal_krishnamurti" },
+        "ayanamsha": { "const": "Krishnamurti" },
+        "ayanamsha_degrees_at_question": { "type": "number" },
+        "house_system": { "const": "placidus" },
+        "node_mode": { "enum": ["mean", "true"] },
+        "planet_time_policy": { "const": "question_time" },
+        "house_time_policy": { "const": "number_selected_ascendant_with_question_time_planets" },
+        "number_longitude_policy": { "const": "segment_midpoint" },
+        "automatic_judgment": { "const": false }
+      }
+    },
+    "horary_number": {
+      "allOf": [
+        { "$ref": "#/$defs/position" },
+        {
+          "type": "object",
+          "required": [
+            "number", "interval_start_longitude", "interval_end_longitude",
+            "representative_longitude", "interior_offset_degrees"
+          ],
+          "properties": {
+            "number": { "type": "integer", "minimum": 1, "maximum": 249 },
+            "interval_start_longitude": { "type": "number", "minimum": 0, "maximum": 360 },
+            "interval_end_longitude": { "type": "number", "minimum": 0, "maximum": 360 },
+            "representative_longitude": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 },
+            "interior_offset_degrees": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        }
+      ]
+    },
+    "house_solution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_ascendant", "solved_ascendant", "residual_degrees", "evaluations", "search_window_days"],
+      "properties": {
+        "target_ascendant": { "$ref": "#/$defs/longitude" },
+        "solved_ascendant": { "$ref": "#/$defs/longitude" },
+        "residual_degrees": { "type": "number", "minimum": 0, "maximum": 0.00001 },
+        "evaluations": { "type": "integer", "minimum": 1 },
+        "search_window_days": { "const": 1.1 }
+      }
+    },
+    "angles": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": { "$ref": "#/$defs/named_position" }
+    },
+    "planets": {
+      "type": "array", "minItems": 9, "maxItems": 9,
+      "items": { "$ref": "#/$defs/planet_position" }
+    },
+    "houses": {
+      "type": "array", "minItems": 12, "maxItems": 12,
+      "items": { "$ref": "#/$defs/house_position" }
+    },
+    "ruling_planets": {
+      "type": "array", "minItems": 7, "maxItems": 7,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["source", "planet"],
+        "properties": { "source": { "type": "string" }, "planet": { "$ref": "#/$defs/lord" } }
+      }
+    },
+    "planet_significators": {
+      "type": "array", "minItems": 9, "maxItems": 9,
+      "items": { "$ref": "#/$defs/planet_significator" }
+    },
+    "house_significators": {
+      "type": "array", "minItems": 12, "maxItems": 12,
+      "items": { "$ref": "#/$defs/house_significator" }
+    },
+    "focus_house": { "$ref": "#/$defs/house_significator" },
+    "node_representations": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["node", "occupied_house", "sign_lord", "star_lord", "sub_lord", "policy"],
+        "properties": {
+          "node": { "$ref": "#/$defs/lord" },
+          "occupied_house": { "$ref": "#/$defs/house_number" },
+          "sign_lord": { "$ref": "#/$defs/lord" },
+          "star_lord": { "$ref": "#/$defs/lord" },
+          "sub_lord": { "$ref": "#/$defs/lord" },
+          "policy": { "const": "direct_connections_only_no_conjunction_or_aspect_inference" }
+        }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "longitude": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 },
+    "house_number": { "type": "integer", "minimum": 1, "maximum": 12 },
+    "lord": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": { "id": { "type": "string", "minLength": 1 }, "name": { "type": "string", "minLength": 1 } }
+    },
+    "nakshatra": {
+      "type": "object", "additionalProperties": false,
+      "required": ["index", "name", "name_zh", "lord", "pada", "start_longitude", "end_longitude"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 1, "maximum": 27 },
+        "name": { "type": "string" }, "name_zh": { "type": "string" },
+        "lord": { "$ref": "#/$defs/lord" },
+        "pada": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "start_longitude": { "type": "number", "minimum": 0, "maximum": 360 },
+        "end_longitude": { "type": "number", "minimum": 0, "maximum": 360 }
+      }
+    },
+    "sub_lord": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "name", "start_longitude", "end_longitude"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "start_longitude": { "type": "number", "minimum": 0, "maximum": 360 },
+        "end_longitude": { "type": "number", "minimum": 0, "maximum": 360 }
+      }
+    },
+    "position": {
+      "type": "object",
+      "required": ["longitude", "sign", "degree_text", "sign_lord", "nakshatra", "sub_lord", "sub_sub_lord"],
+      "properties": {
+        "longitude": { "$ref": "#/$defs/longitude" },
+        "sign": { "type": "string" }, "degree_text": { "type": "string" },
+        "sign_lord": { "$ref": "#/$defs/lord" },
+        "nakshatra": { "$ref": "#/$defs/nakshatra" },
+        "sub_lord": { "$ref": "#/$defs/sub_lord" },
+        "sub_sub_lord": { "$ref": "#/$defs/sub_lord" }
+      }
+    },
+    "named_position": {
+      "allOf": [
+        { "$ref": "#/$defs/position" },
+        {
+          "type": "object", "required": ["id", "name"],
+          "properties": { "id": { "type": "string" }, "name": { "type": "string" } }
+        }
+      ]
+    },
+    "planet_position": {
+      "allOf": [
+        { "$ref": "#/$defs/named_position" },
+        {
+          "type": "object",
+          "required": ["house", "latitude", "declination", "speed", "retrograde", "ephemeris"],
+          "properties": {
+            "house": { "$ref": "#/$defs/house_number" },
+            "latitude": { "type": "number" }, "declination": { "type": "number" },
+            "speed": { "type": "number" }, "retrograde": { "type": "boolean" },
+            "ephemeris": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "house_position": {
+      "allOf": [
+        { "$ref": "#/$defs/position" },
+        {
+          "type": "object", "required": ["house"],
+          "properties": { "house": { "$ref": "#/$defs/house_number" } }
+        }
+      ]
+    },
+    "scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["planet", "occupied_house", "owned_houses"],
+      "properties": {
+        "planet": { "$ref": "#/$defs/lord" },
+        "occupied_house": { "anyOf": [{ "$ref": "#/$defs/house_number" }, { "type": "null" }] },
+        "owned_houses": { "type": "array", "items": { "$ref": "#/$defs/house_number" }, "uniqueItems": true }
+      }
+    },
+    "planet_significator": {
+      "type": "object", "additionalProperties": false,
+      "required": ["planet", "direct", "star_lord_scope", "sub_lord_scope", "candidate_houses", "policy"],
+      "properties": {
+        "planet": { "$ref": "#/$defs/lord" },
+        "direct": { "$ref": "#/$defs/scope" },
+        "star_lord_scope": { "$ref": "#/$defs/scope" },
+        "sub_lord_scope": { "$ref": "#/$defs/scope" },
+        "candidate_houses": { "type": "array", "items": { "$ref": "#/$defs/house_number" }, "uniqueItems": true },
+        "policy": { "const": "transparent_sources_no_weighting" }
+      }
+    },
+    "tier": {
+      "type": "object", "additionalProperties": false,
+      "required": ["tier", "source", "planets"],
+      "properties": {
+        "tier": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "source": { "type": "string" },
+        "planets": { "type": "array", "items": { "$ref": "#/$defs/lord" } }
+      }
+    },
+    "house_significator": {
+      "type": "object", "additionalProperties": false,
+      "required": ["house", "cusp_sign_lord", "tiers", "policy"],
+      "properties": {
+        "house": { "$ref": "#/$defs/house_number" },
+        "cusp_sign_lord": { "$ref": "#/$defs/lord" },
+        "tiers": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/tier" } },
+        "policy": { "const": "candidate_tiers_no_automatic_verdict" }
+      }
+    }
+  }
+}

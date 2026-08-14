@@ -1,3 +1,57 @@
+# KP + 生时矫正合并发布（2026-08-14）
+
+目标：将已提交的生时矫正证据工作区基线与当前 KP 1–249 完整接入整理为边界清晰的提交，推送任务分支，合并到 `main` 并推送远端；不纳入 2026-08-13 生成的两份未实施架构设计/评审文档。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 发布范围与分支审计 | 已完成 | `main` 本地领先 `origin/main` 10 个既有提交；生时矫正为 `dacc7e1`；KP 为其上的当前工作树；架构设计稿明确排除 |
+| 02 发布前门禁与差异审计 | 已完成 | Python 1014、Swift 223 / 30 suites、Swift build、全部 smoke、KP fixture/Schema、diff check 与缓存清理均通过 |
+| 03 提交与任务分支推送 | 进行中 | 已确认账号 `1223a80` 的 keyring token 有效；此前误报来自受限沙箱无法读取 macOS 钥匙串，后续 GitHub 凭据命令改在获准沙箱外执行 |
+| 04 合并 main 与远端核验 | 待开始 | 快进/无冲突合并到 `main`，推送 `origin/main`，核对本地/远端提交一致且不领先 |
+
+---
+
+# KP 数字直接输入修复（2026-08-12）
+
+分支：`codex/feature-kp-horary`。目标：把 KP 1–249 从只能逐次点击的步进器标签改为可直接键入的数字输入，同时保留上下微调和严格范围校验；完成 Swift 验证、补丁版本打包与真实安装版输入 249 验收。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 交互与现有状态审阅 | 已完成 | 确认当前 `Stepper` 只渲染只读数值，`kpHoraryNumber`、请求和运行校验可直接复用 |
+| 02 输入控件修复 | 已完成 | 将 1–249 数字 `TextField` 与步进箭头拆成并列控件，支持直接输入、回车/失焦提交、范围钳制、键盘焦点和箭头微调 |
+| 03 验证与安装 | 已完成 | Swift 完整 223 项、修正后 KP 聚焦 3 项与构建通过；1.5.1（50）已覆盖 `/Applications`，真实安装版从 1 一次输入 249、步进同步并成功起盘，缓存已清理 |
+
+---
+
+# KP 占卜完整接入（2026-08-12）
+
+分支：`codex/feature-kp-horary`。目标：在不复制无明确许可证的 KPAstroDashboard 源码、也不污染现有西方 Horary v2.1 契约的前提下，基于项目现有 SwiftUI + Python + Swiss Ephemeris 架构，独立实现 KP 1–249 数字占卜的数据契约、计算、前端交互、结构化结果与导出，并完成版本、打包和安装版验证。
+
+## 执行计划
+
+| 阶段 | 状态 | 范围 |
+|---|---|---|
+| 01 现有契约与信息架构审阅 | 已完成 | 核对 Horary/Vedic 路由、状态、请求、结果标签页、导出与 Swiss Ephemeris 基础；锁定吠陀导航下的独立 KP CalculationMode 和可复用边界 |
+| 02 KP 后端核心 | 已完成 | 以 Fraction 精确生成 243 原始/249 跨星座拆分区间；问题时刻行星、数字上升求解、Krishnamurti 恒星黄道 Placidus 宫头、三级主星、Ruling Planets 与可审计 Significator 均已实现 |
+| 03 API / Schema / Python 测试 | 已完成 | 注册 `kp_horary`、结构化校验、sample、`kp-horary-data-packet/1.0` Schema、本地/CI smoke；13 项边界、确定性、交点、禁止裁决及 Schema 测试通过 |
+| 04 Swift 完整接入 | 已完成 | 独立请求/响应 Codable、客户端与结果缓存；吠陀导航入口、数字/焦点宫/交点/问题/地点侧栏、运行与错误状态、八结果页、诊断和空态均已接通 |
+| 05 导出与 Swift 测试 | 已完成 | Markdown / JSON / CSV 完整导出；真实 backend fixture 解码、请求蛇形键、秒精度、导航模式、八标签路由和跨实践模式隔离测试通过 |
+| 06 门禁与收口 | 已完成 | KP 聚焦 Python 13 项、完整 Python 1014 项、Swift 223 项 / 30 suites、全部 smoke 与 diff 检查通过；构建、pytest 和源码 Python 缓存已清理 |
+| 07 版本与安装 | 已完成 | 已发布 `1.5.0 (49)`，重打包并覆盖 `/Applications/TransitStudio.app`；版本、arm64、签名、哈希、包内 KP fixture/Schema 与真实安装版八结果页均已验证 |
+
+## 边界
+
+- `horary-data-packet/2.1` 继续专用于西方传统 Horary；KP 使用独立 mode / schema / Swift 模型，不复用含义冲突的判断字段。
+- 不复制 KPAstroDashboard 的 PyQt、Flatlib、CSV、Yoga、Shadbala、Excel 或 updater 源码；KP 数学与数据结构在本项目中独立实现并由测试证明。
+- 第一版“完整接入”指 1–249 数字起盘、KP 上升区间、行星/宫头层级与 Significator 数据完整可见、可导出、可诊断；不输出自动吉凶裁决、yes/no 或伪造置信度。
+- 复用现有出生/地点/时区输入、Swiss Ephemeris、结果页工具栏和导出基础，不创建第二套星历或桌面运行时。
+
+---
+
 # 生时矫正证据包 SwiftUI 接入（2026-08-12）
 
 分支：`codex/feature-rectify-evidence-ui`。目标：在保留现有 `rectify` 三级滑杆契约与 backend-only sample/Schema 合同的前提下，将已完成的 `mode=rectify_evidence` / `rectification-evidence-packet/1.0` 接入生时矫正界面；事件窗口由用户维护，证据按候选、事件和方法家族独立呈现，不合成总分、不自动推荐唯一出生时间。

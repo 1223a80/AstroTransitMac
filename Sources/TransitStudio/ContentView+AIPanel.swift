@@ -152,6 +152,8 @@ extension ContentView {
                 reasoning: aiVM.horaryReasoning,
                 hasResult: calcVM.horaryResult != nil
             ) { Task { await analyzeHoraryResult() } }
+        case .kpHorary:
+            return nil
         case .moment:
             return AIPanelContext(
                 streamKey: "moment",

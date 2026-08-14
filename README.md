@@ -2,7 +2,7 @@
 
 Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界面使用 SwiftUI，计算层使用 Python 与 Swiss Ephemeris；Swift 通过启动随应用打包的 `transit_calc.py` 子进程，以 stdin/stdout JSON 契约取得计算结果。
 
-最近已打包版本为 **1.4.6 (48)**。项目覆盖现代、古典、Horary 与吠陀工作流，并提供星盘图、结构化结果页、Markdown / JSON / CSV 导出、部分模式的流式 AI 分析，以及三级生时矫正；本版完成 Horary v2.1 剩余审计项，并收口行星日/时、事件窗口、秒精度、schema 与证据展示。
+当前发布版本为 **1.5.1 (50)**。项目覆盖现代、古典、西方 Horary、KP 占卜与吠陀工作流，并提供星盘图、结构化结果页、Markdown / JSON / CSV 导出、部分模式的流式 AI 分析，以及三级生时矫正；本版完善 KP 1–249 的直接数字输入交互。
 
 > Transit Studio 首先是一套“可计算、可复算、可审计”的数据工具。部分模块只输出事实、方法与证据，不自动给出吉凶、寿命、择时推荐或 Horary 最终判断。
 
@@ -10,8 +10,8 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 
 | 项目 | 当前实现 |
 |---|---|
-| 最近已打包版本 | 1.4.6 (48) |
-| 本版发布重点 | Horary v2.1 审计收口、时区/事件/VOC 修复、秒精度与 schema 强校验 |
+| 最近已打包版本 | 1.5.1 (50) |
+| 本版发布重点 | KP 1–249 可直接键入并保留步进微调、完整前后端工作区与审计诊断 |
 | 系统要求 | macOS 13 或更高 |
 | 应用架构 | Swift Package executable；当前打包脚本生成 arm64 `.app` |
 | 前端 | SwiftUI |
@@ -19,13 +19,14 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 | 星历 | 仓库内置 Swiss Ephemeris 文件，也可配置外部 `.se1` 目录 |
 | 后端协议 | 单次 JSON 请求写入 stdin，JSON 响应写入 stdout |
 | Horary 默认协议 | `horary-data-packet/2.1`，判断无关的数据包 |
+| KP 占卜协议 | `kp-horary-data-packet/1.0`，独立于西方 Horary 的判断无关数据包 |
 | AI | OpenAI-compatible Chat Completions / SSE 接口；需要用户自行配置 Base URL、模型和 API Key |
 | 自动化验证 | GitHub Actions 在 push 与 pull request 上执行 Swift、Python 和后端 smoke |
-| 当前源码门禁 | Python 980 项、Swift 214 项 / 28 suites、Swift build 与全部登记 smoke 通过 |
+| 当前源码门禁 | Python 1014 项、Swift 223 项 / 30 suites、Swift build 与全部登记 smoke 通过 |
 
 ## 当前已交付能力与 B18 增量
 
-1.4.6 是最近已打包并验证的发布基线；当前源码包含 B7–B20 计算扩展、古典进阶工作区、Horary v2.1、主窗口布局收口、B18 固定星 paran 真实事件引擎与可读 Markdown 导出。以下均为已经接入 UI、后端、模型、导出与测试的现有能力，不是 roadmap。
+1.5.1 是当前发布基线；源码包含 B7–B20 计算扩展、古典进阶工作区、西方 Horary v2.1、KP 1–249、主窗口布局收口、B18 固定星 paran 真实事件引擎与可读 Markdown 导出。以下均为已经接入 UI、后端、模型、导出与测试的现有能力，不是 roadmap。
 
 ### B7–B20 计算扩展
 
@@ -273,6 +274,20 @@ v2.1 **不自动输出**：
 
 `kalachakra_dasa` 仍是占位接口，不应视为完整算法交付。
 
+#### KP 数字占卜
+
+吠陀导航下的“KP 占卜”使用独立 `mode=kp_horary` 与 `kp-horary-data-packet/1.0`，不会复用或改写西方 Horary v2.1：
+
+- 支持 1–249 数字、焦点宫、平均 / 真交点、秒级提问时刻与独立地点。
+- 以精确 Vimshottari 比例生成 243 个宿 / 副星主原始区间，并在六个跨星座边界处拆分为 249 个连续区间；每个区间使用中点作为无歧义起盘代表黄经，同时保留完整起止边界。
+- 固定 Krishnamurti 恒星黄道与 Placidus 宫制；行星使用提问时刻，数字选择上升区间并求得相应宫头。
+- 展示四轴、九曜、十二宫的星座主、宿主、副星主与副副星主，以及 Ruling Planets 原始来源。
+- 展示行星逐层宫位来源、十二宫四级 Significator 候选、焦点宫与交点直接代表关系。
+- 输出求解时刻、目标 / 实算上升与残差；不自动输出 yes/no、verdict、总分或置信度。
+- Swift 前端提供数字总览、行星层级、宫头层级、行星征象、宫位征象、焦点宫、诊断和原始 JSON，并支持 Markdown / JSON / CSV。
+
+请求样例见 [`Examples/sample-kp-horary-request.json`](Examples/sample-kp-horary-request.json)，Schema 见 [`docs/schemas/kp-horary-data-packet-1.0.json`](docs/schemas/kp-horary-data-packet-1.0.json)。
+
 ### 公共时间工具
 
 三个实践模式共用：
@@ -361,13 +376,14 @@ Swift Codable models → result panes / wheel / exports / AI context
 
 ## 支持的后端 mode
 
-当前 `astro_backend_api.validate_required_fields()` 注册 35 个 mode：
+当前 `astro_backend_api.validate_required_fields()` 注册 36 个 mode：
 
 ```text
 moment
 classical
 vedic
 horary
+kp_horary
 scan
 rectify
 rectify_evidence
@@ -509,6 +525,10 @@ Sources/TransitStudio/Resources/ephemeris/
 .venv/bin/python Sources/TransitStudio/Resources/backend/transit_calc.py \
   < Examples/sample-horary-request.json
 
+# KP 1–249 占卜
+.venv/bin/python Sources/TransitStudio/Resources/backend/transit_calc.py \
+  < Examples/sample-kp-horary-request.json
+
 # 现代综合时间线
 .venv/bin/python Sources/TransitStudio/Resources/backend/transit_calc.py \
   < Examples/sample-modern-timing-request.json
@@ -553,6 +573,9 @@ bash check_vibe_changes.sh
   python_tests/test_horary.py \
   python_tests/test_horary_followup.py \
   python_tests/test_horary_v2.py -q
+
+# KP 1–249、Schema 与求解契约
+.venv/bin/python -m pytest python_tests/test_kp_horary.py -q
 
 # 古典
 .venv/bin/python -m pytest python_tests/test_classical.py -q

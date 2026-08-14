@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-08-14 — GitHub 钥匙串授权误报防护
+
+- 在项目 `AGENTS.md` 固化 macOS 钥匙串与 Codex 沙箱规则：沙箱内的 `gh auth status` 可能因无法读取登录钥匙串而把有效凭证误报为无效，禁止仅凭该结果要求用户重复授权。
+- 后续须先在沙箱外复核 `gh auth status` 与 keyring 账号；`gh api`、`git fetch/pull/push` 和 PR 创建等依赖 GitHub 凭证的操作也统一在沙箱外执行。
+- 禁止因为沙箱内出现 `token invalid` 就启动第二次 device-login；本次已在沙箱外确认账号 `1223a80` 的 keyring 凭证有效。
+
+## 2026-08-12 — KP 数字直接输入修复
+
+- 补丁版本提升至 `1.5.1 (50)`。
+- 将 KP 数字从只读 `Stepper` 标签改为独立、可聚焦的数字文本框：用户可以一次输入任意 `1...249` 编号，不再需要从当前值逐次点击；文本框与步进箭头并列，避免 macOS 将嵌套交互控件从键盘/无障碍焦点中吞掉。
+- 保留上下箭头微调；直接输入与步进器共享同一个 `kpHoraryNumber` 状态，越界值会立即钳制到 `1...249`，现有运行前校验继续兜底。
+- Swift 构建与完整 223 项 / 30 suites 通过；拆分交互控件后再次通过构建和 KP 聚焦 3 项测试。
+- 已重新打包并覆盖 `/Applications/TransitStudio.app`；安装版版本、arm64、签名、`dist` / 安装版哈希与 Python 缓存检查通过。
+- 真实安装版验收中直接把输入框从 `1` 改为 `249`，步进器同步为 `249`，随后成功起盘并得到 KP 249（双鱼 `28°56'40"`）结果。
+
+## 2026-08-12 — KP 占卜完整接入
+
+- 发布版本提升至 `1.5.0 (49)`，作为独立 KP 1–249 前后端完整接入的功能版本。
+- 从已完成且工作树干净的 `codex/feature-rectify-evidence-ui` 提交创建独立 `codex/feature-kp-horary` 分支，避免混入生时矫正任务。
+- 登记独立实现边界：不复制许可证冲突的供体源码，不污染西方 Horary v2.1；以现有 Swiss Ephemeris 后端、SwiftUI 结果框架和版本化 JSON 契约实现 KP 1–249 数字占卜。
+- 新增独立 `mode=kp_horary` 与 `kp-horary-data-packet/1.0`：用精确分数从 27 宿 × 9 副星主生成 243 原始区间，并在六个跨星座边界处拆分为连续、无重叠的 249 数字表，不引入供体 CSV 或平行星历。
+- KP 后端固定使用 Krishnamurti 恒星黄道与 Placidus：行星保持用户提问时刻，数字区间选择上升点后另求 Swiss Ephemeris 宫位参考时刻；响应公开问题时刻、宫位求解时刻、目标/实算上升与残差，禁止混淆成普通事件盘。
+- 数据包已覆盖九曜（可选平均/真交点）、四轴、十二宫、星座主/宿主/副星主/副副星主、Ruling Planets、行星逐层宫位来源、十二宫四级 Significator 候选、焦点宫与交点直接代表关系；明确 `automatic_judgment=false`，不输出 yes/no、verdict、总分或伪造置信度。
+- 新增结构化请求校验、sample、JSON Schema、文档、本地一键门禁与 CI smoke；KP 聚焦 Python 13 项通过，覆盖 249 连续边界、已知 30° 拆分、数字变更不改变问题时刻行星、两种交点、Significator 可审计字段和 Schema。
+- Swift 新增独立 `CalculationMode.kpHorary`，在吠陀导航下提供“KP 占卜”入口；复用秒级提问时间与地点基础设施，并新增 1–249 数字、焦点宫和平均/真交点控制，方法区固定显示 Krishnamurti Sidereal + Placidus 及不自动裁决边界。
+- 新增完整 KP Codable、BackendClient 调用与独立结果缓存；切换到现代或古典实践时会把 KP mode 安全落回各自设置页，避免隐藏入口的残留结果页或运行语义泄漏。
+- 新增八页 KP 结果工作区：数字总览、行星层级、宫头层级、行星征象、宫位征象、焦点宫、诊断和原始 JSON；Ruling Planets、四级宫位候选、交点直接代表关系、双时刻与求解残差均结构化呈现。
+- 新增完整 Markdown / JSON / CSV 导出和真实 `kp-horary-result.json` fixture；Swift 3 项请求/导航/模式隔离测试与 1 项真实后端解码/导出契约测试通过，Swift build 通过。
+- 一键门禁现在显式隔离 macOS user-site Python 包并禁止写入 `.pyc`，避免受沙箱不可访问的用户 Library 路径影响或把测试缓存带进应用资源，同时继续优先使用项目 `.venv`。
+- 安装版 UI 验收发现并修正数字 1 的 0° 边界一致性：原先使用区间起点内极小偏移，Swiss 求解可能从 360° 一侧逼近，造成显示四舍五入为白羊而层级仍属双鱼；现在以每个 1–249 区间中点作为代表黄经，原始区间仍完整保留，并新增数字 1、22、23、249 的上升星座主/宿主/副星主同区间回归。
+- 最终一键门禁通过：Python 1014 项、Swift 223 项 / 30 suites、Swift release build 与全部登记 smoke 均成功；实时样例与 fixture 完全一致并通过 JSON Schema。
+- 已重新打包并覆盖 `/Applications/TransitStudio.app`：版本 `1.5.0 (49)`、arm64、签名有效，`dist` 与安装版主程序 SHA-256 一致，安装资源不含 `.pyc` / `__pycache__`，包内 KP 后端输出与 fixture 完全一致。
+- 使用真实安装版逐页验收；数字 1 现显示白羊 `00°23'20"`，上升星座主火星、宿主/副星主计都，数字总览、行星/宫头层级、两类 Significator、焦点宫、诊断和原始 JSON 均可正常访问。
+- 打包与验证后已清理 `.build`、pytest、源码 Python 和 `/private/tmp` 构建缓存，保留可交付的 `dist/TransitStudio.app`。
+
 ## 2026-08-12 — 生时矫正证据包 SwiftUI 接入（开发中）
 
 - 在独立分支登记 UI 接入任务：保留现有 `rectify` 三级滑杆与 backend-only sample/Schema 合同，计划让用户维护人生事件窗口，并以当前滑杆候选为中心请求 `rectification-evidence-packet/1.0`。

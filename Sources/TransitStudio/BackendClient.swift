@@ -297,6 +297,10 @@ struct BackendClient {
         try await run(request: request, pythonPath: pythonPath)
     }
 
+    static func kpHorary(request: KPHoraryRequest, pythonPath: String) async throws -> KPHoraryResult {
+        try await run(request: request, pythonPath: pythonPath)
+    }
+
     static func vedic(request: VedicRequest, pythonPath: String) async throws -> VedicResult {
         try await run(request: request, pythonPath: pythonPath)
     }
