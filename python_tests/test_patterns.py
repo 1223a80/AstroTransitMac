@@ -256,3 +256,94 @@ class TestPatternDetection:
         ]
         p = find_patterns(lons, aspects)
         assert len(p) == 1
+
+
+class TestChartShapes:
+    def test_bundle_across_zero_aries_and_coexists_with_bowl(self) -> None:
+        from astro_backend_patterns import find_chart_shapes
+        # Planets at [350, 355, 5, 10] - span = 20° <= 90° and < 180°
+        body_lons = {
+            "SUN": 350.0,
+            "MOON": 355.0,
+            "MERCURY": 5.0,
+            "VENUS": 10.0,
+        }
+        shapes = find_chart_shapes(body_lons)
+        types = [s["type"] for s in shapes]
+        assert "bundle" in types, "20° span must emit bundle"
+        assert "bowl" in types, "20° span must also emit bowl (non-mutually-exclusive)"
+
+    def test_100_deg_span_is_bowl_not_bundle(self) -> None:
+        from astro_backend_patterns import find_chart_shapes
+        # [0, 30, 60, 90, 100] - span = 100° (> 90° not bundle, < 180° is bowl)
+        body_lons = {
+            "SUN": 0.0,
+            "MOON": 30.0,
+            "MERCURY": 60.0,
+            "VENUS": 90.0,
+            "MARS": 100.0,
+        }
+        shapes = find_chart_shapes(body_lons)
+        types = [s["type"] for s in shapes]
+        assert "bowl" in types
+        assert "bundle" not in types, "100° span must not be bundle"
+
+    def test_boundary_conditions_90_and_180(self) -> None:
+        from astro_backend_patterns import find_chart_shapes
+        # Exactly 90° span -> Bundle + Bowl
+        shapes_90 = find_chart_shapes({"SUN": 0.0, "MOON": 45.0, "MARS": 90.0})
+        types_90 = [s["type"] for s in shapes_90]
+        assert "bundle" in types_90
+        assert "bowl" in types_90
+
+        # 90.1° span -> Bowl only
+        shapes_90_1 = find_chart_shapes({"SUN": 0.0, "MOON": 45.0, "MARS": 90.1})
+        types_90_1 = [s["type"] for s in shapes_90_1]
+        assert "bundle" not in types_90_1
+        assert "bowl" in types_90_1
+
+        # 179.9° span -> Bowl
+        shapes_179_9 = find_chart_shapes({"SUN": 0.0, "MOON": 90.0, "MARS": 179.9})
+        types_179_9 = [s["type"] for s in shapes_179_9]
+        assert "bowl" in types_179_9
+
+        # Exactly 180.0° span -> neither Bowl nor Bundle
+        shapes_180 = find_chart_shapes({"SUN": 0.0, "MOON": 45.0, "MARS": 90.0, "VENUS": 135.0, "JUPITER": 180.0})
+        types_180 = [s["type"] for s in shapes_180]
+        assert "bowl" not in types_180
+        assert "bundle" not in types_180
+
+    def test_rotation_invariance(self) -> None:
+        from astro_backend_patterns import find_chart_shapes
+        base_lons = {
+            "SUN": 350.0,
+            "MOON": 355.0,
+            "MERCURY": 5.0,
+            "VENUS": 10.0,
+        }
+        base_types = sorted(s["type"] for s in find_chart_shapes(base_lons))
+        for shift in [30.0, 90.0, 180.0, 270.0, 315.0]:
+            shifted_lons = {b: (deg + shift) % 360.0 for b, deg in base_lons.items()}
+            shifted_types = sorted(s["type"] for s in find_chart_shapes(shifted_lons))
+            assert shifted_types == base_types, f"Shapes mismatch on shift {shift}°: {shifted_types} vs {base_types}"
+
+    def test_locomotive_across_zero_aries_leading_planet(self) -> None:
+        from astro_backend_patterns import find_chart_shapes
+        # Gap of 120° from 150° (Virgo) to 270° (Capricorn)
+        # Planets in 270°..150° (span = 240°)
+        # First planet moving forward from gap is at 270° (SUN)
+        body_lons = {
+            "SUN": 270.0,
+            "MOON": 300.0,
+            "MERCURY": 340.0,
+            "VENUS": 10.0,
+            "MARS": 50.0,
+            "JUPITER": 90.0,
+            "SATURN": 150.0,
+        }
+        shapes = find_chart_shapes(body_lons)
+        types = [s["type"] for s in shapes]
+        assert "locomotive" in types
+        loco = next(s for s in shapes if s["type"] == "locomotive")
+        assert loco["locomotive_leader"] == "SUN"
+        assert "120.0°" in loco["orb_summary"]

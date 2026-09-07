@@ -15,7 +15,9 @@ enum AppResources {
                 return bundle
             }
         }
-        return nil
+        // SwiftPM tests and `swift run` keep the resource bundle beside the
+        // executable, outside an application's Contents/Resources layout.
+        return Bundle.module
     }
 
     static func url(forResource name: String, withExtension ext: String, subdirectory: String? = nil) -> URL? {

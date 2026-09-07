@@ -1,7 +1,7 @@
 """Ashtakavarga (BAV + SAV) calculation for Jyotish.
 
 Computes Bhinnashtakavarga (BAV) for each planet and
-Sarvatobhadra Chakra (SAV/Total).
+Sarvashtakavarga (SAV, seven-planet total).
 
 REKHA_MAP from Maitreya Ashtakavarga.cpp approach.
 """
@@ -135,6 +135,51 @@ def _red12(val: int) -> int:
     return val % 12
 
 
+def _reduce_ekadhipatya_pair(v1: int, v2: int, c1: int, c2: int) -> tuple[int, int]:
+    """Reduce an Ekadhipatya pair (signs ruled by the same lord) for one planet's row.
+
+    Args:
+        v1: Trikona value in first sign
+        v2: Trikona value in second sign
+        c1: Number of the 7 classical planets occupying first sign
+        c2: Number of the 7 classical planets occupying second sign
+
+    Returns:
+        (new_v1, new_v2) after Ekadhipatya Shodhana reduction.
+    """
+    # 1. One side is 0, other >= 0: both remain unchanged
+    if v1 == 0 or v2 == 0:
+        return v1, v2
+
+    # 2. Both signs occupied by planets: both remain unchanged
+    if c1 > 0 and c2 > 0:
+        return v1, v2
+
+    # 3. Both signs have NO planets:
+    if c1 == 0 and c2 == 0:
+        if v1 != v2:
+            m = min(v1, v2)
+            return m, m
+        else:
+            return 0, 0
+
+    # 4. Only one sign is occupied:
+    if c1 > 0 and c2 == 0:
+        # Side 1 occupied, side 2 empty
+        if v1 < v2:
+            return v1, v2 - v1
+        else:  # v1 >= v2
+            return v1, 0
+    elif c2 > 0 and c1 == 0:
+        # Side 2 occupied, side 1 empty
+        if v2 < v1:
+            return v1 - v2, v2
+        else:  # v2 >= v1
+            return 0, v2
+
+    return v1, v2
+
+
 # ─── Compute Ashtakavarga ─────────────────────────────────────────────
 
 def compute_ashtakavarga(
@@ -188,40 +233,41 @@ def compute_ashtakavarga(
             for k in range(3):
                 trikona[i][j+4*k] = rekha[i][j+4*k] - min_rec
 
+    # Calculate planet count by rasi for the 7 classical planets (excluding ASC, Rahu, Ketu)
+    planet_count_by_rasi = [0] * 12
+    for pid in ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN"]:
+        if pid in planet_positions:
+            r = zodiac_sign_index(planet_positions[pid]["longitude"])
+            planet_count_by_rasi[r] += 1
+
     # Calculate Ekadhipatya Shodana
-    ekadhi = [[0] * 12 for _ in range(8)]
-    # Copy rekha first
-    for i in range(8):
-        for j in range(12):
-            ekadhi[i][j] = rekha[i][j]
+    # Deep copy from trikona matrix (not rekha)
+    ekadhi = [row[:] for row in trikona]
 
     # Ekadhipatya pairs (signs ruled by same lord)
     # Mars: Aries(0), Scorpio(7)
     # Venus: Taurus(1), Libra(6)
     # Mercury: Gemini(2), Virgo(5)
-    # Moon: Cancer(3)
-    # Sun: Leo(4)
     # Jupiter: Sagittarius(8), Pisces(11)
     # Saturn: Capricorn(9), Aquarius(10)
     pairs = [(0, 7), (1, 6), (2, 5), (8, 11), (9, 10)]
     for i in range(8):
         for b1, b2 in pairs:
-            if t := ekadhi[i][b1]:
-                if ekadhi[i][b2] > t:
-                    ekadhi[i][b2] -= t
-                    ekadhi[i][b1] = 0
-                else:
-                    ekadhi[i][b1] -= t
-                    ekadhi[i][b2] = 0
+            c1 = planet_count_by_rasi[b1]
+            c2 = planet_count_by_rasi[b2]
+            ekadhi[i][b1], ekadhi[i][b2] = _reduce_ekadhipatya_pair(
+                ekadhi[i][b1], ekadhi[i][b2], c1, c2
+            )
 
-    # Sarva (total) calculation
+    # Standard SAV sums the seven planetary BAV rows. The ASC BAV remains
+    # available separately; it is not an eighth planetary contribution.
     sarva_rekha = [0] * 12
     sarva_trikona = [0] * 12
     sarva_ekadhi = [0] * 12
     planet_sarva_rekha = [0] * 8
 
     for i in range(12):
-        for j in range(8):
+        for j in range(7):
             sarva_rekha[i] += rekha[j][i]
             sarva_trikona[i] += trikona[j][i]
             sarva_ekadhi[i] += ekadhi[j][i]

@@ -97,17 +97,24 @@
       "event_type": "heliacal_rising",
       "exact_utc": "2026-07-27T20:06:27.751Z",
       "exact_local": "2026-07-28T04:06:27.751+08:00",
+      "exact_local_minute_precision": "2026-07-28T04:06",
+      "next_event_utc": "2026-07-27T20:06:27.751Z",
+      "previous_event_utc": "2026-03-21T21:05:57.861Z",
+      "days_to_next_event": 83.671,
+      "days_from_previous_event": 44.288,
       "visibility_start_jd": 2461249.3378211963,
       "optimum_jd": 2461249.3458883227,
       "visibility_end_jd": 2461249.3543836907,
       "status": "ok",
       "method_key": "swe.heliacal_ut",
       "observer_age": 36.0,
+      "interpretation_precision": "minute",
       "atmosphere": {
         "pressure_hpa": 1013.25,
         "temperature_c": 15.0,
         "relative_humidity": 40.0
-      }
+      },
+      "horizon_assumptions": "Swiss Ephemeris default heliacal atmosphere model"
     },
     {
       "id": "MERCURY|heliacal_setting|2026-06-25T11:43:18.240Z",
@@ -116,17 +123,24 @@
       "event_type": "heliacal_setting",
       "exact_utc": "2026-06-25T11:43:18.240Z",
       "exact_local": "2026-06-25T19:43:18.240+08:00",
+      "exact_local_minute_precision": "2026-06-25T19:43",
+      "next_event_utc": "2026-06-25T11:43:18.240Z",
+      "previous_event_utc": "2026-02-26T10:24:48.313Z",
+      "days_to_next_event": 51.322,
+      "days_from_previous_event": 67.733,
       "visibility_start_jd": 2461216.9884055634,
       "optimum_jd": 2461216.996762043,
       "visibility_end_jd": 2461217.0039263926,
       "status": "ok",
       "method_key": "swe.heliacal_ut",
       "observer_age": 36.0,
+      "interpretation_precision": "minute",
       "atmosphere": {
         "pressure_hpa": 1013.25,
         "temperature_c": 15.0,
         "relative_humidity": 40.0
-      }
+      },
+      "horizon_assumptions": "Swiss Ephemeris default heliacal atmosphere model"
     },
     {
       "id": "VENUS|heliacal_rising|2026-10-29T21:33:34.160Z",
@@ -135,17 +149,24 @@
       "event_type": "heliacal_rising",
       "exact_utc": "2026-10-29T21:33:34.160Z",
       "exact_local": "2026-10-30T05:33:34.160+08:00",
+      "exact_local_minute_precision": "2026-10-30T05:33",
+      "next_event_utc": "2026-10-29T21:33:34.160Z",
+      "previous_event_utc": "2025-03-22T21:28:00.354Z",
+      "days_to_next_event": 177.732,
+      "days_from_previous_event": 408.272,
       "visibility_start_jd": 2461343.398312047,
       "optimum_jd": 2461343.4027796374,
       "visibility_end_jd": 2461343.414758801,
       "status": "ok",
       "method_key": "swe.heliacal_ut",
       "observer_age": 36.0,
+      "interpretation_precision": "minute",
       "atmosphere": {
         "pressure_hpa": 1013.25,
         "temperature_c": 15.0,
         "relative_humidity": 40.0
-      }
+      },
+      "horizon_assumptions": "Swiss Ephemeris default heliacal atmosphere model"
     },
     {
       "id": "VENUS|heliacal_setting|2026-10-11T09:41:41.043Z",
@@ -154,17 +175,24 @@
       "event_type": "heliacal_setting",
       "exact_utc": "2026-10-11T09:41:41.043Z",
       "exact_local": "2026-10-11T17:41:41.043+08:00",
+      "exact_local_minute_precision": "2026-10-11T17:41",
+      "next_event_utc": "2026-10-11T09:41:41.043Z",
+      "previous_event_utc": "2025-03-19T10:18:24.143Z",
+      "days_to_next_event": 159.237,
+      "days_from_previous_event": 411.737,
       "visibility_start_jd": 2461324.903947267,
       "optimum_jd": 2461324.9057065253,
       "visibility_end_jd": 2461324.90669032,
       "status": "ok",
       "method_key": "swe.heliacal_ut",
       "observer_age": 36.0,
+      "interpretation_precision": "minute",
       "atmosphere": {
         "pressure_hpa": 1013.25,
         "temperature_c": 15.0,
         "relative_humidity": 40.0
-      }
+      },
+      "horizon_assumptions": "Swiss Ephemeris default heliacal atmosphere model"
     },
     {
       "id": "MARS|heliacal_rising|2028-06-16T19:55:16.639Z",
@@ -173,17 +201,24 @@
       "event_type": "heliacal_rising",
       "exact_utc": "2028-06-16T19:55:16.639Z",
       "exact_local": "2028-06-17T03:55:16.639+08:00",
+      "exact_local_minute_precision": "2028-06-17T03:55",
+      "next_event_utc": "2028-06-16T19:55:16.639Z",
+      "previous_event_utc": "2026-05-03T20:16:22.983Z",
+      "days_to_next_event": 773.663,
+      "days_from_previous_event": 1.322,
       "visibility_start_jd": 2461939.3300536955,
       "optimum_jd": 2461939.3320328607,
       "visibility_end_jd": 2461939.333491193,
       "status": "ok",
       "method_key": "swe.heliacal_ut",
       "observer_age": 36.0,
+      "interpretation_precision": "minute",
       "atmosphere": {
         "pressure_hpa": 1013.25,
         "temperature_c": 15.0,
         "relative_humidity": 40.0
-      }
+      },
+      "horizon_assumptions": "Swiss Ephemeris default heliacal atmosphere model"
     },
     {
       "id": "MARS|heliacal_setting|2028-01-09T09:53:20.118Z",
@@ -192,17 +227,24 @@
       "event_type": "heliacal_setting",
       "exact_utc": "2028-01-09T09:53:20.118Z",
       "exact_local": "2028-01-09T17:53:20.118+08:00",
+      "exact_local_minute_precision": "2028-01-09T17:53",
+      "next_event_utc": "2028-01-09T09:53:20.118Z",
+      "previous_event_utc": "2025-10-12T10:07:50.558Z",
+      "days_to_next_event": 614.245,
+      "days_from_previous_event": 204.745,
       "visibility_start_jd": 2461779.9120384078,
       "optimum_jd": 2461779.9154411834,
       "visibility_end_jd": 2461779.917732848,
       "status": "ok",
       "method_key": "swe.heliacal_ut",
       "observer_age": 36.0,
+      "interpretation_precision": "minute",
       "atmosphere": {
         "pressure_hpa": 1013.25,
         "temperature_c": 15.0,
         "relative_humidity": 40.0
-      }
+      },
+      "horizon_assumptions": "Swiss Ephemeris default heliacal atmosphere model"
     },
     {
       "id": "JUPITER|heliacal_rising|2026-08-11T20:38:02.434Z",
@@ -211,17 +253,24 @@
       "event_type": "heliacal_rising",
       "exact_utc": "2026-08-11T20:38:02.434Z",
       "exact_local": "2026-08-12T04:38:02.434+08:00",
+      "exact_local_minute_precision": "2026-08-12T04:38",
+      "next_event_utc": "2026-08-11T20:38:02.434Z",
+      "previous_event_utc": "2025-07-09T20:14:51.110Z",
+      "days_to_next_event": 98.693,
+      "days_from_previous_event": 299.323,
       "visibility_start_jd": 2461264.3597503942,
       "optimum_jd": 2461264.3629216887,
       "visibility_end_jd": 2461264.367412427,
       "status": "ok",
       "method_key": "swe.heliacal_ut",
       "observer_age": 36.0,
+      "interpretation_precision": "minute",
       "atmosphere": {
         "pressure_hpa": 1013.25,
         "temperature_c": 15.0,
         "relative_humidity": 40.0
-      }
+      },
+      "horizon_assumptions": "Swiss Ephemeris default heliacal atmosphere model"
     },
     {
       "id": "JUPITER|heliacal_setting|2026-07-11T11:26:59.045Z",
@@ -230,17 +279,24 @@
       "event_type": "heliacal_setting",
       "exact_utc": "2026-07-11T11:26:59.045Z",
       "exact_local": "2026-07-11T19:26:59.045+08:00",
+      "exact_local_minute_precision": "2026-07-11T19:26",
+      "next_event_utc": "2026-07-11T11:26:59.045Z",
+      "previous_event_utc": "2025-06-09T11:28:34.031Z",
+      "days_to_next_event": 67.31,
+      "days_from_previous_event": 329.688,
       "visibility_start_jd": 2461232.977072286,
       "optimum_jd": 2461232.9832875617,
       "visibility_end_jd": 2461232.9889820036,
       "status": "ok",
       "method_key": "swe.heliacal_ut",
       "observer_age": 36.0,
+      "interpretation_precision": "minute",
       "atmosphere": {
         "pressure_hpa": 1013.25,
         "temperature_c": 15.0,
         "relative_humidity": 40.0
-      }
+      },
+      "horizon_assumptions": "Swiss Ephemeris default heliacal atmosphere model"
     },
     {
       "id": "SATURN|heliacal_rising|2027-05-06T20:13:08.812Z",
@@ -249,17 +305,24 @@
       "event_type": "heliacal_rising",
       "exact_utc": "2027-05-06T20:13:08.812Z",
       "exact_local": "2027-05-07T04:13:08.812+08:00",
+      "exact_local_minute_precision": "2027-05-07T04:13",
+      "next_event_utc": "2027-05-06T20:13:08.812Z",
+      "previous_event_utc": "2026-04-24T20:25:06.959Z",
+      "days_to_next_event": 366.676,
+      "days_from_previous_event": 10.316,
       "visibility_start_jd": 2461532.342463109,
       "optimum_jd": 2461532.3475094037,
       "visibility_end_jd": 2461532.3538982905,
       "status": "ok",
       "method_key": "swe.heliacal_ut",
       "observer_age": 36.0,
+      "interpretation_precision": "minute",
       "atmosphere": {
         "pressure_hpa": 1013.25,
         "temperature_c": 15.0,
         "relative_humidity": 40.0
-      }
+      },
+      "horizon_assumptions": "Swiss Ephemeris default heliacal atmosphere model"
     },
     {
       "id": "SATURN|heliacal_setting|2027-03-21T10:39:58.608Z",
@@ -268,17 +331,24 @@
       "event_type": "heliacal_setting",
       "exact_utc": "2027-03-21T10:39:58.608Z",
       "exact_local": "2027-03-21T18:39:58.608+08:00",
+      "exact_local_minute_precision": "2027-03-21T18:39",
+      "next_event_utc": "2027-03-21T10:39:58.608Z",
+      "previous_event_utc": "2026-03-08T10:35:01.507Z",
+      "days_to_next_event": 320.278,
+      "days_from_previous_event": 57.726,
       "visibility_start_jd": 2461485.9444283443,
       "optimum_jd": 2461485.9519862123,
       "visibility_end_jd": 2461485.958791765,
       "status": "ok",
       "method_key": "swe.heliacal_ut",
       "observer_age": 36.0,
+      "interpretation_precision": "minute",
       "atmosphere": {
         "pressure_hpa": 1013.25,
         "temperature_c": 15.0,
         "relative_humidity": 40.0
-      }
+      },
+      "horizon_assumptions": "Swiss Ephemeris default heliacal atmosphere model"
     }
   ],
   "rise_set": [
@@ -289,7 +359,12 @@
       "set_utc": "2026-05-05T10:34:27.249Z",
       "method_key": "swe.rise_trans_disc_center",
       "rise_local": "2026-05-06T05:06:44.477+08:00",
-      "set_local": "2026-05-05T18:34:27.249+08:00"
+      "next_rise_after_reference": "2026-05-05T21:06:44.477Z",
+      "next_rise_after_reference_local": "2026-05-06T05:06:44.477+08:00",
+      "set_local": "2026-05-05T18:34:27.249+08:00",
+      "next_set_after_reference": "2026-05-05T10:34:27.249Z",
+      "next_set_after_reference_local": "2026-05-05T18:34:27.249+08:00",
+      "note": "next_rise/set_after_reference may fall on different civil days; not a same-day rise/set pair guarantee"
     },
     {
       "body_id": "MERCURY",
@@ -298,7 +373,12 @@
       "set_utc": "2026-05-05T09:43:18.176Z",
       "method_key": "swe.rise_trans_disc_center",
       "rise_local": "2026-05-06T04:40:46.482+08:00",
-      "set_local": "2026-05-05T17:43:18.176+08:00"
+      "next_rise_after_reference": "2026-05-05T20:40:46.482Z",
+      "next_rise_after_reference_local": "2026-05-06T04:40:46.482+08:00",
+      "set_local": "2026-05-05T17:43:18.176+08:00",
+      "next_set_after_reference": "2026-05-05T09:43:18.176Z",
+      "next_set_after_reference_local": "2026-05-05T17:43:18.176+08:00",
+      "note": "next_rise/set_after_reference may fall on different civil days; not a same-day rise/set pair guarantee"
     },
     {
       "body_id": "VENUS",
@@ -307,7 +387,12 @@
       "set_utc": "2026-05-05T12:53:42.069Z",
       "method_key": "swe.rise_trans_disc_center",
       "rise_local": "2026-05-06T06:45:33.360+08:00",
-      "set_local": "2026-05-05T20:53:42.069+08:00"
+      "next_rise_after_reference": "2026-05-05T22:45:33.360Z",
+      "next_rise_after_reference_local": "2026-05-06T06:45:33.360+08:00",
+      "set_local": "2026-05-05T20:53:42.069+08:00",
+      "next_set_after_reference": "2026-05-05T12:53:42.069Z",
+      "next_set_after_reference_local": "2026-05-05T20:53:42.069+08:00",
+      "note": "next_rise/set_after_reference may fall on different civil days; not a same-day rise/set pair guarantee"
     },
     {
       "body_id": "MARS",
@@ -316,7 +401,12 @@
       "set_utc": "2026-05-05T08:34:44.642Z",
       "method_key": "swe.rise_trans_disc_center",
       "rise_local": "2026-05-06T03:54:51.266+08:00",
-      "set_local": "2026-05-05T16:34:44.642+08:00"
+      "next_rise_after_reference": "2026-05-05T19:54:51.266Z",
+      "next_rise_after_reference_local": "2026-05-06T03:54:51.266+08:00",
+      "set_local": "2026-05-05T16:34:44.642+08:00",
+      "next_set_after_reference": "2026-05-05T08:34:44.642Z",
+      "next_set_after_reference_local": "2026-05-05T16:34:44.642+08:00",
+      "note": "next_rise/set_after_reference may fall on different civil days; not a same-day rise/set pair guarantee"
     },
     {
       "body_id": "JUPITER",
@@ -325,7 +415,12 @@
       "set_utc": "2026-05-05T15:25:52.270Z",
       "method_key": "swe.rise_trans_disc_center",
       "rise_local": "2026-05-06T09:22:53.905+08:00",
-      "set_local": "2026-05-05T23:25:52.270+08:00"
+      "next_rise_after_reference": "2026-05-06T01:22:53.905Z",
+      "next_rise_after_reference_local": "2026-05-06T09:22:53.905+08:00",
+      "set_local": "2026-05-05T23:25:52.270+08:00",
+      "next_set_after_reference": "2026-05-05T15:25:52.270Z",
+      "next_set_after_reference_local": "2026-05-05T23:25:52.270+08:00",
+      "note": "next_rise/set_after_reference may fall on different civil days; not a same-day rise/set pair guarantee"
     },
     {
       "body_id": "SATURN",
@@ -334,7 +429,12 @@
       "set_utc": "2026-05-05T07:47:07.137Z",
       "method_key": "swe.rise_trans_disc_center",
       "rise_local": "2026-05-06T03:31:19.672+08:00",
-      "set_local": "2026-05-05T15:47:07.137+08:00"
+      "next_rise_after_reference": "2026-05-05T19:31:19.672Z",
+      "next_rise_after_reference_local": "2026-05-06T03:31:19.672+08:00",
+      "set_local": "2026-05-05T15:47:07.137+08:00",
+      "next_set_after_reference": "2026-05-05T07:47:07.137Z",
+      "next_set_after_reference_local": "2026-05-05T15:47:07.137+08:00",
+      "note": "next_rise/set_after_reference may fall on different civil days; not a same-day rise/set pair guarantee"
     }
   ],
   "planetary_hours": {
@@ -534,9 +634,9 @@
         "ruler_id": "SUN",
         "ruler_name": "太阳",
         "start_utc": "2026-05-05T13:12:31.556Z",
-        "end_utc": "2026-05-05T14:05:12.991Z",
+        "end_utc": "2026-05-05T14:05:12.992Z",
         "start_local": "2026-05-05T21:12:31.556+08:00",
-        "end_local": "2026-05-05T22:05:12.991+08:00",
+        "end_local": "2026-05-05T22:05:12.992+08:00",
         "duration_minutes": 52.6906
       },
       {
@@ -544,9 +644,9 @@
         "period": "night",
         "ruler_id": "VENUS",
         "ruler_name": "金星",
-        "start_utc": "2026-05-05T14:05:12.991Z",
+        "start_utc": "2026-05-05T14:05:12.992Z",
         "end_utc": "2026-05-05T14:57:54.427Z",
-        "start_local": "2026-05-05T22:05:12.991+08:00",
+        "start_local": "2026-05-05T22:05:12.992+08:00",
         "end_local": "2026-05-05T22:57:54.427+08:00",
         "duration_minutes": 52.6906
       },
@@ -567,9 +667,9 @@
         "ruler_id": "MOON",
         "ruler_name": "月亮",
         "start_utc": "2026-05-05T15:50:35.863Z",
-        "end_utc": "2026-05-05T16:43:17.298Z",
+        "end_utc": "2026-05-05T16:43:17.299Z",
         "start_local": "2026-05-05T23:50:35.863+08:00",
-        "end_local": "2026-05-06T00:43:17.298+08:00",
+        "end_local": "2026-05-06T00:43:17.299+08:00",
         "duration_minutes": 52.6906
       },
       {
@@ -577,9 +677,9 @@
         "period": "night",
         "ruler_id": "SATURN",
         "ruler_name": "土星",
-        "start_utc": "2026-05-05T16:43:17.298Z",
+        "start_utc": "2026-05-05T16:43:17.299Z",
         "end_utc": "2026-05-05T17:35:58.734Z",
-        "start_local": "2026-05-06T00:43:17.298+08:00",
+        "start_local": "2026-05-06T00:43:17.299+08:00",
         "end_local": "2026-05-06T01:35:58.734+08:00",
         "duration_minutes": 52.6906
       },
@@ -600,9 +700,9 @@
         "ruler_id": "MARS",
         "ruler_name": "火星",
         "start_utc": "2026-05-05T18:28:40.170Z",
-        "end_utc": "2026-05-05T19:21:21.605Z",
+        "end_utc": "2026-05-05T19:21:21.606Z",
         "start_local": "2026-05-06T02:28:40.170+08:00",
-        "end_local": "2026-05-06T03:21:21.605+08:00",
+        "end_local": "2026-05-06T03:21:21.606+08:00",
         "duration_minutes": 52.6906
       },
       {
@@ -610,9 +710,9 @@
         "period": "night",
         "ruler_id": "SUN",
         "ruler_name": "太阳",
-        "start_utc": "2026-05-05T19:21:21.605Z",
+        "start_utc": "2026-05-05T19:21:21.606Z",
         "end_utc": "2026-05-05T20:14:03.041Z",
-        "start_local": "2026-05-06T03:21:21.605+08:00",
+        "start_local": "2026-05-06T03:21:21.606+08:00",
         "end_local": "2026-05-06T04:14:03.041+08:00",
         "duration_minutes": 52.6906
       },

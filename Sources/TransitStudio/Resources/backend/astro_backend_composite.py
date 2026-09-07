@@ -106,6 +106,7 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
             composite_lons[body_id] = mid
 
     # ASC/MC midpoints
+    comp_jd = (a_jd + b_jd) / 2.0
     asc_lat = (a_lat + b_lat) / 2.0
     asc_lon = geographic_longitude_midpoint(a_lon, b_lon)
     a_cusps, a_angles, _ = build_houses(a_jd, a_lat, a_lon, house_system, sidereal, warnings)
@@ -122,8 +123,8 @@ def calculate_composite(request: dict[str, Any], warnings: list[str]) -> dict[st
         comp_cusps = [norm360(first_cusp + 30.0 * i) for i in range(12)]
     else:
         try:
-            raw_cusps, _, _ = build_houses(a_jd, asc_lat, asc_lon, house_system, sidereal, warnings)
-            mc_delta = norm360(comp_mc - a_angles["MC"])
+            raw_cusps, raw_angles, _ = build_houses(comp_jd, asc_lat, asc_lon, house_system, sidereal, warnings)
+            mc_delta = norm360(comp_mc - raw_angles["MC"])
             comp_cusps = [norm360(c + mc_delta) for c in raw_cusps]
         except Exception as exc:
             warnings.append(

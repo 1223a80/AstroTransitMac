@@ -470,7 +470,7 @@ def calculate_hyleg_alcocoden(
                 ),
                 "eligible_under_profile": eligible_under_profile,
                 "rejection_reason": rejection_reason,
-                "rank": 0,
+                "rank": None,
                 "reason": (
                     f"{dignity_label} ruler of hyleg"
                     + (f"；见证 {witness_aspect} orb={witness_orb}" if sees else "；不见 Hyleg → 淘汰")
@@ -481,8 +481,6 @@ def calculate_hyleg_alcocoden(
         # Select only among candidates that see Hyleg and hold dignity.
         selectable_pool = [c for c in alcocoden_candidates if c["eligible_under_profile"]]
         selectable_pool.sort(key=lambda c: (-c["weight"], -c["own_condition_score"]))
-        for index, candidate in enumerate(alcocoden_candidates):
-            candidate["rank"] = index + 1
         for index, candidate in enumerate(selectable_pool):
             candidate["rank"] = index + 1
         selectable_alcocoden = selectable_pool[0] if selectable_pool else None

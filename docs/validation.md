@@ -2,21 +2,38 @@
 
 ## One-Shot Local Gate
 
-`bash check_vibe_changes.sh` runs the whole local gate in one command: pytest, swift build, swift test, and backend smokes (classical / scan / horary / vedic / rectify). Use it before declaring any change done.
+```bash
+bash check_vibe_changes.sh
+```
 
-GitHub Actions (`.github/workflows/ci.yml`) runs the same checks automatically on every push; a red ❌ on the repo page means the pushed change broke something.
+The gate runs the complete Python suite, Swift build, Swift tests including **live backend decoding for every JSON request in Examples/**, and diff whitespace checks. Any failed command stops the gate. The live suite uses the production BackendClient and current built resource bundle, so a stale fixture cannot hide backend/Swift drift.
+
+`swift test` alone keeps the live suite disabled so ordinary model/export tests do not require Python. Local gate and CI explicitly enable it:
+
+```bash
+TRANSIT_LIVE_CONTRACTS=1 swift test --filter LiveBackendContractTests
+```
+
+The gate selects an existing Python that imports pytest, pyswisseph and jsonschema (project .venv, PATH, then common macOS installations). To choose it explicitly or keep build files outside the project:
+
+```bash
+TRANSIT_TEST_PYTHON=/absolute/path/to/python3 \
+SWIFTPM_BUILD_PATH=/private/tmp/astrotransit-validation-build \
+bash check_vibe_changes.sh
+```
+
+The selected Python's bin directory is also used for subprocess tests. Python bytecode and pytest caches are disabled by the gate. Remove the selected build directory after validation/packaging when no longer needed.
 
 ## Environment
 
-Install Python dependencies once:
+If no existing interpreter has the dependencies, create a virtual environment and install from a domestic mirror:
 
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-dev.txt
+.venv/bin/python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements-dev.txt
 ```
 
-The system Python may also work if `pyswisseph` is already installed.
+Runtime needs pyswisseph; the full gate also needs pytest and jsonschema. No installation is needed when a suitable environment is already present.
 
 ## Backend Tests
 
@@ -117,7 +134,7 @@ swift test --filter BackendContractTests   # vedic/synastry/composite/davison/pr
 
 ### Backend Contract Fixtures
 
-`BackendContractTests` decode the captured real backend outputs in `SwiftTests/Fixtures/`. If a fixture test fails after a backend change, the Swift models and backend schema have drifted — either fix the unintended backend change or update the Swift model. Only after an **intentional** schema change, regenerate the fixture:
+`BackendContractTests` decode the captured real backend outputs in `SwiftTests/Fixtures/`. Static fixtures represent a historical output, so they must be paired with LiveBackendContractTests. If a fixture test fails after a backend change, the Swift models and backend schema have drifted — either fix the unintended backend change or update the Swift model. Only after an **intentional** schema change, regenerate the fixture:
 
 ```bash
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py \

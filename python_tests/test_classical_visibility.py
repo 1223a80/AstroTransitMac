@@ -143,3 +143,46 @@ def test_section_isolation() -> None:
     assert result["heliacal_events"] == []
     assert result["rise_set"]
     assert result["planetary_hours"] is None
+
+
+def test_heliacal_previous_event_populated() -> None:
+    req = _request(body_ids=["VENUS"])
+    result = calculate_classical_visibility(req, [])
+    assert result["heliacal_events"]
+    ok_events = [e for e in result["heliacal_events"] if e["status"] == "ok"]
+    assert len(ok_events) > 0
+    # At least one heliacal event should have previous_event_utc found by backward iterator
+    prev_found = [e for e in ok_events if e["previous_event_utc"] is not None]
+    assert len(prev_found) > 0
+    target_utc_iso = "2026-05-05T04:00:00Z"
+    for e in prev_found:
+        assert e["previous_event_utc"] < target_utc_iso <= e["exact_utc"]
+        assert e["days_from_previous_event"] is not None
+        assert e["days_from_previous_event"] > 0
+
+
+def test_moon_evening_first_nearest_previous_event() -> None:
+    # 2026-08-15 12:00 Shanghai (2026-08-15T04:00:00Z)
+    req = _request(
+        moment={
+            "year": 2026,
+            "month": 8,
+            "day": 15,
+            "hour": 12,
+            "minute": 0,
+            "timezone": "Asia/Shanghai",
+        },
+        body_ids=["MOON"],
+        heliacal_event_types=["evening_first"],
+    )
+    result = calculate_classical_visibility(req, [])
+    events = [e for e in result["heliacal_events"] if e["body_id"] == "MOON" and e["status"] == "ok"]
+    assert len(events) > 0
+    moon_ev = events[0]
+    # Nearest previous event is on ~2026-08-14 (JD 2461266.94), less than 2 days prior to target
+    assert moon_ev["previous_event_utc"] is not None
+    assert moon_ev["previous_event_utc"] < "2026-08-15T04:00:00Z" <= moon_ev["exact_utc"]
+    assert moon_ev["days_from_previous_event"] is not None
+    assert moon_ev["days_from_previous_event"] < 5.0, (
+        f"Expected nearest previous event (~0.7d ago), got {moon_ev['days_from_previous_event']} days ago"
+    )

@@ -338,9 +338,12 @@ def find_chart_shapes(
     sorted_lons = [lons[b] for b in sorted_bodies]
     n = len(sorted_lons)
     shapes: list[dict[str, Any]] = []
-    span = sorted_lons[-1] - sorted_lons[0]
-    if span < 0:
-        span += 360.0
+
+    # Circular gaps and minimal spanning arc
+    gaps = [(sorted_lons[(i + 1) % n] - sorted_lons[i]) % 360.0 for i in range(n)]
+    max_gap = max(gaps)
+    max_gap_idx = gaps.index(max_gap)
+    span = 360.0 - max_gap
 
     total_members = list(lons.keys())
 
@@ -360,11 +363,8 @@ def find_chart_shapes(
             "confidence": "high" if span <= 150.0 else "medium",
         })
 
-    # Locomotive: gap of 60-120°, rest within ~300°
+    # Locomotive: gap of 60-150°, rest within ~300°
     if n >= 4:
-        gaps = [(sorted_lons[(i + 1) % n] - sorted_lons[i]) % 360.0 for i in range(n)]
-        max_gap = max(gaps)
-        max_gap_idx = gaps.index(max_gap)
         if 60.0 <= max_gap <= 150.0:
             leader = sorted_bodies[(max_gap_idx + 1) % n]
             other_members = [b for b in sorted_bodies if b != leader]

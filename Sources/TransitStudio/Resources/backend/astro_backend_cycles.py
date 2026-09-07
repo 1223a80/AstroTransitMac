@@ -58,30 +58,11 @@ def _iso_local(dt: datetime, tz_name: str) -> str:
 
 def _utc_from_jd(jd: float) -> datetime:
     year, month, day, hour = swe.revjul(jd, swe.GREG_CAL)
-    whole_hours = int(hour)
-    minutes_f = (hour - whole_hours) * 60.0
-    whole_minutes = int(minutes_f)
-    seconds_f = (minutes_f - whole_minutes) * 60.0
-    whole_seconds = int(seconds_f)
-    micros = int(round((seconds_f - whole_seconds) * 1_000_000))
-    if micros >= 1_000_000:
-        whole_seconds += 1
-        micros -= 1_000_000
-    if whole_seconds >= 60:
-        whole_minutes += 1
-        whole_seconds -= 60
-    if whole_minutes >= 60:
-        whole_hours += 1
-        whole_minutes -= 60
+    total_microseconds = round(float(hour) * 3_600_000_000.0)
     return datetime(
-        int(year),
-        int(month),
-        int(day),
-        whole_hours % 24,
-        whole_minutes,
-        whole_seconds,
-        max(0, micros),
-        tzinfo=timezone.utc,
+        int(year), int(month), int(day), tzinfo=timezone.utc,
+    ) + timedelta(
+        microseconds=total_microseconds,
     )
 
 

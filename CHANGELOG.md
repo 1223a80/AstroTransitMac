@@ -1,5 +1,137 @@
 # Changelog
 
+## 2026-09-07 — 当前版本收尾（待提交）
+
+- 修复太阳弧结果中 `speed: null` 令整份 JSON 无法解码的问题：位置模型能表达“不适用”，同时保留独立的年度推运率；界面、Markdown 与 CSV 明确区分日速度和年推运率，专项回归覆盖 JSON、显示与导出。
+- 修复 SwiftPM 下后端资源定位，新增生产路径上的实时跨语言契约测试：逐个执行 `Examples/` 的 43 个请求，并由对应 Swift 模型实际解码；CI 与本地门禁纳入这项检查，补充生时矫正请求样例。
+- 修正吠陀 Sarvashtakavarga 误将 ASC 纳入七曜总和的问题：SAV 恢复为 337，ASC BAV 49 保持单列，相关汇总与测试口径一致。
+- 发布元数据升至 `1.5.2 (51)`，对应本轮兼容性与计算修复。
+- 重新生成受影响的真实后端夹具；归档历史任务计划，增加当前状态入口，明确区分已实现修复、尚未实施的架构提案和后续审计候选。
+- 验证：Python 1091 项通过；Swift 227 项、31 个 suite 通过，其中包括 43 个实时后端→前端解码样例；`git diff --check` 通过。
+- 已在整合 `origin/main` 后构建、签名并安装至 `/Applications/TransitStudio.app`；安装包版本核对为 `1.5.2 (51)`，本轮构建、测试和封装缓存已清理。
+
+## 2026-08-26 — 后端计算缺陷并行扫描（只读审计）
+
+- 新增 `docs/backend-calculation-bug-scan-20260826.md`：7 路子代理按模块并行扫描全部 50 个后端 Python 模块 + modern_timing.py 人工补审，P1/P2 均经 `.venv` 数值复现。
+- 发现 **1 项 P1**（SAV 求和含 ASC 行致总量 386≠337）、**11 项 P2**（恒星宫位缺 SIDEREAL flag、hellenistic audit 证据行恒空、出生瞬间被当作返照、Yogini 起算错位、特殊上升点/时间型 upagraha 占位实现、approaching_sun 反转、mundane 日主/时主键名错配、scan 相位标签随窗口平移翻转、Kite aspect_types 恒 opposition、patterns 按 type 去重丢实例、Davison 非大圆中点）、**24 项 P3**；并复核本分支此前 13 项修复全部成立。
+- 本次未修改任何源码；修复计划见该文档第五节。
+
+## 2026-08-15 — 审查意见（Code Review）缺陷修复与规范对齐
+
+- **[P1] Heliacal previous 迭代回溯算法重构**：
+  - 重构 `astro_backend_visibility.py` 中的 `_find_previous_heliacal_event`：从历史起点向前递进搜索，记录最后一个严格小于目标时刻的事件并返回，确保短周期事件（如月亮 `EVENING_FIRST`）返回真正的最邻近前一次事件而非上上次事件。
+  - 将 Swiss Ephemeris 异常记录进 `warnings`，杜绝静默吞掉异常。
+  - 在 `python_tests/test_classical_visibility.py` 新增短周期月亮事件精确测试及 `previous < target <= exact` 拓扑断言。
+- **[P1] Chart Shapes 还原原始阈值与独立分类逻辑**：
+  - 修正 `astro_backend_patterns.py` 中的 `find_chart_shapes`：保留环形最小包围弧 `span = 360.0 - max_gap`，还原原始分类阈值（Bundle <= 90°，Bowl < 180°，Locomotive 60°..150°），恢复 Bundle 与 Bowl 独立共存逻辑。
+  - 在 `python_tests/test_patterns.py` 补充 `[350, 355, 5, 10]` 双重检出、旋转不变性、90°/180° 边界条件及 100° 仅 Bowl 断言测试。
+- **[P1] Zodiacal Releasing 单位 Profile 文档与口径明确**：
+  - 在 `PLANS.md`、`CHANGELOG.md` 及生产代码注释中明确定义为 Classical Hybrid Profile（L1: 365.2425 日回归年、L2: 30 日、L3: 2.5 日、L4: 5 小时），修正纯 360 日模型称谓。
+- **[P2] 行星会合步长生产 Helper 与直接测试**：
+  - 在 `astro_backend_planetary_synodic.py` 提取公共生产 helper `_synodic_search_step`。
+  - 在 `python_tests/test_planetary_synodic.py` 直接断言该 helper 并通过 spy/monkeypatch 验证生产调用实际传参。
+- **[P2] Jaimini Chara Karaka 缺星时元数据与完整性标记**：
+  - 在 `astro_backend_jyotish_jaimini.py` 中补充 `requested_system`、`complete`、`missing_planets` 完整性字段，缺星时标明 `f"{system_name} (incomplete)"`。
+  - 在 `python_tests/test_jyotish_focused.py` 新增缺 Rahu 及缺古典行星的完整性测试。
+
+## 2026-08-14 — 任务 13：修复现代周期（Modern Cycles）JD 转 UTC 进位机制
+
+- 修改 `astro_backend_cycles.py` 中的 `_utc_from_jd`：
+  - 使用 `datetime + timedelta(microseconds=total_microseconds)` 统一处理时间换算。
+  - 根除当时间逼近 24:00:00 时因浮点/微秒舍入导致 `whole_hours % 24 = 0` 并发生跨日/跨月倒退（如 2月29日 23:59:59 倒退为 2月29日 00:00:00 而非 3月1日 00:00:00）的进位缺陷。
+- 在 `python_tests/test_modern_cycles.py` 新增 `TestUtcFromJdMidnightCarry` 测试，覆盖跨月、跨年及微秒溢出场景。
+
+## 2026-08-14 — 任务 12：修复 Alcocoden 候选排名语义（不合格置 None）
+
+- 修改 `astro_backend_classical_audit.py`：
+  - 将所有 Alcocoden 候选人的初始排名设为 `None`。
+  - 仅对满足资格条件（`eligible_under_profile` 为 True）的合格候选池 `selectable_pool` 按权重及状态赋予 `rank = 1, 2, ..., N`。
+  - 未入选/被淘汰候选人保持 `rank: None`，消除淘汰候选被误标普通顺位数字的歧义。
+- 在 `python_tests/test_classical.py` 补充验证合格/淘汰候选排名断言及全员淘汰场景。
+
+## 2026-08-14 — 任务 11：修复 Heliacal Previous 回溯查询与 7 参数迭代机制
+
+- 修改 `astro_backend_visibility.py`：
+  - 废除向 `swe.heliacal_ut` 传入第 8 个参数（引发 `TypeError` 并导致静默置 `None`）的旧调用。
+  - 实现全新的 `_find_previous_heliacal_event` 安全回退迭代 helper，通过合法的 7 参数向历史时间窗口逐步迭代回溯，寻找并返回最邻近的目标时间前一次日出/日落相位事件。
+- 在 `python_tests/test_classical_visibility.py` 新增 `test_heliacal_previous_event_populated` 测试，验证 `previous_event_utc` 与 `days_from_previous_event` 字段的正确生成。
+
+## 2026-08-14 — 任务 10：修复跨 0° 星盘形态（Chart Shape）跨度与朝向判定
+
+- 修改 `astro_backend_patterns.py` 中的 `find_chart_shapes`：
+  - 引入环形最大缺口算法 `max_gap = max(gaps)`，跨度计算重构为 `span = 360.0 - max_gap`。
+  - 修复当行星群横跨 0° 白羊座（如双鱼至金牛）时跨度被错误算作 300°+ 并导致 Bundle/Bowl/Locomotive 漏检的问题。
+  - 修正 Locomotive 领头星判定为从最大缺口顺行方向起算的第一颗行星。
+- 在 `python_tests/test_patterns.py` 新增 `TestChartShapes`，验证跨 0° 条件下的 Bundle、Bowl 与 Locomotive 领头星识别。
+
+## 2026-08-14 — 任务 9：修复组合盘象限宫位旋转基准与 A/B 交换对称性
+
+- 修改 `astro_backend_composite.py`：
+  - 修正象限宫位重建旋转基准：由 `a_angles['MC']` 修复为 `raw_angles['MC']`，保证第 10 宫宫头与组合中天 `comp_mc` 准确对齐。
+  - 使用中点时间 `comp_jd = (a_jd + b_jd) / 2.0` 计算参考宫位，确保无论 `person_a` 与 `person_b` 输入次序如何，生成的宫位结果严格对称一致。
+- 在 `python_tests/test_modern_relationship.py` 新增 `test_placidus_quadrant_houses_symmetric_under_ab_swap` 与 `test_placidus_mc_aligns_with_composite_mc` 测试。
+
+## 2026-08-14 — 任务 8：修复行星会合步长选择（取快星 min 步长）
+
+- 修改 `astro_backend_planetary_synodic.py` 中的 `_phase_events`：将步长选择从 `max` 纠正为 `min(_step_for("transit", body_a), _step_for("transit", body_b))`。
+- 保证当任意星体为月亮或内行星等快星时，寻根步长受快星最高速度约束，避免因慢星步长导致相位跳步遗漏。
+- 在 `python_tests/test_planetary_synodic.py` 新增快慢组合（月亮-土星）全量合相检测与步长选择断言测试。
+
+## 2026-08-14 — 任务 7：重构 Zodiacal Releasing 子期并生成真实 LoB 跳跃
+
+- 在 `PLANS.md` 确定并记录 `ZR_UNIT_PROFILE` 规格（L2=30日/月、L3=2.5日、L4=5小时）。
+- 修改 `astro_backend_classical_timing.py`：
+  - 废除原有的比例压缩函数 `_zr_proportional_sub_periods` 与旧 `_zr_sub_levels`，实现全新的 `_zr_sub_periods_sequence` 生成器。
+  - 子期根据固定单位逐段累积推进，超出父期末端时严格截断至 `end_local`。
+  - 在完成第一轮 12 星座周期后，下一子期（第 13 期）真实跳跃至父期起始星座对宫 `(origin_sign + 6) % 12` 并由该对宫顺行继续。
+  - 修正半开区间激活判定与各层级 `origin_sign_idx` 传递。
+- 在 `python_tests/test_classical.py` 新增 `TestZodiacalReleasingSubPeriods`，覆盖短父期无 LoB、水瓶 30 年生成对宫狮子跳跃、子期截断、半开区间边界及 L4 支持测试；并通过全部 112 项古典阶段门禁。
+
+## 2026-08-14 — 任务 6：修复 Nathonatha Bala 地方平时换算与清理宫位调用
+
+- 修改 `astro_backend_jyotish_shadbala.py`：基于 `jd_lmt = jd_ut + longitude / 360.0` 正确计算地方平时（东经为正、西经为负）及距当地午夜的小时数，将 Nata 强弱输出约束在 `[0, 60]`。
+- 移除了冗余的 `call_houses_ex` 调用及静默 fallback，日夜强弱纯粹由 LMT 决定。
+- 在 `python_tests/test_jyotish_focused.py` 新增 `TestNathonathaBala`，验证经度影响、120°E/120°W 与零度经度对比、正午/午夜极端值以及跨日边界连续性；并通过全部 240 项 Jyotish 阶段测试。
+
+## 2026-08-14 — 任务 5：重写 Ekadhipatya Shodhana 为完整规则矩阵
+
+- 修改 `astro_backend_jyotish_ashtakavarga.py`：
+  - 修复 `ekadhi` 初始化错误，改为从 `trikona` 矩阵深复制（而非 `rekha`）。
+  - 新增 `planet_count_by_rasi`，基于七曜真实入驻统计各星座星体数（排除 ASC、Rahu、Ketu）。
+  - 实现独立的 `_reduce_ekadhipatya_pair` 规则 helper，完整覆盖 7 条互斥削减规则（单侧为 0 不变、双侧入驻不变、双侧无星同值归零/异值取小、单侧入驻视大小做差或清零）。
+- 在 `python_tests/test_jyotish_focused.py` 新增 `TestEkadhipatyaShodhana`，对 7 种分支逻辑参数化测试，并验证完整矩阵削减与 `sarva_ekadhi` 列和守恒。
+
+## 2026-08-14 — 任务 4：修复 Yogakaraka 映射字典
+
+- 修改 `astro_backend_jyotish_yoga.py`：纠正上升星座 Yogakaraka 判定映射，金牛/天秤对应 Saturn，巨蟹/狮子对应 Mars，摩羯/水瓶对应 Venus，其余 6 个上升不产生 Yogakaraka。
+- 修复了巨蟹误映射为 Venus、狮子误映射为 Mercury，以及漏掉天秤和水瓶的问题。
+- 在 `python_tests/test_jyotish_focused.py` 新增 `TestYogakarakaMapping`，对全量 12 个上升星座及缺星条件做参数化测试。
+
+## 2026-08-14 — 任务 3：修复 8 星 Chara Karaka 截断与名称顺序
+
+- 修改 `astro_backend_jyotish_jaimini.py`：为 7 星制和 8 星制分别定义独立名称表；8 星制包含 `Pitri Karaka`（第 5 槽位）并在八星齐全时完整返回 8 项，`Dara Karaka` 恒为末位。
+- 保证 `system` 字段与实际模式一致，不为缺失行星生成虚构候选，并保证同经度下的稳定排序。
+- 在 `python_tests/test_jyotish_focused.py` 新增 8 星制完整 8 项顺序、7 星制 7 项顺序、缺星不补位与确定性排序测试。
+
+## 2026-08-14 — 任务 2：修复 D30 Trimsamsha 偶数星座分段与映射
+
+- 修改 `astro_backend_jyotish_varga.py` 中的 `_calc_trimsamsa`：将偶数星座的分段与跨度修正为 BPHS 规范的金牛 5° `[0, 5)`、处女 7° `[5, 12)`、双鱼 8° `[12, 20)`、摩羯 5° `[20, 25)`、天蝎 5° `[25, 30)`。
+- 修正各段内部的连续映射比例与边界钳制，消除边界点溢出到相邻星座的问题，保证输出角度在 `[0, 360)` 且各段映射方向正确。
+- 在 `python_tests/test_jyotish_focused.py` 新增 `TestD30Trimsamsha`，包含 14 个偶数边界点参数化测试、反向映射斜率测试与奇数星座回归测试。
+
+## 2026-08-14 — 任务 1：修复 Arudha Pada 例外规则
+
+- 修改 `astro_backend_jyotish_arudha.py`：废除原本对本宫与对宫统一 `(pada + 10) % 12` 的错误逻辑。
+- 严格按照 BPHS 规则实现：初算 Pada 落原宫 H 时移至原宫起第 10 宫 `(H + 9) % 12`；初算 Pada 落原宫对宫时移至原宫起第 4 宫 `(H + 3) % 12`；其余情况保持初算 Pada。
+- 替换 `python_tests/test_jyotish_focused.py` 中的旧测试，新增覆盖本宫例外、对宫例外、普通情况、双鱼座回绕与全 Pada 范围验证的聚焦测试。
+
+## 2026-08-14 — 计算审计缺陷强约束修复规范（仅文档）
+
+- 新增 `docs/calculation-audit-repair-spec.md`，将计算审计中的 13 项缺陷拆成固定顺序的独立修复任务。
+- 每项任务明确允许修改的文件、锁定算法规则、必须新增且在旧代码上失败的回归测试、禁止做法、聚焦门禁与完成条件，覆盖 Arudha、D30、Chara Karaka、Yogakaraka、Ekadhipatya、Nathonatha、ZR/LoB、会合搜索、组合盘宫位、跨 0°形态、Heliacal previous、Alcocoden rank 和 JD 跨日。
+- ZR 的 L1–L4 单位 profile 被设为实施前确认门禁，禁止执行者猜测 L4；fixture 只允许按 `docs/validation.md` 用真实后端再生成。
+- 本次未修改生产代码、测试、fixture、版本或安装包，未执行构建和打包。
+
 ## 2026-08-14 — KP 与生时矫正合并发布
 
 - 生时矫正证据工作区基线与 KP 1–249 完整接入已整理为独立任务提交；KP 提交为 `e4f3d07`，任务分支 `codex/feature-kp-horary` 已推送并确认与远端一致。
@@ -12,6 +144,22 @@
 - 在项目 `AGENTS.md` 固化 macOS 钥匙串与 Codex 沙箱规则：沙箱内的 `gh auth status` 可能因无法读取登录钥匙串而把有效凭证误报为无效，禁止仅凭该结果要求用户重复授权。
 - 后续须先在沙箱外复核 `gh auth status` 与 keyring 账号；`gh api`、`git fetch/pull/push` 和 PR 创建等依赖 GitHub 凭证的操作也统一在沙箱外执行。
 - 禁止因为沙箱内出现 `token invalid` 就启动第二次 device-login；本次已在沙箱外确认账号 `1223a80` 的 keyring 凭证有效。
+
+## 2026-08-13 — 架构重设计方案独立评审（仅文档）
+
+- 新增 `docs/architecture-redesign-review.md`，对 `docs/architecture-redesign.md` 做前端、后端、契约、测试、导出和迁移路线的源码对照评审。
+- 总体判定为 **Conditional Go**：保留本地常驻服务、transport 抽象、Reducer/Effect 和垂直迁移方向，但当前方案尚不能直接作为阶段 0/1 的实施规格。
+- 记录三个后端 P0：同解释器快速路径会与 Swiss Ephemeris 全局状态串盘；同步 Python 内核无法按稿“杀计算协程”；仅含 `sidereal_flag` 且把 JD 量化到秒的缓存键会混淆不同 ayanāṃśa 并改变亚秒语义。
+- 记录契约与前端阻断：默认 envelope 会破坏现有 CLI/fixture/Swift 解码契约；新旧两种 envelope 定义不一致；现有 Effect 类型无法表达 cancel；状态域缺共享 Chart/Question context 与全局 RunCoordinator；四态 RunState 无法保留旧结果、运行、warning 和 failure 的正交语义。
+- 给出阶段 `-1` 至 `5` 的修订路线：先冻结 golden 与量化 ROI，再纯抽取 dispatcher，随后引入无缓存 daemon、故障/顺序 parity、根状态与可测试 mini-TCA，最后迁移模式与统一导出；JSON 保持独立无损路径。
+- 本次未修改原方案或产品代码，未运行构建/测试/打包。
+
+## 2026-08-13 — 前后端架构重设计方案（仅文档）
+
+- 新增 `docs/architecture-redesign.md`：基于源码量化审计的完整重设计方案，覆盖常驻 daemon 后端、TCA 风格前端状态机、契约 envelope 化、导出体系统一与阶段 0–5 渐进迁移路线图。
+- 决策基线：macOS 单机为主；后端改本地常驻服务（TCP loopback + 随机端口 + 握手 token）；前端引入自研轻量 TCA 内核（零第三方依赖）；先只出方案，暂不落地。
+- 方案与既有文档衔接：`docs/schemas/` 契约雏形、`docs/frontend-refactor/05-viewmodel-extraction.md`、`docs/backend-contracts.md` 为起点；horary v1→v2 弃用先例推广为通用 schema 版本化流程。
+- 本次未改动任何产品代码，无构建/测试/打包。
 
 ## 2026-08-12 — KP 数字直接输入修复
 

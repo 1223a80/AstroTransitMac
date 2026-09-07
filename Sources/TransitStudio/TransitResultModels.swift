@@ -83,10 +83,12 @@ struct PositionRow: Codable, Identifiable {
     let latitude: Double
     let declination: Double?
     let outOfBounds: Bool?
-    let speed: Double
+    /// Daily physical motion is not applicable to uniformly directed points.
+    let speed: Double?
     let sign: String
     let degreeText: String
     let house: Int?
+    var solarArcRateDegPerYear: Double? = nil
 
     var id: String { bodyID }
 
@@ -101,6 +103,7 @@ struct PositionRow: Codable, Identifiable {
         case sign
         case degreeText = "degree_text"
         case house
+        case solarArcRateDegPerYear = "solar_arc_rate_deg_per_year"
     }
 }
 

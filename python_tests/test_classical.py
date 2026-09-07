@@ -358,6 +358,70 @@ class TestLoosingOfBond:
         assert not _detect_loosing_of_bond(11, pisces_aries, ref)[0]
 
 
+class TestZodiacalReleasingSubPeriods:
+    def test_short_parent_period_no_lob(self) -> None:
+        # Taurus Lot (8 years): L2 has ~6 subperiods, should NOT trigger LoB
+        lot = {"id": "fortune", "name": "Lot of Fortune", "longitude": 35.0, "house": 1} # 35° = Taurus (1)
+        birth = datetime(2000, 1, 1, 12, 0)
+        ref = datetime(2004, 1, 1, 12, 0)
+        zr = zodiacal_releasing_summary(lot, birth, ref, max_level=2)
+        assert not zr["loosing_of_bond"]
+        assert len(zr["l2_periods"]) < 12
+        assert zr["l2_periods"][-1]["end_local"] == zr["l1_periods"][0]["end_local"]
+
+    def test_aquarius_l1_generates_lob_to_leo(self) -> None:
+        # Aquarius Lot (30 years): L2 completes 12 signs (6330 days ~17.33 yrs) and jumps to Leo (opposite of Aquarius)
+        lot = {"id": "spirit", "name": "Lot of Spirit", "longitude": 315.0, "house": 10} # 315° = Aquarius (10)
+        birth = datetime(2000, 1, 1, 12, 0)
+        # Ref date 18 years after birth (around 2018), which is inside the LoB jump to Leo
+        ref = datetime(2018, 1, 1, 12, 0)
+        zr = zodiacal_releasing_summary(lot, birth, ref, max_level=2)
+        l2 = zr["l2_periods"]
+        assert len(l2) > 12
+        # Period 11 (12th sign) should be Capricorn (9)
+        assert l2[11]["sign_index"] == 9
+        # Period 12 (13th sign) should be Leo (4) - LoB jump!
+        assert l2[12]["sign_index"] == 4
+        # At ref date in 2018, LoB should be detected
+        assert zr["loosing_of_bond"] is True
+        assert zr["loosing_of_bond_level"] == "L2"
+        assert "跳至" in zr["loosing_of_bond_detail"]
+        assert "狮子" in zr["loosing_of_bond_detail"]
+
+    def test_last_sub_period_strictly_truncated_to_parent_end(self) -> None:
+        lot = {"id": "fortune", "name": "Lot of Fortune", "longitude": 0.0, "house": 1} # Aries (0, 15 years)
+        birth = datetime(2000, 1, 1, 12, 0)
+        ref = datetime(2005, 1, 1, 12, 0)
+        zr = zodiacal_releasing_summary(lot, birth, ref, max_level=3)
+        l1_end = zr["l1_periods"][0]["end_local"]
+        assert zr["l2_periods"][-1]["end_local"] == l1_end
+        active_l2 = next(p for p in zr["l2_periods"] if p["is_active"])
+        assert zr["l3_periods"][-1]["end_local"] == active_l2["end_local"]
+
+    def test_sub_period_half_open_active_boundary(self) -> None:
+        lot = {"id": "fortune", "name": "Lot of Fortune", "longitude": 0.0, "house": 1}
+        birth = datetime(2000, 1, 1, 12, 0)
+        zr1 = zodiacal_releasing_summary(lot, birth, birth, max_level=2)
+        # At exact birth time, first L2 period should be active
+        assert zr1["l2_periods"][0]["is_active"] is True
+        # At exact boundary of period 0 end, period 0 should NOT be active, period 1 should be active
+        p0_end = datetime.strptime(zr1["l2_periods"][0]["end_local"], "%Y-%m-%d %H:%M")
+        zr2 = zodiacal_releasing_summary(lot, birth, p0_end, max_level=2)
+        assert zr2["l2_periods"][0]["is_active"] is False
+        assert zr2["l2_periods"][1]["is_active"] is True
+
+    def test_l4_generation_contract(self) -> None:
+        lot = {"id": "fortune", "name": "Lot of Fortune", "longitude": 0.0, "house": 1}
+        birth = datetime(2000, 1, 1, 12, 0)
+        ref = datetime(2005, 1, 1, 12, 0)
+        zr_l3 = zodiacal_releasing_summary(lot, birth, ref, max_level=3)
+        assert len(zr_l3["l4_periods"]) == 0
+        zr_l4 = zodiacal_releasing_summary(lot, birth, ref, max_level=4)
+        assert len(zr_l4["l4_periods"]) > 0
+        assert zr_l4["current_active_level"] == "L4"
+
+
+
 class TestLotValue:
     def test_simple_lot(self) -> None:
         result = lot_value(0, 30, 60)
@@ -453,6 +517,35 @@ class TestHylegAlcocoden:
         assert isinstance(alc.get("candidates"), list)
         assert {candidate["planet_id"] for candidate in alc["candidates"]} == {"SATURN", "MERCURY", "MARS", "JUPITER", "VENUS"}
         assert "longevity_years" not in result
+
+        # Check ranking semantics
+        for c in alc["candidates"]:
+            if c["eligible_under_profile"]:
+                assert isinstance(c["rank"], int) and c["rank"] >= 1
+            else:
+                assert c["rank"] is None, f"Disqualified candidate {c['planet_id']} should have rank None, got {c['rank']}"
+
+    def test_all_disqualified_have_none_rank(self) -> None:
+        from astro_backend_classical import calculate_hyleg_alcocoden
+        # Sun at 0°, all other 5 planets positioned with no aspect (averse / 30° away)
+        angles = {"ASC": 0.0, "MC": 270.0, "DSC": 180.0, "IC": 90.0}
+        positions = {
+            "SUN": {"longitude": 0.0, "name": "太阳", "score": 3},      # Hyleg
+            "MOON": {"longitude": 30.0, "name": "月亮", "score": 2},
+            "SATURN": {"longitude": 30.0, "name": "土星", "score": 2},   # Semi-sextile (averse in classical)
+            "MERCURY": {"longitude": 30.0, "name": "水星", "score": 1},
+            "MARS": {"longitude": 30.0, "name": "火星", "score": 1},
+            "JUPITER": {"longitude": 30.0, "name": "木星", "score": 5},
+            "VENUS": {"longitude": 30.0, "name": "金星", "score": 4},
+        }
+        cusps = [0.0, 30.0, 60.0, 90.0, 120.0, 150.0, 180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
+        res = calculate_hyleg_alcocoden(0, angles, positions, 30.0, 50.0, cusps, True, "egyptian", "dorothean", [])
+        alc = res["alcocoden"]
+        for c in alc["candidates"]:
+            assert c["eligible_under_profile"] is False
+            assert c["rank"] is None
+        assert alc["selected"] == ""
+        assert alc["selected_id"] == ""
 
 
 class TestCircumambulations:

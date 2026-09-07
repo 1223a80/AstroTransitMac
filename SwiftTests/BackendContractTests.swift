@@ -33,6 +33,8 @@ struct BackendContractTests {
         let divisionals = try #require(result.divisionalCharts)
         #expect(!divisionals.isEmpty)
         #expect(result.ashtakavarga != nil)
+        #expect(result.ashtakavarga?.sav.rekha.reduce(0, +) == 337)
+        #expect(result.ashtakavarga?.bav.planets["ASC"]?.reduce(0, +) == 49)
         #expect(result.shadbala?.isEmpty == false)
         #expect(result.jaiminiKarakas != nil)
         #expect(result.arudha?.isEmpty == false)
@@ -107,6 +109,9 @@ struct BackendContractTests {
         #expect(!result.solarArcPlanets.isEmpty)
         #expect(result.arcValue != 0)
         #expect(result.solarArcPlanets.contains { $0.bodyID == "TRUE_NODE" })
+        #expect(result.solarArcPlanets.allSatisfy { $0.speed == nil })
+        #expect(result.natalPlanets.allSatisfy { $0.speed != nil })
+        #expect(result.solarArcPlanets.allSatisfy { ($0.solarArcRateDegPerYear ?? 0) > 0 })
         #expect(result.patterns?.isEmpty == false)
     }
 

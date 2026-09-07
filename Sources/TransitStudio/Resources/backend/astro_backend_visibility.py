@@ -185,6 +185,56 @@ def _body_rise_set(
     return row
 
 
+def _find_previous_heliacal_event(
+    jd_target: float,
+    geopos: tuple,
+    datm: tuple,
+    dobs: tuple,
+    object_name: str,
+    type_event: int,
+    flags: int = swe.FLG_SWIEPH,
+    lookback_days: float = 365.25 * 3,
+    warnings: list[str] | None = None,
+) -> float | None:
+    """Find the nearest previous heliacal event occurring strictly before jd_target."""
+    search_jd = jd_target - lookback_days
+    last_event_jd: float | None = None
+    max_iterations = 100
+
+    for _ in range(max_iterations):
+        try:
+            res = swe.heliacal_ut(
+                search_jd,
+                geopos,
+                datm,
+                dobs,
+                object_name,
+                int(type_event),
+                flags,
+            )
+            jds: list[float] = []
+            if isinstance(res, tuple) and len(res) >= 1:
+                if isinstance(res[0], (list, tuple)):
+                    jds = [float(x) for x in res[0] if isinstance(x, (int, float))]
+                else:
+                    jds = [float(x) for x in res if isinstance(x, (int, float)) and math.isfinite(float(x))]
+            if not jds:
+                break
+            ev_jd = jds[0]
+            if ev_jd >= jd_target - 1e-5:
+                # Reached or surpassed target moment
+                break
+            last_event_jd = ev_jd
+            # Step slightly past the found event to continue searching forward
+            search_jd = ev_jd + 0.001
+        except Exception as exc:
+            if warnings is not None:
+                warnings.append(f"{object_name} heliacal previous 回溯计算异常：{exc}")
+            break
+
+    return last_event_jd
+
+
 def _heliacal_events(
     *,
     body_ids: list[str],
@@ -245,49 +295,20 @@ def _heliacal_events(
                     )
                     continue
                 exact = _utc_from_jd(jds[0])
-                # Also search backward for previous event of same type (birth-state context).
+                # Search backward for previous event of same type using safe forward-advancing iteration
                 previous_exact = None
-                try:
-                    prev_result = swe.heliacal_ut(
-                        jd_start - 1.0,
-                        geopos,
-                        datm,
-                        dobs,
-                        object_name,
-                        int(type_event),
-                        swe.FLG_SWIEPH | getattr(swe, "HELIACAL_AVKIND_VISLIM", 0),
-                    )
-                    # Prefer dedicated backward flag when available
-                except Exception:
-                    prev_result = None
-                try:
-                    # pyswisseph: last arg backwards=True for previous
-                    prev_result = swe.heliacal_ut(
-                        jd_start,
-                        geopos,
-                        datm,
-                        dobs,
-                        object_name,
-                        int(type_event),
-                        swe.FLG_SWIEPH,
-                        True,
-                    )
-                    if isinstance(prev_result, tuple) and len(prev_result) >= 1:
-                        if isinstance(prev_result[0], (list, tuple)):
-                            prev_jds = [float(x) for x in prev_result[0] if isinstance(x, (int, float))]
-                        else:
-                            prev_jds = [
-                                float(x)
-                                for x in prev_result
-                                if isinstance(x, (int, float)) and math.isfinite(float(x))
-                            ]
-                        if prev_jds:
-                            previous_exact = _utc_from_jd(prev_jds[0])
-                except TypeError:
-                    # Signature without backwards parameter — leave previous unset.
-                    previous_exact = None
-                except Exception:
-                    previous_exact = None
+                prev_jd = _find_previous_heliacal_event(
+                    jd_start,
+                    geopos,
+                    datm,
+                    dobs,
+                    object_name,
+                    int(type_event),
+                    swe.FLG_SWIEPH,
+                    warnings=warnings,
+                )
+                if prev_jd is not None:
+                    previous_exact = _utc_from_jd(prev_jd)
 
                 days_to_next = (exact - start_utc).total_seconds() / 86400.0
                 days_from_prev = (

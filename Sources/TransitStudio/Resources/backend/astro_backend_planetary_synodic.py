@@ -89,6 +89,15 @@ def _pair_state(
     }
 
 
+def _synodic_search_step(
+    body_a: str,
+    body_b: str,
+    warnings: list[str] | None = None,
+) -> float:
+    """Return the search step for synodic event root-finding between two bodies."""
+    return min(_step_for("transit", body_a, warnings), _step_for("transit", body_b, warnings))
+
+
 def _phase_events(
     *,
     body_a: str,
@@ -101,8 +110,8 @@ def _phase_events(
     warnings: list[str],
 ) -> list[dict[str, Any]]:
     warning_keys: set[str] = set()
-    # Relative motion is slower than the faster body; use the slower step.
-    step = max(_step_for("transit", body_a, warnings), _step_for("transit", body_b, warnings))
+    # Relative motion must be sampled at least as fast as the faster body; use the smaller step.
+    step = _synodic_search_step(body_a, body_b, warnings)
     rows: list[dict[str, Any]] = []
     for phase in phases:
         angle = float(phase["angle"]) % 360.0

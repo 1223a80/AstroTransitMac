@@ -97,12 +97,13 @@ def calc_arudha_pada(
     # Normalize
     pada = pada % 12
 
-    # Exception: if pada falls in the same or opposite rasi, shift ten signs.
-    if pada == house_rasi or pada == (house_rasi + 6) % 12:
-        pada = (pada + 10) % 12
-        # If still same, add another sign // shouldn't happen
-        if pada == house_rasi:
-            pada = (pada + 1) % 12
+    # Exceptions according to BPHS standard rules:
+    # 1. If pada falls in the original house H, shift to 10th from H: (H + 9) % 12
+    # 2. If pada falls in the opposite house (H + 6) % 12, shift to 4th from H: (H + 3) % 12
+    if pada == house_rasi:
+        pada = (house_rasi + 9) % 12
+    elif pada == (house_rasi + 6) % 12:
+        pada = (house_rasi + 3) % 12
 
     return pada
 

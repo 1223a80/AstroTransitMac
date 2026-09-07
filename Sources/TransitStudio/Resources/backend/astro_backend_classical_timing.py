@@ -402,64 +402,73 @@ def _zr_walk(sign_idx: int, start: datetime, reference_dt: datetime, max_cycles:
     return rows
 
 
-def _zr_proportional_sub_periods(parent_sign_idx: int, parent_start: datetime, parent_duration_days: float, reference_dt: datetime, level: int, max_level: int) -> list[dict[str, Any]]:
-    if level > max_level:
+# Classical Hybrid Profile for Zodiacal Releasing:
+# - Level 1 (Years): Tropical astronomical year (365.2425 days / year via add_years_approx)
+# - Level 2 (Months): Fixed 30.0 days per sign-year unit
+# - Level 3 (Sub-periods): Fixed 2.5 days per sign-year unit
+# - Level 4 (Micro-periods): Fixed 5.0 hours (5/24 days) per sign-year unit
+ZR_UNIT_DAYS_BY_LEVEL = {
+    2: 30.0,
+    3: 2.5,
+    4: 5.0 / 24.0,
+}
+
+
+def _zr_sub_periods_sequence(
+    origin_sign_idx: int,
+    parent_start: datetime,
+    parent_end: datetime,
+    reference_dt: datetime,
+    level: int,
+    max_level: int,
+) -> list[dict[str, Any]]:
+    if level > max_level or level not in ZR_UNIT_DAYS_BY_LEVEL:
         return []
     ref_naive = reference_dt.replace(tzinfo=None) if reference_dt.tzinfo else reference_dt
     cursor = parent_start.replace(tzinfo=None) if parent_start.tzinfo else parent_start
-    rem_days = parent_duration_days
+    parent_end_naive = parent_end.replace(tzinfo=None) if parent_end.tzinfo else parent_end
+
+    unit_days = ZR_UNIT_DAYS_BY_LEVEL[level]
     rows: list[dict[str, Any]] = []
-    for offset in range(12):
-        sign_idx = (parent_sign_idx + offset) % 12
-        fraction = ZR_PERIOD_YEARS[sign_idx] / _ZR_TOTAL_YEARS
-        sub_days = rem_days * fraction
+    step = 0
+    curr_sign = origin_sign_idx
+
+    while cursor < parent_end_naive:
+        if step == 0:
+            curr_sign = origin_sign_idx
+        elif step == 12:
+            # LoB jump after full 12-sign first cycle
+            curr_sign = (origin_sign_idx + 6) % 12
+        else:
+            curr_sign = (curr_sign + 1) % 12
+
+        sub_days = ZR_PERIOD_YEARS[curr_sign] * unit_days
         sub_end = cursor + timedelta(days=sub_days)
+        if sub_end > parent_end_naive:
+            sub_end = parent_end_naive
+
         is_active = cursor <= ref_naive < sub_end
+        actual_days = (sub_end - cursor).total_seconds() / 86400.0
         row: dict[str, Any] = {
             "level": f"L{level}",
-            "sign": SIGNS[sign_idx],
-            "sign_index": sign_idx,
-            "ruler": planet_name(SIGN_RULERS[sign_idx]),
-            "years": round(sub_days / 365.2425, 2),
+            "sign": SIGNS[curr_sign],
+            "sign_index": curr_sign,
+            "ruler": planet_name(SIGN_RULERS[curr_sign]),
+            "years": round(actual_days / 365.2425, 4),
             "start_local": format_local(cursor),
             "end_local": format_local(sub_end),
             "is_active": is_active,
         }
         if is_active and level < max_level:
-            row["sub_periods"] = _zr_proportional_sub_periods(sign_idx, cursor, sub_days, reference_dt, level + 1, max_level)
+            row["sub_periods"] = _zr_sub_periods_sequence(
+                curr_sign, cursor, sub_end, reference_dt, level + 1, max_level
+            )
+        rows.append(row)
         cursor = sub_end
-        rows.append(row)
-    return rows
-
-
-def _zr_sub_levels(sign_idx: int, start: datetime, reference_dt: datetime, level: int, max_level: int, max_cycles: int = 60) -> list[dict[str, Any]]:
-    if level > max_level:
-        return []
-    ref = reference_dt.replace(tzinfo=None) if reference_dt.tzinfo else reference_dt
-    rows: list[dict[str, Any]] = []
-    idx = sign_idx
-    cursor = start.replace(tzinfo=None) if start.tzinfo else start
-    for _ in range(max_cycles):
-        years = ZR_PERIOD_YEARS[idx]
-        end = add_years_approx(cursor, years)
-        is_active = cursor <= ref < end
-        row: dict[str, Any] = {
-            "level": f"L{level}",
-            "sign": SIGNS[idx],
-            "sign_index": idx,
-            "ruler": planet_name(SIGN_RULERS[idx]),
-            "years": years,
-            "start_local": format_local(cursor),
-            "end_local": format_local(end),
-            "is_active": is_active,
-        }
-        if is_active and level < max_level:
-            row["sub_periods"] = _zr_sub_levels(idx, cursor, reference_dt, level + 1, max_level)
-        rows.append(row)
-        if is_active:
+        step += 1
+        if step > 200:  # safety break
             break
-        cursor = end
-        idx = (idx + 1) % 12
+
     return rows
 
 
@@ -589,32 +598,35 @@ def zodiacal_releasing_summary(lot: dict[str, Any], birth_dt: datetime, referenc
         }
 
     active_period = next((p for p in l1_periods if p["is_active"]), l1_periods[-1])
-    l1_duration_days = active_period["years"] * 365.2425
+    l1_start_dt = datetime.strptime(active_period["start_local"], "%Y-%m-%d %H:%M")
+    l1_end_dt = datetime.strptime(active_period["end_local"], "%Y-%m-%d %H:%M")
 
     l2_periods: list[dict[str, Any]] = []
     l3_periods: list[dict[str, Any]] = []
     l4_periods: list[dict[str, Any]] = []
-    if max_level >= 2:
-        l1_start_dt = datetime.strptime(active_period["start_local"], "%Y-%m-%d %H:%M")
-        l2_periods = _zr_proportional_sub_periods(active_period["sign_index"], l1_start_dt, l1_duration_days, reference_dt, 2, max_level)
-    if max_level >= 3 and l2_periods:
-        active_l2 = next((p for p in l2_periods if p.get("is_active")), None)
-        if active_l2:
-            l2_start_dt = datetime.strptime(active_l2["start_local"], "%Y-%m-%d %H:%M")
-            l2_duration_days = active_l2["years"] * 365.2425
-            l3_periods = _zr_proportional_sub_periods(active_l2["sign_index"], l2_start_dt, l2_duration_days, reference_dt, 3, max_level)
-    if max_level >= 4 and l3_periods:
-        active_l3_for_l4 = next((p for p in l3_periods if p.get("is_active")), None)
-        if active_l3_for_l4:
-            l3_start_dt = datetime.strptime(active_l3_for_l4["start_local"], "%Y-%m-%d %H:%M")
-            l3_duration_days = active_l3_for_l4["years"] * 365.2425
-            l4_periods = _zr_proportional_sub_periods(
-                active_l3_for_l4["sign_index"], l3_start_dt, l3_duration_days, reference_dt, 4, max_level
-            )
 
+    if max_level >= 2:
+        l2_periods = _zr_sub_periods_sequence(
+            active_period["sign_index"], l1_start_dt, l1_end_dt, reference_dt, 2, max_level
+        )
     active_l2 = next((p for p in l2_periods if p.get("is_active")), None) if l2_periods else None
+
+    if max_level >= 3 and active_l2:
+        l2_start_dt = datetime.strptime(active_l2["start_local"], "%Y-%m-%d %H:%M")
+        l2_end_dt = datetime.strptime(active_l2["end_local"], "%Y-%m-%d %H:%M")
+        l3_periods = _zr_sub_periods_sequence(
+            active_l2["sign_index"], l2_start_dt, l2_end_dt, reference_dt, 3, max_level
+        )
     active_l3 = next((p for p in l3_periods if p.get("is_active")), None) if l3_periods else None
+
+    if max_level >= 4 and active_l3:
+        l3_start_dt = datetime.strptime(active_l3["start_local"], "%Y-%m-%d %H:%M")
+        l3_end_dt = datetime.strptime(active_l3["end_local"], "%Y-%m-%d %H:%M")
+        l4_periods = _zr_sub_periods_sequence(
+            active_l3["sign_index"], l3_start_dt, l3_end_dt, reference_dt, 4, max_level
+        )
     active_l4 = next((p for p in l4_periods if p.get("is_active")), None) if l4_periods else None
+
     lob, lob_detail, lob_level = _detect_loosing_of_bond(
         start_sign,
         l1_periods,

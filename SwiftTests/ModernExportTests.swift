@@ -67,8 +67,22 @@ struct ModernExportTests {
     @Test func solarArcCSV() throws {
         let result = try fixture("solar-arc-result", as: SolarArcResult.self)
         let csv = TextExportBuilder.csv(result)
-        expectCSVTable(csv, header: modernHeader, minRows: 2 + result.natalPlanets.count + result.solarArcPlanets.count)
+        expectCSVTable(csv, header: modernHeader + ",solar_arc_rate_deg_per_year", minRows: 2 + result.natalPlanets.count + result.solarArcPlanets.count)
         #expect(csv.contains("arc_value,"))
+        let directedRows = csv.split(separator: "\n").filter { $0.hasPrefix("solar_arc_position,") }
+        #expect(directedRows.count == result.solarArcPlanets.count)
+        for row in directedRows {
+            let fields = row.split(separator: ",", omittingEmptySubsequences: false)
+            #expect(fields.count == 11)
+            #expect(fields[5].isEmpty, "An inapplicable daily speed must not become zero")
+            #expect(Double(fields[10]) != nil, "Annual arc rate belongs in its own column")
+        }
+        let section = MarkdownExportBuilder.positionSection("SA", result.solarArcPlanets).joined(separator: "\n")
+        #expect(section.contains("/年"))
+        #expect(!section.contains("/日"))
+        let roundTrip = try JSONDecoder().decode(SolarArcResult.self, from: Data(TextExportBuilder.json(result).utf8))
+        #expect(roundTrip.solarArcPlanets.allSatisfy { $0.speed == nil })
+        #expect(roundTrip.solarArcPlanets.map(\.solarArcRateDegPerYear) == result.solarArcPlanets.map(\.solarArcRateDegPerYear))
     }
 
     @Test func harmonicCSV() throws {

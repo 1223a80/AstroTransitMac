@@ -320,6 +320,63 @@ class TestComposite:
         assert any("宫位重建失败" in w and "house rebuild exploded" in w for w in warnings)
         assert not any("too many values to unpack" in w for w in warnings)
 
+    def test_placidus_quadrant_houses_symmetric_under_ab_swap(
+        self,
+        person_a: dict[str, Any],
+        person_b: dict[str, Any],
+        aspect_specs: list[dict[str, Any]],
+    ) -> None:
+        req_ab = {
+            "mode": "composite",
+            "person_a": person_a,
+            "person_b": person_b,
+            "house_system": "placidus",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": aspect_specs,
+        }
+        req_ba = {
+            "mode": "composite",
+            "person_a": person_b,
+            "person_b": person_a,
+            "house_system": "placidus",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": aspect_specs,
+        }
+        res_ab = calculate_composite(req_ab, [])
+        res_ba = calculate_composite(req_ba, [])
+
+        cusps_ab = [h["cusp_longitude"] for h in res_ab["houses"]]
+        cusps_ba = [h["cusp_longitude"] for h in res_ba["houses"]]
+
+        for i, (c_ab, c_ba) in enumerate(zip(cusps_ab, cusps_ba)):
+            assert c_ab == pytest.approx(c_ba, abs=1e-4), (
+                f"House {i+1} cusp mismatch on AB swap: AB={c_ab}, BA={c_ba}"
+            )
+
+    def test_placidus_mc_aligns_with_composite_mc(
+        self,
+        person_a: dict[str, Any],
+        person_b: dict[str, Any],
+        aspect_specs: list[dict[str, Any]],
+    ) -> None:
+        req = {
+            "mode": "composite",
+            "person_a": person_a,
+            "person_b": person_b,
+            "house_system": "placidus",
+            "zodiac": "tropical",
+            "node_mode": "true_node",
+            "aspects": aspect_specs,
+        }
+        res = calculate_composite(req, [])
+        mc_angle = next((a["longitude"] for a in res["angles"] if a["id"] == "MC"), None)
+        assert mc_angle is not None
+        # 10th house cusp is index 9
+        mc_cusp = res["houses"][9]["cusp_longitude"]
+        assert mc_cusp == pytest.approx(mc_angle, abs=1e-4)
+
 
 class TestDavison:
     def test_returns_keys(self, person_a: dict[str, Any], person_b: dict[str, Any], aspect_specs: list[dict[str, Any]]) -> None:

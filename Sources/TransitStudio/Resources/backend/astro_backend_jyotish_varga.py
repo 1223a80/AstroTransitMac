@@ -211,32 +211,38 @@ def _get_dvadasamsa_longitude(longitude: float) -> float:
 
 def _calc_trimsamsa(longitude: float, rasi: int, rasi_len: float) -> float:
     """D30: Trimsamsa calculation.
-    From Maitreya Varga.cpp: handles odd vs even rasis differently.
+    Odd rasis: Aries(5°), Aquarius(5°), Sagittarius(8°), Gemini(7°), Libra(5°).
+    Even rasis: Taurus(5°), Virgo(7°), Pisces(8°), Capricorn(5°), Scorpio(5°).
     """
     if _is_odd_rasi(longitude):
         # Odd rasis: Ar(0), Ge(2), Le(4), Li(6), Sg(8), Aq(10)
-        if rasi_len < 5:
-            ret = 30 * 0 + rasi_len * 6  # Aries
-        elif rasi_len <= 10:
-            ret = 30 * 10 + (rasi_len - 5) * 6  # Aquarius
-        elif rasi_len <= 18:
-            ret = 30 * 8 + (rasi_len - 10) / 4 * 15  # Sagittarius
-        elif rasi_len <= 25:
-            ret = 30 * 2 + (rasi_len - 18) / 7 * 30  # Gemini
+        if rasi_len < 5.0:
+            ret = 30 * 0 + rasi_len * 6.0  # Aries [0, 5)
+        elif rasi_len < 10.0:
+            ret = 30 * 10 + (rasi_len - 5.0) * 6.0  # Aquarius [5, 10)
+        elif rasi_len < 18.0:
+            ret = 30 * 8 + (rasi_len - 10.0) / 8.0 * 30.0  # Sagittarius [10, 18)
+        elif rasi_len < 25.0:
+            ret = 30 * 2 + (rasi_len - 18.0) / 7.0 * 30.0  # Gemini [18, 25)
         else:
-            ret = 30 * 6 + (rasi_len - 25) * 6  # Libra
+            ret = 30 * 6 + (rasi_len - 25.0) * 6.0  # Libra [25, 30)
     else:
         # Even rasis: Ta(1), Cn(3), Vi(5), Sc(7), Cp(9), Pi(11)
-        if rasi_len < 5:
-            ret = 30 * 1 + (5 - rasi_len) * 6  # Taurus (reversed)
-        elif rasi_len <= 10:
-            ret = 30 * 5 + (10 - rasi_len) * 6  # Virgo (reversed)
-        elif rasi_len <= 18:
-            ret = 30 * 11 + (18 - rasi_len) / 4 * 15  # Pisces (reversed)
-        elif rasi_len <= 25:
-            ret = 30 * 9 + (25 - rasi_len) / 7 * 30  # Capricorn (reversed)
+        if rasi_len < 5.0:
+            deg = min((5.0 - rasi_len) * 6.0, 29.9999999999)  # Taurus [0, 5) 5°
+            ret = 30 * 1 + deg
+        elif rasi_len < 12.0:
+            deg = min((12.0 - rasi_len) / 7.0 * 30.0, 29.9999999999)  # Virgo [5, 12) 7°
+            ret = 30 * 5 + deg
+        elif rasi_len < 20.0:
+            deg = min((20.0 - rasi_len) / 8.0 * 30.0, 29.9999999999)  # Pisces [12, 20) 8°
+            ret = 30 * 11 + deg
+        elif rasi_len < 25.0:
+            deg = min((25.0 - rasi_len) * 6.0, 29.9999999999)  # Capricorn [20, 25) 5°
+            ret = 30 * 9 + deg
         else:
-            ret = 30 * 7 + (30 - rasi_len) * 6  # Scorpio (reversed)
+            deg = min((30.0 - rasi_len) * 6.0, 29.9999999999)  # Scorpio [25, 30) 5°
+            ret = 30 * 7 + deg
 
     return ret
 

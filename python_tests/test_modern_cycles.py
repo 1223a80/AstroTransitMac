@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from astro_backend_cycles import (
     calculate_modern_cycles,
     cycle_event_to_timing_event,
@@ -189,3 +191,27 @@ def test_display_timezone_gmt_offset_labels_not_silent_utc():
     assert not event["maximum_local"].endswith("+00:00")
     timing = cycle_event_to_timing_event(event)
     assert "+08:00" in (timing.get("exact_local") or "")
+
+
+class TestUtcFromJdMidnightCarry:
+    def test_leap_february_carry(self) -> None:
+        from astro_backend_cycles import _utc_from_jd
+        from astro_backend_core import jd_from_datetime
+        # 2024-02-29 23:59:59.999999
+        dt_leap = datetime(2024, 2, 29, 23, 59, 59, 999999, tzinfo=timezone.utc)
+        jd_leap = jd_from_datetime(dt_leap)
+        # Shift slightly so that microseconds rounding reaches 24:00:00
+        jd_almost_midnight = jd_leap + (0.0000005 / 86400.0)
+        res = _utc_from_jd(jd_almost_midnight)
+        assert res.year == 2024 and res.month == 3 and res.day == 1
+        assert res.hour == 0 and res.minute == 0
+
+    def test_midnight_microsecond_overflow_carry(self, monkeypatch) -> None:
+        import swisseph as swe
+        from astro_backend_cycles import _utc_from_jd
+        # Mock revjul returning 23.999999999999 on 2024-02-29
+        monkeypatch.setattr(swe, "revjul", lambda jd, cal: (2024, 2, 29, 23.999999999999))
+        res = _utc_from_jd(2460370.5)
+        # Must carry to 2024-03-01 00:00:00, NOT roll back to 2024-02-29 00:00:00
+        assert res.year == 2024 and res.month == 3 and res.day == 1
+        assert res.hour == 0 and res.minute == 0

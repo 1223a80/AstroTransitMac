@@ -36,7 +36,7 @@ enum TextExportBuilder {
         ]
 
         rows += result.natalPositions.map {
-            ["natal_position", $0.name, number($0.longitude), $0.degreeText, number($0.latitude), number($0.speed), $0.house.map(String.init) ?? "", "", "", ""]
+            ["natal_position", $0.name, number($0.longitude), $0.degreeText, number($0.latitude), $0.speed.map(number) ?? "", $0.house.map(String.init) ?? "", "", "", ""]
         }
         rows += (result.angles ?? []).map {
             ["angle", $0.name, number($0.longitude), $0.degreeText, "", "", "\($0.house)", $0.ruler, "", ""]
@@ -72,10 +72,10 @@ enum TextExportBuilder {
         ]
 
         rows += result.natalPositions.map {
-            ["natal_position", $0.name, number($0.longitude), $0.degreeText, number($0.latitude), number($0.speed), $0.house.map(String.init) ?? "", "", "", ""]
+            ["natal_position", $0.name, number($0.longitude), $0.degreeText, number($0.latitude), $0.speed.map(number) ?? "", $0.house.map(String.init) ?? "", "", "", ""]
         }
         rows += result.transitPositions.map {
-            ["transit_position", $0.name, number($0.longitude), $0.degreeText, number($0.latitude), number($0.speed), $0.house.map(String.init) ?? "", "", "", ""]
+            ["transit_position", $0.name, number($0.longitude), $0.degreeText, number($0.latitude), $0.speed.map(number) ?? "", $0.house.map(String.init) ?? "", "", "", ""]
         }
         rows += result.aspects.map {
             ["aspect", $0.transitBodyName, "", "", "", "", $0.aspectName, $0.natalBodyName, number($0.separation), number($0.orb)]
@@ -115,7 +115,7 @@ enum TextExportBuilder {
 
     private static func positionRows(_ section: String, _ positions: [PositionRow]) -> [[String]] {
         positions.map {
-            [section, $0.name, number($0.longitude), $0.degreeText, number($0.latitude), number($0.speed), $0.house.map(String.init) ?? "", "", "", ""]
+            [section, $0.name, number($0.longitude), $0.degreeText, number($0.latitude), $0.speed.map(number) ?? "", $0.house.map(String.init) ?? "", "", "", ""]
         }
     }
 
@@ -176,12 +176,14 @@ enum TextExportBuilder {
     }
 
     static func csv(_ result: SolarArcResult) -> String {
-        var rows: [[String]] = [modernCSVHeader]
-        rows.append(["arc_value", "solar_arc", number(result.arcValue), "", "", "", "", "", "", ""])
-        rows += positionRows("natal_position", result.natalPlanets)
-        rows += positionRows("solar_arc_position", result.solarArcPlanets)
-        rows += aspectRows("sa_to_natal_aspect", result.solarArcToNatalAspects)
-        rows += patternRows(result.patterns)
+        var rows: [[String]] = [modernCSVHeader + ["solar_arc_rate_deg_per_year"]]
+        rows.append(["arc_value", "solar_arc", number(result.arcValue), "", "", "", "", "", "", "", ""])
+        rows += positionRows("natal_position", result.natalPlanets).map { $0 + [""] }
+        rows += zip(positionRows("solar_arc_position", result.solarArcPlanets), result.solarArcPlanets).map {
+            $0.0 + [$0.1.solarArcRateDegPerYear.map(number) ?? ""]
+        }
+        rows += aspectRows("sa_to_natal_aspect", result.solarArcToNatalAspects).map { $0 + [""] }
+        rows += patternRows(result.patterns).map { $0 + [""] }
         return csv(rows)
     }
 

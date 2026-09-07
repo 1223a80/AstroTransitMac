@@ -114,3 +114,50 @@ def test_emptyish_window() -> None:
     result = calculate_planetary_synodic(req, [])
     assert isinstance(result["events"], list)
     assert result["meta"]["event_count"] == len(result["events"])
+
+
+def test_moon_saturn_fast_slow_pair_finds_all_conjunctions() -> None:
+    # 60-day window: Moon orbits ~2.2 times, so there should be at least 2 Moon-Saturn conjunctions
+    req = _request()
+    req["pair"] = {"body_a": "MOON", "body_b": "SATURN"}
+    req["phases"] = [{"id": "conjunction", "name": "合相", "angle": 0.0}]
+    req["start"] = {"year": 2024, "month": 1, "day": 1, "hour": 0, "minute": 0, "timezone": "Asia/Shanghai"}
+    req["end"] = {"year": 2024, "month": 3, "day": 1, "hour": 0, "minute": 0, "timezone": "Asia/Shanghai"}
+    result = calculate_planetary_synodic(req, [])
+    conjunctions = [e for e in result["events"] if e["phase_id"] == "conjunction"]
+    assert len(conjunctions) >= 2
+
+
+def test_synodic_step_selection_uses_faster_body(monkeypatch) -> None:
+    import astro_backend_planetary_synodic as synodic_mod
+    from astro_backend_modern_timing import _step_for
+    step_moon = _step_for("transit", "MOON", [])
+    step_saturn = _step_for("transit", "SATURN", [])
+    assert step_moon < step_saturn
+
+    # Direct production helper test
+    production_step = synodic_mod._synodic_search_step("MOON", "SATURN", [])
+    assert production_step == step_moon
+    assert production_step < step_saturn
+
+    # Verify that calculate_planetary_synodic actually passes the fast step to _find_roots
+    captured_steps = []
+    original_find_roots = synodic_mod._find_roots
+
+    def spy_find_roots(func, start, end, step):
+        captured_steps.append(step)
+        return original_find_roots(func, start, end, step)
+
+    monkeypatch.setattr(synodic_mod, "_find_roots", spy_find_roots)
+
+    req = _request()
+    req["pair"] = {"body_a": "MOON", "body_b": "SATURN"}
+    req["phases"] = [{"id": "conjunction", "name": "合相", "angle": 0.0}]
+    req["start"] = {"year": 2024, "month": 1, "day": 1, "hour": 0, "minute": 0, "timezone": "Asia/Shanghai"}
+    req["end"] = {"year": 2024, "month": 1, "day": 5, "hour": 0, "minute": 0, "timezone": "Asia/Shanghai"}
+    synodic_mod.calculate_planetary_synodic(req, [])
+
+    assert len(captured_steps) > 0
+    for s in captured_steps:
+        assert s == step_moon
+        assert s < step_saturn

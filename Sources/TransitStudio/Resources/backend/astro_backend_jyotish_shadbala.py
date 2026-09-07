@@ -100,27 +100,19 @@ def calc_paksha_bala(sun_lon: float, moon_lon: float) -> tuple[float, dict[str, 
 
 def calc_nathonatha_bala(jd_ut: float, latitude: float, longitude: float) -> dict[str, float]:
     """Nathonatha Bala (diurnal/nocturnal strength).
-    Based on whether the birth was in day or night and distance from noon.
+    Based on local mean time (LMT) and distance from local midnight.
     """
-    # Calculate local mean time from JD
-    # LMT = JD + longitude/360 adjustment
-    from astro_backend_ephemeris import call_houses_ex
+    # LMT = JD_UT + longitude / 360.0 (East is positive, West is negative)
+    jd_lmt = jd_ut + (longitude / 360.0)
 
-    sidereal = 0  # tropical for houses
-    try:
-        cusps, ascmc = call_houses_ex(jd_ut, latitude, longitude, "P", False)
-    except Exception:
-        return {p: 30.0 for p in VEDIC_PLANET_IDS[:7]}
+    # Fraction of day from midnight: (jd_lmt + 0.5) % 1.0
+    lmt_hours = ((jd_lmt + 0.5) % 1.0) * 24.0
 
-    # Approximate: distance from noon in hours
-    jd_at_noon = math.floor(jd_ut) + 0.5
-    hours_from_noon = (jd_ut - jd_at_noon) * 24.0
-    if hours_from_noon < 0:
-        hours_from_noon += 24.0
-    if hours_from_noon > 12:
-        hours_from_noon = 24.0 - hours_from_noon
+    # Distance from local midnight (0 to 12 hours)
+    hours_from_midnight = lmt_hours if lmt_hours <= 12.0 else 24.0 - lmt_hours
 
-    natabala = hours_from_noon * 5.0  # 0-60 virupas
+    # Natabala: 0 to 60 virupas (0 at midnight, 60 at noon)
+    natabala = min(60.0, max(0.0, hours_from_midnight * 5.0))
 
     return {
         "SUN": 60.0 - natabala,

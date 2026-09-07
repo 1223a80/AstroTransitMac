@@ -86,7 +86,7 @@
       {
         "id": "ASC",
         "name": "ASC",
-        "longitude": 59.730062938828794,
+        "longitude": 59.73006293905381,
         "sign": "金牛",
         "degree_text": "29°43'48\" 金牛",
         "house": 1,
@@ -99,7 +99,7 @@
       {
         "id": "MC",
         "name": "MC",
-        "longitude": 305.93220445636337,
+        "longitude": 305.93220445660694,
         "sign": "水瓶",
         "degree_text": "05°55'56\" 水瓶",
         "house": 10,
@@ -112,7 +112,7 @@
       {
         "id": "DSC",
         "name": "DSC",
-        "longitude": 239.73006293882878,
+        "longitude": 239.73006293905382,
         "sign": "天蝎",
         "degree_text": "29°43'48\" 天蝎",
         "house": 7,
@@ -125,7 +125,7 @@
       {
         "id": "IC",
         "name": "IC",
-        "longitude": 125.93220445636337,
+        "longitude": 125.93220445660694,
         "sign": "狮子",
         "degree_text": "05°55'56\" 狮子",
         "house": 4,
@@ -229,7 +229,7 @@
         "longitude": 5.9619811129426115,
         "sign": "白羊",
         "degree_text": "05°57'43\" 白羊",
-        "speed": 0.9766631620268501,
+        "speed": 0.9766631619984283,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -275,10 +275,10 @@
       "MOON": {
         "body_id": "MOON",
         "name": "月亮",
-        "longitude": 296.5336633140008,
+        "longitude": 296.533663314003,
         "sign": "摩羯",
         "degree_text": "26°32'01\" 摩羯",
-        "speed": 13.245904365810157,
+        "speed": 13.245904365781401,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -327,7 +327,7 @@
         "longitude": 305.6105273483272,
         "sign": "水瓶",
         "degree_text": "05°36'38\" 水瓶",
-        "speed": 0.7480559957604912,
+        "speed": 0.7480560116496604,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -376,7 +376,7 @@
         "longitude": 23.287983019592172,
         "sign": "白羊",
         "degree_text": "23°17'17\" 白羊",
-        "speed": 0.32400604494631324,
+        "speed": 0.32400604769974845,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -425,7 +425,7 @@
         "longitude": 71.48323626700625,
         "sign": "双子",
         "degree_text": "11°29'00\" 双子",
-        "speed": 0.14862590744812856,
+        "speed": 0.14862590842384182,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -471,10 +471,10 @@
       "VENUS": {
         "body_id": "VENUS",
         "name": "金星",
-        "longitude": 320.69447465355705,
+        "longitude": 320.69447465355717,
         "sign": "水瓶",
         "degree_text": "20°41'40\" 水瓶",
-        "speed": 1.0829041398362167,
+        "speed": 1.0829041397921655,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -520,10 +520,10 @@
       "SATURN": {
         "body_id": "SATURN",
         "name": "土星",
-        "longitude": 271.44133895570644,
+        "longitude": 271.4413389557065,
         "sign": "摩羯",
         "degree_text": "01°26'29\" 摩羯",
-        "speed": 0.024413010247908,
+        "speed": 0.024413011677422696,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -569,10 +569,10 @@
       "RAHU": {
         "body_id": "RAHU",
         "name": "罗睺",
-        "longitude": 289.495407139116,
+        "longitude": 289.4954071391159,
         "sign": "摩羯",
         "degree_text": "19°29'43\" 摩羯",
-        "speed": -0.009052696457915366,
+        "speed": -0.00905269654762303,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -618,10 +618,10 @@
       "KETU": {
         "body_id": "KETU",
         "name": "计都",
-        "longitude": 109.49540713911603,
+        "longitude": 109.49540713911591,
         "sign": "巨蟹",
         "degree_text": "19°29'43\" 巨蟹",
-        "speed": -0.009052696457915366,
+        "speed": -0.00905269654762303,
         "_ephemeris": "Swiss Ephemeris",
         "nakshatra": {
           "nakshatra": {
@@ -687,7 +687,7 @@
       "longitude": 5.9619811129426115,
       "sign": "白羊",
       "degree_text": "05°57'43\" 白羊",
-      "speed": 0.9766631620268501,
+      "speed": 0.9766631619984283,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -732,10 +732,10 @@
     "MOON": {
       "body_id": "MOON",
       "name": "月亮",
-      "longitude": 296.5336633140008,
+      "longitude": 296.533663314003,
       "sign": "摩羯",
       "degree_text": "26°32'01\" 摩羯",
-      "speed": 13.245904365810157,
+      "speed": 13.245904365781401,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -783,7 +783,7 @@
       "longitude": 305.6105273483272,
       "sign": "水瓶",
       "degree_text": "05°36'38\" 水瓶",
-      "speed": 0.7480559957604912,
+      "speed": 0.7480560116496604,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -831,7 +831,7 @@
       "longitude": 23.287983019592172,
       "sign": "白羊",
       "degree_text": "23°17'17\" 白羊",
-      "speed": 0.32400604494631324,
+      "speed": 0.32400604769974845,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -879,7 +879,7 @@
       "longitude": 71.48323626700625,
       "sign": "双子",
       "degree_text": "11°29'00\" 双子",
-      "speed": 0.14862590744812856,
+      "speed": 0.14862590842384182,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -924,10 +924,10 @@
     "VENUS": {
       "body_id": "VENUS",
       "name": "金星",
-      "longitude": 320.69447465355705,
+      "longitude": 320.69447465355717,
       "sign": "水瓶",
       "degree_text": "20°41'40\" 水瓶",
-      "speed": 1.0829041398362167,
+      "speed": 1.0829041397921655,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -972,10 +972,10 @@
     "SATURN": {
       "body_id": "SATURN",
       "name": "土星",
-      "longitude": 271.44133895570644,
+      "longitude": 271.4413389557065,
       "sign": "摩羯",
       "degree_text": "01°26'29\" 摩羯",
-      "speed": 0.024413010247908,
+      "speed": 0.024413011677422696,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -1020,10 +1020,10 @@
     "RAHU": {
       "body_id": "RAHU",
       "name": "罗睺",
-      "longitude": 289.495407139116,
+      "longitude": 289.4954071391159,
       "sign": "摩羯",
       "degree_text": "19°29'43\" 摩羯",
-      "speed": -0.009052696457915366,
+      "speed": -0.00905269654762303,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -1068,10 +1068,10 @@
     "KETU": {
       "body_id": "KETU",
       "name": "计都",
-      "longitude": 109.49540713911603,
+      "longitude": 109.49540713911591,
       "sign": "巨蟹",
       "degree_text": "19°29'43\" 巨蟹",
-      "speed": -0.009052696457915366,
+      "speed": -0.00905269654762303,
       "_ephemeris": "Swiss Ephemeris",
       "nakshatra": {
         "nakshatra": {
@@ -1241,7 +1241,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 296.5337,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -1305,7 +1305,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 320.6945,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -1321,7 +1321,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 271.4413,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -1337,7 +1337,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 289.4954,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -1353,7 +1353,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 109.4954,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -1369,7 +1369,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 59.7301,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
@@ -1709,7 +1709,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 143.0673,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -1773,7 +1773,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 101.3889,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -1789,7 +1789,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 92.8827,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -1805,7 +1805,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 128.9908,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -1821,7 +1821,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 128.9908,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -1837,7 +1837,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 149.4601,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -1876,7 +1876,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 169.601,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -1940,7 +1940,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 182.0834,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
@@ -1956,7 +1956,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 274.324,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -1972,7 +1972,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 58.4862,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
@@ -1988,7 +1988,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 238.4862,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -2004,7 +2004,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 299.1902,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -2043,7 +2043,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 196.1347,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
@@ -2107,7 +2107,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 142.7779,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -2123,7 +2123,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 275.7654,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -2139,7 +2139,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 107.9816,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -2155,7 +2155,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 287.9816,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -2171,7 +2171,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 328.9203,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -2210,7 +2210,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 275.7356,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -2274,7 +2274,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 84.8613,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -2290,7 +2290,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 100.0894,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -2306,7 +2306,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 226.4678,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -2322,7 +2322,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 46.4678,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
@@ -2338,7 +2338,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 58.1104,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
@@ -2377,7 +2377,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 148.803,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -2441,7 +2441,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 6.2503,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -2457,7 +2457,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 282.9721,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -2473,7 +2473,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 85.4587,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -2489,7 +2489,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 265.4587,
           "varga_rasi": 8,
           "varga_rasi_sign": "射手",
@@ -2505,7 +2505,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 177.5706,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -2845,7 +2845,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 55.3366,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
@@ -2909,7 +2909,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 146.9447,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -2925,7 +2925,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 164.4134,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -2941,7 +2941,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 344.9541,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
@@ -2957,7 +2957,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 164.9541,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -2973,7 +2973,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 207.3006,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
@@ -3012,7 +3012,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 228.404,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -3076,7 +3076,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 188.3337,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
@@ -3092,7 +3092,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 287.2961,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -3108,7 +3108,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 143.9449,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -3124,7 +3124,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 323.9449,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -3140,7 +3140,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 26.7608,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -3179,7 +3179,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 64.5386,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -3243,7 +3243,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 91.1116,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -3259,7 +3259,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 23.0614,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -3275,7 +3275,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 311.9265,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -3291,7 +3291,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 311.9265,
           "varga_rasi": 10,
           "varga_rasi_sign": "水瓶",
@@ -3307,7 +3307,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 235.681,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -3346,7 +3346,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 170.6733,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -3410,7 +3410,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 293.8895,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -3426,7 +3426,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 28.8268,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -3442,7 +3442,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 29.9081,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -3458,7 +3458,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 29.9081,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -3474,7 +3474,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 114.6013,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -3513,7 +3513,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 6.8079,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -3577,7 +3577,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 256.6674,
           "varga_rasi": 8,
           "varga_rasi_sign": "射手",
@@ -3593,7 +3593,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 124.5921,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -3609,7 +3609,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 197.8898,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
@@ -3625,7 +3625,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 197.8898,
           "varga_rasi": 6,
           "varga_rasi_sign": "天秤",
@@ -3641,7 +3641,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 83.5215,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -3680,7 +3680,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 86.4089,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -3744,7 +3744,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 18.7508,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -3760,7 +3760,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 128.9162,
           "varga_rasi": 4,
           "varga_rasi_sign": "狮子",
@@ -3776,7 +3776,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 256.376,
           "varga_rasi": 8,
           "varga_rasi_sign": "射手",
@@ -3792,7 +3792,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 76.376,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -3808,7 +3808,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 172.7117,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -3847,7 +3847,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 230.798,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -3911,7 +3911,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 71.5477,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -3927,7 +3927,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 51.352,
           "varga_rasi": 1,
           "varga_rasi_sign": "金牛",
@@ -3943,39 +3943,39 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
-          "varga_longitude": 293.5911,
-          "varga_rasi": 9,
-          "varga_rasi_sign": "摩羯",
-          "varga_degree": 23.59,
-          "house": 3,
-          "degree_text": "23°35'",
+          "longitude": 289.4954071391159,
+          "varga_longitude": 331.8922,
+          "varga_rasi": 11,
+          "varga_rasi_sign": "双鱼",
+          "varga_degree": 1.89,
+          "house": 5,
+          "degree_text": "1°53'",
           "nakshatra": {
-            "name_sa": "Dhanishtha",
-            "pada": 1,
-            "lord": "MARS"
+            "name_sa": "Purva Bhadrapada",
+            "pada": 4,
+            "lord": "JUPITER"
           }
         },
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
-          "varga_longitude": 293.5911,
-          "varga_rasi": 9,
-          "varga_rasi_sign": "摩羯",
-          "varga_degree": 23.59,
-          "house": 3,
-          "degree_text": "23°35'",
+          "longitude": 109.49540713911591,
+          "varga_longitude": 331.8922,
+          "varga_rasi": 11,
+          "varga_rasi_sign": "双鱼",
+          "varga_degree": 1.89,
+          "house": 5,
+          "degree_text": "1°53'",
           "nakshatra": {
-            "name_sa": "Dhanishtha",
-            "pada": 1,
-            "lord": "MARS"
+            "name_sa": "Purva Bhadrapada",
+            "pada": 4,
+            "lord": "JUPITER"
           }
         },
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 211.6196,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -4014,7 +4014,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 161.3465,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -4078,7 +4078,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 107.779,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -4094,7 +4094,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 237.6536,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -4110,7 +4110,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 239.8163,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -4126,7 +4126,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 239.8163,
           "varga_rasi": 7,
           "varga_rasi_sign": "天蝎",
@@ -4142,7 +4142,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 289.2025,
           "varga_rasi": 9,
           "varga_rasi_sign": "摩羯",
@@ -4181,7 +4181,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 114.0148,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -4245,7 +4245,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 331.2514,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
@@ -4261,7 +4261,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 64.8603,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -4277,7 +4277,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 157.2933,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -4293,7 +4293,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 157.2933,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -4309,7 +4309,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 17.8528,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -4348,7 +4348,7 @@
         "MOON": {
           "body_id": "MOON",
           "name": "月亮",
-          "longitude": 296.5336633140008,
+          "longitude": 296.533663314003,
           "varga_longitude": 62.0198,
           "varga_rasi": 2,
           "varga_rasi_sign": "双子",
@@ -4412,7 +4412,7 @@
         "VENUS": {
           "body_id": "VENUS",
           "name": "金星",
-          "longitude": 320.69447465355705,
+          "longitude": 320.69447465355717,
           "varga_longitude": 101.6685,
           "varga_rasi": 3,
           "varga_rasi_sign": "巨蟹",
@@ -4428,7 +4428,7 @@
         "SATURN": {
           "body_id": "SATURN",
           "name": "土星",
-          "longitude": 271.44133895570644,
+          "longitude": 271.4413389557065,
           "varga_longitude": 356.4803,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
@@ -4444,7 +4444,7 @@
         "RAHU": {
           "body_id": "RAHU",
           "name": "罗睺",
-          "longitude": 289.495407139116,
+          "longitude": 289.4954071391159,
           "varga_longitude": 359.7244,
           "varga_rasi": 11,
           "varga_rasi_sign": "双鱼",
@@ -4460,7 +4460,7 @@
         "KETU": {
           "body_id": "KETU",
           "name": "计都",
-          "longitude": 109.49540713911603,
+          "longitude": 109.49540713911591,
           "varga_longitude": 179.7244,
           "varga_rasi": 5,
           "varga_rasi_sign": "处女",
@@ -4476,7 +4476,7 @@
         "ASC": {
           "body_id": "ASC",
           "name": "Asc",
-          "longitude": 59.730062938828794,
+          "longitude": 59.73006293905381,
           "varga_longitude": 13.8038,
           "varga_rasi": 0,
           "varga_rasi_sign": "白羊",
@@ -4514,7 +4514,7 @@
       "MOON": {
         "body_id": "MOON",
         "name": "月亮",
-        "longitude": 296.5336633140008,
+        "longitude": 296.533663314003,
         "rasi": 9,
         "rasi_name": "摩羯",
         "degree_text": "26°32'",
@@ -4570,7 +4570,7 @@
       "VENUS": {
         "body_id": "VENUS",
         "name": "金星",
-        "longitude": 320.69447465355705,
+        "longitude": 320.69447465355717,
         "rasi": 10,
         "rasi_name": "水瓶",
         "degree_text": "20°41'",
@@ -4584,7 +4584,7 @@
       "SATURN": {
         "body_id": "SATURN",
         "name": "土星",
-        "longitude": 271.44133895570644,
+        "longitude": 271.4413389557065,
         "rasi": 9,
         "rasi_name": "摩羯",
         "degree_text": "1°26'",
@@ -4598,7 +4598,7 @@
       "RAHU": {
         "body_id": "RAHU",
         "name": "罗睺",
-        "longitude": 289.495407139116,
+        "longitude": 289.4954071391159,
         "rasi": 9,
         "rasi_name": "摩羯",
         "degree_text": "19°29'",
@@ -4612,7 +4612,7 @@
       "KETU": {
         "body_id": "KETU",
         "name": "计都",
-        "longitude": 109.49540713911603,
+        "longitude": 109.49540713911591,
         "rasi": 3,
         "rasi_name": "巨蟹",
         "degree_text": "19°29'",
@@ -4626,7 +4626,7 @@
       "ASC": {
         "body_id": "ASC",
         "name": "Asc",
-        "longitude": 59.730062938828794,
+        "longitude": 59.73006293905381,
         "rasi": 1,
         "rasi_name": "金牛",
         "degree_text": "29°43'",
@@ -4646,7 +4646,7 @@
       {
         "id": "ASC",
         "name": "ASC",
-        "longitude": 59.730062938828794,
+        "longitude": 59.73006293905381,
         "sign": "金牛",
         "degree_text": "29°43'48\" 金牛",
         "house": 1,
@@ -4659,7 +4659,7 @@
       {
         "id": "MC",
         "name": "MC",
-        "longitude": 305.93220445636337,
+        "longitude": 305.93220445660694,
         "sign": "水瓶",
         "degree_text": "05°55'56\" 水瓶",
         "house": 10,
@@ -4672,7 +4672,7 @@
       {
         "id": "DSC",
         "name": "DSC",
-        "longitude": 239.73006293882878,
+        "longitude": 239.73006293905382,
         "sign": "天蝎",
         "degree_text": "29°43'48\" 天蝎",
         "house": 7,
@@ -4685,7 +4685,7 @@
       {
         "id": "IC",
         "name": "IC",
-        "longitude": 125.93220445636337,
+        "longitude": 125.93220445660694,
         "sign": "狮子",
         "degree_text": "05°55'56\" 狮子",
         "house": 4,
@@ -4714,7 +4714,7 @@
       "MOON": {
         "body_id": "MOON",
         "name": "月亮",
-        "longitude": 296.5336633140008,
+        "longitude": 296.533663314003,
         "house": 9,
         "rasi": 9,
         "rasi_name": "摩羯",
@@ -4770,7 +4770,7 @@
       "VENUS": {
         "body_id": "VENUS",
         "name": "金星",
-        "longitude": 320.69447465355705,
+        "longitude": 320.69447465355717,
         "house": 10,
         "rasi": 10,
         "rasi_name": "水瓶",
@@ -4784,7 +4784,7 @@
       "SATURN": {
         "body_id": "SATURN",
         "name": "土星",
-        "longitude": 271.44133895570644,
+        "longitude": 271.4413389557065,
         "house": 9,
         "rasi": 9,
         "rasi_name": "摩羯",
@@ -4798,7 +4798,7 @@
       "RAHU": {
         "body_id": "RAHU",
         "name": "罗睺",
-        "longitude": 289.495407139116,
+        "longitude": 289.4954071391159,
         "house": 9,
         "rasi": 9,
         "rasi_name": "摩羯",
@@ -4812,7 +4812,7 @@
       "KETU": {
         "body_id": "KETU",
         "name": "计都",
-        "longitude": 109.49540713911603,
+        "longitude": 109.49540713911591,
         "house": 3,
         "rasi": 3,
         "rasi_name": "巨蟹",
@@ -4826,7 +4826,7 @@
       "ASC": {
         "body_id": "ASC",
         "name": "Asc",
-        "longitude": 59.730062938828794,
+        "longitude": 59.73006293905381,
         "house": 1,
         "rasi": 1,
         "rasi_name": "金牛",
@@ -5418,9 +5418,9 @@
   "arudha": {
     "AL": {
       "pada_name": "Arudha Lagna",
-      "rasi": 5,
-      "rasi_name": "处女",
-      "house": 5
+      "rasi": 4,
+      "rasi_name": "狮子",
+      "house": 4
     },
     "A2": {
       "pada_name": "A2 (Dhana)",
@@ -5430,9 +5430,9 @@
     },
     "A3": {
       "pada_name": "A3 (Vikrama)",
-      "rasi": 1,
-      "rasi_name": "金牛",
-      "house": 1
+      "rasi": 0,
+      "rasi_name": "白羊",
+      "house": 12
     },
     "A4": {
       "pada_name": "A4 (Matri)",
@@ -5454,21 +5454,21 @@
     },
     "A7": {
       "pada_name": "A7 (Kama)",
-      "rasi": 11,
-      "rasi_name": "双鱼",
-      "house": 11
+      "rasi": 10,
+      "rasi_name": "水瓶",
+      "house": 10
     },
     "A8": {
       "pada_name": "A8 (Moksha)",
-      "rasi": 6,
-      "rasi_name": "天秤",
-      "house": 6
+      "rasi": 5,
+      "rasi_name": "处女",
+      "house": 5
     },
     "A9": {
       "pada_name": "A9 (Bhagya)",
-      "rasi": 7,
-      "rasi_name": "天蝎",
-      "house": 7
+      "rasi": 6,
+      "rasi_name": "天秤",
+      "house": 6
     },
     "A10": {
       "pada_name": "A10 (Karma)",
@@ -5478,9 +5478,9 @@
     },
     "A11": {
       "pada_name": "A11 (Aya)",
-      "rasi": 3,
-      "rasi_name": "巨蟹",
-      "house": 3
+      "rasi": 2,
+      "rasi_name": "双子",
+      "house": 2
     },
     "UL": {
       "pada_name": "Upapada Lagna",
@@ -5533,8 +5533,8 @@
         "planet_name": "罗睺",
         "longitude_in_rasi": 10.5046,
         "effective_longitude": 10.5046,
-        "name_sa": "Putra Karaka",
-        "name_zh": "子女星 (Putra Karaka)"
+        "name_sa": "Pitri Karaka",
+        "name_zh": "父亲星 (Pitri Karaka)"
       },
       {
         "karaka_type": 5,
@@ -5542,8 +5542,8 @@
         "planet_name": "太阳",
         "longitude_in_rasi": 5.962,
         "effective_longitude": 5.962,
-        "name_sa": "Gnati Karaka",
-        "name_zh": "知识星 (Gnati Karaka)"
+        "name_sa": "Putra Karaka",
+        "name_zh": "子女星 (Putra Karaka)"
       },
       {
         "karaka_type": 6,
@@ -5551,11 +5551,23 @@
         "planet_name": "火星",
         "longitude_in_rasi": 5.6105,
         "effective_longitude": 5.6105,
+        "name_sa": "Gnati Karaka",
+        "name_zh": "知识星 (Gnati Karaka)"
+      },
+      {
+        "karaka_type": 7,
+        "planet": "SATURN",
+        "planet_name": "土星",
+        "longitude_in_rasi": 1.4413,
+        "effective_longitude": 1.4413,
         "name_sa": "Dara Karaka",
         "name_zh": "配偶星 (Dara Karaka)"
       }
     ],
     "system": "8-planet",
+    "requested_system": "8-planet",
+    "complete": true,
+    "missing_planets": [],
     "note": "Chara Karakas ranked by planetary longitude within own sign"
   },
   "ashtakavarga": {
@@ -5705,18 +5717,18 @@
             0
           ],
           "ekadhi": [
-            0,
-            0,
-            0,
-            4,
-            5,
             1,
-            4,
-            1,
+            0,
             0,
             0,
             2,
-            1
+            1,
+            4,
+            0,
+            0,
+            2,
+            4,
+            0
           ],
           "sarva": 48
         },
@@ -5750,18 +5762,18 @@
             0
           ],
           "ekadhi": [
-            0,
-            0,
-            0,
-            5,
             2,
             0,
             4,
+            0,
+            0,
+            0,
+            3,
+            0,
+            1,
             2,
             0,
-            0,
-            0,
-            2
+            0
           ],
           "sarva": 49
         },
@@ -5797,16 +5809,16 @@
           "ekadhi": [
             0,
             0,
-            0,
-            3,
-            4,
-            2,
+            1,
             0,
             2,
-            0,
+            1,
             0,
             1,
-            2
+            0,
+            0,
+            2,
+            1
           ],
           "sarva": 39
         },
@@ -5843,15 +5855,15 @@
             0,
             0,
             0,
+            0,
             1,
-            6,
-            1,
-            1,
+            2,
+            0,
+            3,
             0,
             0,
-            0,
-            4,
-            0
+            3,
+            4
           ],
           "sarva": 54
         },
@@ -5886,16 +5898,16 @@
           ],
           "ekadhi": [
             0,
-            0,
-            0,
-            5,
-            4,
-            0,
-            0,
+            2,
             2,
             0,
-            0,
             1,
+            0,
+            0,
+            0,
+            3,
+            0,
+            2,
             0
           ],
           "sarva": 56
@@ -5930,17 +5942,17 @@
             4
           ],
           "ekadhi": [
-            0,
-            0,
-            0,
-            2,
-            4,
-            2,
+            1,
             0,
             0,
             0,
             0,
             1,
+            0,
+            1,
+            1,
+            0,
+            2,
             1
           ],
           "sarva": 52
@@ -5975,18 +5987,18 @@
             0
           ],
           "ekadhi": [
-            0,
-            0,
-            0,
-            4,
-            1,
-            0,
-            0,
+            2,
             3,
             0,
             0,
             0,
-            1
+            0,
+            0,
+            0,
+            2,
+            3,
+            0,
+            0
           ],
           "sarva": 39
         },
@@ -6020,18 +6032,18 @@
             1
           ],
           "ekadhi": [
-            0,
-            0,
-            0,
             5,
             0,
             0,
-            3,
             0,
             0,
+            2,
             0,
-            3,
-            3
+            0,
+            1,
+            1,
+            1,
+            1
           ],
           "sarva": 49
         }
@@ -6039,46 +6051,46 @@
     },
     "sav": {
       "rekha": [
-        31,
-        28,
-        32,
-        29,
         26,
-        30,
-        34,
-        39,
-        30,
+        26,
+        27,
+        24,
+        26,
+        26,
         29,
-        39,
-        39
+        34,
+        27,
+        26,
+        33,
+        33
       ],
       "trikona": [
-        11,
+        6,
         7,
         7,
         0,
         6,
-        9,
+        7,
         9,
         10,
-        10,
-        8,
-        14,
-        10
+        7,
+        7,
+        13,
+        9
       ],
       "ekadhi": [
-        0,
-        0,
-        0,
-        29,
-        26,
         6,
-        12,
-        10,
+        5,
+        7,
         0,
-        0,
-        12,
-        10
+        6,
+        5,
+        7,
+        5,
+        7,
+        7,
+        13,
+        6
       ]
     }
   },
@@ -6884,16 +6896,16 @@
     "SUN": {
       "sthāna_bala": 58.7,
       "dig_bala": 40.0,
-      "kāla_bala": 94.4,
+      "kāla_bala": 55.6,
       "ceṣṭa_bala": 15.0,
       "naiṣargika_bala": 60.0,
       "dṛg_bala": 0.0,
-      "shadbala_total": 268.0,
-      "shadbala_rupas": 4.47,
+      "shadbala_total": 229.2,
+      "shadbala_rupas": 3.82,
       "required": 390,
       "required_rupas": 6.5,
       "meets_required": null,
-      "percent": 68.7,
+      "percent": 58.8,
       "is_complete": false,
       "status": "incomplete",
       "note": "Full Sthana/Dig/Kala/Cheshta/Naisargika/Drik implementation pending; no meets_required judgment is allowed.",
@@ -6902,16 +6914,16 @@
     "MOON": {
       "sthāna_bala": 27.8,
       "dig_bala": 10.0,
-      "kāla_bala": 25.6,
+      "kāla_bala": 64.4,
       "ceṣṭa_bala": 15.0,
       "naiṣargika_bala": 51.4,
       "dṛg_bala": 0.0,
-      "shadbala_total": 129.9,
-      "shadbala_rupas": 2.17,
+      "shadbala_total": 168.7,
+      "shadbala_rupas": 2.81,
       "required": 360,
       "required_rupas": 6.0,
       "meets_required": null,
-      "percent": 36.1,
+      "percent": 46.9,
       "is_complete": false,
       "status": "incomplete",
       "note": "Full Sthana/Dig/Kala/Cheshta/Naisargika/Drik implementation pending; no meets_required judgment is allowed.",
@@ -6920,16 +6932,16 @@
     "MARS": {
       "sthāna_bala": 13.1,
       "dig_bala": 60.0,
-      "kāla_bala": 39.4,
+      "kāla_bala": 78.2,
       "ceṣṭa_bala": 15.0,
       "naiṣargika_bala": 17.1,
       "dṛg_bala": 0.0,
-      "shadbala_total": 144.6,
-      "shadbala_rupas": 2.41,
+      "shadbala_total": 183.4,
+      "shadbala_rupas": 3.06,
       "required": 300,
       "required_rupas": 5.0,
       "meets_required": null,
-      "percent": 48.2,
+      "percent": 61.1,
       "is_complete": false,
       "status": "incomplete",
       "note": "Full Sthana/Dig/Kala/Cheshta/Naisargika/Drik implementation pending; no meets_required judgment is allowed.",
@@ -6956,16 +6968,16 @@
     "JUPITER": {
       "sthāna_bala": 15.5,
       "dig_bala": 50.0,
-      "kāla_bala": 95.6,
+      "kāla_bala": 56.8,
       "ceṣṭa_bala": 30.0,
       "naiṣargika_bala": 34.3,
       "dṛg_bala": 0.0,
-      "shadbala_total": 225.4,
-      "shadbala_rupas": 3.76,
+      "shadbala_total": 186.6,
+      "shadbala_rupas": 3.11,
       "required": 390,
       "required_rupas": 6.5,
       "meets_required": null,
-      "percent": 57.8,
+      "percent": 47.9,
       "is_complete": false,
       "status": "incomplete",
       "note": "Full Sthana/Dig/Kala/Cheshta/Naisargika/Drik implementation pending; no meets_required judgment is allowed.",
@@ -6974,16 +6986,16 @@
     "VENUS": {
       "sthāna_bala": 15.2,
       "dig_bala": 0.0,
-      "kāla_bala": 80.6,
+      "kāla_bala": 41.8,
       "ceṣṭa_bala": 15.0,
       "naiṣargika_bala": 42.9,
       "dṛg_bala": 0.0,
-      "shadbala_total": 153.7,
-      "shadbala_rupas": 2.56,
+      "shadbala_total": 114.9,
+      "shadbala_rupas": 1.92,
       "required": 330,
       "required_rupas": 5.5,
       "meets_required": null,
-      "percent": 46.6,
+      "percent": 34.8,
       "is_complete": false,
       "status": "incomplete",
       "note": "Full Sthana/Dig/Kala/Cheshta/Naisargika/Drik implementation pending; no meets_required judgment is allowed.",
@@ -6992,16 +7004,16 @@
     "SATURN": {
       "sthāna_bala": 36.2,
       "dig_bala": 40.0,
-      "kāla_bala": 39.4,
+      "kāla_bala": 78.2,
       "ceṣṭa_bala": 30.0,
       "naiṣargika_bala": 8.6,
       "dṛg_bala": 0.0,
-      "shadbala_total": 154.1,
-      "shadbala_rupas": 2.57,
+      "shadbala_total": 192.9,
+      "shadbala_rupas": 3.22,
       "required": 300,
       "required_rupas": 5.0,
       "meets_required": null,
-      "percent": 51.4,
+      "percent": 64.3,
       "is_complete": false,
       "status": "incomplete",
       "note": "Full Sthana/Dig/Kala/Cheshta/Naisargika/Drik implementation pending; no meets_required judgment is allowed.",

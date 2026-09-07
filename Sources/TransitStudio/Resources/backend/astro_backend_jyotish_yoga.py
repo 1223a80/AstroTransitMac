@@ -301,10 +301,12 @@ def yoga_subha(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> di
 def yoga_yogakaraka(planet_positions: dict[str, dict[str, Any]], asc_rasi: int) -> dict[str, Any] | None:
     """Yogakaraka: Planet that rules both a kendra and a trikona for the ascendant."""
     yogakarakas = {
-        1: "SATURN",   # Taurus
-        3: "VENUS",    # Cancer
-        4: "MERCURY",  # Leo
-        9: "VENUS",    # Capricorn
+        1: "SATURN",   # Taurus (rules 9th & 10th)
+        3: "MARS",     # Cancer (rules 5th & 10th)
+        4: "MARS",     # Leo (rules 4th & 9th)
+        6: "SATURN",   # Libra (rules 4th & 5th)
+        9: "VENUS",    # Capricorn (rules 5th & 10th)
+        10: "VENUS",   # Aquarius (rules 4th & 9th)
     }
     if asc_rasi in yogakarakas:
         yk = yogakarakas[asc_rasi]

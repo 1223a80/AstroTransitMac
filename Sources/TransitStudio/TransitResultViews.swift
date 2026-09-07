@@ -204,7 +204,7 @@ struct PositionTableView: View {
                     ("黄经", .trailing, 84),
                     ("宫", .trailing, 36),
                     ("黄纬", .trailing, 80),
-                    ("速度", .trailing, 88),
+                    (positions.contains { $0.solarArcRateDegPerYear != nil } ? "推运率 / 年" : "速度 / 日", .trailing, 88),
                 ])
                 ScrollView {
                     LazyVStack(spacing: 0) {
@@ -236,7 +236,7 @@ struct PositionTableView: View {
                                         .font(TS.Font.monoSmall).foregroundStyle(TS.SemanticColor.inkFaint)
                                         .frame(width: 80, alignment: .trailing)
 
-                                    speedCell(row.speed)
+                                    speedCell(row.speed, solarArcRate: row.solarArcRateDegPerYear)
                                 }
                             }
                         }
@@ -247,15 +247,16 @@ struct PositionTableView: View {
     }
 
     @ViewBuilder
-    private func speedCell(_ speed: Double) -> some View {
-        let retro = speed < 0
+    private func speedCell(_ speed: Double?, solarArcRate: Double?) -> some View {
+        let retro = speed.map { $0 < 0 } ?? false
         HStack(spacing: 4) {
             if retro {
                 Image(systemName: "arrow.uturn.left")
                     .font(.system(size: 8, weight: .bold))
                     .foregroundStyle(TS.SemanticColor.hardAspect)
             }
-            Text(String(format: "%.3f", speed))
+            Text(solarArcRate.map { String(format: "%.3f°/年", $0) }
+                ?? speed.map { String(format: "%.3f", $0) } ?? "—")
                 .font(TS.Font.monoSmall)
                 .foregroundStyle(retro ? TS.SemanticColor.hardAspect : TS.SemanticColor.inkSoft)
         }

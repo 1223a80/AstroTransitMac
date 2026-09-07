@@ -114,13 +114,15 @@ extension MarkdownExportBuilder {
         var lines = [
             "## \(title)",
             "",
-            "| 天体 | 黄经 | 宫 | 黄纬 | 赤纬 | 出界 | 速度 |",
+            "| 天体 | 黄经 | 宫 | 黄纬 | 赤纬 | 出界 | 速度 / 推运率 |",
             "| --- | --- | ---: | ---: | ---: | --- | ---: |"
         ]
         lines += rows.map {
             let dec = $0.declination.map { degree($0, digits: 4) } ?? ""
             let oob = $0.outOfBounds == true ? "是" : ""
-            return "| \($0.name) | \($0.degreeText) | \($0.house.map(String.init) ?? "") | \(degree($0.latitude, digits: 4)) | \(dec) | \(oob) | \(degree($0.speed, digits: 4))/日 |"
+            let motion = $0.solarArcRateDegPerYear.map { "\(degree($0, digits: 4))/年" }
+                ?? $0.speed.map { "\(degree($0, digits: 4))/日" } ?? "—"
+            return "| \($0.name) | \($0.degreeText) | \($0.house.map(String.init) ?? "") | \(degree($0.latitude, digits: 4)) | \(dec) | \(oob) | \(motion) |"
         }
         lines.append("")
         return lines

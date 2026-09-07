@@ -25,21 +25,13 @@ jobs:
       - name: Swift build
         run: swift build
 
-      - name: Swift tests
-        run: swift test
+      - name: Swift tests and live backend contracts
+        env:
+          TRANSIT_LIVE_CONTRACTS: "1"
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          export TRANSIT_TEST_PYTHON="$(command -v python)"
+          swift test
 
       - name: Python tests
         run: python -m pytest python_tests/ -q
-
-      - name: Backend smoke checks
-        run: |
-          python Sources/TransitStudio/Resources/backend/transit_calc.py \
-            < Examples/sample-request.json > /dev/null
-          for sample in classical scan horary kp-horary vedic-ai harmonic synastry modern-solar-return modern-lunar-return modern-mercury-return modern-timing midpoint modern-timing-midpoint modern-timing-composite modern-timing-davison progressed-composite relocation modern-cycles declination-timing retrograde-cycles classical-visibility planetary-synodic hellenistic-condition-audit draconic-heliocentric classical-derivatives astrocartography local-space mundane-electional orbital-dial prenatal-parans distributions-pd primary-directions-audit method-families time-lords-extended rectify-evidence; do
-            echo "smoke: $sample"
-            python Sources/TransitStudio/Resources/backend/transit_calc.py \
-              < "Examples/sample-${sample}-request.json" > /dev/null
-          done
-          echo '{"mode":"rectify","birth_date":"2000-01-01","center_time":"12:00","timezone":"Asia/Shanghai","latitude":31.23,"longitude":121.47,"house_system":"whole_sign","zodiac":"tropical","bounds_system":"egyptian","triplicity_system":"dorothean","max_age":30,"window_minutes":5,"step_minutes":5}' \
-            | python Sources/TransitStudio/Resources/backend/transit_calc.py 2>/dev/null \
-            | python -c 'import json,sys; data=json.load(sys.stdin); assert data.get("total_candidates") == 3'

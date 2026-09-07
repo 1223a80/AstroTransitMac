@@ -346,6 +346,58 @@ class TestDivisionalReferenceValues:
                        positions_with_reference["divisional_charts"]["D2"]["planets"])
 
 
+class TestD30Trimsamsha:
+    """Test D30 Trimsamsa division boundaries and degree mapping."""
+
+    @pytest.mark.parametrize(
+        ("rasi_len", "expected_rasi", "sign_name"),
+        [
+            (0.0, 1, "Taurus"),
+            (4.999999, 1, "Taurus"),
+            (5.0, 5, "Virgo"),
+            (5.000001, 5, "Virgo"),
+            (11.999999, 5, "Virgo"),
+            (12.0, 11, "Pisces"),
+            (12.000001, 11, "Pisces"),
+            (19.999999, 11, "Pisces"),
+            (20.0, 9, "Capricorn"),
+            (20.000001, 9, "Capricorn"),
+            (24.999999, 9, "Capricorn"),
+            (25.0, 7, "Scorpio"),
+            (25.000001, 7, "Scorpio"),
+            (29.999999, 7, "Scorpio"),
+        ],
+    )
+    def test_even_sign_boundaries(self, rasi_len, expected_rasi, sign_name):
+        from astro_backend_jyotish_varga import calc_varga, calc_varga_longitude
+        # Taurus is even sign (rasi index 1, offset 30°)
+        lon = 30.0 + rasi_len
+        actual_rasi = calc_varga(lon, 30)
+        actual_varga_lon = calc_varga_longitude(lon, 30)
+        assert 0.0 <= actual_varga_lon < 360.0
+        assert actual_rasi == expected_rasi, (
+            f"Degree {rasi_len}° in even sign should be {sign_name} ({expected_rasi}), got {actual_rasi}"
+        )
+
+    def test_even_sign_reverse_mapping_slope(self):
+        from astro_backend_jyotish_varga import calc_varga_longitude
+        # Within Virgo segment [5, 12), as rasi_len increases, the degree within Virgo decreases
+        lon_a = 30.0 + 6.0
+        lon_b = 30.0 + 10.0
+        v_a = calc_varga_longitude(lon_a, 30)
+        v_b = calc_varga_longitude(lon_b, 30)
+        assert v_a > v_b, "Even sign segment must map in reverse order"
+
+    def test_odd_sign_boundaries(self):
+        from astro_backend_jyotish_varga import calc_varga
+        # Aries is odd sign (rasi index 0): 0..5 Ar(0), 5..10 Aq(10), 10..18 Sg(8), 18..25 Ge(2), 25..30 Li(6)
+        assert calc_varga(2.0, 30) == 0   # Aries
+        assert calc_varga(7.0, 30) == 10  # Aquarius
+        assert calc_varga(14.0, 30) == 8  # Sagittarius
+        assert calc_varga(21.0, 30) == 2  # Gemini
+        assert calc_varga(27.0, 30) == 6  # Libra
+
+
 # ─── 4. Moon Chart ──────────────────────────────────────────────────
 
 class TestMoonChart:
@@ -473,10 +525,52 @@ class TestArudha:
         assert "house" in al
         assert 1 <= al["house"] <= 12
 
-    def test_arudha_opposite_exception_shifts_ten_signs(self):
+    def test_arudha_same_house_exception_shifts_nine(self):
         from astro_backend_jyotish_arudha import calc_arudha_pada
-        positions = {"MARS": {"longitude": 90.0}}
+        # Aries house (0), Mars in Aries (rasi 0): initial pada = 0 -> shifts to 10th from house = 9 (Capricorn)
+        positions = {"MARS": {"longitude": 10.0}}
+        assert calc_arudha_pada(0, 0, positions) == 9
+
+    def test_arudha_opposite_house_exception_shifts_three(self):
+        from astro_backend_jyotish_arudha import calc_arudha_pada
+        # Aries house (0), Mars in Cancer (rasi 3): initial pada = 3 + 3 = 6 (Libra, opposite of Aries)
+        # Exception shifts to 4th from house = (0 + 3) = 3 (Cancer)
+        positions = {"MARS": {"longitude": 100.0}}
+        assert calc_arudha_pada(0, 0, positions) == 3
+
+    def test_arudha_normal_case_no_exception(self):
+        from astro_backend_jyotish_arudha import calc_arudha_pada
+        # Aries house (0), Mars in Gemini (rasi 2): initial pada = 2 + 2 = 4 (Leo, neither 0 nor 6)
+        positions = {"MARS": {"longitude": 70.0}}
         assert calc_arudha_pada(0, 0, positions) == 4
+
+    def test_arudha_wraparound_near_pisces(self):
+        from astro_backend_jyotish_arudha import calc_arudha_pada
+        # Pisces house (11), Jupiter in Pisces (rasi 11): initial pada = 11 -> shifts to (11 + 9) % 12 = 8 (Sagittarius)
+        positions = {"JUPITER": {"longitude": 340.0}}
+        assert calc_arudha_pada(11, 0, positions) == 8
+
+        # Pisces house (11), Jupiter in Gemini (rasi 2): initial pada = (2 + (2 - 11)) % 12 = 5 (Virgo, opposite)
+        # Exception shifts to (11 + 3) % 12 = 2 (Gemini)
+        positions_opp = {"JUPITER": {"longitude": 70.0}}
+        assert calc_arudha_pada(11, 0, positions_opp) == 2
+
+    def test_compute_arudha_all_padas_valid_range(self):
+        from astro_backend_jyotish_arudha import compute_arudha
+        positions = {
+            "SUN": {"longitude": 10.0},
+            "MOON": {"longitude": 40.0},
+            "MARS": {"longitude": 10.0},
+            "MERCURY": {"longitude": 70.0},
+            "JUPITER": {"longitude": 340.0},
+            "VENUS": {"longitude": 190.0},
+            "SATURN": {"longitude": 280.0},
+        }
+        res = compute_arudha(15.0, positions)
+        assert 0 <= res["AL"]["rasi"] <= 11
+        assert 0 <= res["UL"]["rasi"] <= 11
+        for i in range(2, 12):
+            assert 0 <= res[f"A{i}"]["rasi"] <= 11
 
 
 # ─── 8. Jaimini Karakas ─────────────────────────────────────────────
@@ -508,21 +602,154 @@ class TestJaiminiKarakas:
         assert jk["chara_karakas"][0]["planet"] in ("SUN", "MOON", "MARS", "MERCURY",
                                                       "JUPITER", "VENUS", "SATURN", "RAHU")
 
-    def test_rahu_longitude_is_ranked_retrograde(self):
+    def test_eight_planets_complete_order(self):
         from astro_backend_jyotish_jaimini import compute_chara_karakas
         positions = {
-            "SUN": {"longitude": 5.0},
-            "MOON": {"longitude": 10.0},
-            "MARS": {"longitude": 15.0},
-            "MERCURY": {"longitude": 20.0},
-            "JUPITER": {"longitude": 25.0},
-            "VENUS": {"longitude": 1.0},
-            "SATURN": {"longitude": 2.0},
-            "RAHU": {"longitude": 3.0},
+            "SUN": {"longitude": 28.0},      # rasi_len 28.0 (1st: Atma)
+            "MOON": {"longitude": 24.0},     # rasi_len 24.0 (2nd: Amatya)
+            "MARS": {"longitude": 20.0},     # rasi_len 20.0 (3rd: Bhratri)
+            "MERCURY": {"longitude": 16.0},  # rasi_len 16.0 (4th: Matri)
+            "JUPITER": {"longitude": 12.0},  # rasi_len 12.0 (5th: Pitri)
+            "VENUS": {"longitude": 8.0},     # rasi_len 8.0  (6th: Putra)
+            "SATURN": {"longitude": 4.0},    # rasi_len 4.0  (7th: Gnati)
+            "RAHU": {"longitude": 29.0},     # eff_len 30 - 29 = 1.0 (8th: Dara)
         }
-        result = compute_chara_karakas(positions)
-        assert result["chara_karakas"][0]["planet"] == "RAHU"
-        assert result["chara_karakas"][0]["effective_longitude"] == 27.0
+        res = compute_chara_karakas(positions, include_rahu=True)
+        ck = res["chara_karakas"]
+        assert len(ck) == 8
+        assert res["system"] == "8-planet"
+        assert [k["karaka_type"] for k in ck] == list(range(8))
+        assert ck[0]["name_sa"] == "Atma Karaka"
+        assert ck[4]["name_sa"] == "Pitri Karaka"
+        assert ck[5]["name_sa"] == "Putra Karaka"
+        assert ck[6]["name_sa"] == "Gnati Karaka"
+        assert ck[7]["name_sa"] == "Dara Karaka"
+        assert ck[4]["planet"] == "JUPITER"
+        assert ck[7]["planet"] == "RAHU"
+
+    def test_seven_planets_complete_order(self):
+        from astro_backend_jyotish_jaimini import compute_chara_karakas
+        positions = {
+            "SUN": {"longitude": 28.0},
+            "MOON": {"longitude": 24.0},
+            "MARS": {"longitude": 20.0},
+            "MERCURY": {"longitude": 16.0},
+            "JUPITER": {"longitude": 12.0},
+            "VENUS": {"longitude": 8.0},
+            "SATURN": {"longitude": 4.0},
+            "RAHU": {"longitude": 29.0},
+        }
+        res = compute_chara_karakas(positions, include_rahu=False)
+        ck = res["chara_karakas"]
+        assert len(ck) == 7
+        assert res["system"] == "7-planet"
+        assert [k["karaka_type"] for k in ck] == list(range(7))
+        assert ck[0]["name_sa"] == "Atma Karaka"
+        assert ck[4]["name_sa"] == "Putra Karaka"  # In 7-planet, 5th is Putra
+        assert ck[5]["name_sa"] == "Gnati Karaka"
+        assert ck[6]["name_sa"] == "Dara Karaka"
+        assert all(k["planet"] != "RAHU" for k in ck)
+
+    def test_missing_planet_does_not_create_dummy(self):
+        from astro_backend_jyotish_jaimini import compute_chara_karakas
+        # Only 6 planets provided
+        positions = {
+            "SUN": {"longitude": 28.0},
+            "MOON": {"longitude": 24.0},
+            "MARS": {"longitude": 20.0},
+            "MERCURY": {"longitude": 16.0},
+            "JUPITER": {"longitude": 12.0},
+            "VENUS": {"longitude": 8.0},
+        }
+        res = compute_chara_karakas(positions, include_rahu=False)
+        ck = res["chara_karakas"]
+        assert len(ck) == 6
+        assert all(k["planet"] in positions for k in ck)
+        assert res["complete"] is False
+        assert res["requested_system"] == "7-planet"
+        assert res["system"] == "7-planet (incomplete)"
+        assert res["missing_planets"] == ["SATURN"]
+
+    def test_include_rahu_true_but_missing_rahu_completeness_flag(self):
+        from astro_backend_jyotish_jaimini import compute_chara_karakas
+        # 7 classical planets provided, but include_rahu=True
+        positions = {
+            "SUN": {"longitude": 28.0},
+            "MOON": {"longitude": 24.0},
+            "MARS": {"longitude": 20.0},
+            "MERCURY": {"longitude": 16.0},
+            "JUPITER": {"longitude": 12.0},
+            "VENUS": {"longitude": 8.0},
+            "SATURN": {"longitude": 4.0},
+        }
+        res = compute_chara_karakas(positions, include_rahu=True)
+        assert res["complete"] is False
+        assert res["requested_system"] == "8-planet"
+        assert res["system"] == "8-planet (incomplete)"
+        assert res["missing_planets"] == ["RAHU"]
+        assert len(res["chara_karakas"]) == 7
+
+    def test_tie_break_order_is_deterministic(self):
+        from astro_backend_jyotish_jaimini import compute_chara_karakas
+        positions = {
+            "SUN": {"longitude": 15.0},
+            "MOON": {"longitude": 15.0},
+            "MARS": {"longitude": 15.0},
+            "MERCURY": {"longitude": 15.0},
+            "JUPITER": {"longitude": 15.0},
+            "VENUS": {"longitude": 15.0},
+            "SATURN": {"longitude": 15.0},
+        }
+        res1 = compute_chara_karakas(positions, include_rahu=False)
+        res2 = compute_chara_karakas(positions, include_rahu=False)
+        assert [k["planet"] for k in res1["chara_karakas"]] == [k["planet"] for k in res2["chara_karakas"]]
+
+
+class TestYogakarakaMapping:
+    """Test Yogakaraka planet detection across all 12 ascendants."""
+
+    ALL_POSITIONS = {
+        "SUN": {"longitude": 0.0},
+        "MOON": {"longitude": 30.0},
+        "MARS": {"longitude": 60.0},
+        "MERCURY": {"longitude": 90.0},
+        "JUPITER": {"longitude": 120.0},
+        "VENUS": {"longitude": 150.0},
+        "SATURN": {"longitude": 180.0},
+    }
+
+    @pytest.mark.parametrize(
+        ("asc_rasi", "expected_planet"),
+        [
+            (0, None),       # Aries
+            (1, "SATURN"),   # Taurus
+            (2, None),       # Gemini
+            (3, "MARS"),     # Cancer
+            (4, "MARS"),     # Leo
+            (5, None),       # Virgo
+            (6, "SATURN"),   # Libra
+            (7, None),       # Scorpio
+            (8, None),       # Sagittarius
+            (9, "VENUS"),    # Capricorn
+            (10, "VENUS"),   # Aquarius
+            (11, None),      # Pisces
+        ],
+    )
+    def test_all_12_ascendants(self, asc_rasi, expected_planet):
+        from astro_backend_jyotish_yoga import yoga_yogakaraka
+        res = yoga_yogakaraka(self.ALL_POSITIONS, asc_rasi)
+        if expected_planet is None:
+            assert res is None, f"Ascendant {asc_rasi} should have no Yogakaraka, got {res}"
+        else:
+            assert res is not None, f"Ascendant {asc_rasi} should have Yogakaraka {expected_planet}"
+            assert res["planets"] == [expected_planet]
+            assert expected_planet in res["description"]
+
+    def test_missing_planet_returns_none(self):
+        from astro_backend_jyotish_yoga import yoga_yogakaraka
+        # Taurus (1) requires SATURN; test with SATURN missing
+        positions = {k: v for k, v in self.ALL_POSITIONS.items() if k != "SATURN"}
+        assert yoga_yogakaraka(positions, 1) is None
 
 
 class TestAshtottariDasaFocused:
@@ -574,6 +801,68 @@ class TestAshtakavarga:
         sav = av["sav"]["rekha"]
         for v in sav:
             assert 0 <= v <= 56  # SAV max theoretical
+
+
+class TestEkadhipatyaShodhana:
+    """Test Ekadhipatya Shodhana rules across all 7 cases and matrix reduction."""
+
+    @pytest.mark.parametrize(
+        ("v1", "v2", "c1", "c2", "expected_v1", "expected_v2", "case_desc"),
+        [
+            # 1. One side is 0, other > 0: both unchanged
+            (0, 4, 0, 0, 0, 4, "zero_and_positive"),
+            (5, 0, 1, 0, 5, 0, "positive_and_zero"),
+            # 2. Both sides have planets: both unchanged
+            (4, 6, 1, 1, 4, 6, "both_occupied"),
+            # 3. Both sides have NO planets, different values: both become min
+            (4, 7, 0, 0, 4, 4, "both_empty_diff_values"),
+            # 4. Both sides have NO planets, equal values: both become 0
+            (5, 5, 0, 0, 0, 0, "both_empty_equal_values"),
+            # 5. One side has planet, occupied side has smaller value: occupied unchanged, empty subtracts smaller
+            (3, 7, 1, 0, 3, 4, "one_occupied_smaller_value"),
+            (8, 3, 0, 1, 5, 3, "one_occupied_smaller_value_rev"),
+            # 6. One side has planet, occupied side has larger value: occupied unchanged, empty becomes 0
+            (7, 3, 1, 0, 7, 0, "one_occupied_larger_value"),
+            (2, 6, 0, 1, 0, 6, "one_occupied_larger_value_rev"),
+            # 7. One side has planet, both values equal: occupied unchanged, empty becomes 0
+            (4, 4, 1, 0, 4, 0, "one_occupied_equal_values"),
+            (5, 5, 0, 2, 0, 5, "one_occupied_equal_values_rev"),
+        ],
+    )
+    def test_ekadhipatya_pair_reduction(self, v1, v2, c1, c2, expected_v1, expected_v2, case_desc):
+        from astro_backend_jyotish_ashtakavarga import _reduce_ekadhipatya_pair
+        out_v1, out_v2 = _reduce_ekadhipatya_pair(v1, v2, c1, c2)
+        assert (out_v1, out_v2) == (expected_v1, expected_v2), (
+            f"Case '{case_desc}' failed: in=({v1},{v2}) counts=({c1},{c2}) expected=({expected_v1},{expected_v2}) got=({out_v1},{out_v2})"
+        )
+
+    def test_full_ashtakavarga_matrix_reduction(self):
+        from astro_backend_jyotish_ashtakavarga import compute_ashtakavarga
+        positions = {
+            "SUN": {"longitude": 10.0},      # Aries (0)
+            "MOON": {"longitude": 40.0},     # Taurus (1)
+            "MARS": {"longitude": 70.0},     # Gemini (2)
+            "MERCURY": {"longitude": 100.0}, # Cancer (3)
+            "JUPITER": {"longitude": 130.0}, # Leo (4)
+            "VENUS": {"longitude": 160.0},   # Virgo (5)
+            "SATURN": {"longitude": 190.0},  # Libra (6)
+        }
+        res = compute_ashtakavarga(positions, asc_longitude=15.0)
+        # Verify trikona and rekha are separate from ekadhi
+        for pid in ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN", "ASC"]:
+            row = res["bav"]["rekha_by_planet"][pid]
+            assert all(v >= 0 for v in row["ekadhi"])
+            assert all(v >= 0 for v in row["trikona"])
+            assert all(v >= 0 for v in row["rekha"])
+            # ekadhi must not be identical copy of rekha
+            assert row["ekadhi"] != row["rekha"] or all(v == 0 for v in row["rekha"])
+
+        # SAV excludes the separate ASC BAV row in every reduction layer.
+        calc_sarva_ekadhi = [0] * 12
+        for pid in ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN"]:
+            for r in range(12):
+                calc_sarva_ekadhi[r] += res["bav"]["rekha_by_planet"][pid]["ekadhi"][r]
+        assert res["sav"]["ekadhi"] == calc_sarva_ekadhi
 
 
 # ─── 10. Vimshottari Antardashas ────────────────────────────────────
@@ -718,3 +1007,86 @@ class TestLinyi2004Reference:
         result = calculate_vedic(request, [])
         assert result["meta"]["timezone_label"] == "Asia/Shanghai"
         assert result["meta"]["birth_utc"] == "2004-08-09T08:16:00+00:00"
+
+
+class TestNathonathaBala:
+    """Test Nathonatha Bala LMT longitude calculation and diurnal/nocturnal mapping."""
+
+    def test_longitude_affects_nathonatha_output(self):
+        from astro_backend_jyotish_shadbala import calc_nathonatha_bala
+        jd_ut = 2451545.0  # J2000.0 (2000-01-01 12:00:00 UT)
+        # Lat 30, Long 0 vs Long 120E
+        res_0 = calc_nathonatha_bala(jd_ut, 30.0, 0.0)
+        res_120e = calc_nathonatha_bala(jd_ut, 30.0, 120.0)
+        assert res_0["MOON"] != res_120e["MOON"]
+        assert res_0["SUN"] != res_120e["SUN"]
+
+    def test_120e_equals_ut_plus_8h_at_0_lon(self):
+        from astro_backend_jyotish_shadbala import calc_nathonatha_bala
+        jd_ut = 2451545.0
+        # 120 deg East is +8 hours (+8/24 = +1/3 day)
+        res_120e = calc_nathonatha_bala(jd_ut, 30.0, 120.0)
+        res_ut_plus_8h = calc_nathonatha_bala(jd_ut + 8.0 / 24.0, 30.0, 0.0)
+        assert res_120e["MOON"] == pytest.approx(res_ut_plus_8h["MOON"], abs=1e-6)
+        assert res_120e["SUN"] == pytest.approx(res_ut_plus_8h["SUN"], abs=1e-6)
+
+    def test_120w_equals_ut_minus_8h_at_0_lon(self):
+        from astro_backend_jyotish_shadbala import calc_nathonatha_bala
+        jd_ut = 2451545.0
+        # 120 deg West is -8 hours (-8/24 = -1/3 day)
+        res_120w = calc_nathonatha_bala(jd_ut, 30.0, -120.0)
+        res_ut_minus_8h = calc_nathonatha_bala(jd_ut - 8.0 / 24.0, 30.0, 0.0)
+        assert res_120w["MOON"] == pytest.approx(res_ut_minus_8h["MOON"], abs=1e-6)
+        assert res_120w["SUN"] == pytest.approx(res_ut_minus_8h["SUN"], abs=1e-6)
+
+    def test_local_midnight_extremes(self):
+        from astro_backend_jyotish_shadbala import calc_nathonatha_bala
+        # At lon 0, JD with fractional part .5 is 00:00:00 UT (midnight)
+        jd_midnight = 2451544.5  # 2000-01-01 00:00:00 UT
+        res = calc_nathonatha_bala(jd_midnight, 0.0, 0.0)
+        # At midnight: Nata group (Moon/Mars/Saturn) -> 0.0; Unnata group (Sun/Jupiter/Venus) -> 60.0
+        assert res["MOON"] == pytest.approx(0.0, abs=1e-6)
+        assert res["MARS"] == pytest.approx(0.0, abs=1e-6)
+        assert res["SATURN"] == pytest.approx(0.0, abs=1e-6)
+        assert res["SUN"] == pytest.approx(60.0, abs=1e-6)
+        assert res["JUPITER"] == pytest.approx(60.0, abs=1e-6)
+        assert res["VENUS"] == pytest.approx(60.0, abs=1e-6)
+        assert res["MERCURY"] == 60.0
+
+    def test_local_noon_extremes(self):
+        from astro_backend_jyotish_shadbala import calc_nathonatha_bala
+        # At lon 0, integer JD is 12:00:00 UT (noon)
+        jd_noon = 2451545.0  # 2000-01-01 12:00:00 UT
+        res = calc_nathonatha_bala(jd_noon, 0.0, 0.0)
+        # At noon: Nata group (Moon/Mars/Saturn) -> 60.0; Unnata group (Sun/Jupiter/Venus) -> 0.0
+        assert res["MOON"] == pytest.approx(60.0, abs=1e-6)
+        assert res["MARS"] == pytest.approx(60.0, abs=1e-6)
+        assert res["SATURN"] == pytest.approx(60.0, abs=1e-6)
+        assert res["SUN"] == pytest.approx(0.0, abs=1e-6)
+        assert res["JUPITER"] == pytest.approx(0.0, abs=1e-6)
+        assert res["VENUS"] == pytest.approx(0.0, abs=1e-6)
+        assert res["MERCURY"] == 60.0
+
+    def test_day_boundary_wrapping(self):
+        from astro_backend_jyotish_shadbala import calc_nathonatha_bala
+        # 23:59 LMT vs 00:01 LMT
+        jd_before = 2451544.5 - (1.0 / 1440.0)  # 23:59 previous day
+        jd_after = 2451544.5 + (1.0 / 1440.0)   # 00:01 current day
+        res_b = calc_nathonatha_bala(jd_before, 0.0, 0.0)
+        res_a = calc_nathonatha_bala(jd_after, 0.0, 0.0)
+        # Both are 1 minute from midnight, so nata value should be nearly equal and close to 0
+        assert res_b["MOON"] == pytest.approx(res_a["MOON"], abs=1e-4)
+        assert res_b["MOON"] < 1.0
+
+
+@pytest.mark.parametrize("asc", [0.0, 119.9, 359.9])
+def test_sav_sums_seven_planets_and_retains_separate_asc_bav(asc):
+    from astro_backend_jyotish_ashtakavarga import compute_ashtakavarga
+    planet_ids = ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN"]
+    positions = {pid: {"longitude": (index * 47.3 + asc) % 360} for index, pid in enumerate(planet_ids)}
+    result = compute_ashtakavarga(positions, asc)
+    assert sum(result["sav"]["rekha"]) == 337
+    assert sum(result["bav"]["rekha_by_planet"]["ASC"]["rekha"]) == 49
+    for layer in ("rekha", "trikona", "ekadhi"):
+        expected = [sum(result["bav"]["rekha_by_planet"][pid][layer][sign] for pid in planet_ids) for sign in range(12)]
+        assert result["sav"][layer] == expected

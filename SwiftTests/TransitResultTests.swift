@@ -4,6 +4,23 @@ import Testing
 
 struct TransitResultTests {
 
+    @Test func positionStillRejectsMalformedSpeed() {
+        let json = #"{"body_id":"SUN","name":"太阳","longitude":0,"latitude":0,"speed":"invalid","sign":"白羊","degree_text":"0°","house":1}"#
+        #expect(throws: DecodingError.self) {
+            try JSONDecoder().decode(PositionRow.self, from: Data(json.utf8))
+        }
+    }
+
+    @Test func unavailableSpeedDoesNotExportAsZero() throws {
+        let json = #"{"body_id":"SUN","name":"太阳","longitude":0,"latitude":0,"speed":null,"sign":"白羊","degree_text":"0°","house":1}"#
+        let position = try JSONDecoder().decode(PositionRow.self, from: Data(json.utf8))
+        #expect(position.speed == nil)
+        #expect(position.solarArcRateDegPerYear == nil)
+        let section = MarkdownExportBuilder.positionSection("位置", [position]).joined(separator: "\n")
+        #expect(section.contains("| — |"))
+        #expect(!section.contains("/日"))
+    }
+
     @Test func decodeTransitResult() throws {
         let json = """
         {

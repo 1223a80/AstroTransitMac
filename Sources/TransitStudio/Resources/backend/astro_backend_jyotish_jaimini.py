@@ -13,17 +13,19 @@ from astro_backend_core import zodiac_sign_index
 
 # ─── Chara Karaka Order ───────────────────────────────────────────────
 
-KARAKA_NAMES_SA = [
-    "Atma Karaka",       # Soul significator
-    "Amatya Karaka",     # Career/minister significator
-    "Bhratri Karaka",    # Sibling significator
-    "Matri Karaka",      # Mother significator
-    "Putra Karaka",      # Child significator
-    "Gnati Karaka",      # Knowledge significator
-    "Dara Karaka",       # Spouse significator
+# ─── Chara Karaka Order ───────────────────────────────────────────────
+
+KARAKA_NAMES_7_SA = [
+    "Atma Karaka",       # 0: Soul significator
+    "Amatya Karaka",     # 1: Career/minister significator
+    "Bhratri Karaka",    # 2: Sibling significator
+    "Matri Karaka",      # 3: Mother significator
+    "Putra Karaka",      # 4: Child significator
+    "Gnati Karaka",      # 5: Relations/obstacles significator
+    "Dara Karaka",       # 6: Spouse significator
 ]
 
-KARAKA_NAMES_ZH = [
+KARAKA_NAMES_7_ZH = [
     "灵魂星 (Atma Karaka)",
     "大臣星 (Amatya Karaka)",
     "兄弟星 (Bhratri Karaka)",
@@ -32,6 +34,31 @@ KARAKA_NAMES_ZH = [
     "知识星 (Gnati Karaka)",
     "配偶星 (Dara Karaka)",
 ]
+
+KARAKA_NAMES_8_SA = [
+    "Atma Karaka",       # 0: Soul significator
+    "Amatya Karaka",     # 1: Career/minister significator
+    "Bhratri Karaka",    # 2: Sibling significator
+    "Matri Karaka",      # 3: Mother significator
+    "Pitri Karaka",      # 4: Father significator
+    "Putra Karaka",      # 5: Child significator
+    "Gnati Karaka",      # 6: Relations/obstacles significator
+    "Dara Karaka",       # 7: Spouse significator
+]
+
+KARAKA_NAMES_8_ZH = [
+    "灵魂星 (Atma Karaka)",
+    "大臣星 (Amatya Karaka)",
+    "兄弟星 (Bhratri Karaka)",
+    "母亲星 (Matri Karaka)",
+    "父亲星 (Pitri Karaka)",
+    "子女星 (Putra Karaka)",
+    "知识星 (Gnati Karaka)",
+    "配偶星 (Dara Karaka)",
+]
+
+KARAKA_NAMES_SA = KARAKA_NAMES_7_SA
+KARAKA_NAMES_ZH = KARAKA_NAMES_7_ZH
 
 
 # ─── Planet Longitude in Own Sign ─────────────────────────────────────
@@ -58,8 +85,11 @@ def compute_chara_karakas(
     longitude within their own sign. The planet with the highest
     longitude = Atma Karaka, then decreasing → Amatya, Bhratri, etc.
 
-    The 8th karaka (if Rahu is included) is Gnati Karaka, otherwise
-    Gnati is 6th and Dara is 7th.
+    In the 8-planet system (with Rahu), the order is:
+    Atma, Amatya, Bhratri, Matri, Pitri, Putra, Gnati, Dara.
+
+    In the 7-planet system, the order is:
+    Atma, Amatya, Bhratri, Matri, Putra, Gnati, Dara.
 
     Args:
         planet_positions: Dict of planet positions
@@ -69,30 +99,32 @@ def compute_chara_karakas(
     Returns:
         Dict with chara_karakas ordered by importance.
     """
-    # Planets to consider
-    # Standard 7: Sun..Saturn
-    # If include_rahu: include Rahu as well (8)
     if include_rahu:
-        candidates = ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN", "RAHU"]
+        candidate_ids = ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN", "RAHU"]
+        names_sa = KARAKA_NAMES_8_SA
+        names_zh = KARAKA_NAMES_8_ZH
+        system_name = "8-planet"
     else:
-        candidates = ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN"]
+        candidate_ids = ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN"]
+        names_sa = KARAKA_NAMES_7_SA
+        names_zh = KARAKA_NAMES_7_ZH
+        system_name = "7-planet"
+
+    # Only include planets actually present in planet_positions
+    candidates = [p for p in candidate_ids if p in planet_positions]
+    missing_planets = [p for p in candidate_ids if p not in planet_positions]
+    is_complete = len(missing_planets) == 0
 
     # Get longitude within own sign for each
-    rl = {}
-    for pid in candidates:
-        if pid in planet_positions:
-            rl[pid] = _get_rasi_longitude(planet_positions, pid)
-        else:
-            rl[pid] = 0.0
+    rl = {pid: _get_rasi_longitude(planet_positions, pid) for pid in candidates}
 
-    # Sort by longitude descending
+    # Sort by longitude descending with stable key
     sorted_planets = sorted(candidates, key=lambda p: rl.get(p, 0.0), reverse=True)
-    sorted_planets = [p for p in sorted_planets if p in planet_positions]
 
     # Assign karaka in order
     karakas = []
     for i, pid in enumerate(sorted_planets):
-        if i >= len(KARAKA_NAMES_SA):
+        if i >= len(names_sa):
             break
         karakas.append({
             "karaka_type": i,
@@ -100,12 +132,15 @@ def compute_chara_karakas(
             "planet_name": planet_positions.get(pid, {}).get("name", pid),
             "longitude_in_rasi": round(rl.get(pid, 0.0), 4),
             "effective_longitude": round(rl.get(pid, 0.0), 4),
-            "name_sa": KARAKA_NAMES_SA[i],
-            "name_zh": KARAKA_NAMES_ZH[i],
+            "name_sa": names_sa[i],
+            "name_zh": names_zh[i],
         })
 
     return {
         "chara_karakas": karakas,
-        "system": "8-planet" if include_rahu else "7-planet",
+        "system": system_name if is_complete else f"{system_name} (incomplete)",
+        "requested_system": system_name,
+        "complete": is_complete,
+        "missing_planets": missing_planets,
         "note": "Chara Karakas ranked by planetary longitude within own sign",
     }

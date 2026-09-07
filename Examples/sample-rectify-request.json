@@ -1,0 +1,15 @@
+{
+  "mode": "rectify",
+  "birth_date": "2000-01-01",
+  "center_time": "12:00",
+  "timezone": "Asia/Shanghai",
+  "latitude": 31.23,
+  "longitude": 121.47,
+  "house_system": "whole_sign",
+  "zodiac": "tropical",
+  "bounds_system": "egyptian",
+  "triplicity_system": "dorothean",
+  "max_age": 30,
+  "window_minutes": 5,
+  "step_minutes": 5
+}
