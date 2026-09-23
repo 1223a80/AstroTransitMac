@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-22 — 后端缺陷修复总体计划（只写计划，未改业务代码）
+
+- 新增 `docs/bugfix-master-plan-20260922.md`：汇总 `backend-calculation-review-20260908`、`backend-calculation-bug-scan-20260826`、horary 补审与 `current-status` 的全部待修项，状态分流后产出批次 A–G 任务卡（每项含位置/现状/应然/修法/影响面/测试/fixture/风险）、PR 切分、影响面总表、验证门禁与剩余风险登记。
+- 覆盖：P1 2 项、P2 约 27 项（新 16 + 旧 11 去重）、P3 约 54 项（新 30 + 旧 24）；明确 4 项误报不修、SAV-337/horary A–J/13 项 audit 已关闭勿重复、8 项需产品口径确认后方可实现。
+- 对照源码核验了关键位置（`EGYPTIAN_BOUNDS[0]`、`_display_zone`、composite 宫位重建、`hayz_status` 的 `in_sect`、`primary_directions` 单分支、`orbital_dial` 整圈距离、`method_families` `or 1.0`/`bool()`、Krittika `name_zh`、patterns kite/去重、horary 速度缺失分支、Frustration 速度过滤、`declination_parallels` 半球判据、旧扫描 11 项复现点等），计划中的行号与现状描述与当前源码一致。
+- 本轮未修改任何业务代码、测试或 fixture。
+
 ## 2026-09-08 — 后端计算代码整体审查（只读）
 
 - 新增 `docs/backend-calculation-review-20260908.md`：12 组只读子代理覆盖全部 61 个后端 Python 模块（约 31.7k 行）+ 主会话用 pyswisseph 数值对拍与权威资料（Tetrabiblos I.21/I.22、Valens、astro.com）核对；基线 `pytest` 1091 passed。

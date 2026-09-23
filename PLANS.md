@@ -1,3 +1,26 @@
+# 后端缺陷修复总体计划（2026-09-22）
+
+状态：**计划已产出，未开始修复**。授权范围：汇总 `docs/` 内全部 bug/审查文档待修项并写出可执行修复计划；本轮**不修改任何业务代码**。详细计划：`docs/bugfix-master-plan-20260922.md`。
+
+- [x] 通读 `docs/backend-calculation-review-20260908.md`、`docs/backend-calculation-bug-scan-20260826.md`、`docs/horary-remaining-fixes.md`、`docs/calculation-audit-repair-spec.md`、`docs/current-status.md`、`docs/horary-audit-2026-07-10.md`、`docs/horary-fix-guide-2026-07-11.md`。
+- [x] 对照源码核验关键位置（`EGYPTIAN_BOUNDS`、`_display_zone`、composite 重建、Hayz、PD 单方向、orbital_dial modulus、method_families `or 1.0`/`bool()`、Krittika、patterns kite/去重、horary 速度缺失、Frustration 速度约束、declination_parallels 半球、旧扫描 11 项等）。
+- [x] 状态分流：已关闭/误报/待修复/需口径决策；产出批次 A–G 任务卡（修法、影响面、测试、fixture、风险）。
+- [x] 写出 PR 切分、影响面总表、验证门禁与剩余风险登记。
+- [ ] 批次 A（2 项 P1）——待授权开工。
+- [ ] 批次 B/C/D（P2）——待授权开工。
+- [ ] 批次 E/F（P3）——待授权开工。
+- [ ] 批次 G（口径决策）——待人类确认。
+
+## 计划摘要
+
+- **P1 2 项**：埃及界 Aries 误用托勒密数值（`astro_backend_classical_dignity.py:57`，需同步 `test_classical.py:100-105`）；`declination_timing._display_zone` 固定偏移被静默改 UTC（`astro_backend_declination_timing.py:199-205`）。
+- **P2 27 项**（新 16 + 旧 11，去重后）：composite ASC/宫头不一致、Mercury Hayz、PD converse 缺失、orbital_dial modulus、Krittika 译名、Shadbala Jupiter+15/Drik=0、method_families 参数吞噬、horary 速度缺失判离相、station 采样过稀、mundane 无 orb 阈值与 count 矛盾、body 中文名两套、阈值不统一、Frustration 速度约束、declination_parallels 半球、恒星 ARMC flag、hellenistic 证据行恒空、出生瞬间当返照、Yogini 起算、upagraha 占位、approaching_sun 反转、mundane 日时主键名、scan 入离相、Kite 标签、图形去重、Davison 大圆中点。
+- **P3 约 54 项**（新 30 + 旧 24）：按输入校验/时间精度/契约静默/horary 语义四组分批。
+- **误报 4 项不修**；**已关闭** SAV-337、horary A–J、13 项 audit；**8 项 DECISION_REQUIRED**（PTOLEMAIC_BOUNDS 版本、Shadbala 完整度、PD 双向、moiety orb、年长常数、upagraha 方案、Frustration 变体/事件 id/morning_evening、composite ASC/MC 权威）。
+- 执行纪律：先失败测试→最小修复→模块回归；每批独立分支 + CHANGELOG；JSON 形状变更必须同步 Swift 模型/导出/fixture + LiveBackendContractTests；收尾 `bash check_vibe_changes.sh`。
+
+---
+
 # 后端计算代码整体审查（2026-09-08）
 
 状态：完成（只读审查，未改业务代码）。授权范围：`Sources/TransitStudio/Resources/backend/` 全部 61 个 Python 模块（约 31.7k 行），目标找出真实计算 bug，每条给文件:行号与可复现验证。详细报告：`docs/backend-calculation-review-20260908.md`。
