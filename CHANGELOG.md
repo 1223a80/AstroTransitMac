@@ -1881,3 +1881,11 @@ JSON 合约向后兼容：旧响应无 `section_errors` 字段时 Swift 解码�
 
 - 本次不再改动功能逻辑，只补充项目跟踪记录并执行提交/安装收尾。
 - 安装目标使用当前规范产物 `dist/TransitStudio.app`，避免从历史副本 `TransitStudio 2.app` / `TransitStudio 3.app` 取包。
+
+
+## 2026-09-22 — 后端修复总体计划 v2（仅文档）
+
+- 新建 `docs/bugfix-master-plan-20260922-v2.md`，并在保留的原版增加历史版本提示；87 条来源记录逐项映射到 18 个工作包，补齐 station 采样、极区 PD 等 7 个原版漏项。
+- 记录 12 条实际接口/源码/数学核验，纠正 houses_armc flags、PD 分支异号、composite 二次平移、mundane 自动排名、27/28 宿混用等方案；明确待核验与口径决策，14 个决策只阻塞关联项。
+- 补充 schema/fixture/Swift/导出验收、完整 app 资源发布与缓存清理；原计划仅增加历史版本提示，未修改业务代码、schema 或 fixture，未打包。
+- 文档验证：87 个唯一 ID 及完整预期集合、单一归属、工作包/决策引用、本地链接、测试与 Swift 文件名、代码围栏/空白通过；运行本地探针，未运行完整 pytest/Swift 门禁。

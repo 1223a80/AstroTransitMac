@@ -1,5 +1,7 @@
 # 后端计算缺陷修复总体计划（2026-09-22）
 
+> 历史版本：后续实施请以 [v2 修订计划](bugfix-master-plan-20260922-v2.md) 为准。v2 已纠正本文部分接口假设、修法和任务覆盖；本文保留作修订依据。
+
 > 性质：**修复计划，不含修复实现**。本文汇总 `docs/` 内全部 bug/审查文档的待修项，给出逐条修法、影响面、测试与验证方式，供后续分批执行。
 > 来源：`backend-calculation-review-20260908.md`（新发现）、`backend-calculation-bug-scan-20260826.md`（旧扫描未关闭项）、`current-status.md`（收口状态）、`horary-remaining-fixes.md`（已关闭，仅作边界）、`calculation-audit-repair-spec.md`（已关闭，仅作边界）。
 > 基线：`pytest` 1091 passed；分支 `codex/stabilize-json-contracts`。
