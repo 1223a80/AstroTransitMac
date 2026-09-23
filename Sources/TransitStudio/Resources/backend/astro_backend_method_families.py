@@ -112,7 +112,7 @@ def calculate_method_families(request: dict[str, Any], warnings: list[str]) -> d
     )
     age_years = max((ref_dt - birth_dt).total_seconds() / (365.2422 * 86400), 0.0)
     naibod_arc = NAIBOD_DEG_PER_YEAR * age_years
-    custom_rate = float(request.get("solar_arc_rate_deg_per_year") or 1.0)
+    custom_rate = float(request.get("solar_arc_rate_deg_per_year", 1.0))
     custom_arc = custom_rate * age_years
     armc_rate = 361.0 / 365.2422
 
@@ -135,7 +135,7 @@ def calculate_method_families(request: dict[str, Any], warnings: list[str]) -> d
     natal_mc = float(natal_angles.get("MC", 0.0))
     natal_asc_mc_separation = abs(((natal_asc - natal_mc + 180) % 360) - 180)
 
-    include_experimental = bool(request.get("include_experimental_profiles", True))
+    include_experimental = request.get("include_experimental_profiles", True)
     progression_ids = dict(PROGRESSION_PROFILES)
     if include_experimental:
         progression_ids.update(PROGRESSION_EXPERIMENTAL)

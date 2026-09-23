@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-09-23 — R-P2-g/h / W03 method_families inputs
+
+- W03 investigation confirmed the method_families rate uses `request.get(...) or 1.0` and the experimental-profile flag uses `bool(...)`; the existing API already exposes `_is_finite_number` and structured `mode/error/invalid` responses. The analogous rate fallback in the separate `solar_arc` mode is recorded for scope review.
+- Added red-test cases for the zero-rate fallback, optional defaults, exact JSON boolean behavior, bool/NaN/Inf/null/string rejection, and structured errors through `transit_calc.py`.
+- Adjusted the default-rate regression tolerance to account for `meta.age_years` being rounded for display; the custom profile retains its full precision.
+- Fixed W03 by validating optional method_families values through the existing API error path and preserving explicit zero/JSON booleans in calculation; the `solar_arc` mode's separate same-shaped fallback remains a tracked follow-up.
+- Verification: the focused method_families/contract/solar_arc regressions passed (57 tests); `check_vibe_changes.sh` passed with 1109 Python tests, Swift build, 227 Swift tests across 31 suites including all 43 live backend decode cases, and `git diff --check`. Removed the temporary SwiftPM scratch cache.
+
 ## 2026-09-23 — R-P1-1 / W01 Egyptian Aries terms
 
 - Added independent Book I §20 Egyptian-terms expectations for Aries boundary values, the 0°/30° sign edges, and 360° normalization; added explicit Ptolemaic Aries guard expectations. This is test-first coverage against the pre-fix table.

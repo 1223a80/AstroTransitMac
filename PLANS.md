@@ -1,3 +1,18 @@
+# R-P2-g/h / W03 method_families 输入校验（2026-09-23）
+
+状态：已完成；仅修复 `method_families` 中自定义 solar-arc rate 与实验 profile 选项被静默吞值/宽松强转的问题，不调整结果 JSON shape。
+
+- [x] 确认 W01 分支 `eb1ff0b` clean；从同步的 `codex/bugfix-plan-v2` (`2298535`) 创建独立分支 `codex/fix-method-families-inputs`，避免混入 W01。
+- [x] 完整复读 `AGENTS.md`，核对 v2 W03 要求；检查 `validate_required_fields`、`_is_finite_number`、`calculate_method_families`、`test_method_families.py`、真实 `transit_calc.py` 入口，以及 Swift request/model/export 调用。
+- [x] 旧代码红测：`solar_arc_rate_deg_per_year=0` 被 `or 1.0` 转成 1；`include_experimental_profiles="false"` 被 `bool()` 当真；覆盖缺省值、0、JSON true/false、布尔假数值、NaN/Inf/非法字符串拒绝与入口结构化错误。旧版聚焦测试 15 failed / 6 passed，失败均落在上述缺陷断言。
+- [x] 最小实现：在现有 API 校验器复用 `_is_finite_number`，可选 rate 缺失沿用 1°/年、显式有限数（含 0）保留、其他类型/非有限拒绝；实验开关仅在缺失时默认 true，提供时必须为 JSON boolean；计算函数停止 `or` 和 `bool()` 归一化。错误继续返回既有 `mode/error/invalid` 结构。
+- [x] 同形风险审查：`solar_arc` 独立模式也有同样的 `or 1.0` rate 表达式，但 W03 来源归属只含 `method_families`。已确认它是分离的 mode handler，Swift `SolarArcRequest` 无该 rate 字段；method_families 通过 `ExpansionGenericRequest` 发送，未发现共享字段契约，故将 solar_arc 留为独立跟进项，不在本分支扩修。
+- [x] 检查 Swift generic method_families 请求、Codable/result/导出契约；无 request/result shape 变化，不改 Codable / fixture。
+- [x] 每次代码改动更新 `CHANGELOG.md`；聚焦与相关 Python 测试 57 项通过，完整 `bash check_vibe_changes.sh` 通过（Python 1109 项，Swift build，Swift 227 项/31 suites，43 个实时请求解码）；清理本任务构建缓存。
+- [x] 审阅完整 diff/status，完成一个本地逻辑提交；不 push、不开 PR、不打包。
+
+边界：计划指定不自创 rate 数值范围。对错误输入通过当前 validator 的 `invalid` 字段可观察拒绝，而不是让 mode handler 崩溃或静默回退。
+
 # R-P1-2 / W02 证据化关闭（2026-09-23）
 
 状态：已完成；本任务仅纠正审查/计划文档，不改业务代码、测试、fixture 或 schema。

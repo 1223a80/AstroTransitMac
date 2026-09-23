@@ -1,14 +1,39 @@
 from __future__ import annotations
 
+import json
+import math
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
 from astro_backend_api import validate_required_fields
 from astro_backend_method_families import calculate_method_families
 
+ROOT = Path(__file__).resolve().parents[1]
+TRANSIT_CALC = ROOT / "Sources" / "TransitStudio" / "Resources" / "backend" / "transit_calc.py"
+
 
 def _req():
-    import json
-    from pathlib import Path
+    return json.loads((ROOT / "Examples/sample-method-families-request.json").read_text())
 
-    return json.loads(Path("Examples/sample-method-families-request.json").read_text())
+
+def _custom_arc(result: dict) -> float:
+    row = next(item for item in result["solar_arc_profiles"] if item["profile_id"] == "solar_arc_custom_key")
+    return float(row["arc_deg"])
+
+
+def _run_transit_calc(request: dict) -> dict:
+    completed = subprocess.run(
+        [sys.executable, str(TRANSIT_CALC)],
+        input=json.dumps(request, allow_nan=True),
+        text=True,
+        capture_output=True,
+        check=True,
+        cwd=ROOT,
+    )
+    return json.loads(completed.stdout)
 
 
 def test_api_accepts():
@@ -83,6 +108,80 @@ def test_calculate_defining_facts():
     c = arcs.get("solar_arc_custom_key", arcs.get("custom_rate"))
     assert abs(t - n) > 1e-9 or abs(n - c) > 1e-9
     assert r["profile_arc_comparison"]
+
+
+def test_missing_options_keep_existing_defaults():
+    request = _req()
+    result = calculate_method_families(request, [])
+
+    assert "solar_arc_rate_deg_per_year" not in request
+    assert math.isclose(_custom_arc(result), float(result["meta"]["age_years"]), abs_tol=1e-5)
+    assert "include_experimental_profiles" not in request
+    assert result["requested_config"]["include_experimental_profiles"] is True
+    assert "armc_361_ecliptic_proxy_experimental" in result["effective_config"]["progression_experimental"]
+
+
+def test_zero_solar_arc_rate_is_not_replaced_by_one():
+    request = _req()
+    request["solar_arc_rate_deg_per_year"] = 0.0
+
+    result = calculate_method_families(request, [])
+
+    assert _custom_arc(result) == 0.0
+
+
+@pytest.mark.parametrize("include_experimental", [True, False])
+def test_experimental_profiles_follow_json_boolean(include_experimental: bool):
+    request = _req()
+    request["include_experimental_profiles"] = include_experimental
+
+    result = calculate_method_families(request, [])
+
+    profiles = result["effective_config"]["progression_experimental"]
+    assert ("armc_361_ecliptic_proxy_experimental" in profiles) is include_experimental
+    assert result["requested_config"]["include_experimental_profiles"] is include_experimental
+
+
+@pytest.mark.parametrize(
+    "rate",
+    [True, False, math.nan, math.inf, -math.inf, "0", "not-a-number", None],
+)
+def test_api_rejects_invalid_solar_arc_rate(rate):
+    request = _req()
+    request["solar_arc_rate_deg_per_year"] = rate
+
+    error = validate_required_fields(request)
+
+    assert error is not None
+    assert error["mode"] == "method_families"
+    assert "solar_arc_rate_deg_per_year must be a finite number" in error["invalid"]
+
+
+@pytest.mark.parametrize("include_experimental", ["false", "true", 0, 1, None])
+def test_api_rejects_non_boolean_experimental_profile_option(include_experimental):
+    request = _req()
+    request["include_experimental_profiles"] = include_experimental
+
+    error = validate_required_fields(request)
+
+    assert error is not None
+    assert error["mode"] == "method_families"
+    assert "include_experimental_profiles must be a boolean" in error["invalid"]
+
+
+def test_transit_calc_returns_structured_errors_for_invalid_options():
+    request = _req()
+    request["solar_arc_rate_deg_per_year"] = "0"
+    request["include_experimental_profiles"] = "false"
+
+    response = _run_transit_calc(request)
+
+    assert response["mode"] == "method_families"
+    assert isinstance(response["error"], str)
+    assert response["invalid"] == [
+        "solar_arc_rate_deg_per_year must be a finite number",
+        "include_experimental_profiles must be a boolean",
+    ]
 
 
 def test_armc_naibod_not_ecliptic_plus_same_arc():

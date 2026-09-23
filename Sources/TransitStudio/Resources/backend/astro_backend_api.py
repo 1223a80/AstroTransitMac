@@ -1728,6 +1728,15 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                             invalid.append("reference.year must be in [1800, 2100]")
                     except Exception as exc:
                         invalid.append(f"reference is invalid: {exc}")
+        if mode == "method_families":
+            if "solar_arc_rate_deg_per_year" in request and not _is_finite_number(
+                request["solar_arc_rate_deg_per_year"]
+            ):
+                invalid.append("solar_arc_rate_deg_per_year must be a finite number")
+            if "include_experimental_profiles" in request and not isinstance(
+                request["include_experimental_profiles"], bool
+            ):
+                invalid.append("include_experimental_profiles must be a boolean")
         body_ids = request.get("body_ids")
         if body_ids is not None:
             if not isinstance(body_ids, list):
