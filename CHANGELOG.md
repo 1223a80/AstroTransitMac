@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-09-23 — R-P2-b / W04 Mercury Hayz
+
+- Added a red-test matrix for Mercury's day/night, oriental/occidental, above/below-horizon, and masculine/feminine-sign combinations; added generic Hayz branch checks for Jupiter, Saturn, Moon, Venus, and Mars. Existing `sect_agreement` and `planet_sect` values are asserted independently.
+- On the old implementation, `python_tests/test_classical.py` produced 8 expected Hayz-matrix failures and 94 passes; `sect_status` returned correct Mercury booleans while Hayz's Chinese-prefix parser forced its own trace boolean false.
+- Fixed Hayz to read the existing structured `sect_agreement` value directly. Kept `planet_sect`, the function signature/response shape, and the shared non-Mercury/Sun branches unchanged.
+- After the fix, the focused classical, Hellenistic audit, and classical derivatives regression modules passed (107 tests). Swift result models, the table view, and Markdown export were checked; they consume the existing `hayz` string with no schema change.
+- Verification: `check_vibe_changes.sh` passed with 1108 Python tests, Swift build, 227 Swift tests across 31 suites including 43 live backend decode cases, and `git diff --check`. Removed the temporary SwiftPM scratch cache.
+
 ## 2026-09-23 — R-P2-g/h / W03 method_families inputs
 
 - W03 investigation confirmed the method_families rate uses `request.get(...) or 1.0` and the experimental-profile flag uses `bool(...)`; the existing API already exposes `_is_finite_number` and structured `mode/error/invalid` responses. The analogous rate fallback in the separate `solar_arc` mode is recorded for scope review.

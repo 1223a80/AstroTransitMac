@@ -457,8 +457,8 @@ def hayz_status(body_id: str, is_day: bool, lon: float, house: int, sun_lon: flo
             return "Hayz", 3, ["Hayz"], {"label": "hayz", "score": 3, "value": "Hayz", "trace": {"sign_gender": gender, "above_horizon": above_horizon, "sect_agreement": True, "is_hayz": True}}
         return "", 0, [], {"label": "hayz", "score": 0, "value": "", "trace": {"sign_gender": gender, "above_horizon": above_horizon, "sect_agreement": True, "is_hayz": False, "note": "Sun not hayz: above_horizon and masculine sign both required"}}
 
-    sect, _, _, _ = sect_status(body_id, is_day, lon, sun_lon)
-    in_sect = sect.startswith("合")
+    _, _, _, sect_details = sect_status(body_id, is_day, lon, sun_lon)
+    in_sect = sect_details["sect_agreement"]
 
     hayz = False
     if is_day and above_horizon and in_sect and gender == "masc":

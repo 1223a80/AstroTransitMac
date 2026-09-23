@@ -1,3 +1,17 @@
+# R-P2-b / W04 Mercury Hayz（2026-09-23）
+
+状态：已完成；只处理 Mercury 的 Hayz 资格判定错误，不包含 W04 的 Hellenistic ID、Hyleg、syzygy、ZR 或其他来源项，不改 `planet_sect` 的语义。
+
+- [x] 确认 W03 提交 `cd516aa` 已留在独立分支且工作区 clean；从同步计划分支 `codex/bugfix-plan-v2` (`2298535`) 创建 `codex/fix-mercury-hayz-sect`。
+- [x] 完整复读 `AGENTS.md` 与 v2 W04/R-P2-b/EV-07 要求；开始核查既有 Hayz、sect 接口、测试及 Swift 消费者。
+- [x] 先写独立红测：按当前锁定 Hayz 契约覆盖 Mercury 东方/西方、昼/夜、上下半球与黄道星座性别的 16 组正反例；附其他行星通用分支保护断言。旧代码 `test_classical.py` 为 94 passed / 8 failed，失败均由 Hayz 将 Mercury 的 sect 状态误读为 False 导致。
+- [x] 最小修复：保持 `hayz_status` 签名及返回结构，改为读取 `sect_status(...)[3]['sect_agreement']`；不改 `planet_sect` 既有语义，不加入来源未授权的新规则。
+- [x] 核对 Swift 模型、结果展示与导出：`ClassicalPlanetRow.hayz` 继续解码既有字符串字段，表格与 Markdown 导出直接展示该值；无 JSON shape 变化，不改 Swift / fixture。
+- [x] 更新 `CHANGELOG.md`；聚焦 classical/Hellenistic audit/classical derivatives 回归 107 项通过；完整 `bash check_vibe_changes.sh` 通过（Python 1108 项，Swift build，Swift 227 项/31 suites，43 个实时请求解码）；清理本任务构建缓存。
+- [x] 检查完整 diff/status，完成一个本地逻辑提交；不 push、不开 PR、不打包。
+
+执行边界：只按现有锁定契约判读昼夜、地平线上下、行星/星座性别。若契约与传统规则或实现边界矛盾，先保留证据并暂停生产修改，报告仲裁所需信息。
+
 # R-P2-g/h / W03 method_families 输入校验（2026-09-23）
 
 状态：已完成；仅修复 `method_families` 中自定义 solar-arc rate 与实验 profile 选项被静默吞值/宽松强转的问题，不调整结果 JSON shape。

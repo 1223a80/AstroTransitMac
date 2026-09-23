@@ -311,6 +311,59 @@ class TestSectHayzJoy:
         assert score == 2
         assert "\u5408" in status
 
+    @pytest.mark.parametrize(
+        ("is_day", "oriental", "above_horizon", "longitude", "expected"),
+        [
+            pytest.param(True, True, True, 10.0, True, id="day-oriental-above-masculine"),
+            pytest.param(True, True, True, 40.0, False, id="day-oriental-above-feminine"),
+            pytest.param(True, True, False, 10.0, False, id="day-oriental-below-masculine"),
+            pytest.param(True, True, False, 40.0, False, id="day-oriental-below-feminine"),
+            pytest.param(True, False, True, 10.0, False, id="day-occidental-above-masculine"),
+            pytest.param(True, False, True, 40.0, False, id="day-occidental-above-feminine"),
+            pytest.param(True, False, False, 10.0, False, id="day-occidental-below-masculine"),
+            pytest.param(True, False, False, 40.0, True, id="day-occidental-below-feminine"),
+            pytest.param(False, True, True, 10.0, True, id="night-oriental-above-masculine"),
+            pytest.param(False, True, True, 40.0, False, id="night-oriental-above-feminine"),
+            pytest.param(False, True, False, 10.0, False, id="night-oriental-below-masculine"),
+            pytest.param(False, True, False, 40.0, False, id="night-oriental-below-feminine"),
+            pytest.param(False, False, True, 10.0, False, id="night-occidental-above-masculine"),
+            pytest.param(False, False, True, 40.0, False, id="night-occidental-above-feminine"),
+            pytest.param(False, False, False, 10.0, False, id="night-occidental-below-masculine"),
+            pytest.param(False, False, False, 40.0, True, id="night-occidental-below-feminine"),
+        ],
+    )
+    def test_mercury_hayz_uses_boolean_sect_agreement(
+        self,
+        is_day: bool,
+        oriental: bool,
+        above_horizon: bool,
+        longitude: float,
+        expected: bool,
+    ) -> None:
+        sun_lon = longitude + 5.0 if oriental else longitude - 5.0
+        _, _, _, sect_details = sect_status("MERCURY", is_day, longitude, sun_lon)
+        sect_agreement = (is_day and oriental) or (not is_day and not oriental)
+        assert sect_details["sect_agreement"] is sect_agreement
+        assert sect_details["planet_sect"] == ("day" if sect_agreement else "night")
+
+        label, _, _, breakdown = hayz_status("MERCURY", is_day, longitude, 10 if above_horizon else 4, sun_lon)
+        assert (label == "Hayz") is expected
+        assert breakdown["trace"]["sect_agreement"] is sect_agreement
+        assert breakdown["trace"]["above_horizon"] is above_horizon
+
+    def test_other_planets_keep_generic_hayz_branches(self) -> None:
+        masculine = 10.0
+        feminine = 40.0
+        for body_id in ("JUPITER", "SATURN"):
+            assert hayz_status(body_id, True, masculine, 10, 20.0)[0] == "Hayz"
+            assert hayz_status(body_id, True, masculine, 4, 20.0)[0] == ""
+            assert hayz_status(body_id, False, masculine, 10, 20.0)[0] == "Hayz"
+
+        for body_id in ("MOON", "VENUS", "MARS"):
+            assert hayz_status(body_id, False, feminine, 4, 35.0)[0] == "Hayz"
+            assert hayz_status(body_id, False, feminine, 10, 35.0)[0] == ""
+            assert hayz_status(body_id, True, feminine, 4, 35.0)[0] == "Hayz"
+
     def test_joy(self) -> None:
         label, score, _, _ = joy_status("SUN", 9)
         assert label == "\u559c\u4e50"
