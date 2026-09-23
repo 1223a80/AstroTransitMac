@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-09-08 — 后端计算代码整体审查（只读）
+
+- 新增 `docs/backend-calculation-review-20260908.md`：12 组只读子代理覆盖全部 61 个后端 Python 模块（约 31.7k 行）+ 主会话用 pyswisseph 数值对拍与权威资料（Tetrabiblos I.21/I.22、Valens、astro.com）核对；基线 `pytest` 1091 passed。
+- 新发现 **2 项 P1**：埃及界 Aries 误用托勒密数值（`astro_backend_classical_dignity.py:57`，Aries 12–14°/20–21°/25–26° 界主判错，波及 bound/score/almuten/circumambulations 等全部 Egyptian 口径输出，`test_classical.py:100-105` 固化了错误值）；`declination_timing` 固定偏移时区（`GMT+8`）被静默改成 UTC（`astro_backend_declination_timing.py:199-205`）。
+- 新发现约 16 项 P2、约 20 项 P3（composite 非等宫制 ASC 轴与宫头差 18.8°、Mercury Hayz 判定失效、primary_directions 非合相只取单方向、orbital_dial 忽略 modulus、Krittika 中文名错、Shadbala Jupiter +15/Drik 恒 0、method_families `or 1.0`/`bool()` 参数吞噬、horary v2 速度缺失判 separating、mundane 无 orb 阈值、body 中文名两套、orb/静止阈值跨模块不统一等）。
+- 仲裁 2 项误报：`armc_from_mc` 实为精确解（MC 黄纬=0，与 `swe.houses_ex` ARMC 差 6e-14）；scan 无 stderr 进度与 Swift 端一致（`BackendClient.scan` 不传回调）。
+- 复核确认 2026-08-26 旧扫描文档 11 项仍未修复（hellenistic 证据行恒空、Yogini 起算、approaching_sun 反转、scan 相位标签、patterns Kite、Davison 中点、visibility fallback 互换等）。
+- horary 补审（补齐首轮 `horary.py` 1–1000 行等覆盖缺口）：新增 P2 Frustration 第三方速度约束漏报（`astro_backend_horary.py:1483`）、`declination_parallels` 未校验同半球致 0 赤纬附近双判/异号误判（`astro_backend_horary_v2_modules.py:906-947`），另有 10 项 P3；`lot_ruler_condition` 中文名匹配经复核实为正确。
+- 本次未修改任何业务代码。
+
 ## 2026-09-07 — 当前版本收尾（待提交）
 
 - 修复太阳弧结果中 `speed: null` 令整份 JSON 无法解码的问题：位置模型能表达“不适用”，同时保留独立的年度推运率；界面、Markdown 与 CSV 明确区分日速度和年推运率，专项回归覆盖 JSON、显示与导出。
