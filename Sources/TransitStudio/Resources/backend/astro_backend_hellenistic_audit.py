@@ -87,6 +87,33 @@ def _body_id(row: dict[str, Any]) -> str:
     return str(row.get("id") or row.get("body_id") or "")
 
 
+def _aspect_participant_ids(aspect: dict[str, Any]) -> list[str]:
+    """Return canonical body IDs from the classical aspect wire row."""
+    parts = str(aspect.get("id") or "").split("|")
+    if len(parts) == 4 and parts[0] in CLASSICAL_BODY_IDS and parts[2] in CLASSICAL_BODY_IDS:
+        return [parts[0], parts[2]]
+
+    participant_ids: list[str] = []
+    for key in (
+        "body1",
+        "body_a",
+        "transit_body_id",
+        "body2",
+        "body_b",
+        "target_name",
+        "a",
+        "body_a_id",
+        "p1",
+        "b",
+        "body_b_id",
+        "p2",
+    ):
+        participant_id = aspect.get(key)
+        if participant_id in CLASSICAL_BODY_IDS and participant_id not in participant_ids:
+            participant_ids.append(participant_id)
+    return participant_ids
+
+
 def _enclosure(
     subject_lon: float,
     bodies: list[dict[str, Any]],
@@ -401,36 +428,36 @@ def calculate_hellenistic_condition_audit(request: dict[str, Any], warnings: lis
 
             # applying assistance / separating testimony from classical aspects if present
             for aspect in snap.get("aspects") or []:
-                a1 = aspect.get("body1") or aspect.get("body_a") or aspect.get("transit_body_id")
-                a2 = aspect.get("body2") or aspect.get("body_b") or aspect.get("target_name")
-                # classical aspects shape may use different keys
-                left = aspect.get("a") or aspect.get("body_a_id") or aspect.get("p1")
-                right = aspect.get("b") or aspect.get("body_b_id") or aspect.get("p2")
-                bodies_pair = {a1, a2, left, right}
-                if body_id not in bodies_pair:
+                participant_ids = _aspect_participant_ids(aspect)
+                if body_id not in participant_ids:
                     continue
-                applying = aspect.get("applying") or aspect.get("application")
-                if applying is True or applying == "applying":
+                applying = aspect.get("applying")
+                if applying is None:
+                    applying = aspect.get("application")
+                orb = aspect.get("orb")
+                if orb is None:
+                    orb = aspect.get("exact_orb")
+                if applying is True or applying in ("applying", "入相"):
                     conditions.append(
                         _row(
                             "applying_aspect",
                             body_id,
-                            [str(x) for x in bodies_pair if x and x != body_id],
+                            [x for x in participant_ids if x != body_id],
                             str(aspect.get("type") or aspect.get("aspect") or aspect.get("aspect_name") or "aspect"),
                             "applying",
-                            aspect.get("orb") or aspect.get("exact_orb"),
+                            orb,
                             [f"aspect={aspect}"],
                         )
                     )
-                elif applying is False or applying == "separating":
+                elif applying is False or applying in ("separating", "离相"):
                     conditions.append(
                         _row(
                             "separating_aspect",
                             body_id,
-                            [str(x) for x in bodies_pair if x and x != body_id],
+                            [x for x in participant_ids if x != body_id],
                             str(aspect.get("type") or aspect.get("aspect") or aspect.get("aspect_name") or "aspect"),
                             "separating",
-                            aspect.get("orb") or aspect.get("exact_orb"),
+                            orb,
                             [f"aspect={aspect}"],
                         )
                     )

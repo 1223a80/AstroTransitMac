@@ -1,3 +1,19 @@
+# S-P2-2 / W04 Hellenistic 相位 ID/状态适配（2026-09-23）
+
+状态：已完成实现、验证与本地逻辑提交；只修复 Hellenistic audit 与 classical 上游相位行的稳定 ID / 字段值匹配，不包含 Mercury Hayz、Hyleg、syzygy、ZR 或其他 W04 来源项，不重设计 JSON schema。
+
+- [x] 确认 W04 Hayz 提交 `b4c8d66` 已留在独立分支且工作区 clean；从同步计划分支 `codex/bugfix-plan-v2` (`2298535`) 创建独立分支 `codex/fix-hellenistic-aspect-mapping`。
+- [x] 完整复读 `AGENTS.md` 和 v2 EV-07、W04 相位适配与 S-P2-2 验收要求；开始核对 classical 上游相位、audit 消费、测试与 Swift 字段消费。
+- [x] 先增加独立红测：以 classical 生产 wire shape 的入相/离相行逐行匹配稳定 ID；验证合法 `False` 与 `orb=0` 不会被 `or` 当作缺失；运行旧代码并记录失败证据。
+- [x] 最小修复：优先复用/补齐上游稳定 ID 或现有映射；保留当前 wire schema、展示字段和既有状态值，不靠七曜全状态样本代替逐行断言。
+- [x] 核对 Swift Codable、Hellenistic 结果视图及 Markdown/JSON 导出；只有调用与 fixture 证据要求时才同步模型或夹具。
+- [x] 每次代码改动更新 `CHANGELOG.md`；运行聚焦及相关测试与完整 `bash check_vibe_changes.sh`，清理本任务构建缓存。
+- [x] 审阅完整 diff/status，完成一个本地逻辑提交；不 push、不开 PR、不打包。
+
+验证记录：旧代码红测为 3 failed（生产 wire 行未匹配到任何 Mercury 相位；`applying=False` 未生成离相行；`orb=0.0` 被 `exact_orb=2.75` 覆盖）。修复后聚焦 Hellenistic / classical / derivative 测试为 93 passed。用真实 `transit_calc.py` 入口运行 audit 样例、将 `aspect_orb` 设为 15.0，得到 20 条相位证据（10 入相、10 离相）；输出保留 `geometry` 中文相位名及现有 `applying_separating` / `orb` 字段。Swift `HellenisticConditionRow` 已解码这些字段，结果表/Markdown 展示 `geometry`，CSV 导出状态与 orb；JSON schema 未变。既有 fixture 使用 `aspect_orb=3.0`，重算与 fixture 都没有符合门槛的 degree 相位证据行，故不需更新 fixture。完整门禁通过：Python 1094 passed，Swift build 成功、227 tests / 31 suites 通过（43 个 Examples 实时解码），差异格式检查通过；清理了本任务 Swift 临时构建目录及 pytest/backend 字节码缓存。
+
+执行边界：以当前真实生产相位字段与现有类型契约为准；如证据显示报告归因不成立，先将复现/调用证据写入本文与 CHANGELOG，并以“已证明非缺陷”关闭，不扩成别的 W04 修复。
+
 # R-P2-b / W04 Mercury Hayz（2026-09-23）
 
 状态：已完成；只处理 Mercury 的 Hayz 资格判定错误，不包含 W04 的 Hellenistic ID、Hyleg、syzygy、ZR 或其他来源项，不改 `planet_sect` 的语义。

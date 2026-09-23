@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-23 — S-P2-2 / W04 Hellenistic 相位 ID/状态适配（复现与修复）
+
+- 在 Hellenistic audit 测试中加入经典生产相位行形状的逐行反例（复合稳定 ID、中文星名和“入相/离相”）、显式 `False` 以及 `orb=0.0` 回退反例；旧代码运行结果为 3 项失败。
+- 修复 audit 对经典相位复合 ID、中文入/离相值的读取，并以空值判断选择状态和 orb 回退，保留 `False`、零 orb 与原有“合相/拱相”等 geometry 文本；未改变 JSON schema。
+- 真实 `transit_calc.py` audit 样例设 `aspect_orb=15.0` 的生产烟测生成 20 条相位证据（10 入相、10 离相），确认现有输出字段可承载恢复后的行。
+- 完整门禁通过：Python 1094 项；Swift 构建成功，227 项 / 31 个 suite 通过，含 43 个 Examples 实时解码；`git diff --check` 通过。清理本任务 Swift 临时构建目录与 Python 测试缓存。
+
 ## 2026-09-23 — R-P2-b / W04 Mercury Hayz
 
 - Added a red-test matrix for Mercury's day/night, oriental/occidental, above/below-horizon, and masculine/feminine-sign combinations; added generic Hayz branch checks for Jupiter, Saturn, Moon, Venus, and Mars. Existing `sect_agreement` and `planet_sect` values are asserted independently.
