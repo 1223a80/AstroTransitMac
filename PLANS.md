@@ -1,3 +1,16 @@
+# R-P1-2 / W02 证据化关闭（2026-09-23）
+
+状态：已完成；本任务仅纠正审查/计划文档，不改业务代码、测试、fixture 或 schema。
+
+- [x] 核对当前 `codex/bugfix-plan-v2` 分支、工作区状态及项目规则。
+- [x] 检查 `_display_zone` 全部调用点与 `calculate_declination_timing` 生产时区解析路径。
+- [x] 对 `Examples/sample-declination-timing-request.json` 分别以 GMT+8、UTC 运行真实 `transit_calc.py` 入口，对比事件数、UTC 精确时刻与当地时刻。
+- [x] 修订 v2 的 EV-04、R-P1-2 来源登记、W02 任务卡和执行顺序；在原审查报告 P1-2 后追加仲裁说明，保留历史正文。
+- [x] 更新 CHANGELOG 与本文完成记录；核对 87 个来源 ID、18 个工作包、Markdown 链接/编号/围栏和完整 diff。
+- [x] 提交一个本地 docs 逻辑提交；不推送。
+
+证据摘要：`_display_zone` 只有定义，没有生产调用。生产函数先尝试 `ZoneInfo(display_timezone)`，再由 `resolve_timezone` 解析固定偏移。真实入口 GMT+8 / UTC 均返回 262 个事件；首事件 `exact_utc` 均为 `2026-01-02T08:10:49.525Z`，`exact_local` 分别为 `2026-01-02T16:10:49.525+08:00` 与 `2026-01-02T08:10:49.525+00:00`。结论：R-P1-2 是生产误报，关闭为已证明非缺陷；未调用 helper 的局部错误不构成 P1，也不作为 P1 修复项。
+
 # 后端缺陷修复总体计划（2026-09-22）
 
 状态：**计划已产出，未开始修复**。授权范围：汇总 `docs/` 内全部 bug/审查文档待修项并写出可执行修复计划；本轮**不修改任何业务代码**。详细计划：`docs/bugfix-master-plan-20260922.md`。
@@ -13,7 +26,7 @@
 
 ## 计划摘要
 
-- **P1 2 项**：埃及界 Aries 误用托勒密数值（`astro_backend_classical_dignity.py:57`，需同步 `test_classical.py:100-105`）；`declination_timing._display_zone` 固定偏移被静默改 UTC（`astro_backend_declination_timing.py:199-205`）。
+- **P1 来源线索 2 项**：埃及界 Aries 误用托勒密数值仍待独立来源复核（`astro_backend_classical_dignity.py:57`，对应 W01）；R-P1-2 已通过真实生产入口证明为误报并关闭（未调用的 `_display_zone` helper 局部返回 UTC，不影响 `*_local` 输出）。来源登记仍保留两条以维持可追溯性，当前待修 P1 为 1 项。
 - **P2 27 项**（新 16 + 旧 11，去重后）：composite ASC/宫头不一致、Mercury Hayz、PD converse 缺失、orbital_dial modulus、Krittika 译名、Shadbala Jupiter+15/Drik=0、method_families 参数吞噬、horary 速度缺失判离相、station 采样过稀、mundane 无 orb 阈值与 count 矛盾、body 中文名两套、阈值不统一、Frustration 速度约束、declination_parallels 半球、恒星 ARMC flag、hellenistic 证据行恒空、出生瞬间当返照、Yogini 起算、upagraha 占位、approaching_sun 反转、mundane 日时主键名、scan 入离相、Kite 标签、图形去重、Davison 大圆中点。
 - **P3 约 54 项**（新 30 + 旧 24）：按输入校验/时间精度/契约静默/horary 语义四组分批。
 - **误报 4 项不修**；**已关闭** SAV-337、horary A–J、13 项 audit；**8 项 DECISION_REQUIRED**（PTOLEMAIC_BOUNDS 版本、Shadbala 完整度、PD 双向、moiety orb、年长常数、upagraha 方案、Frustration 变体/事件 id/morning_evening、composite ASC/MC 权威）。

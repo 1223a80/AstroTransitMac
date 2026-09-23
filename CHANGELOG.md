@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-09-23 — R-P1-2 / W02 证据化关闭（文档更正）
+
+- 对 `declination_timing` 时区线索执行生产路径仲裁：`_display_zone` 只有定义、没有调用；真实 `transit_calc.py` 入口以 GMT+8 / UTC 运行均返回 262 个事件，同一首事件 UTC 时刻不变，当地显示分别为 `+08:00` / `+00:00`。
+- 在 v2 计划中将 EV-04 限定为未调用 helper 的局部行为，新增 EV-13 记录生产入口对照；R-P1-2 来源 ID 与 W02 归属保留，状态改为“已证明非缺陷（关闭）”，并更正执行顺序。
+- 在原后端审查报告 P1-2 下追加仲裁说明，保留原审查正文；更新 `PLANS.md` 状态与证据记录。未改业务代码、测试、fixture 或 schema。
+
 ## 2026-09-22 — 后端缺陷修复总体计划（只写计划，未改业务代码）
 
 - 新增 `docs/bugfix-master-plan-20260922.md`：汇总 `backend-calculation-review-20260908`、`backend-calculation-bug-scan-20260826`、horary 补审与 `current-status` 的全部待修项，状态分流后产出批次 A–G 任务卡（每项含位置/现状/应然/修法/影响面/测试/fixture/风险）、PR 切分、影响面总表、验证门禁与剩余风险登记。

@@ -37,6 +37,8 @@
   # 现输出 UTC（utcoffset 0:00:00）
   ```
 
+> 后续仲裁（2026-09-23；保留以上审查记录作为历史）：`_display_zone` 在模块中只有定义，没有生产调用。`calculate_declination_timing` 实际先尝试 `ZoneInfo(display_timezone)`，失败后调用 `resolve_timezone(display_timezone)`。将 `Examples/sample-declination-timing-request.json` 分别以 `display_timezone=GMT+8` 和 `UTC` 经 `transit_calc.py` 运行，两次各返回 262 个事件，首事件 `exact_utc` 相同（`2026-01-02T08:10:49.525Z`），`exact_local` 分别为 `2026-01-02T16:10:49.525+08:00` 与 `2026-01-02T08:10:49.525+00:00`。因此原 P1-2 是生产误报，已证明非缺陷并关闭；唯一复现到的是未调用 helper 自身的局部错误，不作为 P1 业务修复。
+
 ### P2（新发现）
 
 | # | 位置 | 问题 | 复现要点 |

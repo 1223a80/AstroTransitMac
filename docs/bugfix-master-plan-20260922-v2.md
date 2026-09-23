@@ -50,7 +50,7 @@
 
 原始 R 正文 P3 实为 18 行，其中 phase_angle/receptions/morning_evening 一行包含三项。本版将其拆为 `R-P3-17a/b/c`，形成 20 条记录；H-P3 保持原十行，H-P3-08 中异常和搜索上限必须分别验收。
 
-**来源登记共 87 条，不等于 87 个已确认 bug，也不等于 87 个 PR：**R-P1 两条、R-P2 十四条、H-P2 两条、S-P2 十一条、R-P3 二十条、H-P3 十条、S-P3 二十八条。另列已关闭/误报和决策议题，不重复计入来源登记。第 6 节每条记录恰好归属一个工作包。
+**来源登记共 87 条，不等于 87 个已确认 bug，也不等于 87 个 PR：**R-P1 两条、R-P2 十四条、H-P2 两条、S-P2 十一条、R-P3 二十条、H-P3 十条、S-P3 二十八条。另列已关闭/误报和决策议题，不重复计入来源登记。第 6 节每条记录恰好归属一个工作包。R-P1-2 保留在来源计数中以维持审查线索追溯，但后续生产路径仲裁已将其证明为误报并关闭；它不再是待修 bug。
 
 ### 2.2 不能沿用的 V1 指令
 
@@ -80,7 +80,7 @@
 | EV-01 | 本机 `swe.houses_armc.__doc__` 与关键字探针 | 签名为 `armc, lat, eps, hsys, ascmc9`；传 `flags` 抛 TypeError，否定 V1 接口方案 |
 | EV-02 | 现有 `platiclon_to_arc`，promissor=0、sig=100、angle=60、eps=23.44、lat=0、diurnal=True | 两目标 160/40 返回 +161.5340636014587/+37.59104550252263；否定“两个分支必异号”，不证明完整 PD 方法正确 |
 | EV-03 | `bounds_ruler(13/20.5/25.5, 'egyptian')` | 当前依次 VENUS/MERCURY/MARS；这是旧输出复现，正确表仍需附独立文本证据 |
-| EV-04 | `_display_zone('GMT+8').utcoffset(None)` | 得 0:00:00，确认固定偏移丢失 |
+| EV-04 | `_display_zone('GMT+8').utcoffset(None)` 与调用图检索 | helper 单独调用得 0:00:00；但全模块只有定义、没有生产调用，因此只证明未调用 helper 自身返回 UTC，不证明产品输出丢失固定偏移 |
 | EV-05 | `NAKSHATRA_DATA` 与现有 Yogini 名称序列 | 主表 27 项；V1 公式在 Krittika index=2 时映射 Ulka，与其测试文字冲突 |
 | EV-06 | mundane 源码、`test_calculate_defining_facts`、Swift 导出 | 明确 facts only；已有 `scan_sample_count`、`filtered_candidates` 与 legacy alias 说明，不能把数组和计数指向不同语义直接认成算法错误 |
 | EV-07 | `sect_status` / `hayz_status` | 已有结构化 `sect_agreement`，Hayz 却读取中文前缀；可复用既有字段，不必重设计返回值 |
@@ -89,6 +89,7 @@
 | EV-10 | draconic 源码 | 常量 `SCHEMA_VERSION=1`，输出表达式正常生成 2；是否错版本待对照历史和消费者 |
 | EV-11 | `_station_or_retrograde_before_exact` | `steps` 上限 12，实际采样为 `range(steps+1)`，上限 13 点；零速度点不会单独令 detected=True；需区分换向、触零与缺失 |
 | EV-12 | packaging / gate 脚本 | 打包复制 Swift 资源 bundle；完整门禁已经运行 Python、Swift build/test、实时 Examples 解码及 diff 检查，勿重复当作独立未包含项目 |
+| EV-13 | `Examples/sample-declination-timing-request.json` 经 `transit_calc.py` 真实入口，分别将 `display_timezone` 设为 `GMT+8` / `UTC` | 两次均返回 262 个事件；首事件 `exact_utc` 均为 `2026-01-02T08:10:49.525Z`，`exact_local` 分别为 `2026-01-02T16:10:49.525+08:00` / `2026-01-02T08:10:49.525+00:00`。生产实现正确解析固定偏移并保持同一 instant；Swift 模型、视图及 Markdown/CSV 导出消费 `exact_local`，无 schema 或导出修复需求 |
 
 可在项目根目录重跑以下小探针。它不是测试套件，不写源码或字节码：
 
@@ -118,11 +119,11 @@ PY
 
 本节补足高影响、原方案错误或跨模块问题。其余局部项按第 6 节的定位、验收和第 8 节共同行为执行；不能仅凭优先级跳过证据门槛。
 
-### 4.1 两个 P1：分开落地，不互相等待
+### 4.1 来源报告中的 P1：逐项核验，区分待修与已关闭
 
 **R-P1-1 / W01：埃及界。**定位 `astro_backend_classical_dignity.py::EGYPTIAN_BOUNDS` 和 `bounds_ruler`。原报告拟修的 Aries 上限为 6/12/20/25/30；落地前记录所用文本的版本、章/页、可访问出处以及五个界主，不能把本报告反复转述当独立来源。仅修对应 Egyptian 表，不调整 Ptolemaic 版本。边界测试覆盖每个变化边界前/值/后及 0、30 的归一化规则；旧 `test_classical.py` 中 20/25 的错误期望应注明依据后更新。全表结构检查不能替代其余 11 星座逐值核对，未核对不得添加“已逐界核对”注释。检查 bounds→尊贵分→almuten→circumambulations 与下游 audit 的数值变化，schema 不因此必然改变。
 
-**R-P1-2 / W02：固定偏移时区。**`resolve_timezone` 已支持项目的 IANA 与固定偏移语法。最小方向是 `_display_zone` 对有效输入直接返回该 helper 的 `tzinfo`，按现有空输入规则处理默认 UTC，避免再造一套 try/except 或把所有异常转 UTC。核查消费方是否只需 `tzinfo`。测试 GMT+8、UTC、IANA、非整小时偏移、跨日期和非法名称。两种显示时区表示同一 instant，aware datetime 相减应为 0；验证当地钟面与 offset 的变化，不能简单断言两个 aware datetime 相差 8 小时。无关 UTC exact、事件数量和角度须不变。
+**R-P1-2 / W02：固定偏移时区——已证明非缺陷并关闭。**EV-04 只复现了 `_display_zone('GMT+8')` 这个 helper 单独返回 UTC；调用图检索确认它没有生产调用。`calculate_declination_timing` 的实际路径先用 `ZoneInfo(display_timezone)`，失败后用 `resolve_timezone(display_timezone)`，固定偏移由后者解析。EV-13 通过真实 `transit_calc.py` 样例请求证实 GMT+8 与 UTC 各有 262 个事件，首事件 `exact_utc` 相同，而 `exact_local` 分别带 `+08:00` 与 `+00:00`。Swift 模型、结果视图、Markdown 与 CSV 消费 `exact_local`；现有生产响应正确，无 JSON、模型或导出变更。故不建立该 P1 的失败测试或生产修复。未调用 helper 自身仍有局部错误；若将来出现真实调用需求，可另立 helper 清理任务，但不能把它追认为本 P1 的实现或关闭前置条件。
 
 ### 4.2 局部逻辑与结构化数据复用
 
@@ -257,12 +258,12 @@ syzygy、fortune、spirit 缺失不能用有效黄经 0°参与计分：保留 u
 
 每行的“验收/下一步”与第 4、8 节共同构成任务卡；阶段为核验/决策的行，不得照旧文方案直接改代码。优先级继承来源用于风险排序，不代表本版已确认严重度。
 
-### 6.1 P1（2 条）
+### 6.1 P1 来源登记（2 条；1 条待修，1 条已证明非缺陷）
 
 | ID | 问题与位置 | V1 | 阶段 | 工作包 | 验收/下一步 |
 |---|---|---|---|---|---|
 | R-P1-1 | Egyptian Aries / classical_dignity | A-1 | 修复准备 | W01 | EV-03；独立表来源、逐边界、尊贵/almuten 数值链；test_classical |
-| R-P1-2 | 固定偏移被改 UTC / declination_timing::_display_zone | A-2 | 修复准备 | W02 | EV-04；同 instant、offset、日期跨界和非法区名；test_declination_timing |
+| R-P1-2 | 历史线索：固定偏移被改 UTC / 未调用的 declination_timing::_display_zone | A-2 | 已证明非缺陷（关闭） | W02 | EV-04 仅证明 helper 自身错误；EV-13 真实入口对比 GMT+8/UTC，生产 `exact_local` 正确；无业务修复 |
 
 ### 6.2 新 P2（14 条）及补审 P2（2 条）
 
@@ -383,7 +384,7 @@ syzygy、fortune、spirit 缺失不能用有效黄经 0°参与计分：保留 u
 | 包 | 范围与优先顺序 | 显式依赖/阻塞 | 聚焦验证与消费者 |
 |---|---|---|---|
 | W01 | Egyptian P1；最先 | 独立来源核实；不依赖 DEC-01 | test_classical、test_technique_maintenance_classical、test_hellenistic_condition_audit；classical/derivatives/time-lords/distributions |
-| W02 | 固定偏移 P1；与 W01 独立 | 无方法决策 | test_declination_timing；DeclinationTimingModels / DeclinationTimingExports |
+| W02 | R-P1-2 生产路径核验与误报关闭；不安排 P1 业务修复 | 无方法决策；关闭依据见 EV-04/EV-13 | `test_declination_timing` 现有输出路径已核对；DeclinationTimingModels / Views / Exports 消费 `exact_local`，无需 schema/fixture 改动 |
 | W03 | method_families 输入 | API 现有校验契约 | test_method_families、test_contracts；MethodFamiliesModels / MethodFamiliesExports |
 | W04 | 尊贵、ID、缺失计分、ZR 核验 | 各项独立；DEC-01 仅新增版本议题 | test_classical、test_hellenistic_condition_audit、test_classical_derivatives；ClassicalCoreModels / ClassicalResultModels / MarkdownClassicalExportBuilder |
 | W05 | patterns 与 orbital dial | 各项失败测试；stellium 先定去重语义 | test_patterns、test_orbital_dial；ModernResultModels 与现代导出 |
@@ -405,7 +406,7 @@ syzygy、fortune、spirit 缺失不能用有效黄经 0°参与计分：保留 u
 
 ### 7.2 推荐执行流
 
-1. W01 / W02 各自锁定证据并修复。不会因为一个传统表来源尚未核实而阻塞另一个时区修复。
+1. W01 仍是本组唯一待修 P1，需独立来源核实后推进；W02 已由 EV-04/EV-13 证明为生产误报并关闭，不进入业务修复队列。两条来源记录仍分别归属 W01、W02，保持 87 条来源 ID 与 18 个工作包的追溯关系。
 2. W03、W04 中确定的键/标签项、W05 中确定的恒真条件/去重项、W09 键名、W16 已有错误协议缺口进入小范围修复。
 3. W06、W07、W08、W10、W11、W14 的数学/方法核验产出后，再按各项条件实施；W12/W13 严格区分 legacy 与 v2。
 4. W15 先处理已确认的不完整结果披露，再执行获选定的完整算法范围；W17/W18 的局部项可以随其真实依赖就绪而推进，不需等所有 P2。
@@ -533,6 +534,8 @@ git status --short --branch
 - 文档任务没有业务源码/fixture/schema 变化，不以未运行的 pytest/Swift 结果宣称全绿。
 
 本次文档校验记录（2026-09-22）：编号集合与来源清单一致；87 条记录无重复且各有唯一归属；18 个工作包与 14 个决策的引用均有定义；本地链接、实际测试/Swift 文件名、代码围栏和尾随空白检查通过。已运行第 3 节接口/数学探针并记录结果。未运行完整 pytest、Swift 或打包流程，本版不宣称业务修复通过。
+
+后续仲裁记录（2026-09-23）：R-P1-2 保留为第 6 节的来源历史记录，但状态改为“已证明非缺陷（关闭）”；EV-04 限定为未调用 helper 的独立行为，EV-13 记录真实入口时区对照。来源 ID 总数仍为 87，每条仍有唯一主工作包，18 个 W 包与 14 个 DEC 定义保持完整；本次未改业务代码、测试或 fixture。
 
 ### 11.2 后续每项实施记录模板
 
