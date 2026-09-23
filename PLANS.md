@@ -134,6 +134,7 @@
 - [x] 核验 v2 的 87 个唯一来源 ID、18 个工作包、14 个决策、本地链接及代码围栏；`git diff --check` 通过。
 - [x] 完整门禁通过：Python 1091 项、Swift 227 项（31 个 suite），其中 43 个 Examples 实时后端解码样例通过。
 - [x] 清理 `/private/tmp/astrotransit-bugfix-plan-v2-validation-20260923` 构建缓存。
+
 # W01/W03/W04 集成与最终审查收尾（2026-09-24）
 
 状态：进行中。范围为四个已完成的独立修复分支、W03 极值输入返回结构化错误、W01 沿界真实输出夹具迁移，以及合并后的完整验证与 main 同步；不扩展到 v2 其他工作包。
@@ -144,3 +145,19 @@
 - [ ] 从当前生产请求重新生成 distributions PD 夹具，检查 Swift 模型、UI/Markdown/CSV 消费，并加入能捕捉白羊座 20° 边界的契约断言。
 - [ ] 检查完整集成 diff、运行聚焦回归和 `bash check_vibe_changes.sh`，清理本任务构建缓存。
 - [ ] 推送经验证的集成结果；将本地 main 同步至最新 origin/main 后合入并推送，确认无 ahead/behind，最后切回 clean 的 main。
+
+# R-P1-1 / W01 Egyptian Aries 界表（2026-09-23）
+
+状态：实现、验证、完整 diff 审阅及本地逻辑提交均已完成。仅将 `EGYPTIAN_BOUNDS` 的 Aries 条目改为独立原典确认值，保持 `PTOLEMAIC_BOUNDS` 和其他 11 个星座不变。
+
+- [x] 确认 W02 文档提交 `2298535` 已同步，工作区干净；创建独立分支 `codex/fix-egyptian-aries-bounds`。
+- [x] 核验原典转录：[Ptolemy, Tetrabiblos, Book I §20, “Of the Disposition of Terms”](https://penelope.uchicago.edu/thayer/e/roman/texts/ptolemy/tetrabiblos/1b%2A.html)，“Terms according to the Egyptians” Aries 行为 ♃6 ♀6 ☿8 ♂5 ♄5（累计上界 6/12/20/25/30）；紧接 §21 为 “According to the Chaldaeans”，不是本次 Egyptian 表。项目另有独立 `PTOLEMAIC_BOUNDS` 字典，本任务不改。
+- [x] 在旧代码上增加并运行独立期望测试：Aries 三个变化边界的前/值/后，0°、30°/下个星座起点与 360° 归一化，Ptolemaic 独立护栏；旧代码在 12°、20°、25° 三个边界失败（`3 failed, 9 passed`）。
+- [x] 最小改表后，核对 bounds → dignity score/ownership → almuten、circumambulations 与 audit 调用路径；增加 Mars 在 20.5° Aries 得 7 分（含界主 +2）及 almuten ASC.bound 贡献测试，并复核 `test_classical.py` 中旧 14°、26° expectation。
+- [x] 对比同一个 `Examples/sample-distributions-pd-request.json` 真实请求：ASC=17.616017304° 的 Egyptian Mercury 当前 period 旧表结束 21°、新表结束 20°。静态 `distributions-pd-result.json` 确含受影响的旧 14–21°值，但 JSON 结构已落后当前生产输出（旧 `boundaries` 与现行 `periods` 及其他历史差异）；为避免 W01 顺带改写无关结构，保留该历史快照，以新增真实计算断言覆盖现行 20°边界，并记录后续独立 fixture 迁移需要。
+- [x] 检查 Swift `DistributionsPdModels` / classical Codable 模型、沿界范围 UI、Markdown/CSV 导出和相关 fixture/live contract tests；JSON 形状不变，无 Swift 模型或导出修改。
+- [x] 更新 `CHANGELOG.md`；相关 6 个 Python 模块 149 项通过、classical 模块 101 项通过；`bash check_vibe_changes.sh` 全门禁通过（Python 1108 项、Swift 227 项 / 31 suites、43 个 Examples live backend → Swift 解码样例）。
+- [x] 清理本任务专用 SwiftPM scratch `/private/tmp/astrotransit-w01-validation-20260923`；没有生成项目内 Swift build 产物。
+- [x] 审阅完整 `git diff`、`git status` 与 diff stat；仅有本任务的 5 个文件，`git diff --check` 通过；完成一个本地逻辑提交，不 push、不开 PR、不打包。
+
+原典依据：LacusCurtius 所载 Loeb/Robbins 1940 转录，Book I §20 标题及 Egyptian terms 表，页面行 127、135–149；Aries 行直接列出五个分配度数，合计 30°。§21 才进入 Chaldaean method。代码映射为各条目 exclusive upper degree，因此预计 Egyptian Aries 列表为 `JUPITER 6, VENUS 12, MERCURY 20, MARS 25, SATURN 30`。

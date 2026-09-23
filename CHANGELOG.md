@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-09-23 — R-P1-1 / W01 Egyptian Aries terms
+
+- Added independent Book I §20 Egyptian-terms expectations for Aries boundary values, the 0°/30° sign edges, and 360° normalization; added explicit Ptolemaic Aries guard expectations. This is test-first coverage against the pre-fix table.
+- Added the test module's missing `pytest` import so the parameterized regression cases collect correctly.
+- Updated only `EGYPTIAN_BOUNDS` Aries to the independent Egyptian row (exclusive upper bounds 6/12/20/25/30); documented the actual Book I §20 Egyptian table and left `PTOLEMAIC_BOUNDS` unchanged. Updated circumambulations expectations and added dignity ownership/score, Almuten and live period-boundary checks. The old table failed the independent boundary tests at 12°, 20° and 25°; the classical module passes 101 tests, and all six relevant Python modules pass 149 tests.
+- Added explicit immediately-after values for every changed Aries boundary to complement its before/at assertions.
+- Same real distributions request before/after: Aries ASC 17.616017304° stays under Mercury, while its current period end changes from the erroneous 21° to 20°. The corresponding static distributions fixture contains old 14–21° values, but its JSON structure predates the current `periods` output and differs in unrelated fields; kept it as a historical snapshot and verified current behavior with a focused live calculation. A current-schema fixture refresh should be a separate task.
+- Added a production-mode regression that loads `Examples/sample-distributions-pd-request.json` and asserts the current Aries ASC period end is 20°.
+- Full `check_vibe_changes.sh` passed: Python 1108 tests; Swift build/test 227 tests in 31 suites, including all 43 live backend-output decode samples; final `git diff --check` passed. Removed the task-specific SwiftPM scratch cache after validation.
+
 ## 2026-09-23 — R-P1-2 / W02 证据化关闭（文档更正）
 
 - 对 `declination_timing` 时区线索执行生产路径仲裁：`_display_zone` 只有定义、没有调用；真实 `transit_calc.py` 入口以 GMT+8 / UTC 运行均返回 262 个事件，同一首事件 UTC 时刻不变，当地显示分别为 `+08:00` / `+00:00`。

@@ -51,10 +51,10 @@ SIGN_ELEMENTS = [
     "water",
 ]
 
-# Egyptian terms (Ptolemy's table of the Egyptians). Each tuple is (ruler, exclusive_upper_degree).
+# Egyptian terms (Ptolemy, Tetrabiblos I.20, Egyptian table). Each tuple is (ruler, exclusive_upper_degree).
 # Degree D in sign is in the first bound with D < upper (last bound absorbs D==30).
 EGYPTIAN_BOUNDS = {
-    0: [("JUPITER", 6), ("VENUS", 14), ("MERCURY", 21), ("MARS", 26), ("SATURN", 30)],
+    0: [("JUPITER", 6), ("VENUS", 12), ("MERCURY", 20), ("MARS", 25), ("SATURN", 30)],
     1: [("VENUS", 8), ("MERCURY", 14), ("JUPITER", 22), ("SATURN", 27), ("MARS", 30)],
     2: [("MERCURY", 6), ("JUPITER", 12), ("VENUS", 17), ("MARS", 24), ("SATURN", 30)],
     3: [("MARS", 7), ("VENUS", 13), ("MERCURY", 19), ("JUPITER", 26), ("SATURN", 30)],

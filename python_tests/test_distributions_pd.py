@@ -36,6 +36,20 @@ def test_calculate_defining_facts():
     assert "naibod_longitude_proxy" in profile_ids
 
 
+def test_sample_aries_asc_uses_corrected_egyptian_bound_edge():
+    result = calculate_distributions_pd(_req(), [])
+    asc = next(
+        row for row in result["distributions"]
+        if row["significator"] == "ASC" and row["bounds_system"] == "egyptian"
+    )
+    assert abs(asc["significator_longitude"] - 17.616017304) < 1e-9
+    assert asc["packet"]["current_ruler_id"] == "MERCURY"
+    current = next(period for period in asc["packet"]["periods"] if period["current_period"])
+    assert current["period_ruler_id"] == "MERCURY"
+    assert current["start_degree"] == 17.616
+    assert current["end_degree"] == 20
+
+
 def test_pd_profiles_diverge_using_arc_signed():
     r = calculate_distributions_pd({**_req(), "include_test_pd_profiles": True}, [])
     by_id: dict[str, dict[str, dict]] = {}

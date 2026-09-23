@@ -5,6 +5,8 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import pytest
+
 from astro_backend_api import calculate_classical
 from astro_backend_classical import (
     add_years_approx,
@@ -97,17 +99,66 @@ class TestDignities:
         rulers = dignity_rulers_for_lon(0, False, "egyptian", "dorothean")
         assert rulers["triplicity"] == "JUPITER"
 
-    def test_bounds_egyptian_aries(self) -> None:
-        assert bounds_ruler(2, "egyptian") == "JUPITER"
-        assert bounds_ruler(10, "egyptian") == "VENUS"
-        assert bounds_ruler(20, "egyptian") == "MERCURY"
-        assert bounds_ruler(25, "egyptian") == "MARS"
-        assert bounds_ruler(29, "egyptian") == "SATURN"
+    @pytest.mark.parametrize(
+        ("longitude", "expected"),
+        [
+            (0.0, "JUPITER"),
+            (5.999, "JUPITER"),
+            (6.0, "VENUS"),
+            (11.999, "VENUS"),
+            (12.0, "MERCURY"),
+            (12.001, "MERCURY"),
+            (19.999, "MERCURY"),
+            (20.0, "MARS"),
+            (20.001, "MARS"),
+            (24.999, "MARS"),
+            (25.0, "SATURN"),
+            (25.001, "SATURN"),
+            (29.999, "SATURN"),
+            (30.0, "VENUS"),  # Taurus starts at 30° zodiacal longitude.
+            (360.0, "JUPITER"),  # Full-circle normalization returns to Aries 0°.
+        ],
+    )
+    def test_bounds_egyptian_aries(self, longitude: float, expected: str) -> None:
+        assert bounds_ruler(longitude, "egyptian") == expected
 
     def test_bounds_ptolemaic_aries(self) -> None:
         assert bounds_ruler(2, "ptolemaic") == "JUPITER"
+        assert bounds_ruler(20.5, "ptolemaic") == "MERCURY"
+        assert bounds_ruler(25.5, "ptolemaic") == "MARS"
         assert bounds_ruler(27, "ptolemaic") == "MARS"
         assert bounds_ruler(29, "ptolemaic") == "SATURN"
+
+    def test_egyptian_aries_bound_flows_into_dignity_and_almuten(self) -> None:
+        from astro_backend_classical import dignity_ownership, calculate_almuten_figuris
+
+        rulers = dignity_rulers_for_lon(20.5, True, "egyptian", "dorothean")
+        assert rulers["bound"] == "MARS"
+        ownership = dignity_ownership("MARS", rulers, triplicity_set(0, "dorothean"))
+        assert ownership["subject_owns_bound"] is True
+
+        _dom, _ex, _tr, _bound, _decan, score, notes, breakdown, _det, _fall = dignity_labels(
+            "MARS", 20.5, True, "egyptian", "dorothean"
+        )
+        assert score == 7  # Aries domicile +5 and the Egyptian Mars bound +2.
+        assert "界主" in notes
+        assert any(row.get("label") == "bound" and row.get("score") == 2 for row in breakdown)
+
+        result = calculate_almuten_figuris(
+            {"ASC": 20.5},
+            {"SUN": {"longitude": 60.0}, "MOON": {"longitude": 60.0}},
+            60.0,
+            {"longitude": 60.0, "method_variant": "prenatal_syzygy_nearest_before_birth"},
+            True,
+            "egyptian",
+            "dorothean",
+        )
+        mars = next(row for row in result["score_table"] if row["planet_id"] == "MARS")
+        assert mars["total"] == 7
+        assert any(
+            contribution["point"] == "ASC" and contribution["dignity"] == "bound"
+            for contribution in mars["contributions"]
+        )
 
     def test_decan_ruler_first_decan_aries(self) -> None:
         assert decan_ruler(5) == "MARS"
@@ -560,22 +611,39 @@ class TestCircumambulations:
     def test_find_bound_mid_degree_aries_egyptian(self) -> None:
         from astro_backend_circumambulations import _find_bound_for_degree
         from astro_backend_classical import EGYPTIAN_BOUNDS
-        # Exclusive upper: 14°00' starts Mercury bound (Venus is 6–14 exclusive).
-        ruler, start, end = _find_bound_for_degree(EGYPTIAN_BOUNDS, 0, 14.0)
+        # Exclusive upper: 12°00' starts Mercury bound (Venus is 6–12 exclusive).
+        ruler, start, end = _find_bound_for_degree(EGYPTIAN_BOUNDS, 0, 12.0)
         assert ruler == "MERCURY"
-        assert start == 14
-        assert end == 21
+        assert start == 12
+        assert end == 20
         ruler_v, start_v, end_v = _find_bound_for_degree(EGYPTIAN_BOUNDS, 0, 13.999)
+        assert ruler_v == "MERCURY"
+        assert start_v == 12
+        assert end_v == 20
+        ruler_v, start_v, end_v = _find_bound_for_degree(EGYPTIAN_BOUNDS, 0, 11.999)
         assert ruler_v == "VENUS"
         assert start_v == 6
-        assert end_v == 14
+        assert end_v == 12
 
     def test_find_bound_last_degree_aries_egyptian(self) -> None:
         from astro_backend_circumambulations import _find_bound_for_degree
         from astro_backend_classical import EGYPTIAN_BOUNDS
         ruler, start, end = _find_bound_for_degree(EGYPTIAN_BOUNDS, 0, 29.9)
         assert ruler == "SATURN"
-        assert start == 26
+        assert start == 25
+
+    def test_circumambulations_sample_aries_significator_uses_corrected_bound(self) -> None:
+        from astro_backend_circumambulations import calculate_circumambulations
+
+        birth = datetime(1990, 1, 1, 12, 0)
+        result = calculate_circumambulations(
+            17.616017304, birth, "egyptian", max_age=90, reference_dt=birth
+        )
+        assert result["current_ruler_id"] == "MERCURY"
+        assert result["bound_end_degree"] == 20
+        # The active period starts at the significator itself, then ends at the table edge.
+        assert result["periods"][0]["start_degree"] == 17.616
+        assert result["periods"][0]["end_degree"] == 20
 
     def test_circumambulations_max_age_zero(self) -> None:
         from astro_backend_circumambulations import calculate_circumambulations
