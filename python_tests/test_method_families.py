@@ -184,6 +184,34 @@ def test_transit_calc_returns_structured_errors_for_invalid_options():
     ]
 
 
+@pytest.mark.parametrize(
+    ("rate", "expected_error"),
+    [
+        (10**400, "solar_arc_rate_deg_per_year must be a finite number"),
+        (1e308, "solar_arc_rate_deg_per_year produces a non-finite arc"),
+    ],
+)
+def test_extreme_solar_arc_rate_returns_structured_error(rate, expected_error):
+    request = _req()
+    request["solar_arc_rate_deg_per_year"] = rate
+
+    validation_error = validate_required_fields(request)
+    assert validation_error is not None
+    assert expected_error in validation_error["invalid"]
+
+    response = _run_transit_calc(request)
+    assert response["mode"] == "method_families"
+    assert expected_error in response["invalid"]
+
+
+def test_extreme_finite_rate_is_allowed_when_reference_equals_birth():
+    request = _req()
+    request["reference"] = dict(request["birth"]["moment"])
+    request["solar_arc_rate_deg_per_year"] = 1e308
+
+    assert validate_required_fields(request) is None
+
+
 def test_armc_naibod_not_ecliptic_plus_same_arc():
     """Formal Naibod must rebuild houses — ASC delta ≠ MC delta in general."""
     r = calculate_method_families(_req(), [])

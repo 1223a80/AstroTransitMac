@@ -797,11 +797,12 @@ def calculate_classical(request: dict[str, Any], warnings: list[str]) -> dict[st
 
 
 def _is_finite_number(value: Any) -> bool:
-    return (
-        not isinstance(value, bool)
-        and isinstance(value, (int, float))
-        and math.isfinite(float(value))
-    )
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return False
+    try:
+        return math.isfinite(float(value))
+    except (OverflowError, ValueError):
+        return False
 
 
 def _validate_horary_moment(moment: dict[str, Any], invalid: list[str]) -> None:
@@ -1684,6 +1685,8 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
         "draconic_heliocentric",
     }
     if mode in expansion_birth_modes:
+        parsed_birth: datetime | None = None
+        parsed_reference: datetime | None = None
         birth = request.get("birth")
         if not isinstance(birth, dict):
             invalid.append("birth must be an object")
@@ -1729,10 +1732,17 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                     except Exception as exc:
                         invalid.append(f"reference is invalid: {exc}")
         if mode == "method_families":
-            if "solar_arc_rate_deg_per_year" in request and not _is_finite_number(
-                request["solar_arc_rate_deg_per_year"]
-            ):
-                invalid.append("solar_arc_rate_deg_per_year must be a finite number")
+            if "solar_arc_rate_deg_per_year" in request:
+                rate = request["solar_arc_rate_deg_per_year"]
+                if not _is_finite_number(rate):
+                    invalid.append("solar_arc_rate_deg_per_year must be a finite number")
+                elif parsed_birth is not None and parsed_reference is not None:
+                    age_years = max(
+                        (parsed_reference - parsed_birth).total_seconds() / (365.2422 * 86400),
+                        0.0,
+                    )
+                    if not math.isfinite(float(rate) * age_years):
+                        invalid.append("solar_arc_rate_deg_per_year produces a non-finite arc")
             if "include_experimental_profiles" in request and not isinstance(
                 request["include_experimental_profiles"], bool
             ):

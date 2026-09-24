@@ -481,6 +481,13 @@ struct BackendContractTests {
         #expect(result.calculationAssumptions?.isEmpty == false)
         #expect(!result.distributions.isEmpty)
         #expect(!result.primaryDirectionsByProfile.isEmpty)
+        let egyptianAsc = try #require(result.distributions.first {
+            $0.significator == "ASC" && $0.boundsSystem == "egyptian"
+        })
+        let packet = try #require(egyptianAsc.circumambulationPacket)
+        #expect(packet.currentRulerId == "MERCURY")
+        #expect(packet.boundEndDegree == 20)
+        #expect(packet.boundaries?.first?.endDegree == 20)
         let md = MarkdownExportBuilder.distributionsPd(result)
         let csv = TextExportBuilder.csv(result)
         #expect(md.contains(result.meta.method))
