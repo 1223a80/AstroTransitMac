@@ -134,3 +134,13 @@
 - [x] 核验 v2 的 87 个唯一来源 ID、18 个工作包、14 个决策、本地链接及代码围栏；`git diff --check` 通过。
 - [x] 完整门禁通过：Python 1091 项、Swift 227 项（31 个 suite），其中 43 个 Examples 实时后端解码样例通过。
 - [x] 清理 `/private/tmp/astrotransit-bugfix-plan-v2-validation-20260923` 构建缓存。
+# W01/W03/W04 集成与最终审查收尾（2026-09-24）
+
+状态：进行中。范围为四个已完成的独立修复分支、W03 极值输入返回结构化错误、W01 沿界真实输出夹具迁移，以及合并后的完整验证与 main 同步；不扩展到 v2 其他工作包。
+
+- [x] 阅读项目规则，确认工作区干净、远端 main 与计划分支关系，并核对四个待集成提交及审查发现。
+- [ ] 按 W01、W03、Mercury Hayz、Hellenistic 相位顺序保留逻辑提交，解决 `PLANS.md` / `CHANGELOG.md` 合并冲突，检查所有代码与测试均保留。
+- [ ] 对 W03 巨大整数转换和有限 rate 导致的计算溢出补失败测试；沿现有 `invalid` 错误协议修复，保持普通数值和 0 行为。
+- [ ] 从当前生产请求重新生成 distributions PD 夹具，检查 Swift 模型、UI/Markdown/CSV 消费，并加入能捕捉白羊座 20° 边界的契约断言。
+- [ ] 检查完整集成 diff、运行聚焦回归和 `bash check_vibe_changes.sh`，清理本任务构建缓存。
+- [ ] 推送经验证的集成结果；将本地 main 同步至最新 origin/main 后合入并推送，确认无 ahead/behind，最后切回 clean 的 main。
