@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-24 — Transit Studio 1.5.3 (52) 打包补发
+
+- 将已合入 `main` 的 bug fix v2 集成修复作为补丁版本打包：Egyptian Aries 界表、`method_families` 输入校验、Mercury Hayz 与 Hellenistic 相位证据映射，并包含集成审查发现的极值处理及真实输出夹具更新。
+- `package_app.sh` 版本提升至 `1.5.3 (52)`；应用包验证、安装与缓存清理结果记录在 `PLANS.md`。
+
 ## 2026-09-24 — W03 极值输入与集成收尾
 
 - 最终审查补充失败测试：巨大整数 rate 的浮点转换溢出，以及有限 rate 与实际年龄相乘溢出时，真实入口必须返回现有结构化 `invalid` 错误；同一极值 rate 在零年龄时仍可接受。

@@ -2,7 +2,7 @@
 
 Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界面使用 SwiftUI，计算层使用 Python 与 Swiss Ephemeris；Swift 通过启动随应用打包的 `transit_calc.py` 子进程，以 stdin/stdout JSON 契约取得计算结果。
 
-当前发布版本为 **1.5.1 (50)**。项目覆盖现代、古典、西方 Horary、KP 占卜与吠陀工作流，并提供星盘图、结构化结果页、Markdown / JSON / CSV 导出、部分模式的流式 AI 分析，以及三级生时矫正；本版完善 KP 1–249 的直接数字输入交互。
+当前发布版本为 **1.5.3 (52)**。项目覆盖现代、古典、西方 Horary、KP 占卜与吠陀工作流，并提供星盘图、结构化结果页、Markdown / JSON / CSV 导出、部分模式的流式 AI 分析，以及三级生时矫正；本版包含 Egyptian Aries 界表、推运方法族输入校验、Mercury Hayz 与 Hellenistic 相位证据映射修复。
 
 > Transit Studio 首先是一套“可计算、可复算、可审计”的数据工具。部分模块只输出事实、方法与证据，不自动给出吉凶、寿命、择时推荐或 Horary 最终判断。
 
@@ -10,8 +10,8 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 
 | 项目 | 当前实现 |
 |---|---|
-| 最近已打包版本 | 1.5.1 (50) |
-| 本版发布重点 | KP 1–249 可直接键入并保留步进微调、完整前后端工作区与审计诊断 |
+| 最近已打包版本 | 1.5.3 (52) |
+| 本版发布重点 | 本轮已完成的 bug fix v2 修复；KP 1–249 直接输入与既有工作区继续可用 |
 | 系统要求 | macOS 13 或更高 |
 | 应用架构 | Swift Package executable；当前打包脚本生成 arm64 `.app` |
 | 前端 | SwiftUI |
@@ -22,11 +22,11 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 | KP 占卜协议 | `kp-horary-data-packet/1.0`，独立于西方 Horary 的判断无关数据包 |
 | AI | OpenAI-compatible Chat Completions / SSE 接口；需要用户自行配置 Base URL、模型和 API Key |
 | 自动化验证 | GitHub Actions 在 push 与 pull request 上执行 Swift、Python 和后端 smoke |
-| 当前源码门禁 | Python 1014 项、Swift 223 项 / 30 suites、Swift build 与全部登记 smoke 通过 |
+| 当前源码门禁 | Python 1149 项、Swift 227 项 / 31 suites、Swift build 与 43 个实时后端解码样例通过 |
 
-## 当前已交付能力与 B18 增量
+## 当前已交付能力
 
-1.5.1 是当前发布基线；源码包含 B7–B20 计算扩展、古典进阶工作区、西方 Horary v2.1、KP 1–249、主窗口布局收口、B18 固定星 paran 真实事件引擎与可读 Markdown 导出。以下均为已经接入 UI、后端、模型、导出与测试的现有能力，不是 roadmap。
+1.5.3 是当前发布基线；源码包含 B7–B20 计算扩展、古典进阶工作区、西方 Horary v2.1、KP 1–249、主窗口布局收口、B18 固定星 paran 真实事件引擎与可读 Markdown 导出。以下均为已经接入 UI、后端、模型、导出与测试的现有能力，不是 roadmap。
 
 ### B7–B20 计算扩展
 

@@ -1,3 +1,12 @@
+# bug fix v2 集成版打包覆盖（2026-09-24）
+
+状态：已完成。补齐 `main` 已集成修复的本机发布步骤；按补丁版本更新为 `1.5.3 (52)`，验证应用包后覆盖 `/Applications/TransitStudio.app`，记录安装结果并清理缓存。
+
+- [x] 核对项目打包规则、脚本、已安装版本、当前分支与运行中的应用。
+- [x] 更新打包版本及发布记录，检查完整差异；沿用集成后完整门禁（Python 1149、Swift 227、43 个实时样例），发布构建成功。
+- [x] 生成并验证 `1.5.3 (52)` 应用包，覆盖安装；安装版签名、版本、arm64、包内代码及二进制 SHA-256 对照通过，无 `.pyc`/`__pycache__`，安装版后端确认 Egyptian ASC 界终点 20°、极值 rate 返回结构化 `invalid`。
+- [x] 清理本轮 release 构建、封装暂存与 `dist` 中受 FileProvider 扩展属性影响的中间副本；保留已验证的 `/Applications` 安装版。提交并同步发布记录，最终回到 clean 的 `main`。
+
 # S-P2-2 / W04 Hellenistic 相位 ID/状态适配（2026-09-23）
 
 状态：已完成实现、验证与本地逻辑提交；只修复 Hellenistic audit 与 classical 上游相位行的稳定 ID / 字段值匹配，不包含 Mercury Hayz、Hyleg、syzygy、ZR 或其他 W04 来源项，不重设计 JSON schema。
