@@ -172,8 +172,9 @@ def test_escape_user_metadata_without_table_or_html_injection(packet):
         cell({"nested": "dump"})
 
 
-def test_failures_and_partial_search_are_prominent(packet):
-    packet["validation"].update(invariant_check="failed", invariant_issues=["bad|reference"])
+@pytest.mark.parametrize("issue", ["bad|reference", {"code": "bad|reference", "path": "events[0]"}])
+def test_failures_and_partial_search_are_prominent(packet, issue):
+    packet["validation"].update(invariant_check="failed", invariant_issues=[issue])
     packet["event_search"]["status"] = "partial"
     text = format_horary_v3_markdown(packet)
     assert text.index("数据检查未通过") < text.index("## 宫位与取用")

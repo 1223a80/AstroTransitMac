@@ -2,7 +2,7 @@
 
 Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界面使用 SwiftUI，计算层使用 Python 与 Swiss Ephemeris；Swift 通过启动随应用打包的 `transit_calc.py` 子进程，以 stdin/stdout JSON 契约取得计算结果。
 
-当前发布版本为 **1.6.0 (53)**。项目覆盖现代、古典、西方 Horary、KP 占卜与吠陀工作流，并提供星盘图、结构化结果页、Markdown / JSON / CSV 导出、部分模式的流式 AI 分析，以及三级生时矫正；本版新增显式可选的 Horary V3 后端、事件搜索覆盖与一致性校验，以及 Python 中文解盘工作表。应用默认 Horary V2.1 保持不变。
+当前发布版本为 **1.6.1 (54)**。项目覆盖现代、古典、西方 Horary、KP 占卜与吠陀工作流，并提供星盘图、结构化结果页、Markdown / JSON / CSV 导出、部分模式的流式 AI 分析，以及三级生时矫正。Horary 默认使用 V3，侧栏可切换 V2.1；复制、Markdown 导出及 AI 数据输入使用选择性中文解盘工作表。
 
 > Transit Studio 首先是一套“可计算、可复算、可审计”的数据工具。部分模块只输出事实、方法与证据，不自动给出吉凶、寿命、择时推荐或 Horary 最终判断。
 
@@ -10,15 +10,15 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 
 | 项目 | 当前实现 |
 |---|---|
-| 最近已打包版本 | 1.6.0 (53) |
-| 本版发布重点 | 显式可选 Horary V3、事件校验与 Python 选择性阅读导出；默认 V2.1 及既有工作区保持兼容 |
+| 最近已打包版本 | 1.6.1 (54) |
+| 本版发布重点 | Horary 默认 V3、V3 / V2.1 界面切换、选择性阅读导出及事件校验 |
 | 系统要求 | macOS 13 或更高 |
 | 应用架构 | Swift Package executable；当前打包脚本生成 arm64 `.app` |
 | 前端 | SwiftUI |
 | 后端 | Python 3 + `pyswisseph` |
 | 星历 | 仓库内置 Swiss Ephemeris 文件，也可配置外部 `.se1` 目录 |
 | 后端协议 | 单次 JSON 请求写入 stdin，JSON 响应写入 stdout |
-| Horary 默认协议 | `horary-data-packet/2.1`，判断无关的数据包 |
+| Horary 默认协议 | `horary-data-packet/3.0`，判断无关的数据包；V2.1 可显式切换 |
 | KP 占卜协议 | `kp-horary-data-packet/1.0`，独立于西方 Horary 的判断无关数据包 |
 | AI | OpenAI-compatible Chat Completions / SSE 接口；需要用户自行配置 Base URL、模型和 API Key |
 | 自动化验证 | GitHub Actions 在 push 与 pull request 上执行 Swift、Python 和后端 smoke |
@@ -26,7 +26,7 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 
 ## 当前已交付能力
 
-1.6.0 是当前发布基线；源码包含 B7–B20 计算扩展、古典进阶工作区、西方 Horary v2.1、KP 1–249、主窗口布局收口、B18 固定星 paran 真实事件引擎与可读 Markdown 导出。Horary V3 是显式请求的后端选项，不是默认 UI 模式。以下均为现有能力，不是 roadmap。
+1.6.1 是当前发布基线；源码包含 B7–B20 计算扩展、古典进阶工作区、西方 Horary V3（兼容 V2.1）、KP 1–249、主窗口布局收口、B18 固定星 paran 真实事件引擎与可读 Markdown 导出。以下均为现有能力，不是 roadmap。
 
 ### B7–B20 计算扩展
 
@@ -47,9 +47,9 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 | B19 | Swiss Ephemeris 轨道节点、近日点 / 远日点和 45° / 90° 等 modulus dial pictures | 现代 → 轨道点 / Dial |
 | B20 | 四至点太阳 ingress 与 electional fact matrix；不做吉时排名 | 古典进阶 → 世俗 / 择时事实 |
 
-### Horary v2.1
+### Horary V3 / V2.1
 
-- 默认生产入口从旧解释型响应升级为 `horary-data-packet/2.1`。
+- 默认生产入口为 `horary-data-packet/3.0`，侧栏保留 V2.1 切换。
 - 相位计算与显示 orb 解耦：完整保留候选与未来 exact，盘面只绘制当前显示 orb 内相位。
 - 新增 event graph、前后 sign / house change、月亮接触序列和 VOC 规则证据。
 - 新增 mean / true nodes、偶然状态、完整接纳、行星日时、considerations evidence。
@@ -187,12 +187,12 @@ Transit Studio 是一款面向 macOS 的本地占星计算工作台。应用界�
 
 ### Horary
 
-Horary 默认走 **Data Packet v2.1**：
+Horary 默认走 **Data Packet V3**，应用侧栏可切换 V2.1：
 
 ```json
 {
   "mode": "horary",
-  "packetVersion": "2",
+  "packetVersion": "3",
   "chart": {
     "moment": {
       "year": 2026,
@@ -215,7 +215,7 @@ Horary 默认走 **Data Packet v2.1**：
 }
 ```
 
-v2.1 是判断无关的数据管线，主要包含：
+V3 是判断无关的数据管线，主要包含：
 
 - 输入、计算配置、时间地点和 provenance。
 - 宫位、角点、天体、尊贵归属、节点与偶然状态证据。
@@ -225,7 +225,7 @@ v2.1 是判断无关的数据管线，主要包含：
 - 行星日 / 时、considerations evidence、optional modules。
 - 技术校验、warnings 和显示辅助字段。
 
-v2.1 **不自动输出**：
+V3 **不自动输出**：
 
 - 征象星选择。
 - radicality 统一结论。
@@ -235,14 +235,14 @@ v2.1 **不自动输出**：
 
 如确实需要旧解释型 packet，必须显式传 `packetVersion=1`；该入口只用于兼容，已弃用。未知版本会返回结构化校验错误。
 
-新增 Horary V3：请求 `packetVersion=3`（也支持 `v3` / `3.0`）可返回 `horary-data-packet/3.0`。V3 独立组织请求配置、共享事件时序与引用校验，继续复用既有事实计算器；Python `format_horary_v3_markdown` 输出选择性中文解盘工作表，完整证据留在 JSON。详见 [Horary V3](docs/horary-v3.md)。应用默认请求和既有 Swift 导出口径不变。
+Horary V3：省略版本或请求 `packetVersion=3`（也支持 `v3` / `3.0`）返回 `horary-data-packet/3.0`；显式 `packetVersion=2` 返回 V2.1。V3 独立组织请求配置、共享事件时序与引用校验，继续复用既有事实计算器；`display.reader_markdown` 为 Python 生成的选择性中文工作表，应用复制、Markdown 导出和 AI 数据输入共用此内容，完整证据留在 JSON。详见 [Horary V3](docs/horary-v3.md)。
 
 详细说明：
 
 - [Horary v2 架构](docs/horary-v2/README.md)
 - [字段字典](docs/horary-v2/FIELD_DICTIONARY.md)
 - [v1 → v2 迁移](docs/horary-v2/MIGRATION.md)
-- [生产 JSON Schema](docs/schemas/horary-data-packet-2.1.json)
+- [生产 JSON Schema](docs/schemas/horary-data-packet-3.0.json)
 - [Canonical golden](docs/examples/horary-data-packet-v2-linyi-golden.json)
 
 ### 生时矫正
@@ -629,7 +629,7 @@ SKIP_INSTALL=1 ./package_app.sh
 ## 关键契约与已知边界
 
 - 出生时间与事件时间要求明确到分钟并带 timezone；项目不自动把模糊生时降级成中午盘。
-- Horary 默认 v2.1 只给事实数据，不给自动判断。
+- Horary 默认 V3 只给事实数据，不给自动判断；V2.1 可显式切换。
 - Legacy Horary 只通过 `packetVersion=1` 显式调用。
 - 古典返照统一位于 `planetary_returns`。
 - Hyleg / Alcocoden 不输出寿命年数。

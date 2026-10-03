@@ -1,7 +1,9 @@
 # Horary V3
 
-V3 is an opt-in backend pipeline producing `horary-data-packet/3.0`. The application
-continues to request V2.1 by default. V1 and V2 routes and their fixtures are unchanged.
+V3 is the default application and CLI pipeline producing `horary-data-packet/3.0`.
+The Horary sidebar provides a persistent V3 / V2.1 selector. Switching versions
+clears the previous result and AI analysis; switching is disabled during calculation or AI streaming.
+Explicit V1 and V2 routes remain available and their fixtures are unchanged.
 
 ## Run
 
@@ -10,7 +12,8 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 ```
 
 Use `mode: "horary"` with `packetVersion: "3"`, `"v3"`, or `"3.0"`. The snake-case
-`packet_version` alias also works. Python callers use
+`packet_version` alias also works. Omitting the version selects V3; use `"2"` for V2.1.
+Python callers use
 `astro_backend_horary_v3.calculate_horary_v3(request, warnings)` and
 `format_horary_v3_markdown(packet)`.
 
@@ -86,7 +89,7 @@ Swift `HoraryDataPacket` supports the shared blocks and preserves extra fields
 through its lossless JSON representation. The new example participates in
 the live backend-to-Swift contract gate.
 
-## Python Reader Export
+## Reader Export
 
 `format_horary_v3_markdown(packet)` produces a Chinese horary worksheet, not a
 diagnostic dump. Its selection follows the practical questions of choosing
@@ -119,7 +122,11 @@ all twelve cusp rulers and the seven bodies as the minimum generic reference.
 All displayed times are converted from UTC to the requested IANA or fixed-offset
 zone, retaining the offset to distinguish DST folds. Positions round to seconds
 with carry. Unknown states are not rendered as false; user text is escaped.
-This Python reader export does not change the existing Swift exporter or V2.1.
+V3 includes this worksheet as `display.reader_markdown`. Application copy, Markdown
+export and AI data input use it directly; custom analysis prompts are still handled
+separately for AI and prefixed for manual exports. JSON retains the complete evidence.
+Historical V3 packets without this optional display field fall back to the existing
+Swift exporter. Explicit V2.1 exports are unchanged.
 
 ```bash
 python3 -m pytest python_tests/test_horary_v3.py python_tests/test_horary_v3_markdown.py python_tests/test_horary_v2.py

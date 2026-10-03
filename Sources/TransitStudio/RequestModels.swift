@@ -487,7 +487,7 @@ struct HoraryRequest: Codable {
     let placeName: String
     let questionText: String
     let aspectOrb: Double
-    /// Canonical packet is v2 (`"2"`). Use `"1"` / `"legacy"` only for the deprecated interpretive adapter.
+    /// V3 is the default; `"2"` retains V2.1 compatibility.
     let packetVersion: String
     let ephemerisPath: String?
     let noAsteroids: Bool
@@ -505,7 +505,7 @@ struct HoraryRequest: Codable {
         placeName: String,
         questionText: String,
         aspectOrb: Double,
-        packetVersion: String = "2",
+        packetVersion: String = "3",
         ephemerisPath: String?,
         noAsteroids: Bool,
         requireEphemeris: String

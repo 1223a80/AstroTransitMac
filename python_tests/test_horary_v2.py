@@ -717,17 +717,19 @@ class TestMarkdownAndCLI:
         assert "Horary Data Packet" in md
         assert packet["schema"]["schema_id"] in md
 
-    def test_cli_default_is_v2(self) -> None:
+    def test_cli_default_is_v3(self) -> None:
+        request = {key: value for key, value in LINYI_REQUEST.items() if key != "packetVersion"}
         result = subprocess.run(
             ["python3", str(TRANSIT_CALC)],
-            input=json.dumps(LINYI_REQUEST),
+            input=json.dumps(request),
             capture_output=True,
             text=True,
             timeout=90,
         )
         assert result.returncode == 0, result.stderr[:500]
         data = json.loads(result.stdout)
-        assert data["schema"]["version"] in {"2.0", "2.1"}
+        assert data["schema"]["version"] == "3.0"
+        assert "## 宫位与取用" in data["display"]["reader_markdown"]
         assert "machine_summary" not in data
         assert assert_no_forbidden_fields(data) == []
         assert "aspect_candidates" in data

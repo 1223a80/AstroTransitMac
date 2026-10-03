@@ -19,7 +19,7 @@
 - Swift tests: `SwiftTests/` (incl. `BackendContractTests` + real-output fixtures in `SwiftTests/Fixtures/`)
 - Python tests: `python_tests/`
 - Sample backend requests: `Examples/` (one per mode; horary/vedic included)
-- Horary production packet: **v2.1** (`horary-data-packet/2.1`) via `astro_backend_horary_v2.calculate_horary_v2` — judgment-free data only. Legacy interpretive packet requires explicit `packetVersion=1`. Docs: `docs/horary-v2/`.
+- Horary production packet: **V3** (`horary-data-packet/3.0`) via `astro_backend_horary_v3.calculate_horary_v3` — judgment-free data only, with selective `display.reader_markdown` for app exports/AI. The sidebar offers V3 / V2.1; explicit `packetVersion=2` retains V2.1 and `packetVersion=1` retains legacy. Docs: `docs/horary-v3.md`, `docs/horary-v2/`.
 - CI: `.github/workflows/ci.yml` runs swift build/test + pytest + backend smokes on every push
 
 ### Rectifier-specific files

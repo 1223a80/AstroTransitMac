@@ -43,6 +43,7 @@ struct ContentView: View {
     @State var horaryLongitude = "121.4737"
     @State var horaryGmtOffset = 8.0
     @State var horaryQuestionText = ""
+    @AppStorage("horaryPacketVersion") var horaryPacketVersion = "3"
     @State var kpHoraryNumber = 1
     @State var kpFocusHouse = 7
     @State var kpNodeMode = "mean"

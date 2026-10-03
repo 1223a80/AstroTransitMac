@@ -171,4 +171,5 @@ def calculate_horary_v3(request: dict[str, Any], warnings: list[str]) -> dict[st
     evidence = calculate_evidence(chart, timeline, warnings)
     packet = assemble_packet(chart, evidence)
     validate_packet(packet, warnings)
+    packet["display"]["reader_markdown"] = format_horary_v3_markdown(packet)
     return packet

@@ -3,7 +3,7 @@ import Foundation
 extension MarkdownExportBuilder {
     /// Human-readable Horary report for copying, saving, and manual LLM handoff.
     ///
-    /// The backend v2.1 packet remains lossless through JSON export. Markdown is
+    /// The backend packet remains lossless through JSON export. Markdown is
     /// intentionally selective: it presents decision-relevant facts as tables
     /// instead of serializing the complete nested packet back into JSON lines.
     /// Passing no prompt produces a data-only report suitable for the AI client,
@@ -24,6 +24,12 @@ extension MarkdownExportBuilder {
                     "",
                 ]
             }
+        }
+
+        if result.schema.schemaId == "horary-data-packet/3.0",
+           let reader = result.rawValue("display")?.string("reader_markdown"),
+           !reader.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return (lines + [reader]).joined(separator: "\n")
         }
 
         lines += [

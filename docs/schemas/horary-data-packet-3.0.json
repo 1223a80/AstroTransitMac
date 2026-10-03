@@ -1407,7 +1407,13 @@
       "additionalProperties": true
     },
     "display": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "reader_markdown": {
+          "type": "string",
+          "description": "Selective Chinese worksheet for app copy, Markdown export and AI input; numeric evidence remains authoritative."
+        }
+      }
     },
     "event_search": {
       "type": "object",

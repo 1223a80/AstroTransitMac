@@ -1532,7 +1532,7 @@ extension ContentView {
                 placeName: horaryPlaceName.trimmingCharacters(in: .whitespacesAndNewlines),
                 questionText: question,
                 aspectOrb: horaryAspectOrb,
-                packetVersion: "2",
+                packetVersion: horaryPacketVersion,
                 ephemerisPath: normalizedEphemerisPath,
                 noAsteroids: appState.noAsteroids,
                 requireEphemeris: appState.requireEphemeris

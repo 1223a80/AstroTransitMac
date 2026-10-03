@@ -1052,10 +1052,10 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
             packet_version = str(
                 request.get("packetVersion")
                 or request.get("packet_version")
-                or "2"
+                or "3"
             ).strip().lower()
             if packet_version not in HORARY_V1_PACKET_VERSIONS | HORARY_V2_PACKET_VERSIONS | HORARY_V3_PACKET_VERSIONS:
-                invalid.append("packetVersion is unsupported; use 3, 2 (default), or 1/legacy")
+                invalid.append("packetVersion is unsupported; use 3 (default), 2, or 1/legacy")
             if packet_version in HORARY_V3_PACKET_VERSIONS and not missing and not invalid:
                 from astro_backend_horary_v3_config import HoraryConfig
                 try:
@@ -1886,7 +1886,7 @@ def main() -> None:
             packet_version = str(
                 request.get("packetVersion")
                 or request.get("packet_version")
-                or "2"
+                or "3"
             ).strip().lower()
             if packet_version in HORARY_V1_PACKET_VERSIONS:
                 # Legacy interpretive / judgment-bearing packet (v1).
@@ -1897,7 +1897,7 @@ def main() -> None:
                     "schema_id": "horary-data-packet/1.0",
                     "legacy": True,
                     "deprecated": True,
-                    "migration": "Use packetVersion=2 for judgment-free data packet",
+                    "migration": "Use packetVersion=3 for judgment-free data packet",
                 })
             elif packet_version in HORARY_V2_PACKET_VERSIONS:
                 response = calculate_horary_v2(request, warnings)

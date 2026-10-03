@@ -180,6 +180,22 @@ extension ContentView {
     var horaryQuestionSection: some View {
         VStack(alignment: .leading, spacing: TS.Spacing.lg) {
             HStack {
+                Text("Horary 版本").foregroundStyle(.secondary)
+                Spacer()
+                Picker("Horary 版本", selection: $horaryPacketVersion) {
+                    Text("V3").tag("3")
+                    Text("V2.1").tag("2")
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .frame(width: 160)
+                .disabled(calcVM.isRunning || aiVM.isAnalyzing)
+                .onChange(of: horaryPacketVersion) { _ in
+                    calcVM.horaryResult = nil
+                    aiVM.clear(modeKey: "horary")
+                }
+            }
+            HStack {
                 Text("起盘时间").foregroundStyle(.secondary)
                 DateTimeInput(date: $horaryDate, timeZone: timeZone(for: horaryGmtOffset), showsSeconds: true)
                 Button("现在") { horaryDate = Date() }

@@ -44,7 +44,6 @@ struct HoraryStateIsolationTests {
             placeName: "临沂市",
             questionText: "opaque",
             aspectOrb: horaryAspectOrb,
-            packetVersion: "2",
             ephemerisPath: nil,
             noAsteroids: true,
             requireEphemeris: "warn"
@@ -56,5 +55,13 @@ struct HoraryStateIsolationTests {
         #expect(chartObj["houseSystem"] as? String != selectedHouseSystem)
         #expect(obj["aspectOrb"] as? Double == 5.5)
         #expect(obj["aspectOrb"] as? Double != classicalAspectOrb)
+        #expect(obj["packetVersion"] as? String == "3")
+        let compatible = HoraryRequest(
+            mode: "horary", chart: chart, placeName: "临沂市", questionText: "opaque",
+            aspectOrb: horaryAspectOrb, packetVersion: "2", ephemerisPath: nil,
+            noAsteroids: true, requireEphemeris: "warn"
+        )
+        let compatibleJSON = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(compatible)) as? [String: Any])
+        #expect(compatibleJSON["packetVersion"] as? String == "2")
     }
 }

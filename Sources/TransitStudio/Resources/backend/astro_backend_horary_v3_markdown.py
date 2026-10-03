@@ -115,7 +115,8 @@ class Worksheet:
         if validation.get("invariant_check") != "passed":
             self.paragraph("**数据检查未通过：以下事实存在内部一致性问题，不能视作已验证数据。**")
         for issue in validation.get("invariant_issues", []):
-            self.paragraph("数据问题：" + cell(issue))
+            detail = f"{issue.get('code', 'unknown')} · {issue.get('path', '')}" if isinstance(issue, dict) else issue
+            self.paragraph("数据问题：" + cell(detail))
         for warning in validation.get("warnings", []):
             self.paragraph("计算提示：" + cell(warning))
         if self.p.get("event_search", {}).get("status") != "sampled":

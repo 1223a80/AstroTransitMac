@@ -145,6 +145,7 @@ def test_real_packet_schema_and_invariants(packet):
     schema = json.loads((ROOT / "docs/schemas/horary-data-packet-3.0.json").read_text())
     jsonschema.Draft202012Validator(schema).validate(packet)
     assert packet["schema"]["schema_id"] == "horary-data-packet/3.0"
+    assert packet["display"]["reader_markdown"] == v3.format_horary_v3_markdown(packet)
     assert packet["validation"]["invariant_check"] == "passed"
     assert packet["validation"]["forbidden_field_scan"] == "passed"
     assert len(packet["aspect_candidates"]) == 105
