@@ -51,6 +51,7 @@ Run individual test files:
 python3 -m pytest python_tests/test_classical.py -v   # classical dignity, timing, audit, circumambulations, primary directions
 python3 -m pytest python_tests/test_horary.py -v      # legacy horary helpers (significators/advanced); call calculate_horary directly
 python3 -m pytest python_tests/test_horary_v2.py -v   # horary data packet v2 (default production path)
+python3 -m pytest python_tests/test_horary_v3.py -v   # opt-in v3 pipeline, UTC events, coverage and invariants
 python3 -m pytest python_tests/test_kp_horary.py -v   # KP 1–249 table, packet Schema, solve and significator sources
 python3 -m pytest python_tests/test_scan.py -v        # scan engine: aspect matching, priority scoring, ingress/station
 python3 -m pytest python_tests/test_rectify_evidence.py -v  # backend-only rectification theory/evidence packet
@@ -72,6 +73,7 @@ python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sampl
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-station-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-classical-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-horary-request.json
+python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-horary-v3-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-kp-horary-request.json
 python3 Sources/TransitStudio/Resources/backend/transit_calc.py < Examples/sample-vedic-ai-request.json
 ```

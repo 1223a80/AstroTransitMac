@@ -736,8 +736,13 @@ struct HoraryV2EvidenceRow: Codable, Identifiable {
     var datetimeUtc: String? { string("datetime_utc") }
     var datetimeLocal: String? { string("datetime_local") }
     var eventType: String? { string("event_type") }
-    var offsetSecondsFromQuery: Int? {
-        number("offset_seconds_from_query").map { Int($0) }
+    var offsetSecondsFromQuery: Double? {
+        number("offset_seconds_from_query")
+    }
+    var offsetSecondsText: String? {
+        offsetSecondsFromQuery.map { value in
+            value.rounded() == value ? String(format: "%.0f", value) : String(value)
+        }
     }
     var bodyIds: [String] {
         guard case .array(let arr) = object["body_ids"] else { return [] }

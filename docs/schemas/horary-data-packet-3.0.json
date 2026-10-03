@@ -1,0 +1,1523 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://transitstudio.local/schemas/horary-data-packet-3.0.json",
+  "title": "Horary Data Packet 3.0",
+  "description": "Judgment-free Horary v3. Shared fact blocks retain v2.1 structure. Events are sampled geometric crossings over UTC elapsed-day windows, with subsecond offsets and explicit search coverage.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "question_metadata",
+    "calculation_config",
+    "provenance",
+    "time_and_location",
+    "houses",
+    "angles",
+    "bodies",
+    "dignities",
+    "pairwise_geometry",
+    "aspects",
+    "aspect_candidates",
+    "aspects_in_display_orb",
+    "display_orb_deg",
+    "receptions",
+    "lots",
+    "events",
+    "event_graph",
+    "moon",
+    "visibility",
+    "planetary_day_hour",
+    "considerations_evidence",
+    "nodes",
+    "optional_modules",
+    "validation",
+    "display",
+    "event_search"
+  ],
+  "properties": {
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "schema_id"
+      ],
+      "properties": {
+        "name": {
+          "const": "horary-data-packet"
+        },
+        "version": {
+          "const": "3.0"
+        },
+        "schema_id": {
+          "const": "horary-data-packet/3.0"
+        }
+      }
+    },
+    "question_metadata": {
+      "type": "object",
+      "required": [
+        "question_text",
+        "place_name"
+      ],
+      "properties": {
+        "question_text": {
+          "type": "string"
+        },
+        "place_name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "calculation_config": {
+      "type": "object",
+      "required": [
+        "house_system",
+        "zodiac",
+        "aspect_orb_deg",
+        "bodies",
+        "event_window"
+      ],
+      "properties": {
+        "house_system": {
+          "type": "string",
+          "enum": [
+            "regiomontanus",
+            "whole_sign",
+            "placidus",
+            "porphyry",
+            "alcabitius",
+            "equal"
+          ]
+        },
+        "zodiac": {
+          "type": "string"
+        },
+        "aspect_orb_deg": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "bodies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z0-9_]+$"
+          },
+          "uniqueItems": true
+        },
+        "event_window": {
+          "type": "object",
+          "required": [
+            "past_days",
+            "future_days"
+          ],
+          "properties": {
+            "past_days": {
+              "type": "number",
+              "minimum": 0
+            },
+            "future_days": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "engine_name",
+        "engine_version",
+        "algorithm_version",
+        "input_hash_sha256",
+        "config_hash_sha256"
+      ],
+      "properties": {
+        "engine_name": {
+          "type": "string"
+        },
+        "engine_version": {
+          "type": "string"
+        },
+        "algorithm_version": {
+          "type": "string"
+        },
+        "ephemeris_provider": {
+          "type": "string"
+        },
+        "ephemeris_version": {
+          "type": "string"
+        },
+        "input_hash_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "config_hash_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "time_and_location": {
+      "type": "object",
+      "required": [
+        "local_datetime",
+        "utc_datetime",
+        "timezone",
+        "jd_ut",
+        "latitude_deg",
+        "longitude_deg",
+        "sect"
+      ],
+      "properties": {
+        "jd_ut": {
+          "type": "number"
+        },
+        "jd_tt": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "latitude_deg": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "longitude_deg": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "utc_offset_seconds": {
+          "type": "integer"
+        },
+        "dst_active": {
+          "type": "boolean"
+        },
+        "sect": {
+          "type": "object",
+          "required": [
+            "is_day",
+            "rule_id"
+          ],
+          "properties": {
+            "is_day": {
+              "type": "boolean"
+            },
+            "rule_id": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "houses": {
+      "type": "object",
+      "required": [
+        "system",
+        "cusps"
+      ],
+      "properties": {
+        "system": {
+          "type": "string"
+        },
+        "cusps": {
+          "type": "array",
+          "minItems": 12,
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "required": [
+              "house",
+              "cusp_longitude_deg",
+              "domicile_ruler_id"
+            ],
+            "properties": {
+              "house": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 12
+              },
+              "cusp_longitude_deg": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMaximum": 360
+              },
+              "span_deg": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "domicile_ruler_id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fallback_applied": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "angles": {
+      "type": "object",
+      "required": [
+        "points",
+        "armc"
+      ]
+    },
+    "bodies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "body_id",
+          "ecliptic",
+          "sign",
+          "house",
+          "motion"
+        ],
+        "properties": {
+          "body_id": {
+            "type": "string",
+            "pattern": "^[A-Z0-9_]+$"
+          },
+          "names": {
+            "type": "object",
+            "required": [
+              "en",
+              "zh"
+            ],
+            "properties": {
+              "en": {
+                "type": "string"
+              },
+              "zh": {
+                "type": "string"
+              }
+            }
+          },
+          "ecliptic": {
+            "type": "object",
+            "required": [
+              "longitude_deg"
+            ],
+            "properties": {
+              "longitude_deg": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMaximum": 360
+              },
+              "latitude_deg": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "distance_au": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "longitude_speed_deg_per_day": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "latitude_speed_deg_per_day": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "distance_speed_au_per_day": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            }
+          },
+          "sign": {
+            "type": "object",
+            "properties": {
+              "sign_id": {
+                "type": "string"
+              },
+              "sign_en": {
+                "type": "string"
+              },
+              "sign_zh": {
+                "type": "string"
+              },
+              "sign_index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 11
+              },
+              "degree_in_sign": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 30
+              },
+              "display_en": {
+                "type": "string"
+              },
+              "display_zh": {
+                "type": "string"
+              },
+              "dms": {
+                "type": "object",
+                "required": [
+                  "degrees",
+                  "minutes",
+                  "seconds"
+                ],
+                "properties": {
+                  "degrees": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 29
+                  },
+                  "minutes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 59
+                  },
+                  "seconds": {
+                    "type": "number",
+                    "minimum": 0,
+                    "exclusiveMaximum": 60
+                  }
+                }
+              }
+            }
+          },
+          "equatorial": {
+            "type": "object",
+            "properties": {
+              "right_ascension_deg": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "declination_deg": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "hour_angle_deg": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            }
+          },
+          "horizontal": {
+            "type": "object",
+            "properties": {
+              "azimuth_deg": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "altitude_true_deg": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "above_horizon": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            }
+          },
+          "house": {
+            "type": "object",
+            "required": [
+              "integer_house"
+            ],
+            "properties": {
+              "integer_house": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 12
+              },
+              "continuous_house": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "distance_from_previous_cusp_deg": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "distance_to_next_cusp_deg": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            }
+          },
+          "motion": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "string"
+              },
+              "longitude_speed_deg_per_day": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "mean_longitude_speed_deg_per_day": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "speed_to_mean_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "station_threshold_deg_per_day": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "rule_id": {
+                "type": "string"
+              },
+              "algorithm_version": {
+                "type": "string"
+              },
+              "evidence": {
+                "type": "object"
+              }
+            }
+          },
+          "ephemeris_source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "accidental": {
+            "type": "object"
+          },
+          "distance_to_angles_deg": {
+            "type": "object"
+          },
+          "events_index": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "precision": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "node_mode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "node_role": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "south_derivation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "participates_in_domicile_rulership": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "participates_in_classical_dignities": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "dignities": {
+      "type": "array"
+    },
+    "pairwise_geometry": {
+      "type": "array"
+    },
+    "aspects": {
+      "type": "array"
+    },
+    "aspect_candidates": {
+      "type": "array",
+      "minItems": 1,
+      "description": "All classical pair × Ptolemaic aspects; not filtered by display orb",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "body_a_id",
+          "body_b_id",
+          "aspect_id",
+          "application",
+          "within_display_orb"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "body_a_id": {
+            "type": "string"
+          },
+          "body_b_id": {
+            "type": "string"
+          },
+          "aspect_id": {
+            "type": "string",
+            "enum": [
+              "conjunction",
+              "sextile",
+              "square",
+              "trine",
+              "opposition"
+            ]
+          },
+          "aspect_angle_deg": {
+            "type": "number"
+          },
+          "signed_orb_deg": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "absolute_orb_deg": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "application": {
+            "type": "string",
+            "enum": [
+              "applying",
+              "separating"
+            ]
+          },
+          "within_display_orb": {
+            "type": "boolean"
+          },
+          "within_orb": {
+            "type": "boolean"
+          },
+          "orb_deg": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "degrees_to_exact": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "relative_speed_deg_per_day": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "display_orb_deg": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "application_evidence": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "station_or_retrograde_before_exact": {
+            "type": "boolean"
+          },
+          "station_or_retrograde_evidence": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "sign_exit_before_exact": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "refranation_detected": {
+            "type": "boolean"
+          },
+          "will_perfect_in_window": {
+            "type": "boolean"
+          },
+          "entity_types": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "geometry_type": {
+            "type": "string"
+          },
+          "rule_id": {
+            "type": "string"
+          },
+          "algorithm_version": {
+            "type": "string"
+          },
+          "next_exact": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "datetime_utc": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "datetime_local": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "root_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "root_reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "previous_exact": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "datetime_utc": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "datetime_local": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "aspects_in_display_orb": {
+      "type": "array"
+    },
+    "display_orb_deg": {
+      "type": "number",
+      "minimum": 0
+    },
+    "receptions": {
+      "type": "array",
+      "description": "Directed dignity reception facts only; no strength scores",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "receiver_id": {
+            "type": "string"
+          },
+          "received_body_id": {
+            "type": "string"
+          },
+          "dignity_type": {
+            "type": "string",
+            "enum": [
+              "domicile",
+              "exaltation",
+              "triplicity",
+              "bound",
+              "decan",
+              "detriment",
+              "fall"
+            ]
+          },
+          "relation_kind": {
+            "type": "string",
+            "enum": [
+              "unidirectional",
+              "directed",
+              "mutual",
+              "mutual_reception",
+              "mixed",
+              "mixed_reception"
+            ]
+          },
+          "related_aspect_candidate_ids": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "direction": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sign_index": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 11
+          },
+          "systems": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "relation_at_query": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "relation_at_next_aspect_exact": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "relation_changes_if_sign_exit_before_exact": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "rule_id": {
+            "type": "string"
+          },
+          "algorithm_version": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "lots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "longitude_deg",
+          "formula_used"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "longitude_deg": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMaximum": 360
+          },
+          "longitude_before_normalize_deg": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "formula_used": {
+            "type": "string"
+          },
+          "formula_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "formula_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "formula_day": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "formula_night": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sect_used": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source_tradition": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "group": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "names": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "en": {
+                "type": "string"
+              },
+              "zh": {
+                "type": "string"
+              }
+            }
+          },
+          "sign": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "domicile_ruler_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "exaltation_ruler_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "triplicity_active_ruler_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bounds_ruler_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "decan_ruler_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "input_points": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          },
+          "intermediates": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          },
+          "house": {
+            "type": "object",
+            "properties": {
+              "integer_house": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 12
+              },
+              "continuous_house": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "distance_from_previous_cusp_deg": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "distance_to_next_cusp_deg": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "event_type",
+          "body_ids",
+          "datetime_utc",
+          "offset_seconds_from_query",
+          "rule_id",
+          "rule_ids",
+          "in_configured_window"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "event_type": {
+            "type": "string"
+          },
+          "body_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "aspect_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "candidate_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "within_display_orb_at_query": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "application_at_query": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state_before": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "state_after": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "direction": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "threshold_deg": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "datetime_utc": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T"
+          },
+          "datetime_local": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "offset_seconds_from_query": {
+            "type": "number"
+          },
+          "root_error_deg": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "rule_id": {
+            "type": "string"
+          },
+          "algorithm_version": {
+            "type": "string"
+          },
+          "in_configured_window": {
+            "type": "boolean"
+          },
+          "rule_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "voc_rule_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "event_graph": {
+      "type": "object",
+      "required": [
+        "per_body",
+        "aspect_candidate_sequences"
+      ],
+      "properties": {
+        "per_body": {
+          "type": "array"
+        },
+        "aspect_candidate_sequences": {
+          "type": "array"
+        },
+        "moon_sequence": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "algorithm_version": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "moon": {
+      "type": "object",
+      "required": [
+        "sign_exit",
+        "void_of_course_rules",
+        "search_coverage"
+      ],
+      "properties": {
+        "void_of_course_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "rule_id",
+              "value",
+              "status",
+              "interval"
+            ],
+            "properties": {
+              "value": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "evaluated",
+                  "unavailable"
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "unavailable"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "value": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "visibility": {
+      "type": "array"
+    },
+    "planetary_day_hour": {
+      "type": "object"
+    },
+    "considerations_evidence": {
+      "type": "array"
+    },
+    "optional_modules": {
+      "type": "object",
+      "properties": {
+        "antiscia": {
+          "type": "array"
+        },
+        "via_combusta": {
+          "type": "array"
+        },
+        "dodecatemoria": {
+          "type": "array"
+        },
+        "antiscia_contacts": {
+          "type": "array"
+        },
+        "declination_contacts": {
+          "type": "array"
+        },
+        "declination_moon_sequence": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "fixed_stars": {
+          "type": "object"
+        },
+        "nodes": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "nodes": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string"
+        },
+        "bodies": {
+          "type": "array"
+        },
+        "rule_id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "validation": {
+      "type": "object",
+      "required": [
+        "warnings",
+        "forbidden_field_scan",
+        "invariant_check",
+        "invariant_issues",
+        "event_search_status"
+      ],
+      "properties": {
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "forbidden_field_scan": {
+          "type": "string",
+          "enum": [
+            "passed",
+            "failed"
+          ]
+        },
+        "house_fallback_applied": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "schema_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "body_count": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "aspect_count": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "aspect_candidate_count": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "aspects_in_display_orb_count": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "event_count": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "lot_count": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "invariant_check": {
+          "enum": [
+            "passed",
+            "failed"
+          ]
+        },
+        "invariant_issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code",
+              "path"
+            ]
+          }
+        },
+        "event_search_status": {
+          "enum": [
+            "sampled",
+            "partial"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "display": {
+      "type": "object"
+    },
+    "event_search": {
+      "type": "object",
+      "required": [
+        "window",
+        "coverage",
+        "status",
+        "scope",
+        "house_frame"
+      ],
+      "properties": {
+        "window": {
+          "type": "object",
+          "required": [
+            "start_utc",
+            "end_utc"
+          ],
+          "properties": {
+            "start_utc": {
+              "type": "string"
+            },
+            "end_utc": {
+              "type": "string"
+            }
+          }
+        },
+        "coverage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "start_utc",
+              "end_utc",
+              "status",
+              "method",
+              "max_step_hours"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "found",
+                  "not_found_in_window",
+                  "unavailable"
+                ]
+              },
+              "max_step_hours": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            }
+          }
+        },
+        "status": {
+          "enum": [
+            "sampled",
+            "partial"
+          ]
+        },
+        "scope": {
+          "type": "string"
+        },
+        "house_frame": {
+          "const": "fixed_query_chart_cusps"
+        }
+      }
+    }
+  },
+  "not": {
+    "anyOf": [
+      {
+        "required": [
+          "machine_summary"
+        ]
+      },
+      {
+        "required": [
+          "radicality_flags"
+        ]
+      },
+      {
+        "required": [
+          "significator_candidates"
+        ]
+      },
+      {
+        "required": [
+          "key_significator_links"
+        ]
+      },
+      {
+        "required": [
+          "advanced_candidates"
+        ]
+      },
+      {
+        "required": [
+          "score"
+        ]
+      },
+      {
+        "required": [
+          "bonification"
+        ]
+      },
+      {
+        "required": [
+          "maltreatment"
+        ]
+      }
+    ]
+  }
+}

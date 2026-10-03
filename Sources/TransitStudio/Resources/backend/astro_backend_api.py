@@ -73,6 +73,7 @@ from astro_backend_classical_medieval import (
 
 HORARY_V1_PACKET_VERSIONS = {"1", "v1", "legacy", "1.0"}
 HORARY_V2_PACKET_VERSIONS = {"2", "v2", "2.0", "2.1"}
+HORARY_V3_PACKET_VERSIONS = {"3", "v3", "3.0"}
 
 
 def _bundled_ephemeris_path(module_file: Path | None = None) -> Path | None:
@@ -1053,8 +1054,14 @@ def validate_required_fields(request: dict[str, Any]) -> dict[str, Any] | None:
                 or request.get("packet_version")
                 or "2"
             ).strip().lower()
-            if packet_version not in HORARY_V1_PACKET_VERSIONS | HORARY_V2_PACKET_VERSIONS:
-                invalid.append("packetVersion is unsupported; use 2 (default) or 1/legacy")
+            if packet_version not in HORARY_V1_PACKET_VERSIONS | HORARY_V2_PACKET_VERSIONS | HORARY_V3_PACKET_VERSIONS:
+                invalid.append("packetVersion is unsupported; use 3, 2 (default), or 1/legacy")
+            if packet_version in HORARY_V3_PACKET_VERSIONS and not missing and not invalid:
+                from astro_backend_horary_v3_config import HoraryConfig
+                try:
+                    HoraryConfig.from_request(request)
+                except (ValueError, TypeError, OverflowError) as exc:
+                    invalid.append(str(exc))
         else:
             number = request.get("horary_number")
             if isinstance(number, bool) or not isinstance(number, int) or not 1 <= number <= 249:
@@ -1894,6 +1901,9 @@ def main() -> None:
                 })
             elif packet_version in HORARY_V2_PACKET_VERSIONS:
                 response = calculate_horary_v2(request, warnings)
+            elif packet_version in HORARY_V3_PACKET_VERSIONS:
+                from astro_backend_horary_v3 import calculate_horary_v3
+                response = calculate_horary_v3(request, warnings)
             else:
                 # validate_required_fields rejects this path; keep an explicit
                 # guard so future refactors cannot silently route version typos.

@@ -499,7 +499,7 @@ enum TextExportBuilder {
             ]
         }
         rows += result.events.map {
-            ["event", $0.eventType ?? "", $0.datetimeUtc ?? "", "", "", $0.bodyIds.joined(separator: ";"), $0.aspectId ?? "", "\($0.offsetSecondsFromQuery.map { String($0) } ?? "")", $0.id]
+            ["event", $0.eventType ?? "", $0.datetimeUtc ?? "", "", "", $0.bodyIds.joined(separator: ";"), $0.aspectId ?? "", $0.offsetSecondsText ?? "", $0.id]
         }
         // Nested v2 sections as flat JSON-string rows (parity with Markdown/JSON export).
         rows += result.pairwiseGeometry.map {
@@ -507,6 +507,9 @@ enum TextExportBuilder {
         }
         if let eventGraph = result.eventGraph {
             rows.append(["event_graph", "packet", "", "", "", "", "", "", jsonString(eventGraph)])
+        }
+        if let search = result.rawValue("event_search") {
+            rows.append(["event_search", "packet", "", "", "", "", "", "", jsonString(search)])
         }
         if let moon = result.moon {
             rows.append(["moon", "index", "", "", "", "", "", "", jsonString(moon)])

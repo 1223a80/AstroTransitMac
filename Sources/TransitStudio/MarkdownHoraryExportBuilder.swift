@@ -29,7 +29,7 @@ extension MarkdownExportBuilder {
         lines += [
             "# Horary 数据报告",
             "",
-            "> 完整、无损的 v2.1 证据包请使用 JSON 导出；本 Markdown 仅保留适合阅读与分析的字段。",
+            "> 完整、无损的 v\(result.schema.version) 证据包请使用 JSON 导出；本 Markdown 仅保留适合阅读与分析的字段。",
             "",
             "## 问题与起盘信息",
             "",
@@ -130,6 +130,13 @@ extension MarkdownExportBuilder {
             "- 数量：天体 \(result.bodies.count)，相位候选 \(result.aspectCandidates?.count ?? result.aspects.count)，事件 \(result.events.count)，Lots \(result.lots.count)",
             "- 宫制回退：\(yesNo(result.validation.houseFallbackApplied ?? false))",
         ]
+        if let search = result.rawValue("event_search") {
+            lines += [
+                "- 事件搜索：\(plain(search.string("status") ?? "unknown"))；\(plain(search.string("scope") ?? "unknown"))",
+                "- 事件窗口：\(plain(search["window"]?.string("start_utc") ?? "unknown")) 至 \(plain(search["window"]?.string("end_utc") ?? "unknown"))",
+                "- 引用与时间一致性：\(plain(result.rawValue("validation")?.string("invariant_check") ?? "unknown"))",
+            ]
+        }
         if !result.validation.warnings.isEmpty {
             lines += ["", "### 技术警告", ""]
             lines += result.validation.warnings.map { "- \(plain($0))" }
@@ -273,7 +280,7 @@ extension MarkdownExportBuilder {
         }
         for event in events {
             lines.append(
-                "| \(cell(event.datetimeUtc ?? "—")) | \(cell(event.eventType ?? "—")) | \(cell(event.bodyIds.joined(separator: " / "))) | \(cell(event.aspectId ?? "—")) | \(event.offsetSecondsFromQuery.map { "\($0)s" } ?? "—") |"
+                "| \(cell(event.datetimeUtc ?? "—")) | \(cell(event.eventType ?? "—")) | \(cell(event.bodyIds.joined(separator: " / "))) | \(cell(event.aspectId ?? "—")) | \(event.offsetSecondsText.map { "\($0)s" } ?? "—") |"
             )
         }
     }

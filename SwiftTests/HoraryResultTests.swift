@@ -3,6 +3,44 @@ import Testing
 @testable import TransitStudio
 
 struct HoraryResultTests {
+    @Test func decodeAndExportHoraryV3WithoutLosingEvidence() throws {
+        let url = try #require(Bundle.module.url(forResource: "horary-v3-result", withExtension: "json", subdirectory: "Fixtures"))
+        let data = try Data(contentsOf: url)
+        let result = try JSONDecoder().decode(HoraryDataPacket.self, from: data)
+        #expect(result.schema.schemaId == "horary-data-packet/3.0")
+        #expect(result.bodies.count == 7)
+        #expect(result.aspectCandidates?.count == 105)
+        #expect(result.rawValue("event_search")?.string("status") == "sampled")
+        #expect(result.rawValue("validation")?.string("invariant_check") == "passed")
+        let fractional = try #require(result.events.first {
+            guard let n = $0.number("offset_seconds_from_query") else { return false }
+            return n.rounded() != n
+        })
+        #expect(fractional.offsetSecondsFromQuery == fractional.number("offset_seconds_from_query"))
+        let offsetText = try #require(fractional.offsetSecondsText)
+        let markdown = MarkdownExportBuilder.horary(result)
+        #expect(markdown.contains("完整、无损的 v3.0 证据包"))
+        #expect(markdown.contains("事件搜索：sampled"))
+        #expect(markdown.contains(offsetText + "s"))
+        let csv = TextExportBuilder.csv(result)
+        #expect(csv.contains("event_search"))
+        #expect(csv.contains(offsetText))
+        let source = try #require(JSONSerialization.jsonObject(with: data) as? NSDictionary)
+        let encoded = try JSONEncoder().encode(result)
+        let roundTrip = try #require(JSONSerialization.jsonObject(with: encoded) as? NSDictionary)
+        #expect(source == roundTrip)
+        let wheel = ChartWheelData(horaryResult: result)
+        #expect(wheel.unresolvedAspectEndpoints.isEmpty)
+    }
+
+    @Test func eventOffsetsPreserveSubsecondsAndIntegerDisplay() throws {
+        let row = try JSONDecoder().decode(HoraryV2EvidenceRow.self, from: Data(#"{"id":"past","offset_seconds_from_query":-0.5}"#.utf8))
+        #expect(row.offsetSecondsFromQuery == -0.5)
+        #expect(row.offsetSecondsText == "-0.5")
+        let integer = try JSONDecoder().decode(HoraryV2EvidenceRow.self, from: Data(#"{"id":"past","offset_seconds_from_query":-2}"#.utf8))
+        #expect(integer.offsetSecondsText == "-2")
+    }
+
     @Test func jsonValuePrettyJSONIsReadableJSON() throws {
         // Structured value: stable key order, JSON-like braces, no enum reflection.
         let v = HoraryV2JSONValue.object([

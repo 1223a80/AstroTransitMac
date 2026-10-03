@@ -10,7 +10,7 @@ struct HoraryEventsTimelineView: View {
                 Text("Events (\(result.events.count))")
                     .font(TS.Font.sectionTitle)
                 ForEach(result.events.prefix(80)) { ev in
-                    Text("\(ev.datetimeUtc ?? "-") | \(ev.eventType ?? "-") | \(ev.bodyIds.joined(separator: ",")) | \(ev.offsetSecondsFromQuery.map { String($0) } ?? "-")s")
+                    Text("\(ev.datetimeUtc ?? "-") | \(ev.eventType ?? "-") | \(ev.bodyIds.joined(separator: ",")) | \(ev.offsetSecondsText ?? "-")s")
                         .font(TS.Font.label)
                         .monospacedDigit()
                         .textSelection(.enabled)
