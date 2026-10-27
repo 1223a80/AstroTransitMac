@@ -338,6 +338,7 @@ extension ContentView {
             HStack {
                 Spacer()
                 Button {
+                    calcVM.errorMessage = nil
                     currentLocationManager.requestCurrentLocation { result in
                         switch result {
                         case .success(let payload):

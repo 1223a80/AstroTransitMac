@@ -6,8 +6,8 @@ cd "$ROOT_DIR"
 
 PRODUCT_NAME="TransitStudio"
 BUNDLE_ID="com.gacu.TransitStudio"
-APP_VERSION="1.6.1"
-BUILD_VERSION="54"
+APP_VERSION="1.6.2"
+BUILD_VERSION="55"
 SWIFTPM_BUILD_PATH="${SWIFTPM_BUILD_PATH:-/private/tmp/astrotransit-package-build}"
 BUILD_DIR="$SWIFTPM_BUILD_PATH/arm64-apple-macosx/release"
 OUTPUT_ROOT="${APP_OUTPUT_DIR:-$ROOT_DIR/dist}"
@@ -161,6 +161,8 @@ cat > "$CONTENTS_DIR/Info.plist" <<PLIST
     <string>13.0</string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>NSLocationUsageDescription</key>
+    <string>用于在 Horary 起盘时自动填入当前提问地点的经纬度与地点名。</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>用于在 Horary 起盘时自动填入当前提问地点的经纬度与地点名。</string>
     <key>NSSupportsAutomaticGraphicsSwitching</key>
