@@ -139,7 +139,12 @@ class TestPatternDetection:
             "D": _deg(180),    # opposition with A, sextile B/C
         }
         p = self._run(lons)
-        assert "kite" in self._types(p)
+        kites = [item for item in p if item["type"] == "kite"]
+        assert len(kites) == 1
+        labels = kites[0]["aspect_types"]
+        assert labels.count("opposition") == 1
+        assert labels.count("sextile") == 2
+        assert len(labels) == 3
 
     def test_kite_requires_grand_trine(self) -> None:
         lons = {

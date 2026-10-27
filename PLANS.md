@@ -1,3 +1,11 @@
+# 风筝相位标签修复（2026-10-27 收尾登记）
+
+状态：既有实现已由本轮 Python 全量 1232 项测试验证。范围：仅整理已存在的 astro_backend_patterns.py 与 test_patterns.py 改动。
+
+- [x] 核对已有修复：angular_separation 最大为 180°，旧 <= 180 + orb 条件恒真；现按距 180° / 60° 的误差分别标记 opposition / sextile，按成员排序保持确定性。
+- [x] 已有回归断言同一风筝恰有 1 个 opposition、2 个 sextile，字段结构不变。
+- [x] Python 全量测试通过，按独立修复保存代码、测试与记录；完整门禁结果见本轮项目整理收尾条目。
+
 # 汉堡占星接入现有架构计划（2026-10-26）
 
 状态：计划完成，未实施。范围：只读核对现有 practice/navigation/CalculationMode、运行、结果页、侧栏、导出与 AI 管线，产出接入方案 `docs/hamburg-integration-plan.md`；不修改 App 源码，不打包。现有汉堡 Swift 核心/CLI、Horary 与代码审查任务原样保留。

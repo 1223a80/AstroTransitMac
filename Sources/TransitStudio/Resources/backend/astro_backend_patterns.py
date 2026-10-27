@@ -228,15 +228,22 @@ def find_patterns(
             if opp_count >= 1 and sextile_count >= 2:
                 members = sorted(gt_members | {d})
                 orbs = _all_orbs(members)
+                # angular_separation is already in [0, 180], so a "<= 180 + orb"
+                # check is always true and labels every kite edge as opposition.
+                # The fourth point opposes one grand-trine planet and sextiles the other two.
+                aspect_types = []
+                for member in sorted(gt_members):
+                    sep = angular_separation(body_lons[d], body_lons[member])
+                    if abs(sep - 180.0) <= PATTERN_ASPECT_ORB + 1e-9:
+                        aspect_types.append("opposition")
+                    elif abs(sep - 60.0) <= PATTERN_ASPECT_ORB + 1e-9:
+                        aspect_types.append("sextile")
                 _register({
                     "id": f"kite_{'_'.join(members)}",
                     "type": "kite",
                     "type_name": PATTERN_TYPES["kite"],
                     "members": members,
-                    "aspect_types": [
-                        "opposition" if angular_separation(body_lons[d], body_lons[m]) <= 180 + PATTERN_ASPECT_ORB
-                        else "sextile" for m in gt_members
-                    ],
+                    "aspect_types": aspect_types,
                     "orb_summary": f"{max(orbs):.2f}°" if orbs else "",
                     "confidence": _confidence(orbs),
                 })

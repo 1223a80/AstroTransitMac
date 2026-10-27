@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-27 - 风筝相位标签修复（既有改动收尾）
+
+- 修复风筝第四点的相位标签：旧角距判断恒真，现根据 180° / 60° 误差区分冲相与六合，并确定成员遍历顺序；不改变 JSON 结构。
+- 回归测试断言 1 个 opposition 与 2 个 sextile；本轮 Python 全量 1232 项通过，完整门禁结果见 PLANS.md。
+
 ## 2026-10-26 - 汉堡占星接入架构计划
 
 - 新增 `docs/hamburg-integration-plan.md`：只读核对现有 SwiftUI 导航、`CalculationMode`、运行/结果/侧栏/导出/AI 管线，给出汉堡盘接入方案。
