@@ -9,9 +9,9 @@ Transit Studio 是一款 macOS 本地占星计算工作台：SwiftUI 界面 + Py
 3. `SwiftTests/Fixtures/` 中 38 份真实输出快照。
 4. `python_tests/` 中 1,232 项规则测试。
 
-`docs/` 只作为历史说明，重写时不需要依赖。
+`docs/` 收录契约、当前状态和历史说明。应用功能规格以本文件与源码为准；独立增量与后续任务见 [当前状态](docs/current-status.md)，开发验证和目录用途见 [文档索引](docs/README.md)。
 
-**基线**：2026-10-18 源码，应用版本 1.6.2 (55)，macOS 13+，Swift 5.9，Python 3 + `pyswisseph`。当前验证：Python 1,232 项、Swift 234 项 / 32 suites、44 个实时样例全部通过。
+**基线**：2026-10-18 源码，应用版本 1.6.2 (55)，macOS 13+，Swift 5.9，Python 3 + `pyswisseph`。2026-10-27 验证：Python 1,232 项、Swift 267 项 / 38 suites（含独立汉堡核心 33 项）、44 个实时样例全部通过。
 
 ---
 
@@ -921,7 +921,7 @@ AI 面板在无上下文时显示“此页面暂不支持 AI 分析”；有上�
 | 层 | 数量 |
 |---|---:|
 | Python 测试 | 1,232 |
-| Swift 测试 | 234（32 suites） |
+| Swift 测试 | 267（38 suites，含独立汉堡核心 33 项） |
 | 实时后端样例 | 44 |
 | 契约 fixture | 38 |
 

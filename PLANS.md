@@ -1,3 +1,17 @@
+# 项目整理收尾（2026-10-27）
+
+状态：完成本地收尾。范围：保留现有业务成果，按任务拆分本地提交；核对并补齐任务/变更记录、执行完整门禁，清理可重建缓存。本轮不推进汉堡 App 接入、不修订算法、不重新打包、不推送或合并 main。
+
+- [x] 阅读 AGENTS.md，归类现有 Horary 独立后端、定位修复、README、汉堡核心/CLI、接入方案、风筝标签修复及历史记录。
+- [x] 检查既有差异与新增文件，补齐风筝修复记录；登记汉堡 5 项审查待办及定位实机边界，清理独立 Horary 模块 5 处行尾空格。
+- [x] 独立临时目录完整门禁通过：Python 1232、Swift build、267 项 / 38 suites、44 个 Examples 实时后端解码；CLI JSON/Markdown/--no-python 均通过。
+- [x] 按 Horary 独立后端、定位修复、功能规格、汉堡核心/CLI、接入方案、风筝标签修复保存六个逻辑提交；每项含对应 PLANS/CHANGELOG，无源码遗漏。
+- [x] SwiftPM 原生 clean 后清理本轮临时目录、源码/测试 Python 缓存与 .DS_Store；合计清理 1015.62 MiB（含本轮验证产生的临时构建），项目 .build 剩余 4 KiB。保留 .venv、dist 发布包、星历与本地参考库。收尾文档随最后提交保存，最终 Git 状态复核无未提交/未跟踪文件。
+
+提交说明：在 `codex/project-closeout-20261027` 保存六个独立成果提交和本次收尾文档提交；原 `feature/hamburg-swift-core` 分支指针保留。仅本地提交，未推送、未合并 main；安装版仍为 1.6.2 (55)。同时纳入此前扫描选型、分享检查、依赖核对和清理的既有完成记录。
+
+验证说明：首次复用旧 `.build` 时 Swift 链接器报 RetrogradeCyclesModels.swift.o 在构建期间被修改（Python 已通过）；未把该次视为门禁通过。改用 `/private/tmp/astrotransit-closeout-build-20261027` 从头构建后完整通过。初次与最终日志保存在本聊天产物目录 `project-closeout/`。Markdown 围栏和本地文件链接检查通过；未变更生产 JSON 契约，不需重建夹具。
+
 # 风筝相位标签修复（2026-10-27 收尾登记）
 
 状态：既有实现已由本轮 Python 全量 1232 项测试验证。范围：仅整理已存在的 astro_backend_patterns.py 与 test_patterns.py 改动。
@@ -43,6 +57,24 @@
 验证记录：`bash check_vibe_changes.sh` 通过——Python 1232 项、Swift 267 项 / 38 suites、44 个 `Examples/` 实时后端样例；`HamburgCoreTests` 33 项。真实样例 `HamburgExamples/sample-hamburg-request.json` 返回 22 点、116 幅图像、5 棵树、true_sun 太阳弧 37.456993°，无 warnings；CLI JSON/Markdown 与 `--no-python` 点集模式均实际运行。TNP 与 Swiss Ephemeris 在 J1900/J2000/1990/2026 的对照误差小于 0.02°；太阳弧与现有 Python 的差约 0.002°。
 
 边界：本轮不接 App 导航/结果页/导出，不改 `transit_calc.py` 和 `astro_backend_api.py`，不把汉堡请求放入 `Examples/`；TNP 为数学假想点，输出不宣称天文实体。方法、根数来源、精度与 orb 单位写入文档和报告 meta。
+
+# Transit Scan 实现与语言选型分析（2026-10-19）
+
+状态：完成。范围：核对扫描代码、性能基线、输出契约与原生语言接入条件，给出算法和语言选型建议；根据用户补充，纳入 Apple M2 的 CPU、GPU / Metal、Neural Engine 协同可行性。本轮未实施重写、未打包，只更新此计划记录。工作区已有 README 重写、当前位置修复及 Horary V3.0.1 独立后端变更，均属于此前任务，原样保留。
+
+- [x] 阅读项目 AGENTS.md 与现有任务记录，按任务归类已有变更。
+- [x] 核对 scan、星历封装、请求内采样器、Swift 工作量估算与契约测试；临时内存缓存对照保留现行完整输出。
+- [x] 查证 Swiss Ephemeris 官方 C 接口与线程状态、Swift/Rust 原生接入和分发条件；Apple 默认 TLS 关闭，本地二进制 swed 位于普通共享数据段。
+- [x] 查证 M2 / Metal 浮点能力及 Core ML / Neural Engine 工作负载限制，确定异构计算是否值得引入。
+- [x] 给出明确推荐、性能收益边界、兼容验证与迁移顺序，核查本轮文档差异。
+
+实测记录：使用现有 `.venv` / Swiss Ephemeris 2.10.03、随项目星历和 sample-scan-request，在同一临时 Python 进程内分别运行原版与仅加请求内黄经缓存的对照各三次。scan_window 中位耗时 3.2160 s → 0.3641 s，swe.calc_ut 调用 433,159 → 10,644，346 条结果的完整 payload 与现行原版一致。计时不含 Process 启动、import 或 JSON 编码，未写入生产源码或 fixture。历史 fixture 与现行原版的事件 ID、顺序及非浮点字段一致；差异仅为 transit_longitude / orb，最大 7.05e-12 度，不能声称历史 fixture 逐字节一致。
+
+选型结论：当前 macOS / SwiftUI 项目优先 Swift 原生扫描内核 + 官方 Swiss Ephemeris C 库；跨平台独立核心才优先考虑 Rust + C。按天体/时刻复用黄经和速度、连续数值缓冲及目标角度索引先消除重复遍历，保留现行 bisection 和输出语义作为首轮迁移基线。更换求根算法必须如实处理 exact_method，并验证分钟 ID、排序、边界、时区、警告与回退。现有 Swift 静态 fixture 解码与 live 解码不足以证明新旧算法数值等价。
+
+M2 结论：CPU 双精度承担精确星历与求根；大任务优先验证原生独立 worker 进程并行，不能直接把共享 Swiss C 状态交给多线程。官方 sweodef.h 在 __APPLE__ 下使 TLS 为空，本地扩展的 swed 位于普通 __DATA,__common。Metal 规范 §2.1 明确不支持 double；300 度附近 Float32 间隔约 3.05e-5 度，大于现行 1e-8 度根残差阈值约 3052 倍。GPU 仅作为有保守误差界限的可选大批量粗筛，须端到端基准证明收益；Core ML 的 all 是允许框架选择/分配模型算子的执行单元，不是任意 C 星历函数的 CPU/GPU/ANE 自动并行。50M 工作量上限需用新算法重新校准，并同步前后端阈值，不能沿用旧算法线性耗时。
+
+查证来源：[Swiss Ephemeris 线程宏](https://github.com/aloistr/swisseph/blob/master/sweodef.h)、[Swift C/C++ 封装](https://www.swift.org/documentation/articles/wrapping-c-cpp-library-in-swift.html)、[Rust 静态库链接](https://doc.rust-lang.org/reference/linkage.html)、[Apple Metal 语言规范 §2.1](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)、[Core ML compute units](https://developer.apple.com/documentation/coreml/mlcomputeunits)。Apple PDF 已下载核查并清理临时 PDF/文本；实验使用 -B 未生成 Python 字节码，无构建缓存需要清理。本轮没有 Swift/Python 生产代码变更，因此未执行完整构建门禁；完成样例对照与文档差异检查。
 
 # README 功能规格重写（2026-10-18）
 
@@ -362,3 +394,27 @@
 - [x] 审阅完整 `git diff`、`git status` 与 diff stat；仅有本任务的 5 个文件，`git diff --check` 通过；完成一个本地逻辑提交，不 push、不开 PR、不打包。
 
 原典依据：LacusCurtius 所载 Loeb/Robbins 1940 转录，Book I §20 标题及 Egyptian terms 表，页面行 127、135–149；Aries 行直接列出五个分配度数，合计 30°。§21 才进入 Chaldaean method。代码映射为各条目 exclusive upper degree，因此预计 Egyptian Aries 列表为 `JUPITER 6, VENUS 12, MERCURY 20, MARS 25, SATURN 30`。
+
+# /Applications 已安装应用的分享前隐私检查（2026-09-28）
+
+状态：完成。范围：只读检查 `/Applications/TransitStudio.app` 版本 1.5.3 (52) 中的资源、可执行文件、签名与扩展属性，识别随应用拷贝可能泄露的个人资料、凭据及本机路径；核对用户数据的存储位置。此轮不修改或重新打包应用。
+
+- [x] 盘点应用包内容与元数据：24 MB、75 个文件，无随包用户配置、数据库、日志或缓存；签名完整、ad hoc，扩展属性只有系统 provenance。
+- [x] 扫描文本资源与可执行文件：包标识含 `gacu`，可执行文件含 153 处相同本机项目目录前缀及构建临时路径；无匹配到常见密钥格式或私钥。星表文本有一处第三方贡献者邮箱。
+- [x] 核对运行时数据：本机 `~/Library/Preferences/com.gacu.TransitStudio.plist` 存有非空 API Key、出生资料及笔记，但这些实际值未出现在应用包；出生资料名称、ID、经纬度也未匹配。直接分享 `.app` 会暴露用户名和构建路径，分享时勿附带 Preferences 文件或整份用户目录。
+
+# 分享版运行依赖核对（2026-09-28）
+
+状态：完成。范围：核对当前 `/Applications/TransitStudio.app`、`requirements.txt`、Python 后端导入及前端解释器选择，回答朋友在自己 Mac 上运行所需的条件；不修改应用或安装环境。
+
+- [x] `requirements.txt` 仅要求 `pyswisseph>=2.10`；已安装包 68 个 Python 模块只导入标准库及 `swisseph`，并附带三份普通星历和恒星表。`requirements-dev.txt` 的 pytest/jsonschema 仅用于开发验证。
+- [x] App 在预设路径中选取能导入 `swisseph` 的 Python，也允许在设置中指定解释器。运行条件包括 macOS 13+、Apple Silicon、可用 Python 3；AI 分析还需要用户自己的 API Key，自定义小行星的缺失星历可能需要下载。当前包为 ad hoc 签名，朋友收到后启动可能受 macOS 安全检查影响。
+
+
+# 硬盘第一批清理（2026-10-24）
+
+状态：完成。授权范围：用户确认清理上一轮列出的缓存、旧更新包和构建产物。本项目仅使用 `swift package clean` 清理 `.build` 中的可重建产物；保留源码、测试、资源、dist、依赖配置和现有工作区改动。
+
+- [x] 阅读 AGENTS.md，记录清理前工作区状态并核对 `swift package clean --help`。
+- [x] 执行 SwiftPM 原生构建清理，`.build` 从 516.8 MB 降至 4 KiB，减少 516.8 MB。
+- [x] 清理前后 Git status 文件列表一致，`git diff --check` 通过；安装应用、源码和已有改动保留。本轮无业务代码变更，不重新构建或运行会生成缓存的测试。

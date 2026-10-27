@@ -9,8 +9,8 @@ Use these files before changing the project:
 - `git-workflow.md` - local-vs-GitHub state checks, task-boundary rules, and push checklist.
 - `backend-contracts.md` - JSON contracts and calculation-specific invariants.
 - `validation.md` - local setup, test commands, and smoke checks.
-- `hamburg-integration-plan.md` - proposed App integration plan for the Hamburg page: `CalculationMode.hamburg`, Python `moment` adapter, native `HamburgEngine`, result tabs, exports, AI, tests, phases, risks, and acceptance criteria. Planning only; not implemented.
 - `hamburg-astrology.md` - native Swift Hamburg / Uranian core and `hamburg` CLI: TNP ephemeris, dial/midpoint/picture algorithms, solar arc, antiscia, Witte houses, JSON contract, precision boundaries, and validation.
+- `hamburg-integration-plan.md` - proposed App integration plan for the Hamburg page: `CalculationMode.hamburg`, Python `moment` adapter, native `HamburgEngine`, result tabs, exports, AI, tests, phases, risks, and acceptance criteria. Planning only; not implemented.
 - `product-decisions.md` - intentional product constraints that audits and future changes must preserve.
 - `project-audit-2026-07-06.md` - historical folder hygiene notes, technical debt, potential hidden bugs, and next-step recommendations.
 - `modern-astrology-expansion-assessment-2026-07.md` - historical modern-astrology baseline, missing techniques, feasibility, priorities, and recommended implementation sequence.

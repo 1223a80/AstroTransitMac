@@ -2,8 +2,8 @@
 
 ## Root
 
-- `Package.swift` - Swift Package manifest. Product is the macOS executable `TransitStudio`.
-- `README.md` - user-facing overview and basic run instructions.
+- `Package.swift` - Swift Package manifest. Products are the macOS executable `TransitStudio`, the independent `HamburgCore` library, and the `hamburg` CLI.
+- `README.md` - application feature specification and rewrite baseline; standalone Hamburg capabilities are documented separately.
 - `AGENTS.md` - project-specific instructions for coding agents.
 - `PLANS.md` / `CHANGELOG.md` - task plans and human-readable change log (see AGENTS.md change discipline).
 - `requirements.txt` - Python runtime dependency list. Currently requires `pyswisseph`.
@@ -16,6 +16,8 @@
 ## Source
 
 - `Sources/TransitStudio/` - SwiftUI app source.
+- `Sources/HamburgCore/` - independent Swift Hamburg/Uranian calculation library; not linked into the app.
+- `Sources/HamburgCLI/` - `hamburg` CLI, optionally using the existing Python `moment` backend for standard positions.
 - `Sources/TransitStudio/Resources/backend/` - Python backend source bundled into the app.
 - `Sources/TransitStudio/Resources/ephemeris/` - bundled Swiss Ephemeris files.
 
@@ -57,6 +59,8 @@ Important backend files:
 
 ## Tests And Examples
 
+- `HamburgTests/` - independent Hamburg core tests and static TNP reference fixture.
+- `HamburgExamples/` - standalone CLI requests; kept outside `Examples/` so they do not enter the Python live-contract scan.
 - `python_tests/` - pytest coverage for backend math and classical contracts.
 - `SwiftTests/` - Swift Codable/model tests, including KP request/navigation tests and `BackendContractTests` which decode real backend outputs.
 - `SwiftTests/Fixtures/` - captured backend outputs used by `BackendContractTests`. Regenerate after an intentional schema change with:
