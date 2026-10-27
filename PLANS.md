@@ -1,3 +1,11 @@
+# Horary V3.0.1 独立后端开发（2026-10-05）
+
+状态：完成。范围：按照用户确认，独立编写一份全新自包含 Python 后端 `Sources/TransitStudio/Resources/backend/astro_backend_horary_v3_0_1.py`，版本标识 `3.0.1`（`horary-data-packet/3.0.1`）；不接入现有应用管线（`transit_calc.py` / `astro_backend_api.py` / Swift 保持不变），不依赖已有 v2/v3 路由和耦合模块，实现纯粹的自包含卜卦占星引擎与阅读工作表生成器。
+
+- [x] 编写自包含 Horary V3.0.1 后端：包含天文时间地点解析、Regiomontanus 宫位、七曜与交点坐标、修正后埃及界与 Dorothean 三分性等本质尊贵、日光状态、相位与精确求根、换座/逆行阻碍检查、接纳矩阵、月亮推进与出座前空亡区间、福点/精神点、映点与恒星、审盘注意事项、reader_markdown 工作表生成及独立 CLI 入口。
+- [x] 编写专门的单元测试 `python_tests/test_horary_v3_0_1.py`，覆盖起盘准确性、边界条件、空亡区间、阅读版格式与 CLI 执行，8 项测试全部通过（0.41s）。
+- [x] 验证独立测试及全项目回归门禁（`test_horary_v3`、`test_horary_v3_markdown`、`test_horary_v2` 142 项全通过），现有应用管线完全不受影响；更新 CHANGELOG.md 与 PLANS.md。
+
 # Horary V3 应用入口补齐（2026-10-03）
 
 状态：功能、验证与覆盖安装完成，进入提交推送收尾。沿用 codex/horary-v3，安装版本 1.6.1 (54)。默认起盘 V3，侧栏提供持久化 V3 / V2.1 切换，应用复制、Markdown 导出及 AI 数据使用同一 Python 阅读版；V2.1 显式入口保留。本记录随修正提交推送，远端同步以最后 Git 核验为准；末尾既有分享检查笔记仅保留本地。
