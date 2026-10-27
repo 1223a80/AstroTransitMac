@@ -1,11 +1,13 @@
 # 项目收尾分支推送与 main 合并（2026-10-27）
 
-状态：进行中。用户明确授权推送并合并 main。范围：推送 codex/project-closeout-20261027，保留既有逻辑提交，合入最新远端 main 并同步本地主线；不修改业务代码、不重新打包。
+状态：推送、main 快进合并及远端核验完成。用户明确授权推送并合并 main。范围：推送 codex/project-closeout-20261027，保留既有逻辑提交，合入最新远端 main 并同步本地主线；不修改业务代码、不重新打包。
 
 - [x] 重读 AGENTS.md，确认工作区干净及此前完整门禁通过记录。
 - [x] 沙箱外 gh auth status 确认 keyring 凭据有效；fetch 后 origin/main=5db091e，main 无分叉（0/10），远端 main 未启用分支保护。
 - [x] 确认 Sources/测试/样例/Package/CI 与已验证的 338d069 完全一致；仅更新同步状态文档，复用同日完整门禁结果（Python 1232、Swift 267/38 组、44 个实时样例），不重复生成构建缓存。
-- [ ] 推送任务分支，按远端保护要求完成 main 合并；核验本地 main、origin/main 与远端实际 SHA 一致，工作区干净。
+- [x] 任务分支推送成功并建立 upstream，ahead/behind=0/0；main 从 5db091e 快进到 e1508e2 后推送成功。git ls-remote 证实远端 main 与任务分支均为 e1508e2；本地 main 与 origin/main 一致、工作区干净。以下同步完成记录作为文档提交追加到 main 并再次推送，最终 SHA 以执行后的 Git 核验为准。
+
+本轮只增加同步文档，没有改动业务实现；未重新构建或打包，项目 .build 保持 4 KiB。GitHub Actions 的运行状态另行读取，不以本地门禁结果冒充远端 CI 结果。
 
 # 项目整理收尾（2026-10-27）
 
