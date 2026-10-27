@@ -2,6 +2,16 @@
 
 Transit Studio 是一款 macOS 本地占星计算工作台：SwiftUI 界面 + Python/Swiss Ephemeris 计算后端，覆盖现代、古典、吠陀三种实践，西方 Horary、KP 数字占卜、三级生时矫正，以及 36 个后端计算模式。
 
+## 许可证与第三方组件
+
+本项目原创代码以 [GNU Affero General Public License v3.0](LICENSE)（AGPL-3.0-only）发布。第三方组件和数据的版权及许可仍归其各自权利人所有。
+
+- Python 后端依赖 [pyswisseph](https://github.com/astrorigin/pyswisseph)，该 Python 扩展采用 AGPL-3.0。
+- pyswisseph 使用的 [Swiss Ephemeris](https://www.astro.com/swisseph/swephprg.htm) 由 Astrodienst AG 以 AGPL 和专业商业许可证双重授权；本项目采用 AGPL 路线。Swiss Ephemeris 的商业许可证不自动改变 pyswisseph 扩展本身的许可。
+- `Sources/TransitStudio/Resources/ephemeris/` 内包含 Swiss Ephemeris 格式的行星、月球、小行星星历和固定星数据，保留其原有文件及署名；相关上游数据可见 [Astrodienst 星历目录](https://www.astro.com/ftp/swisseph/ephe/)。这些数据的具体版本和来源尚未逐文件核验，不应视为项目原创或仅凭本项目 LICENSE 重新授权。
+
+分发本项目或修改版本时，请遵守 AGPL 条款，包括随分发提供许可证及相应源码；通过网络提供修改版本时也要履行适用的源码提供义务。分发已编译的应用时，应确保接收者能取得与该版本对应的完整源码及适用的第三方声明；当前仓库源码见 [AstroTransitMac](https://github.com/1223a80/AstroTransitMac)。
+
 本文不是发布记录，也不是路线图。它是当前实现的**功能规格**，用于指导从零重写。事实来源按优先级为：
 
 1. 源码（`Sources/TransitStudio/`、`Sources/TransitStudio/Resources/backend/`）。
