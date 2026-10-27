@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-10-26 - 汉堡占星 Swift 核心与 CLI
+
+- 新增独立 `HamburgCore` Swift 库：原生计算 8 颗乌拉尼亚 TNP（Neely J1900 根数 + Kepler + IAU 1976 岁差 + 光行时/地心转换），并提供中点轴/树、90°/45°/22.5° dial、四因子行星图像、太阳弧（true sun/Naibod/custom、converse）、映点与 Witte 等宫。
+- 新增 `hamburg` CLI：标准行星/宫位/ASC/MC 仍调用现有 Python `transit_calc.py`，汉堡增量计算全部在 Swift 完成；支持 JSON/Markdown、`--no-python` 点集模式和 `--output`。
+- 新增独立 `HamburgCoreTests`（33 项）与 Swiss Ephemeris 参考值夹具（J1900/J2000/1990/2026）；TNP 黄经/黄纬对照误差小于 0.02°，太阳弧与现有 Python 差约 0.002°。
+- 新增 `docs/hamburg-astrology.md` 与 `HamburgExamples/sample-hamburg-request.json`；样例返回 22 点、116 幅图像、5 棵树、true_sun 太阳弧 37.456993°，无 warnings。
+- 不接入 App 导航/结果页/导出，不修改 Python 算法，不把汉堡样例放入会被 live contract 扫描的 `Examples/`；现有 Horary 工作区改动原样保留。
+- 校验：`bash check_vibe_changes.sh` 通过（Python 1232 项、Swift 267 项 / 38 suites、44 个实时后端样例）；CLI JSON/Markdown 与点集模式均实际运行。
+
 ## 2026-10-18 - README 重写为功能规格
 
 - 将 README 从发布记录改写成可独立指导“从头重写”的功能规格；事实来自源码、36 个后端 mode、44 个 `Examples/` 实跑输出和 38 个契约 fixture。

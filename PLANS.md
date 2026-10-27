@@ -1,3 +1,30 @@
+# 汉堡 Swift 后端代码审查（2026-10-26）
+
+状态：完成。范围：审查今天新增的 `Sources/HamburgCore/`、`Sources/HamburgCLI/`、`HamburgTests/`、样例与 Package.swift 集成；既有定位、README 与 Horary 改动属于其他任务，保留。本轮仅审查，不修改生产实现。
+
+- [x] 阅读 AGENTS.md，确认工作区任务边界与原实现计划。
+- [x] 核对核心算法、输入/输出契约、Python 桥接与测试覆盖，复现可确认的问题。
+- [x] 执行相关 Swift 测试和 CLI 边界验证，记录证据、审查差异并清理本轮缓存。
+- [x] 按严重程度交付带准确代码行号的 review findings。
+
+验证记录：本轮独立临时路径构建；Hamburg 专项 33 项通过；`bash check_vibe_changes.sh` 全通过（Python 1232 项、Swift 267 项 / 38 suites、44 个实时后端样例），差异格式检查通过。确认 5 项：TNP 速度固定太阳参考、moment/JD 混盘、reference fold 被忽略、360° 中点对向轴漏报、stdout/stderr 顺序排空死锁。均用 CLI/独立探针复现，未修改生产代码；探针与门禁日志保存在本聊天产物目录 `hamburg-review/`，清理本轮临时构建约 502 MiB。另一个任务新写入的接入方案与计划记录原样保留。
+
+# 汉堡占星 Swift 核心与 CLI 后端（2026-10-26）
+
+状态：完成。范围：按用户确认交付“Swift 核心 + CLI 后端入口”，不改现有 SwiftUI 导航与 Python 生产管线。标准行星、宫位和轴点继续复用现有 Python 后端；汉堡/乌拉尼亚增量计算（8 颗 TNP、90°/45°/22.5° dial、中点树、行星图像、太阳弧、映点、Witte 等宫）全部用独立 Swift 实现，不新增 Python 算法。现有 Horary 工作区的未提交改动属于此前任务，原样保留，未纳入本任务文件。
+
+- [x] 核对现有 midpoint / orbital_dial / solar_arc 语义、`moment` 模式请求与输出、Swift 包结构和验证门禁；确认 `Examples/` 会被 live contract 扫描，因此汉堡样例放到 `HamburgExamples/`。
+- [x] 查证 TNP 轨道根数来源与算法：James Neely 1980 J1900 根数、Kepler 传播、J1900→date 岁差、地心转换；用 Swiss Ephemeris 2.10.03 做只读数值对照，确认 1900–2026 黄经误差约 0.01°。
+- [x] 查证汉堡宫制（等宫、0° 天秤起 I 宫）、90° dial、planetary picture 的规范形与 orb 口径；决定请求显式声明 `orb_unit`，输出同时保留 360° 谐波等价 orb 与 dial orb。
+- [x] 新增 `HamburgCore` 库：角度/时刻、岁差、TNP 星历、星盘模型、dial/中点/行星图像、太阳弧、映点、宫位、Codable 报告与 Markdown 渲染。
+- [x] 新增 `hamburg` CLI：读取 JSON、按需调用现有 Python `transit_calc.py` 取标准位置、在 Swift 完成汉堡计算、输出 JSON/Markdown；支持 `--no-python` 纯点集输入。
+- [x] 新增独立 `HamburgCoreTests`：TNP 参考值、跨 0° 中点、90° dial 折叠、图像去重/截断、太阳弧、宫位、映点、JSON round-trip；33 项通过。
+- [x] 更新 Package.swift、独立样例、`docs/hamburg-astrology.md`、`docs/README.md`、CHANGELOG；运行 `swift build`、`swift test`、CLI 双模式 smoke，检查完整 diff 与格式。
+
+验证记录：`bash check_vibe_changes.sh` 通过——Python 1232 项、Swift 267 项 / 38 suites、44 个 `Examples/` 实时后端样例；`HamburgCoreTests` 33 项。真实样例 `HamburgExamples/sample-hamburg-request.json` 返回 22 点、116 幅图像、5 棵树、true_sun 太阳弧 37.456993°，无 warnings；CLI JSON/Markdown 与 `--no-python` 点集模式均实际运行。TNP 与 Swiss Ephemeris 在 J1900/J2000/1990/2026 的对照误差小于 0.02°；太阳弧与现有 Python 的差约 0.002°。
+
+边界：本轮不接 App 导航/结果页/导出，不改 `transit_calc.py` 和 `astro_backend_api.py`，不把汉堡请求放入 `Examples/`；TNP 为数学假想点，输出不宣称天文实体。方法、根数来源、精度与 orb 单位写入文档和报告 meta。
+
 # README 功能规格重写（2026-10-18）
 
 状态：完成。范围：只改文档（README.md、PLANS.md、CHANGELOG.md），未动计算与 UI 代码。目标：把 README 从发布记录改写成可独立指导“从头重写”的功能规格；事实以源码、36 个后端 mode、44 个 `Examples/` 请求和 38 个契约 fixture 为准，不以 `docs/` 叙述为依据。

@@ -1,0 +1,306 @@
+{
+  "source": "Swiss Ephemeris 2.10.03 (pyswisseph 2.10.3.2), swe.calc_ut(FLG_SWIEPH / FLG_HELCTR). Reference values generated 2026-10-26; used only as static test oracle.",
+  "note": "TNP positions use Neely 1980 J1900 elements. Geocentric positions are apparent ecliptic-of-date; heliocentric positions are ecliptic-of-date.",
+  "samples": [
+    {
+      "label": "J2000",
+      "jd_ut": 2451545.0,
+      "sun": {
+        "longitude": 280.3689196753,
+        "latitude": 0.0002323265,
+        "distance_au": 0.9833276448
+      },
+      "bodies": {
+        "CUPIDO": {
+          "geo_longitude": 243.89645838,
+          "geo_latitude": 0.97454162,
+          "geo_distance_au": 41.68866597,
+          "helio_longitude": 243.08215805,
+          "helio_latitude": 0.99333496,
+          "helio_distance_au": 40.90223538
+        },
+        "HADES": {
+          "geo_longitude": 78.180389,
+          "geo_latitude": -1.0504282,
+          "geo_distance_au": 49.83149346,
+          "helio_longitude": 78.59459984,
+          "helio_latitude": -1.03151939,
+          "helio_distance_au": 50.74313968
+        },
+        "ZEUS": {
+          "geo_longitude": 185.38829137,
+          "geo_latitude": -0.00211705,
+          "geo_distance_au": 59.15185812,
+          "helio_longitude": 184.44037407,
+          "helio_latitude": -0.00211779,
+          "helio_distance_au": 59.24543644
+        },
+        "KRONOS": {
+          "geo_longitude": 87.79400723,
+          "geo_latitude": 0.01324777,
+          "geo_distance_au": 63.96474565,
+          "helio_longitude": 87.97744611,
+          "helio_latitude": 0.01304804,
+          "helio_distance_au": 64.92479627
+        },
+        "APOLLON": {
+          "geo_longitude": 201.3065087,
+          "geo_latitude": -0.00558758,
+          "geo_distance_au": 70.479357,
+          "helio_longitude": 200.52069297,
+          "helio_latitude": -0.00560571,
+          "helio_distance_au": 70.29949
+        },
+        "ADMETOS": {
+          "geo_longitude": 49.1151501,
+          "geo_latitude": 0.01074309,
+          "geo_distance_au": 73.00834319,
+          "helio_longitude": 49.70841848,
+          "helio_latitude": 0.01064876,
+          "helio_distance_au": 73.62765
+        },
+        "VULKANUS": {
+          "geo_longitude": 110.43842636,
+          "geo_latitude": 0.01197446,
+          "geo_distance_au": 76.28727387,
+          "helio_longitude": 110.30535326,
+          "helio_latitude": 0.01182159,
+          "helio_distance_au": 77.25568
+        },
+        "POSEIDON": {
+          "geo_longitude": 214.55808002,
+          "geo_latitude": -0.0081501,
+          "geo_distance_au": 84.06712692,
+          "helio_longitude": 213.94617645,
+          "helio_latitude": -0.00819239,
+          "helio_distance_au": 83.66907
+        }
+      }
+    },
+    {
+      "label": "2026-01-01",
+      "jd_ut": 2461041.5,
+      "sun": {
+        "longitude": 280.5685862387,
+        "latitude": 0.0001772118,
+        "distance_au": 0.9833265344
+      },
+      "bodies": {
+        "CUPIDO": {
+          "geo_longitude": 279.37210753,
+          "geo_latitude": 0.548881,
+          "geo_distance_au": 41.80858125,
+          "helio_longitude": 279.34918704,
+          "helio_latitude": 0.56205316,
+          "helio_distance_au": 40.82552038
+        },
+        "HADES": {
+          "geo_longitude": 104.91105255,
+          "geo_latitude": -0.89487201,
+          "geo_distance_au": 49.79805766,
+          "helio_longitude": 104.82146853,
+          "helio_latitude": -0.87760221,
+          "helio_distance_au": 50.77851339
+        },
+        "ZEUS": {
+          "geo_longitude": 206.25140917,
+          "geo_latitude": -0.00816972,
+          "geo_distance_au": 59.47921388,
+          "helio_longitude": 205.33697133,
+          "helio_latitude": -0.00820906,
+          "helio_distance_au": 59.22104693
+        },
+        "KRONOS": {
+          "geo_longitude": 106.33120196,
+          "geo_latitude": 0.01562141,
+          "geo_distance_au": 63.88975792,
+          "helio_longitude": 106.23840075,
+          "helio_latitude": 0.01538327,
+          "helio_distance_au": 64.86820986
+        },
+        "APOLLON": {
+          "geo_longitude": 217.48093235,
+          "geo_latitude": -0.01080251,
+          "geo_distance_au": 70.7390527,
+          "helio_longitude": 216.76887351,
+          "helio_latitude": -0.01087349,
+          "helio_distance_au": 70.29949
+        },
+        "ADMETOS": {
+          "geo_longitude": 64.4456163,
+          "geo_latitude": 0.01558516,
+          "geo_distance_au": 72.83118705,
+          "helio_longitude": 64.89216219,
+          "helio_latitude": 0.0154133,
+          "helio_distance_au": 73.62765
+        },
+        "VULKANUS": {
+          "geo_longitude": 124.76186657,
+          "geo_latitude": 0.01293507,
+          "geo_distance_au": 76.35759292,
+          "helio_longitude": 124.45783825,
+          "helio_latitude": 0.01278299,
+          "helio_distance_au": 77.25568
+        },
+        "POSEIDON": {
+          "geo_longitude": 227.08236738,
+          "geo_latitude": -0.01272181,
+          "geo_distance_au": 84.25039995,
+          "helio_longitude": 226.54458824,
+          "helio_latitude": -0.01281331,
+          "helio_distance_au": 83.66907
+        }
+      }
+    },
+    {
+      "label": "1990-01-01",
+      "jd_ut": 2447892.5,
+      "sun": {
+        "longitude": 280.3045107649,
+        "latitude": -7.8091e-06,
+        "distance_au": 0.9833361627
+      },
+      "bodies": {
+        "CUPIDO": {
+          "geo_longitude": 230.23518496,
+          "geo_latitude": 1.04694259,
+          "geo_distance_au": 41.56760546,
+          "helio_longitude": 229.18344218,
+          "helio_latitude": 1.06298532,
+          "helio_distance_au": 40.9435198
+        },
+        "HADES": {
+          "geo_longitude": 67.91475219,
+          "geo_latitude": -1.05340746,
+          "geo_distance_au": 49.89211338,
+          "helio_longitude": 68.50511867,
+          "helio_latitude": -1.03605309,
+          "helio_distance_au": 50.72496622
+        },
+        "ZEUS": {
+          "geo_longitude": 177.34474015,
+          "geo_latitude": -0.00029161,
+          "geo_distance_au": 59.02552266,
+          "helio_longitude": 176.41679935,
+          "helio_latitude": -0.00029015,
+          "helio_distance_au": 59.25392004
+        },
+        "KRONOS": {
+          "geo_longitude": 80.68518666,
+          "geo_latitude": 0.01189959,
+          "geo_distance_au": 64.017083,
+          "helio_longitude": 80.97117667,
+          "helio_latitude": 0.01172969,
+          "helio_distance_au": 64.9441063
+        },
+        "APOLLON": {
+          "geo_longitude": 195.0788468,
+          "geo_latitude": -0.00387796,
+          "geo_distance_au": 70.37441354,
+          "helio_longitude": 194.28063051,
+          "helio_latitude": -0.00388214,
+          "helio_distance_au": 70.29949
+        },
+        "ADMETOS": {
+          "geo_longitude": 43.23858167,
+          "geo_latitude": 0.00892335,
+          "geo_distance_au": 73.08853808,
+          "helio_longitude": 43.87775491,
+          "helio_latitude": 0.0088576,
+          "helio_distance_au": 73.62765
+        },
+        "VULKANUS": {
+          "geo_longitude": 104.93584559,
+          "geo_latitude": 0.01120053,
+          "geo_distance_au": 76.27549799,
+          "helio_longitude": 104.87132763,
+          "helio_latitude": 0.01105885,
+          "helio_distance_au": 77.25568
+        },
+        "POSEIDON": {
+          "geo_longitude": 209.74297063,
+          "geo_latitude": -0.00656804,
+          "geo_distance_au": 83.99111716,
+          "helio_longitude": 209.10987125,
+          "helio_latitude": -0.00659362,
+          "helio_distance_au": 83.66907
+        }
+      }
+    },
+    {
+      "label": "J1900",
+      "jd_ut": 2415020.0,
+      "sun": {
+        "longitude": 279.6434404339,
+        "latitude": 3.77673e-05,
+        "distance_au": 0.98326899
+      },
+      "bodies": {
+        "CUPIDO": {
+          "geo_longitude": 105.30169267,
+          "geo_latitude": -0.46331283,
+          "geo_distance_au": 40.20090645,
+          "helio_longitude": 105.16129237,
+          "helio_latitude": -0.45230806,
+          "helio_distance_au": 41.17948657
+        },
+        "HADES": {
+          "geo_longitude": 336.36366196,
+          "geo_latitude": 0.07322408,
+          "geo_distance_au": 51.0904471,
+          "helio_longitude": 337.2984328,
+          "helio_latitude": 0.07398899,
+          "helio_distance_au": 50.55754565
+        },
+        "ZEUS": {
+          "geo_longitude": 104.28909458,
+          "geo_latitude": 4e-07,
+          "geo_distance_au": 58.3029329,
+          "helio_longitude": 104.20653282,
+          "helio_latitude": -0.0,
+          "helio_distance_au": 59.28304078
+        },
+        "KRONOS": {
+          "geo_longitude": 17.11135274,
+          "geo_latitude": 3.4e-07,
+          "geo_distance_au": 64.87870588,
+          "helio_longitude": 17.96983812,
+          "helio_latitude": -0.0,
+          "helio_distance_au": 65.0137015
+        },
+        "APOLLON": {
+          "geo_longitude": 138.56532837,
+          "geo_latitude": 3e-07,
+          "geo_distance_au": 69.53167954,
+          "helio_longitude": 138.05743943,
+          "helio_latitude": -0.0,
+          "helio_distance_au": 70.29949
+        },
+        "ADMETOS": {
+          "geo_longitude": 350.61391336,
+          "geo_latitude": 2.7e-07,
+          "geo_distance_au": 73.94244587,
+          "helio_longitude": 351.33915495,
+          "helio_latitude": 0.0,
+          "helio_distance_au": 73.62765
+        },
+        "VULKANUS": {
+          "geo_longitude": 55.39771544,
+          "geo_latitude": 2.5e-07,
+          "geo_distance_au": 76.5483829,
+          "helio_longitude": 55.90247072,
+          "helio_latitude": -0.0,
+          "helio_distance_au": 77.25568
+        },
+        "POSEIDON": {
+          "geo_longitude": 166.14025634,
+          "geo_latitude": 2.1e-07,
+          "geo_distance_au": 83.27195653,
+          "helio_longitude": 165.52049604,
+          "helio_latitude": -0.0,
+          "helio_distance_au": 83.66907
+        }
+      }
+    }
+  ]
+}

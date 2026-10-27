@@ -1,0 +1,43 @@
+{
+  "moment": {
+    "year": 1990,
+    "month": 1,
+    "day": 1,
+    "hour": 12,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "location": {
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "timezone": "Asia/Shanghai",
+    "house_system": "hamburg"
+  },
+  "reference": {
+    "year": 2026,
+    "month": 10,
+    "day": 26,
+    "hour": 12,
+    "minute": 0,
+    "timezone": "Asia/Shanghai"
+  },
+  "zodiac": "tropical",
+  "house_assignment": "hamburg",
+  "options": {
+    "dial_modulus": 90,
+    "midpoint_orb": 1.5,
+    "picture_orb": 1.0,
+    "orb_unit": "zodiac",
+    "focus_point_ids": ["SUN", "MOON", "ASC", "MC", "ARIES_POINT"],
+    "max_pictures": 200,
+    "max_hits_per_tree": 80,
+    "max_antiscia_contacts": 120,
+    "antiscia_enabled": true,
+    "solar_arc_enabled": true,
+    "solar_arc_method": "true_sun",
+    "solar_arc_orb": 1.0,
+    "include_converse_solar_arc": false,
+    "display_dials": [360, 90, 45, 22.5],
+    "apply_tnp_light_time": true
+  }
+}
