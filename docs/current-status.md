@@ -16,7 +16,7 @@
 | 汉堡 App 接入 | 方案完成，尚未实施 | [接入方案](hamburg-integration-plan.md) |
 | 风筝标签 | 已有修复区分 1 个冲相、2 个六合；JSON 结构保持不变 | [实现](../Sources/TransitStudio/Resources/backend/astro_backend_patterns.py)、[测试](../python_tests/test_patterns.py) |
 
-当前打包脚本与 `/Applications/TransitStudio.app` 安装版均为 **1.6.2 (55)**（本轮读取 Info.plist 核对）。本轮只做本地整理与验证，不重新打包、安装、推送或合并 main。
+当前打包脚本与 `/Applications/TransitStudio.app` 安装版均为 **1.6.2 (55)**（本轮读取 Info.plist 核对）。整理阶段完成后，用户已追加授权推送并合入 main；同步执行结果见 [PLANS](../PLANS.md) 顶部记录。本次不重新打包或安装。
 
 ## 汉堡已确认问题
 
@@ -43,7 +43,7 @@
 - 初次复用旧 `.build` 时链接器报对象文件在构建期间被修改；随后使用本轮独立临时目录从头构建，完整门禁通过。
 - Markdown 代码围栏、本地文件链接、差异格式及任务提交边界已检查。
 - 构建/缓存合计清理 1015.62 MiB（含本轮验证临时产物），项目 `.build` 剩余 4 KiB。
-- 六项既有成果与收尾文档保存在 `codex/project-closeout-20261027` 的七个本地提交中；未推送或合并 main。
+- 六项既有成果与收尾文档已保存为七个逻辑提交；后续远端推送与主线同步沿用 `codex/project-closeout-20261027`，进度与最终核验见 PLANS 顶部记录。
 
 ## 日常验证与清理
 
