@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-26 - 汉堡占星接入架构计划
+
+- 新增 `docs/hamburg-integration-plan.md`：只读核对现有 SwiftUI 导航、`CalculationMode`、运行/结果/侧栏/导出/AI 管线，给出汉堡盘接入方案。
+- 推荐新增页面级 `CalculationMode.hamburg`（现代 practice 的「星图」组），不把 native 结果塞进 `ModernSubMode`/`ModernResultData`；标准盘继续用现有 Python `moment`，汉堡增量计算调用 `HamburgCore`。
+- 规划 Adapter、`CalculationViewModel.hamburgReport`、结果 tabs、Markdown/JSON/CSV、AI 上下文、测试与 Phase 0–4 验收；本轮仅文档，不修改 App 源码、不打包。
+
 ## 2026-10-26 - 汉堡占星 Swift 核心与 CLI
 
 - 新增独立 `HamburgCore` Swift 库：原生计算 8 颗乌拉尼亚 TNP（Neely J1900 根数 + Kepler + IAU 1976 岁差 + 光行时/地心转换），并提供中点轴/树、90°/45°/22.5° dial、四因子行星图像、太阳弧（true sun/Naibod/custom、converse）、映点与 Witte 等宫。

@@ -1,3 +1,14 @@
+# 汉堡占星接入现有架构计划（2026-10-26）
+
+状态：计划完成，未实施。范围：只读核对现有 practice/navigation/CalculationMode、运行、结果页、侧栏、导出与 AI 管线，产出接入方案 `docs/hamburg-integration-plan.md`；不修改 App 源码，不打包。现有汉堡 Swift 核心/CLI、Horary 与代码审查任务原样保留。
+
+- [x] 核对 `PracticeMode`、`CalculationMode`、`ModernSubMode`、`ModernResultData` 与各 `switch mode` 的耦合，确认 `ModernSubMode` 同时承担 Python mode/缓存/导出键，不宜直接塞入 native 结果。
+- [x] 对比三种接入层级：`ModernSubMode.hamburg`、`PracticeMode.hamburg`、`CalculationMode.hamburg`；推荐页面级 `CalculationMode.hamburg`，放在现代 practice 的「星图」组。
+- [x] 设计数据流：继续用现有 Python `moment` 取标准盘，App 层 Adapter 转成 `HamburgChart`，再调用 `HamburgEngine`；不新增 Python mode。
+- [x] 列出 UI、状态、导出、AI、测试、风险和 Phase 0–4 验收清单，写入 `docs/hamburg-integration-plan.md`。
+
+后续候选：按 Phase 1 实施 App 接入；本任务已完成，实施前先处理已登记的核心/CLI 审查问题。
+
 # 汉堡 Swift 后端代码审查（2026-10-26）
 
 状态：完成。范围：审查今天新增的 `Sources/HamburgCore/`、`Sources/HamburgCLI/`、`HamburgTests/`、样例与 Package.swift 集成；既有定位、README 与 Horary 改动属于其他任务，保留。本轮仅审查，不修改生产实现。
